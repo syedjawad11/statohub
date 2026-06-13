@@ -1,0 +1,73 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Statohub',
+  description = 'Statistics education and calculator tools.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const useDark = stored ? stored === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', useDark);
+      })();
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-950 transition-colors duration-150 dark:bg-slate-950 dark:text-slate-100">
+    <header class="border-b border-slate-200 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/85">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <a href="/" class="text-base font-semibold text-slate-950 no-underline dark:text-white">Statohub</a>
+        <button
+          id="theme-toggle"
+          type="button"
+          class="inline-flex h-10 items-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-800 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+          aria-label="Toggle dark mode"
+          aria-pressed="false"
+        >
+          <span class="dark:hidden">Dark</span>
+          <span class="hidden dark:inline">Light</span>
+        </button>
+      </div>
+    </header>
+    <main class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <slot />
+    </main>
+    <script is:inline>
+      (() => {
+        const button = document.getElementById('theme-toggle');
+        if (!button) return;
+
+        const syncPressed = () => {
+          button.setAttribute(
+            'aria-pressed',
+            String(document.documentElement.classList.contains('dark')),
+          );
+        };
+
+        button.addEventListener('click', () => {
+          const nextIsDark = !document.documentElement.classList.contains('dark');
+          document.documentElement.classList.toggle('dark', nextIsDark);
+          localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
+          syncPressed();
+        });
+
+        syncPressed();
+      })();
+    </script>
+  </body>
+</html>

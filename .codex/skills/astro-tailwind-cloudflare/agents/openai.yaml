@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astro Tailwind Cloudflare"
+  short_description: "Build Astro Tailwind sites for Cloudflare"
+  default_prompt: "Use $astro-tailwind-cloudflare to build and deploy an Astro + Tailwind CSS website on Cloudflare."
