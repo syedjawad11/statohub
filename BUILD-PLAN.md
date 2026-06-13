@@ -212,6 +212,14 @@ Combinatorics (`/permutations-and-combinations/`) and **G5** Validity — plus
 dedicated passes for Probability and a permutation calc. Run these via DataForSEO
 REST when the core is live.
 
+**Launch scope (revised 2026-06-13):** do **not** write all ~50 articles before
+launch. Ship the site with **4–5 seed articles** (enough to prove the article +
+embedded-calculator wedge and exercise every layout/route type), then publish the
+rest on a **steady ~2–3 posts/day cadence** afterwards. The 4–5 launch picks come
+from the Phase-1 / KD 0–5 top of C3 below. Article *writing* is deferred to a future
+full session (it's the token-heavy work); the build tasks (TASK-002…007) don't
+depend on the articles existing.
+
 **C3. Write in the study's phased order** (compound authority bottom-up):
 - **Q1 / Phase 1 (KD 0–5):** the two rare low-KD pillars first — **G1 Fundamental
   Statistics** (301k/KD7, "second homepage") and **F1 Frequency Tables** (22k/KD1)
