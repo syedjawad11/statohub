@@ -122,3 +122,126 @@ At the end of each session, append a dated entry to the Session log below.
   **Next (Claude):** git init + GitHub `statohub` repo push (gated on user's
   go-ahead + public/private call), then write `TASK-002` (content collections
   schema: `categories`/`articles`/`calculators` Zod collections per BUILD-PLAN A2).
+
+- **2026-06-13** — Scaffold pushed to GitHub + **TASK-002 written & queued**.
+  `git init` → committed the TASK-001 scaffold (21 files; `node_modules`/`dist`
+  excluded) → pushed to the existing public repo `syedjawad11/statohub` `main`.
+  Wrote `handoff/TASK-002-content-collections-schema.md` (status `TODO`) with the
+  **pinned Zod contract** for `src/content/config.ts` (3 collections —
+  `categories`/`articles`/`calculators`, all cross-links via `reference()`) plus
+  3 deletable sample entries (descriptive-statistics category, standard-deviation
+  calculator `engine:'standardDeviation'`, standard-deviation MDX article). Scope
+  fenced tight: **schema + sample data ONLY** — no page-wiring, no `<StatCalc>`, no
+  `src/calc/**`, no `links.ts`/`check-links.mjs`, no SEO components, no calculator
+  form-config (that extends the schema in TASK-004). DoD: `astro sync` + `astro
+  check` exit 0, `npm run build` still builds the existing routes. Also logged the
+  **revised launch scope** in BUILD-PLAN Plan C: ship 4–5 seed articles, then
+  ~2–3 posts/day; article writing deferred to full sessions. **User is taking
+  TASK-002 to Codex now.** **Next (Claude, tomorrow):** review Codex's TASK-002
+  Work Log when it flips to `DONE`; then plan + write the 4–5 launch articles
+  (likely G1 Fundamental Statistics, parameter-vs-statistic, z-table, + 1–2
+  descriptive spokes — all Phase-1 KD 0–7).
+
+- **2026-06-14** — **TASK-002 reviewed → CLOSED; TASK-003 written & queued.**
+  Codex returned TASK-002 `DONE`; Claude verified against artifacts (not just the
+  Work Log): `src/content/config.ts` matches the pinned Zod contract verbatim (all
+  3 collections, all `reference()` fields, defaults, `phase` literal-union); the 3
+  sample entries are internally consistent + deletable (article references the
+  sample category + calculator; the `standard-deviation` slug/id collision across
+  two URL spaces correctly demonstrates the dual-deploy design); scope respected
+  (no routes, no `<StatCalc>`, no `src/calc/**`, calculator schema left
+  un-extended for TASK-004). Independently re-ran `npx astro check` → **3 files,
+  0 errors/0 warnings/0 hints.** Verdict + notes in the task file's Review section.
+  Then wrote `handoff/TASK-003-calc-engines-registry-tests.md` (status `TODO`):
+  the pure **calculator engine layer** (`src/calc/`) + `registry.ts` keyed by
+  engine name + **Vitest** unit tests. Scoped to the **Descriptive batch (10
+  engines)** — `mean`, `median`, `mode`, `range`, `variance`, `standardDeviation`
+  (the key the TASK-002 sample calc already references), `meanAbsoluteDeviation`,
+  `percentile`, `weightedMean`, `zScore` — all deterministic + fully testable.
+  Pinned a `CalcResult`/`CalcEngine` contract, a canonical reference dataset
+  `[2,4,4,4,5,5,7,9]` with exact expected values, and the validation-returns-null
+  (no-throw) rule. Heavier engines that need numerical approximations
+  (normal/binomial CDF, correlation, regression, p-value, t-test, chi-square,
+  combinatorics) explicitly **deferred** to later batches; registry built to grow.
+  Scope fenced: engines + registry + tests ONLY — no `<StatCalc>`, no schema
+  field-specs, no page wiring, no `links.ts`/`check-links.mjs`. **User is taking
+  TASK-003 to Codex.** **Next (Claude):** review Codex's TASK-003 when it flips to
+  `DONE`; then TASK-004 (`<StatCalc>` dual-deploy — first consumer of these
+  engines). Article-writing still deferred to a dedicated full session.
+
+- **2026-06-14** — **TASK-003 reviewed → CLOSED + fixed the Codex friction at its
+  source.** Codex returned TASK-003 `DONE`; Claude verified against artifacts (not
+  just the Work Log): re-ran `npm test` → **11 files / 24 tests pass** incl. the
+  invalid-input null/error paths; purity grep `astro:|\.astro|window|document|
+  fetch\(` over `src/calc/**` → no matches (the dual-deploy guarantee TASK-004
+  relies on holds); `registry.ts` exposes all 10 camelCase keys incl.
+  `standardDeviation` + `getEngine()`, no stub throws; `percentile` documents
+  Hyndman-Fan Type 7 and reuses it for q1/q2/q3/iqr; `mode` tie/no-mode behavior
+  deterministic + tested. Contract followed verbatim. Verdict + notes in the task
+  file's Review section. **Addressed the 3 issues Codex logged:** (1) **mojibake**
+  (`â€"`/`â†'`/`â€¦` broke an `apply_patch`) — root cause = our handoff `.md` files
+  used UTF-8 em-dash/arrow/ellipsis, which Codex reads through a Windows codepage;
+  **fixed at the source** by converting `handoff/TEMPLATE.md` to plain ASCII (every
+  future task spawns from it clean) + added an ASCII-only authoring rule to
+  `handoff/README.md` conventions; (2) Vitest **`spawn EPERM`** + (3) **`npm
+  install` cached-only** — both are Windows-sandbox approval prompts (project is
+  already `trusted`), not bugs; documented them as expected (approve + re-run) in a
+  new **"Sandbox heads-up"** section in `AGENTS.md` so Codex stops treating them as
+  blockers. **Next (Claude):** write TASK-004 (`<StatCalc>` dual-deploy — first
+  consumer of these engines). Article-writing still deferred to a full session.
+
+- **2026-06-14** — **TASK-004 brief written + dropped as `TODO`** for Codex
+  (`handoff/TASK-004-statcalc-dual-deploy.md`, ASCII-clean from the new template).
+  Spec = BUILD-PLAN **A4**: one config-driven `<StatCalc>` that dual-deploys from
+  the same config + same TASK-003 engine — `variant="page"` (standalone
+  `/calculators/{slug}/`) and `variant="embed"` (inline) — zero logic duplication.
+  **Decisions baked into the brief** (the two open specifics, resolved): (1)
+  **proof case = reuse the existing `standard-deviation.yaml`** (`standalone:true`,
+  multi-output sample/population) as the canonical dual-deploy case + add one
+  **`median.yaml` (`standalone:false`)** to prove the embed-only path renders inline
+  but generates **no** route — two configs cover the whole matrix (value-only,
+  multi-output, page, embed, route-generated, route-suppressed); (2) **styling =
+  functional + accessible Tailwind now** matching BaseLayout conventions, with the
+  polished design-token system / `CalculatorLayout` deferred to a later
+  `ui-designer` pass — don't block the engine→UI proof on design. Also pinned:
+  **no UI framework** (vanilla `<script>` island importing `getEngine` from
+  `src/calc/registry`, so deps stay astro/mdx/sitemap and safe on Node 20.8.0),
+  **no charts/uPlot** (leave only the lazy-import seam), engines/`src/calc/**` stay
+  untouched + pure, and the `calculators` schema gets **only optional/defaulted**
+  new fields (`inputs`/`precision`/`resultLabel`/`outputLabels`) so the existing SD
+  config still validates. DoD verifies the build emits the SD page + `/calculators/`
+  hub but **not** a median route, the embed computes the same numbers, and
+  `npm test`/`astro check` stay green. **Out of scope** (their own tasks): article
+  routes/`ArticleLayout`, `links.ts`+`check-links` (TASK-005), SEO+sitemap
+  (TASK-006), deploy (TASK-007). **Next:** Codex picks up TASK-004; Claude reviews
+  on `DONE`.
+
+- **2026-06-14** — **TASK-004 reviewed -> CLOSED.** Codex returned it `DONE`;
+  Claude verified independently (not just the Work Log) by re-running all three
+  gates from a clean state: `npm run build` exits 0 and emits exactly the four
+  expected routes (`/calculators/standard-deviation/`, `/calculators/`, `/`,
+  `/normal-distribution/`) with **no** `/calculators/median/` (the
+  `standalone:false` embed-only proof holds); `npx astro check` = 0 errors / 0
+  warnings / 0 hints; `npm test` = **33 tests / 12 files** (24 engine tests
+  intact + 9 new `format.ts` tests). Dual-deploy proven at source: the standalone
+  SD route and the hub both render `<StatCalc>` from the SAME
+  `standard-deviation.yaml` via the SAME `getEngine('standardDeviation')` — built
+  hub HTML confirmed to carry two distinct server-rendered `data-statcalc`
+  instances with per-instance `application/json` config blocks
+  (`engine:"standardDeviation"` + `engine:"median"`), real labeled controls, and
+  `aria-live` results regions; instances isolated by unique root id +
+  `data-config-id`. Result rule correct (SD shows Sample+Population from
+  `outputs`, no primary duplication; null -> error, no crash). Schema
+  back-compat held (new `inputs`/`precision`/`resultLabel`/`outputLabels` all
+  optional/defaulted; existing SD yaml unedited); `src/calc/**` untouched + pure;
+  no new runtime dep; chart seam left commented-only. **One non-blocking note:**
+  Codex's functional check used a production-bundle DOM harness instead of a live
+  `npm run preview` browser pass (in-app `iab` browser was unavailable) — same
+  numbers reproduced (Sample ~= 2.1381, Population = 2; median 5), fine for now,
+  but worth a real browser pass when StatCalc gets its visual polish in the later
+  `ui-designer` task. Verdict + full notes in the task file's Review section.
+  **Session paused here per user (short break).** **>> NEXT UP: TASK-005 <<** —
+  the typed link registry: `src/lib/links.ts` (typed route registry) +
+  `Link.astro` + `scripts/check-links.mjs` build gate enforcing zero internal
+  redirects/404s (the BUILD-PLAN non-negotiable). Claude writes the brief, drops
+  it as `TODO`, hand to Codex. Article-writing still deferred to a full session.

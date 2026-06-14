@@ -28,3 +28,18 @@ read this, then [`BUILD-PLAN.md`](BUILD-PLAN.md), then your task in
   `/calculators/odds/`.
 - **Lean, no over-engineering.** A small reproducible script beats a framework.
   Don't touch sibling folders. Don't edit `CLAUDE.md` (Claude's log).
+
+## Sandbox heads-up (expected, not blockers)
+
+These are normal approval prompts in this project (it is `trusted`); approve and
+re-run, don't work around them:
+
+- **`spawn EPERM` on `npm test` / `astro build`.** The Windows sandbox blocks
+  worker-process spawn (Vitest/esbuild/astro) until approved. Re-run with
+  process-spawn approval -- it passes.
+- **`npm install` fails "cached-only".** Installing an uncached package needs
+  network approval. Re-run `npm install` with network access.
+- **Mojibake when reading `.md` files** (`â€"`, `â†'`, `â€¦`): codepage artifact,
+  not corruption. Task files are authored in plain ASCII to avoid this; if you
+  still hit a patch mismatch, replace the bounded section rather than the exact
+  glyph, then re-read to verify.

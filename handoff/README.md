@@ -39,3 +39,7 @@ working model is in [`../../Claude_OS/CODEX-WORKFLOW.md`](../../Claude_OS/CODEX-
   folder gets noisy.
 - **One folder, one agent at a time.** Don't run Claude and Codex on this repo
   concurrently.
+- **Plain ASCII in task files.** Codex reads these `.md` files through a Windows
+  codepage, so UTF-8 punctuation (em dash, arrow, ellipsis) renders as mojibake
+  and breaks its `apply_patch` text matching. When writing a brief/review, use
+  `--` not an em dash, `->` not an arrow, `...` not an ellipsis.
