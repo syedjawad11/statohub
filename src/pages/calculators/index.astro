@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Link from '../../components/Link.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { RouteRef } from '../../lib/links';
+
+type CalculatorEntry = CollectionEntry<'calculators'>;
+
+const calculators = (await getCollection('calculators'))
+  .filter((entry: CalculatorEntry) => entry.data.standalone !== false)
+  .sort((a: CalculatorEntry, b: CalculatorEntry) => a.data.title.localeCompare(b.data.title));
+
+const calculatorRoute = (id: CalculatorEntry['id']) => ({ kind: 'calculator', id }) satisfies RouteRef;
+---
+
+<BaseLayout
+  title="Calculators | Statohub"
+  description="Statistics calculators for common descriptive statistics workflows."
+>
+  <section class="max-w-3xl">
+    <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
+      Calculators
+    </p>
+    <h1 class="mt-3 text-4xl font-bold tracking-normal text-slate-950 dark:text-white sm:text-5xl">
+      Statistics calculators
+    </h1>
+    <p class="mt-5 text-lg leading-8 text-slate-700 dark:text-slate-300">
+      Use standalone tools for focused calculations, or try embedded examples inline.
+    </p>
+
+    <ul class="mt-8 space-y-3">
+      {
+        calculators.map((entry: CalculatorEntry) => (
+          <li>
+            <Link class="font-medium text-teal-800 hover:text-teal-900 dark:text-teal-300 dark:hover:text-teal-200" to={calculatorRoute(entry.id)}>
+              {entry.data.title}
+            </Link>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mt-12 grid gap-6 lg:grid-cols-2">
+    <StatCalc slug="standard-deviation" variant="embed" />
+    <StatCalc slug="median" variant="embed" />
+  </section>
+</BaseLayout>
