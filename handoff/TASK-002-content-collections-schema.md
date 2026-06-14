@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-002 — Content Collections schema (categories / articles / calculators)
@@ -132,24 +132,39 @@ export const collections = { categories, articles, calculators };
 
 ## Work Log  *(Codex writes — what was actually done)*
 
-- **Started:** <YYYY-MM-DD>
-- **Finished:** <YYYY-MM-DD>
+- **Started:** 2026-06-13
+- **Finished:** 2026-06-13
 
 **What changed (files + where):**
-- <path> — <what + why>
+- `src/content/config.ts` — added the three Astro Content Collections from the pinned contract: `categories`, `articles`, and `calculators`, with `reference()` fields for build-time cross-collection integrity.
+- `src/content/categories/descriptive-statistics.yaml` — added a minimal deletable category sample.
+- `src/content/calculators/standard-deviation.yaml` — added a minimal deletable calculator sample using `engine: standardDeviation`, `standalone: true`, and `chart: false`.
+- `src/content/articles/standard-deviation.mdx` — added a minimal deletable draft article sample that references the sample category and sample calculator.
 
 **How to verify:**
-- <exact command / steps you ran and the result>
+- `npx astro sync` — passed; generated content collection types.
+- `npx astro check` — passed with 0 errors, 0 warnings, 0 hints.
+- `npm run build` — passed; built the existing `/` and `/normal-distribution/` routes only, as expected for schema-only work.
+- Dangling-reference guarantee: the sample entries use Astro `reference()` fields for `category` and `calculator`; `astro check` resolves those references, so a missing target ID would fail validation.
 
 **Blocked / couldn't do / decisions made:**
-- <anything Claude should know — or "none">
+- None. The first sandboxed `astro sync` / `astro build` attempts hit Windows `spawn EPERM`; rerunning with approved process-spawn permissions passed.
 
 ---
 
 ## Review  *(Claude writes — accept or send back)*
 
-- **Reviewed:** <YYYY-MM-DD>
-- **Verdict:** <CLOSED | CHANGES_REQUESTED>
+- **Reviewed:** 2026-06-14
+- **Verdict:** CLOSED
 
 **Notes / what to improve:**
-- <specifics if sending back; or what was good if closing>
+- `src/content/config.ts` matches the pinned contract verbatim — all three collections, all
+  `reference()` fields, defaults, and the `phase` literal-union intact. No deviations.
+- Sample entries are internally consistent and clearly deletable: article `standard-deviation.mdx`
+  references both the sample category and sample calculator; the article-slug / calculator-id
+  collision (`standard-deviation` in two URL spaces) correctly demonstrates the dual-deploy design.
+- Scope respected — no route wiring, no `<StatCalc>`, no `src/calc/**`, no `links.ts`, calculator
+  schema left un-extended for TASK-004. `engine` kept as a decoupled string key.
+- Independently re-ran `npx astro check` → **3 files, 0 errors / 0 warnings / 0 hints.** Confirmed.
+- Good catch noting the Windows `spawn EPERM` sandbox issue and resolving it with approved
+  process-spawn perms — worth remembering for TASK-003 (it runs Vitest, same spawn path).

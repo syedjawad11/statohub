@@ -1,0 +1,10 @@
+title: Standard Deviation Calculator
+description: Calculate standard deviation and understand how far values typically fall from the mean.
+engine: standardDeviation
+category: descriptive-statistics
+standalone: true
+chart: false
+keywords:
+  - standard deviation calculator
+  - sample standard deviation
+  - population standard deviation
