@@ -12,4 +12,26 @@ calculator: standard-deviation
 draft: true
 ---
 
-This draft sample proves the article collection can reference a category and calculator.
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Standard deviation describes how far values in a dataset typically sit from the mean.
+Small standard deviations mean the values are tightly clustered; larger standard
+deviations mean the values are more spread out.
+
+## Standard deviation calculator
+
+Use the calculator while reading the steps below. The same calculator config powers
+the standalone tool and this embedded article version.
+
+<StatCalc slug="standard-deviation" variant="embed" />
+
+## How to read the result
+
+For a dataset like `2, 4, 4, 4, 5, 5, 7, 9`, the standard deviation gives a single
+spread measure in the original units. That makes it easier to compare variability
+between similar datasets.
+
+When you need more room for repeated calculations, open the
+<Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>.

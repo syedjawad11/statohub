@@ -1,0 +1,59 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import { routes, type ArticleId } from '../lib/links';
+import { articleSchema, type BreadcrumbItem } from '../lib/schema';
+
+type ArticleData = CollectionEntry<'articles'>['data'];
+
+interface Props {
+  article: ArticleData;
+  slug: ArticleId;
+  categoryTitle?: string;
+}
+
+const { article, slug, categoryTitle } = Astro.props as Props;
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: article.title, route: routes.article(slug) },
+];
+const site = Astro.site ?? Astro.url;
+const schema = articleSchema(
+  {
+    id: slug,
+    headline: article.title,
+    description: article.description,
+    datePublished: article.pubDate,
+    dateModified: article.updatedDate ?? article.pubDate,
+    image: article.ogImage,
+  },
+  site,
+);
+---
+
+<BaseLayout
+  title={`${article.title} | Statohub`}
+  description={article.description}
+  canonicalPath={routes.article(slug)}
+  ogType="article"
+  ogImage={article.ogImage}
+  breadcrumbs={breadcrumbs}
+  jsonLd={[schema]}
+>
+  <article class="mx-auto max-w-3xl">
+    {categoryTitle && (
+      <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
+        {categoryTitle}
+      </p>
+    )}
+    <h1 class="mt-3 text-4xl font-bold tracking-normal text-slate-950 dark:text-white sm:text-5xl">
+      {article.title}
+    </h1>
+    <p class="mt-5 text-lg leading-8 text-slate-700 dark:text-slate-300">
+      {article.description}
+    </p>
+    <div class="article-prose mt-10">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
