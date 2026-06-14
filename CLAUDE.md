@@ -58,14 +58,128 @@ the workflow (not a credential). First fully-green run verified live.
 **Remaining follow-ups (not blocking, their own tasks):**
 1. **SEO baselines.** Capture the `seo-drift` baseline + `seo-technical`
    mobile/CWV pass against the now-live URL.
-2. **A5 article layout (unnumbered).** `ArticleLayout` + flat `/{slug}/` article
-   routes + category hubs, then write + ship the 4–5 launch articles.
+2. **Category hubs `/{category}/`** — must fold into the existing root
+   `src/pages/[slug]/index.astro` route (Astro allows only one root `[slug]`).
+   Then write + ship the 4–5 launch articles. (A5 `ArticleLayout` + flat
+   `/{slug}/` article routes shipped via TASK-008, 2026-06-14.)
 
 ## Maintenance convention
 
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-14** — **First article LIVE-READY + built the cloud-routine content
+  engine; pushed the whole launch backlog.** Ran the manual "test routine" end to
+  end for the first launch article via subagents (to spare context):
+  `stats-article-writer` drafted **`standard-deviation-symbol`** (2863 words, all
+  9 keywords), `stats-article-reviewer` returned **PASS 96/100**, applied 2 polish
+  fixes, flipped `draft:false`, DB status `published`. **Two fixes baked into the
+  pipeline from what the test surfaced:** (1) **H1 change (user request)** — the
+  frontmatter `title` IS the page's only H1 (ArticleLayout renders it), so the body
+  must start at **H2**; a body H1 trips duplicate-H1 audits (Ahrefs). Applied to
+  `seo-playbook.md` (§2/§4/§8), `stats-article-writer.md`, `stats-article-reviewer.md`
+  (reviewer now greps for a body H1 as an auto-fail). (2) **No raw LaTeX** — MDX
+  parses `{` as JS so `$$…$$`/`\dfrac{}` **breaks the build** (hit it live); rule
+  added to playbook §7 + writer agent; formulas are fenced **Unicode** blocks.
+  **Built the cloud-routine system (the user's "cloud routines", à la their DevNook
+  pattern — NOT GitHub Actions, NOT session cron):**
+  [`content-ops/cloud-routine/publish-next-article.md`](content-ops/cloud-routine/publish-next-article.md)
+  is a self-contained, cold-start routine a **claude.ai Routine** runs against the
+  connected repo: locate repo -> `content_db.py next` (the queue) -> write a
+  >=2000-word MDX article to the playbook -> **mechanical QA gate** (word count,
+  body-H1, LaTeX, keywords, external link, internal-link format) -> **real build
+  gate** (`astro check` + `vitest` + `npm run build` incl. link gate) -> flip
+  `draft:false` -> update `content.db` -> `git commit && push origin main` (triggers
+  the existing GH Actions -> Cloudflare deploy). Defensive: `draft:true` until BOTH
+  gates pass; on failure it leaves the article as a build-safe **draft** + marks
+  `changes_requested` + still advances the queue (never forces broken content live).
+  Plus [`content-ops/cloud-routine/README.md`](content-ops/cloud-routine/README.md):
+  prereqs (connect repo to Claude; everything on `main`), the 4× one-time-routine
+  setup (same prompt, ~3.5h apart -> 4 articles in ~24h), and the publish order
+  (`next` = phase -> lowest KD -> volume: how-to-find-the-range,
+  correlation-vs-causation, what-is-an-average, linear-regression). **Pushed the
+  whole uncommitted backlog** in 4 clean commits: (A) TASK-008 ArticleLayout + flat
+  `/{slug}/` routes + `.article-prose` + removed the `/normal-distribution/` proof
+  route; (B) mean+range calculator entries + range engine output fix; (C) the
+  content pipeline (`content-ops/` DB+CLI, `.claude/` agents+playbook+skill, cloud
+  routine, SITE-ARCHITECT + CONTENT-WORKFLOW docs, the first published article); (D)
+  this log. Gate green before push: astro check 0/0/0, **33 tests**, build **7
+  pages / 0 link violations**. Push to `main` triggers the live deploy, so the first
+  article ships. **Next:** user creates the 4 cloud routines in claude.ai (paste the
+  routine prompt, set the 4 UTC times), connects the repo with push access; then the
+  remaining launch articles publish themselves. Still owed: category hubs
+  `/{category}/` (fold into root `[slug]`), SEO baselines on the live URL, and
+  rotate the `cfut_…` Cloudflare token pasted in chat during setup.
+
+- **2026-06-14** — **TASK-008 reviewed -> CLOSED + created `SITE-ARCHITECT.md`.**
+  Verified Codex's TASK-008 (ArticleLayout + flat `/{slug}/` article routes)
+  independently, not just the Work Log: `npm run build` green (4 pages, link gate
+  **0 violations**; draft `standard-deviation.mdx` correctly produced NO page,
+  proving draft exclusion); `npx astro check` 0/0/0; `src/pages/normal-distribution/`
+  confirmed deleted (no second root `[slug]` route). `ArticleLayout.astro` reuses
+  BaseLayout + `articleSchema()` (no hand-rolled canonical/OG/JSON-LD), Home->article
+  breadcrumbs only, category as a non-linked eyebrow (gate-safe as briefed); the
+  root `[slug]` route mirrors the calculator route, filters drafts, and carries the
+  forward-compat comment about the future category-hub root-route collision; sample
+  MDX uses in-frontmatter imports (StatCalc + Link + routes). Accepted both Codex
+  decisions (hand-styled `.article-prose` over `@tailwindcss/typography`; MDX
+  self-imports over a `components=` prop). **Caught one latent issue (logged, not
+  fixed):** `astro.config.mjs` `noindexRouteSegments` still lists
+  `normal-distribution` (the deleted proof route) -- harmless now but would silently
+  exclude the real PD3 article from the sitemap when it ships; flagged in
+  SITE-ARCHITECT.md §11 to remove with that article.
+  **Then created [`SITE-ARCHITECT.md`](SITE-ARCHITECT.md)** (per user request): the
+  single orientation map -- core info, tech stack, repo structure, URL/link
+  contract, key commands, available tools (gh, Wrangler v3, DataForSEO REST,
+  content-ops CLI), deploy pipeline, content workflow, **workspace model**
+  (statohub = primary hub for build + content execution incl. Claude Code; Claude_OS
+  = research/planning/future-strategy only), and a **Codex current-scope section**
+  (handoff loop, what Codex owns, done through TASK-008, likely next briefs, hard
+  rules). Baked in the **content-generation flexibility note**: Claude writes
+  articles now, but the pipeline is author-agnostic so generation may pivot to Codex
+  in the coming weeks (same briefs/playbook/draft gate, only the "who drafts" step
+  moves). File is plain ASCII (Codex reads it too). **Next:** category-hub task +
+  remaining calculator engines + launch articles.
+
+- **2026-06-14** — **Stood up the content-writing workflow (the article pipeline)
+  before article writing starts.** New self-contained system inside the repo, kept
+  separate from the Codex `handoff/` build loop (handoff = build; this = writing).
+  See [`CONTENT-WORKFLOW.md`](CONTENT-WORKFLOW.md). **Decisions (with user):**
+  2 agents (writer + reviewer); DB = **Python 3.14 stdlib `sqlite3`** (zero
+  installs, never ships). **Built:** (1) **`content-ops/` SQLite editorial board** —
+  `schema.sql` + `seed.json` (transcribed from the SEO-study maps `08`–`13` in
+  Claude_OS, **no new API calls**) + `content_db.py` CLI
+  (`init`/`seed`/`list`/`show`/`brief`/`next`/`set-status`/`log-review`/`stats`) →
+  generated `content.db`. Seeded clean: **48 articles · 7 categories · 28
+  calculators · 354 keywords · 0 cannibalization conflicts.** The study's "one
+  keyword → one article" rule is enforced *mechanically* by a global
+  `UNIQUE INDEX` on keywords — seeding aborts loudly on any overlap. Caught + fixed
+  one real source overlap (`distribution mean` was on both A2 and PD2 → assigned to
+  PD2). Odds/betting-odds calcs excluded per the non-negotiable. Two stubs
+  (`permutations-and-combinations`, `validity-in-statistics`) seeded
+  `research_pending` (keyword passes still owed); 8 flagged articles surface with
+  their study notes. (2) **`.claude/` project folder** — `agents/stats-article-writer.md`
+  (drafts ≥2000-word MDX from a brief; distills `seo-content-writer` +
+  `seo-content-planner`) + `agents/stats-article-reviewer.md` (scores against the
+  playbook, PASS/CHANGES_REQUESTED, never rewrites; distills
+  `seo-content-auditor` + `seo-authority-builder` + `seo-cannibalization-detector`
+  + `content-quality-editor`) + `skills/write-article/SKILL.md`
+  (`/write-article [slug]` runs brief→write→review→status, 2-round cap). (3)
+  **`.claude/seo-playbook.md`** — the one rule book both agents load: ≥2000 words,
+  ≥1 authoritative external link, all keywords used naturally/semantically, active
+  voice, educational tone, grade ~8–10 (soft guide-rail — stats terms inflate the
+  score), + the statohub build contracts (flat slugs, typed `Link` only,
+  frontmatter per `src/content/config.ts`, `draft:true` until human-published).
+  Status loop: `planned → briefed → drafting → in_review → changes_requested →
+  approved → published`; reviewer PASS sets `approved` only — a human flips
+  `draft:false` + `published` after a green `npm run build`. **Verified:** init +
+  seed exit clean; `next` correctly picks `standard-deviation-symbol` (phase 1,
+  KD 0–13, ~187.5k/mo); `brief` renders a complete writing brief. **Nothing built
+  yet ships** — this is infrastructure; writing the 4–5 launch articles + the ~50
+  backlog is the next session(s). **Note:** the A5 `ArticleLayout` + flat
+  `/{slug}/` routes (a Codex `handoff/` task) still don't exist — articles can't
+  *ship* until those routes land, though drafts can be written now.
 
 - **2026-06-14** — **Set up push-to-deploy CI/CD (GitHub Actions → Cloudflare
   Pages).** User asked whether to connect the repo to Cloudflare for auto-deploy.
@@ -84,10 +198,15 @@ At the end of each session, append a dated entry to the Session log below.
   auth fail (verified via direct curl); 2nd token (`cfut_…`, Account · Cloudflare
   Pages · Edit) verified good against the Pages API. Set repo secret
   `CLOUDFLARE_API_TOKEN` via `gh secret set`, re-ran → **fully green** (deploy in
-  39s). Live re-verified: apex/hub/SD-calc 200, odds 404, www→apex 301. Told user
-  to revoke the earlier zone-scoped + truncated tokens shared in chat. Note: GH
-  flagged Node-20 JS-action deprecation (auto-moves to Node 24 on 2026-06-16,
-  runner-side, harmless — separate from our `node-version: 20` build step).
+  39s). Live re-verified: apex/hub/SD-calc 200, odds 404, www→apex 301. **Confirmed
+  the on-push trigger end-to-end:** the doc-sync push (`6333ceb`) — a normal push,
+  not a manual re-run — auto-fired workflow run `27498690290`, which completed
+  **success**, proving push → gates → deploy works on a plain push. Told user to
+  revoke the earlier zone-scoped + truncated tokens shared in chat (the working
+  `cfut_…` token is narrowly scoped but was pasted in chat — roll + re-set the
+  secret later, no rush). Note: GH flagged Node-20 JS-action deprecation (auto-moves
+  to Node 24 on 2026-06-16, runner-side, harmless — separate from our
+  `node-version: 20` build step).
 
 - **2026-06-14** — **Pushed the build-pipeline work to GitHub + attached the
   custom domain `statohub.com`.** First synced the repo: the working tree held
