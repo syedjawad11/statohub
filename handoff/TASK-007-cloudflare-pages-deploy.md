@@ -117,6 +117,13 @@ project-create + deploy; custom domain deferred to a follow-up.
   Verified live: apex trailing-slash 200s; `www` -> 301 to apex (preserves path);
   odds/betting-odds/unmatched -> 404; sitemap slash-only on apex host. Live at
   https://statohub.com.
+- **CI/CD -- DONE (2026-06-14, follow-up completed same day):** push-to-deploy
+  wired via GitHub Actions (`.github/workflows/deploy.yml`), not native CF Git
+  integration (which would force recreating this Direct Upload project +
+  re-attaching the domain). Push to `main` -> astro check -> vitest -> build
+  (link gate) -> `wrangler@3 pages deploy dist --project-name statohub`; deploy
+  only runs if all gates pass. Auth = repo secret `CLOUDFLARE_API_TOKEN`
+  (Account · Cloudflare Pages · Edit). First fully-green run verified live.
 - **Follow-ups still open (own tasks, not blocking):** (1) capture the
   `seo-drift` baseline + `seo-technical` mobile/CWV pass against the live URL;
   (2) the A5 article-layout task (ArticleLayout + flat `/{slug}/` routes +

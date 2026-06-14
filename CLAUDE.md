@@ -45,6 +45,16 @@ single `www → https://statohub.com/` **301** (preserves path + query). Verifie
 live: apex trailing-slash 200s, odds/betting-odds/unmatched → 404, sitemap
 slash-only on the apex host.
 
+**CI/CD — DONE (2026-06-14):** push-to-deploy via GitHub Actions
+([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)), **not** native
+Cloudflare Git integration (that would force recreating the Direct Upload project
+and re-attaching the domain). Every push to `main` runs the full gate suite
+(`astro check` → `vitest` → `npm run build`, which includes the link gate) and
+only then `wrangler@3 pages deploy dist --project-name statohub`. A push that
+fails any gate cannot ship. Auth = repo secret `CLOUDFLARE_API_TOKEN` (scoped
+**Account · Cloudflare Pages · Edit**, `cfut_…` token); account id hardcoded in
+the workflow (not a credential). First fully-green run verified live.
+
 **Remaining follow-ups (not blocking, their own tasks):**
 1. **SEO baselines.** Capture the `seo-drift` baseline + `seo-technical`
    mobile/CWV pass against the now-live URL.
@@ -56,6 +66,28 @@ slash-only on the apex host.
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-14** — **Set up push-to-deploy CI/CD (GitHub Actions → Cloudflare
+  Pages).** User asked whether to connect the repo to Cloudflare for auto-deploy.
+  Chose **GitHub Actions over native CF Git integration**: a Pages project can't
+  be converted between Direct Upload and Git-connected, so native integration
+  would mean deleting/recreating `statohub` and re-attaching the domain we just
+  set up; native builds also only run the build command, skipping our test/link
+  gates. Added [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) —
+  on push to `main`: `npm ci` → `astro check` → `vitest` → `npm run build`
+  (route-id gen + astro build + link gate) → `cloudflare/wrangler-action@v3`
+  `pages deploy dist --project-name statohub` (pinned `wranglerVersion: 3`,
+  `node-version: 20`, `concurrency` guard, account id hardcoded since it's not a
+  credential). Committed `89995d4`, pushed `385874f..89995d4`. **Token saga:**
+  first run passed all gates, failed only at deploy (no secret) — proving the
+  gate-then-deploy design. User's 1st token was truncated (37 chars) → `9106`
+  auth fail (verified via direct curl); 2nd token (`cfut_…`, Account · Cloudflare
+  Pages · Edit) verified good against the Pages API. Set repo secret
+  `CLOUDFLARE_API_TOKEN` via `gh secret set`, re-ran → **fully green** (deploy in
+  39s). Live re-verified: apex/hub/SD-calc 200, odds 404, www→apex 301. Told user
+  to revoke the earlier zone-scoped + truncated tokens shared in chat. Note: GH
+  flagged Node-20 JS-action deprecation (auto-moves to Node 24 on 2026-06-16,
+  runner-side, harmless — separate from our `node-version: 20` build step).
 
 - **2026-06-14** — **Pushed the build-pipeline work to GitHub + attached the
   custom domain `statohub.com`.** First synced the repo: the working tree held
