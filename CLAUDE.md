@@ -34,17 +34,21 @@ Cloudflare Pages. Built from the completed SEO study + content-architecture in
 ## ✅ LIVE — build pipeline complete (2026-06-14)
 
 The full build plan (TASK-001 → TASK-007) is **done** and the skeleton site is
-**live at https://statohub.pages.dev** (home + calculators; articles follow).
-Cloudflare Pages project `statohub` is registered (production branch `main`).
+**live on the custom domain https://statohub.com** (home + calculators; articles
+follow). Cloudflare Pages project `statohub` is registered (production branch
+`main`); `statohub.pages.dev` remains the deploy alias.
+
+**Custom domain — DONE (2026-06-14):** `statohub.com` + `www` attached to the
+Pages project via the Cloudflare dashboard (auto-created proxied CNAMEs →
+`statohub.pages.dev`, SSL active). Apex is canonical; a zone Redirect Rule does a
+single `www → https://statohub.com/` **301** (preserves path + query). Verified
+live: apex trailing-slash 200s, odds/betting-odds/unmatched → 404, sitemap
+slash-only on the apex host.
 
 **Remaining follow-ups (not blocking, their own tasks):**
-1. **Custom domain.** Attach `statohub.com` (+ `www`) to the Pages project — in
-   the Cloudflare dashboard, or hand Claude a Cloudflare API token (Pages:Edit +
-   DNS:Edit) to script it. Plan keeps apex canonical with a single `www → apex`
-   301.
-2. **SEO baselines.** Capture the `seo-drift` baseline + `seo-technical`
+1. **SEO baselines.** Capture the `seo-drift` baseline + `seo-technical`
    mobile/CWV pass against the now-live URL.
-3. **A5 article layout (unnumbered).** `ArticleLayout` + flat `/{slug}/` article
+2. **A5 article layout (unnumbered).** `ArticleLayout` + flat `/{slug}/` article
    routes + category hubs, then write + ship the 4–5 launch articles.
 
 ## Maintenance convention
@@ -52,6 +56,33 @@ Cloudflare Pages project `statohub` is registered (production branch `main`).
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-14** — **Pushed the build-pipeline work to GitHub + attached the
+  custom domain `statohub.com`.** First synced the repo: the working tree held
+  two tasks' uncommitted work (Codex left TASK-006's SEO layer uncommitted, plus
+  Claude's TASK-007 deploy fixes). Sliced into three clean per-task commits on
+  `syedjawad11/statohub` `main` — `33a9b23` (TASK-006: SEO components +
+  `schema.ts` + Breadcrumbs + `public/robots.txt` + sitemap config),
+  `c892348` (TASK-007: `wrangler.toml` name + `src/pages/404.astro` + handoff),
+  `b7837c7` (docs sync) — pushed `3963aca..b7837c7`. **Then the custom domain
+  (was a deferred follow-up):** user gave a Cloudflare API token; `verify`
+  endpoint quirked but the authenticated zone call proved it valid. Token was
+  **zone-scoped** (DNS + zone + rulesets edit) but **lacked account Pages:Edit**,
+  so it could not attach the custom domain to the Pages project. Per user choice,
+  user did the dashboard step (Pages → statohub → Custom domains → add
+  `statohub.com` + `www.statohub.com`); Cloudflare auto-created two **proxied
+  CNAMEs → `statohub.pages.dev`** + provisioned SSL (both served 200 within
+  ~1 min). Claude then added the **`www → apex` 301** via API — a zone Redirect
+  Rule in the `http_request_dynamic_redirect` phase, expression
+  `(http.host eq "www.statohub.com")`, target
+  `concat("https://statohub.com", http.request.uri.path)`, `preserve_query_string`.
+  **Live verification (curl) all pass:** apex `/`, `/calculators/`,
+  `/calculators/standard-deviation/` → 200; `www` → 301 to apex (preserves path,
+  worst case `www`+no-slash = 2 hops 301→308 landing on canonical 200);
+  odds/betting-odds/unmatched → 404; sitemap slash-only on the apex host.
+  **Site is now live at https://statohub.com.** Zone id `50e47547…`, account
+  `027007f4…`. **Remaining follow-ups:** SEO baselines (`seo-drift` +
+  `seo-technical` on the live URL); A5 article layout → launch articles.
 
 - **2026-06-14** — **TASK-006 reviewed → CLOSED, then TASK-007 (final go-live)
   executed by Claude → site is LIVE.** First closed TASK-006: re-ran all gates

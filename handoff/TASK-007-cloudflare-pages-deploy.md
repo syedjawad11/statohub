@@ -106,8 +106,18 @@ project-create + deploy; custom domain deferred to a follow-up.
   sitemap). The build pipeline TASK-001 -> TASK-007 is complete.
 - The missing-404-page defect was the one real find at go-live; fixed at source
   (a permanent `src/pages/404.astro`) rather than a Pages-level redirect rule.
-- **Follow-ups (own tasks, not blocking):** (1) attach `statohub.com` + `www`
-  (apex canonical, single `www -> apex` 301); (2) capture the `seo-drift`
-  baseline + `seo-technical` mobile/CWV pass against the live URL; (3) the A5
-  article-layout task (ArticleLayout + flat `/{slug}/` routes + category hubs)
-  -- still unnumbered -- then write + ship the launch articles.
+- **Custom domain -- DONE (2026-06-14, follow-up completed same day):**
+  `statohub.com` + `www.statohub.com` attached to the Pages project via the
+  Cloudflare dashboard (user step -- the supplied API token was zone-scoped, no
+  account Pages:Edit). Cloudflare auto-created two proxied CNAMEs ->
+  `statohub.pages.dev` + provisioned SSL. Claude added the `www -> apex` 301 via
+  API: a zone Redirect Rule in the `http_request_dynamic_redirect` phase, expr
+  `(http.host eq "www.statohub.com")`, target
+  `concat("https://statohub.com", http.request.uri.path)`, preserve_query_string.
+  Verified live: apex trailing-slash 200s; `www` -> 301 to apex (preserves path);
+  odds/betting-odds/unmatched -> 404; sitemap slash-only on apex host. Live at
+  https://statohub.com.
+- **Follow-ups still open (own tasks, not blocking):** (1) capture the
+  `seo-drift` baseline + `seo-technical` mobile/CWV pass against the live URL;
+  (2) the A5 article-layout task (ArticleLayout + flat `/{slug}/` routes +
+  category hubs) -- still unnumbered -- then write + ship the launch articles.
