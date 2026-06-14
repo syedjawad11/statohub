@@ -31,36 +31,60 @@ Cloudflare Pages. Built from the completed SEO study + content-architecture in
   at a time. This `CLAUDE.md` log has one writer: Claude. See
   `../Claude_OS/CODEX-WORKFLOW.md`.
 
-## ⏳ Waiting on you (before the build can start)
+## ✅ LIVE — build pipeline complete (2026-06-14)
 
-These are gated on your review + the few things only you can do. Once done, tell
-Claude and the Codex build begins (TASK-001 onward).
+The full build plan (TASK-001 → TASK-007) is **done** and the skeleton site is
+**live at https://statohub.pages.dev** (home + calculators; articles follow).
+Cloudflare Pages project `statohub` is registered (production branch `main`).
 
-1. **Review the plan.** Read [`BUILD-PLAN.md`](BUILD-PLAN.md) end-to-end and flag
-   anything you want changed (scope, URL SOP, calculator list, content order).
-2. ~~**Cloudflare login**~~ ✅ **DONE (2026-06-13)** — logged in via `wrangler@3`
-   as `syedjawadhassan11@gmail.com` (account `027007f4d056b885d434f48b4f136a07`),
-   token has `pages (write)`. **Still pending:** `npx wrangler@3 pages project
-   create statohub --production-branch main` — deferred until after TASK-001
-   produces a `dist/` (it's part of TASK-007 deploy wiring; no point before then).
-3. **GitHub repo — give the go-ahead.** Claude will `git init` here + create the
-   `statohub` repo and push (via the github MCP / `gh`). Just confirm the repo
-   name (`statohub`) and public/private. Nothing for you to type unless you'd
-   rather create it yourself.
-4. **Custom domain (after first deploy).** Attach `statohub.com` (+ `www`) to the
-   Pages project — in the Cloudflare Pages dashboard, or hand Claude a Cloudflare
-   API token (Pages:Edit + DNS:Edit) to script it. Plan keeps apex as canonical
-   with a single `www → apex` 301.
-
-**Nothing is built yet** — no scaffold, no git, no Cloudflare *project* (the
-account is now authenticated, but the Pages project isn't registered yet).
-Items 1, 3, 4 still pending your review/go.
+**Remaining follow-ups (not blocking, their own tasks):**
+1. **Custom domain.** Attach `statohub.com` (+ `www`) to the Pages project — in
+   the Cloudflare dashboard, or hand Claude a Cloudflare API token (Pages:Edit +
+   DNS:Edit) to script it. Plan keeps apex canonical with a single `www → apex`
+   301.
+2. **SEO baselines.** Capture the `seo-drift` baseline + `seo-technical`
+   mobile/CWV pass against the now-live URL.
+3. **A5 article layout (unnumbered).** `ArticleLayout` + flat `/{slug}/` article
+   routes + category hubs, then write + ship the 4–5 launch articles.
 
 ## Maintenance convention
 
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-14** — **TASK-006 reviewed → CLOSED, then TASK-007 (final go-live)
+  executed by Claude → site is LIVE.** First closed TASK-006: re-ran all gates
+  from clean state (`npm run build` 0 link violations / `astro check` 0-0-0 /
+  33 tests green) and verified the built SD calculator page carries one absolute
+  slash-terminated canonical + two ld+json blocks (BreadcrumbList +
+  SoftwareApplication), the sitemap lists only the 3 indexable slash-terminated
+  URLs, robots is allow-all, and `/normal-distribution/` is `noindex`. Then ran
+  **TASK-007** personally (the interactive Cloudflare stage). **User decisions
+  this session:** deploy the skeleton now (home + calculators; A5 article routes
+  don't exist yet); Claude runs project-create + deploy; custom domain deferred.
+  **Steps:** confirmed `wrangler@3 whoami` (still logged in, `pages (write)`) →
+  `pages project create statohub --production-branch main` → `pages deploy dist`.
+  **Hit + fixed two go-live defects:** (1) deploy failed — `wrangler.toml` lacked
+  a top-level `name`; added `name = "statohub"`. (2) **No `404.html` was being
+  built** (the scaffold never had a `src/pages/404.astro`), so Cloudflare Pages
+  served the homepage with a **200 for every unmatched path** — soft-404s, and
+  `/calculators/odds/` was reachable, a direct violation of the "no odds calcs /
+  404 by design" non-negotiable. Fixed at source: created a permanent
+  `src/pages/404.astro` (`noindex`, no self-canonical, BaseLayout + typed
+  `Link`), rebuilt (5 pages, link gate still 0 violations), redeployed.
+  **Live verification (curl) all pass:** `/`, `/calculators/`,
+  `/calculators/standard-deviation/` → 200; non-slash → single 308 hop to slash;
+  `/calculators/odds/` + `/calculators/betting-odds/` + any typo → 404; sitemap
+  slash-only. **Site is live at https://statohub.pages.dev.** Wrote
+  `handoff/TASK-007-cloudflare-pages-deploy.md` (CLOSED, full Work Log + Review).
+  **Build pipeline TASK-001 → TASK-007 is complete.** **Follow-ups (own tasks,
+  not blocking):** custom-domain attach (`statohub.com` + `www`, apex canonical +
+  single `www→apex` 301); `seo-drift` baseline + `seo-technical` CWV/mobile pass
+  on the live URL; the unnumbered A5 article-layout task → then the launch
+  articles. **Uncommitted at session end:** `404.astro`, `wrangler.toml` name,
+  regenerated `content-route-ids.ts`, TASK-006/007 handoff files, this log entry
+  — commit/push pending the user's go.
 
 - **2026-06-13** — Repo bootstrapped. Created `Desktop/statohub/` as the dedicated
   build folder (separate from Claude_OS per the research/build separation SOP).
@@ -245,3 +269,64 @@ At the end of each session, append a dated entry to the Session log below.
   `Link.astro` + `scripts/check-links.mjs` build gate enforcing zero internal
   redirects/404s (the BUILD-PLAN non-negotiable). Claude writes the brief, drops
   it as `TODO`, hand to Codex. Article-writing still deferred to a full session.
+
+- **2026-06-14** — **TASK-006 written & queued (`TODO`); deploy ordering locked
+  with the user.** Per the user's call this session: do **TASK-006 (SEO) next,
+  then TASK-007 (deploy) as the final go-live stage** -- article writing planned
+  for the evening as its own session. Wrote
+  `handoff/TASK-006-seo-components-sitemap.md` (ASCII-clean from the template):
+  the SEO plumbing layer (BUILD-PLAN **B4**) wired into the pages that exist today
+  (home, calculators hub, standalone calculator pages, throwaway
+  `/normal-distribution/`). Deliverables pinned: `src/components/seo/Meta.astro`
+  (title/desc + OG + Twitter), `Canonical.astro` (absolute, slash-terminated),
+  `JsonLd.astro` (generic ld+json emitter), `Breadcrumbs.astro` (visible nav via
+  the typed `Link`), and `src/lib/schema.ts` pure helpers building
+  **BreadcrumbList** + **Article** + **SoftwareApplication** -- **every URL field
+  routed through `url()`** so the TASK-005 `check-links.mjs` gate stays the
+  enforcement mechanism (the B2 non-negotiable). BaseLayout extended with optional
+  SEO props (auto-prepends BreadcrumbList from the breadcrumb trail = single
+  source); SoftwareApplication + breadcrumbs wired into the calculator page,
+  breadcrumbs into the hub, canonical/OG confirmed on home. `public/robots.txt` +
+  verified slash-terminated sitemap. **Two scope fences baked in:** (1)
+  `articleSchema` is **built + exported but not consumed yet** -- it's ready for
+  the upcoming **A5 article-layout task** (ArticleLayout + flat `/{slug}/` article
+  routes + category hubs), which is still unnumbered and does NOT exist; no article
+  routes are built in TASK-006; (2) **no `wrangler`/deploy** -- that's TASK-007.
+  No new deps; `src/calc/**` stays pure. DoD headline gate = `npm run build` with
+  **0 link violations** + `astro check` clean + 33 tests green + the built SD
+  calculator page carrying a real canonical + BreadcrumbList + SoftwareApplication.
+  **Flagged to user (deliberate, accepted):** at TASK-007 the site goes live with
+  **calculators + home only** -- the A5 article routes won't exist yet; first
+  deploy is a skeleton by design, articles follow. **Next (user):** hand the Codex
+  kickoff prompt (written this session) to Codex in the statohub workspace.
+  **Next (Claude):** review TASK-006 on `DONE` -> CLOSE -> then **personally do
+  TASK-007** (the final go-live: `pages project create statohub` + `wrangler@3
+  pages deploy` + domain attach).
+
+- **2026-06-14** — **TASK-005 reviewed -> CLOSED, then the whole backlog
+  committed + pushed.** The typed link safety layer is in and verified: 3 layers
+  working together — `src/lib/links.ts` (`url(RouteRef)` emitter, single source of
+  truth for internal hrefs) + typed `Link.astro` (a bogus route id fails `astro
+  check`) + `scripts/check-links.mjs` (post-build gate crawling `dist/**/*.html`
+  for non-canonical / unresolvable internal links). Route ids are a real literal-
+  union **generated** from `src/content/**` by `scripts/gen-route-ids.mjs`
+  (regenerated on `predev` + `build`) into `src/lib/content-route-ids.ts` — works
+  around this Astro version collapsing `CollectionEntry['id']` to `string`, so the
+  registry has compile-time bite AND can't drift from content; **no new
+  dependency**. `index.astro`, `normal-distribution/index.astro`, and
+  `BaseLayout.astro` all converted from raw `<a href>` to typed `<Link to>`.
+  **Decided:** keep `content-route-ids.ts` committed (not gitignored). Final
+  `npm run build` = green end-to-end (4 pages, gate scanned 7 internal links, **0
+  violations**). **Git:** the working tree held FOUR tasks' worth of uncommitted
+  work (TASK-002→005 + doc-sync), not just TASK-005 — surfaced it and, per user
+  choice, sliced it into **5 clean per-task commits** (`d8a132f` TASK-002 content
+  collections, `d9a48e6` TASK-003 calc engines + Vitest, `69c4ee1` TASK-004
+  StatCalc + calculator pages, `ad1fb38` TASK-005 typed links + gate, `3963aca`
+  chore doc-sync), splitting `package.json`/`package-lock.json` across the 003 and
+  005 commits via an intermediate on-disk state (no interactive `add -p` in this
+  shell). **Pushed to `syedjawad11/statohub` `main`** (`daa6f31..3963aca`); branch
+  in sync with origin. **Build pipeline through TASK-005 is complete and live in
+  the repo.** **Next:** TASK-006 (SEO + JSON-LD + sitemap — JSON-LD URL fields
+  must route through `url()`), then TASK-007 (Cloudflare Pages deploy wiring +
+  `pages project create statohub`). Article-writing still deferred to a dedicated
+  full session.
