@@ -1,19 +1,49 @@
 ---
 import '../styles/global.css';
 import Link from '../components/Link.astro';
-import type { RouteRef } from '../lib/links';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Canonical from '../components/seo/Canonical.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
+import Meta from '../components/seo/Meta.astro';
+import { routes, url, type RouteRef } from '../lib/links';
+import { breadcrumbList, type BreadcrumbItem } from '../lib/schema';
 
 interface Props {
   title?: string;
   description?: string;
+  canonicalPath?: RouteRef;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  breadcrumbs?: BreadcrumbItem[];
+  jsonLd?: object[];
+  noindex?: boolean;
 }
 
 const {
   title = 'Statohub',
   description = 'Statistics education and calculator tools.',
+  canonicalPath,
+  ogType = 'website',
+  ogImage,
+  breadcrumbs,
+  jsonLd = [],
+  noindex = false,
 } = Astro.props;
 
-const homeRoute = { kind: 'home' } satisfies RouteRef;
+const site = Astro.site ?? Astro.url;
+const canonical = new URL(canonicalPath ? url(canonicalPath) : Astro.url.pathname, site);
+canonical.search = '';
+canonical.hash = '';
+
+if (!canonical.pathname.endsWith('/')) {
+  canonical.pathname = `${canonical.pathname}/`;
+}
+
+const schemas = breadcrumbs
+  ? [breadcrumbList(breadcrumbs, site), ...jsonLd]
+  : jsonLd;
+
+const homeRoute = routes.home();
 ---
 
 <!doctype html>
@@ -21,8 +51,16 @@ const homeRoute = { kind: 'home' } satisfies RouteRef;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <Meta
+      title={title}
+      description={description}
+      canonicalUrl={canonical.href}
+      ogType={ogType}
+      ogImage={ogImage}
+    />
+    <Canonical canonicalPath={canonicalPath ? url(canonicalPath) : undefined} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    {schemas.map((schema) => <JsonLd schema={schema} />)}
     <script is:inline>
       (() => {
         const stored = localStorage.getItem('theme');
@@ -49,6 +87,7 @@ const homeRoute = { kind: 'home' } satisfies RouteRef;
       </div>
     </header>
     <main class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
       <slot />
     </main>
     <script is:inline>

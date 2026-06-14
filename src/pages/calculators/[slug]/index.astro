@@ -3,9 +3,12 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import StatCalc from '../../../components/StatCalc.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { routes } from '../../../lib/links';
+import { softwareApplicationSchema, type BreadcrumbItem } from '../../../lib/schema';
 
 type CalculatorEntry = CollectionEntry<'calculators'>;
 type CalculatorData = CalculatorEntry['data'];
+type CalculatorId = CalculatorEntry['id'];
 
 export async function getStaticPaths() {
   const calculators = await getCollection('calculators');
@@ -20,13 +23,33 @@ export async function getStaticPaths() {
 
 interface Props {
   calc: CalculatorData;
-  slug: string;
+  slug: CalculatorId;
 }
 
 const { calc, slug } = Astro.props as Props;
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Calculators', route: routes.calculatorsHub() },
+  { label: calc.title, route: routes.calculator(slug) },
+];
+const site = Astro.site ?? Astro.url;
+const calculatorSchema = softwareApplicationSchema(
+  {
+    id: slug,
+    name: calc.title,
+    description: calc.description,
+  },
+  site,
+);
 ---
 
-<BaseLayout title={`${calc.title} | Statohub`} description={calc.description}>
+<BaseLayout
+  title={`${calc.title} | Statohub`}
+  description={calc.description}
+  canonicalPath={routes.calculator(slug)}
+  breadcrumbs={breadcrumbs}
+  jsonLd={[calculatorSchema]}
+>
   <article class="max-w-3xl">
     <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
       Calculator

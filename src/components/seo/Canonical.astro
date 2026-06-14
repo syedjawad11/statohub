@@ -1,0 +1,17 @@
+---
+interface Props {
+  canonicalPath?: string;
+}
+
+const site = Astro.site ?? Astro.url;
+const canonical = new URL(Astro.props.canonicalPath ?? Astro.url.pathname, site);
+
+canonical.search = '';
+canonical.hash = '';
+
+if (!canonical.pathname.endsWith('/')) {
+  canonical.pathname = `${canonical.pathname}/`;
+}
+---
+
+<link rel="canonical" href={canonical.href} />

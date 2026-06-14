@@ -1,14 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Link from '../components/Link.astro';
-import type { RouteRef } from '../lib/links';
+import { routes } from '../lib/links';
 
-const calculatorsHubRoute = { kind: 'calculatorsHub' } satisfies RouteRef;
+const calculatorsHubRoute = routes.calculatorsHub();
 ---
 
 <BaseLayout
   title="Statohub"
   description="Statistics education and calculator tools for clear, practical learning."
+  canonicalPath={routes.home()}
 >
   <section class="max-w-3xl">
     <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">

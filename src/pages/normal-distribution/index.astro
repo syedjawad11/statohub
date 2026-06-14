@@ -1,14 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Link from '../../components/Link.astro';
-import type { RouteRef } from '../../lib/links';
+import { routes } from '../../lib/links';
 
-const homeRoute = { kind: 'home' } satisfies RouteRef;
+const homeRoute = routes.home();
 ---
 
 <BaseLayout
   title="Normal Distribution | Statohub"
   description="Sample route proving Statohub directory output and trailing-slash routing."
+  noindex
 >
   <article class="max-w-3xl">
     <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">

@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogType = 'website',
+  ogImage,
+} = Astro.props;
+
+const site = Astro.site ?? Astro.url;
+const resolvedOgImage = ogImage
+  ? new URL(ogImage, site).href
+  : undefined;
+const twitterCard = resolvedOgImage ? 'summary_large_image' : 'summary';
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalUrl} />
+{resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}

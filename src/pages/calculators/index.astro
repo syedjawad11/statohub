@@ -4,7 +4,8 @@ import type { CollectionEntry } from 'astro:content';
 import Link from '../../components/Link.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import type { RouteRef } from '../../lib/links';
+import { routes, type RouteRef } from '../../lib/links';
+import type { BreadcrumbItem } from '../../lib/schema';
 
 type CalculatorEntry = CollectionEntry<'calculators'>;
 
@@ -13,11 +14,17 @@ const calculators = (await getCollection('calculators'))
   .sort((a: CalculatorEntry, b: CalculatorEntry) => a.data.title.localeCompare(b.data.title));
 
 const calculatorRoute = (id: CalculatorEntry['id']) => ({ kind: 'calculator', id }) satisfies RouteRef;
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Calculators', route: routes.calculatorsHub() },
+];
 ---
 
 <BaseLayout
   title="Calculators | Statohub"
   description="Statistics calculators for common descriptive statistics workflows."
+  canonicalPath={routes.calculatorsHub()}
+  breadcrumbs={breadcrumbs}
 >
   <section class="max-w-3xl">
     <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
