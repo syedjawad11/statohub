@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "predev": "node scripts/gen-route-ids.mjs",
     "dev": "astro dev",
-    "build": "astro build",
+    "gen:routes": "node scripts/gen-route-ids.mjs",
+    "build": "node scripts/gen-route-ids.mjs && astro build && node scripts/check-links.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "astro check": "astro check",

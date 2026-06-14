@@ -1,0 +1,22 @@
+---
+import { url, type RouteRef } from '../lib/links';
+
+interface Props {
+  to: RouteRef;
+  class?: string;
+  id?: string;
+  title?: string;
+  target?: string;
+  rel?: string;
+  download?: boolean | string;
+  'aria-current'?: boolean | 'page' | 'step' | 'location' | 'date' | 'time';
+  'aria-label'?: string;
+  [attribute: `aria-${string}`]: string | number | boolean | undefined;
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
+}
+
+const { to, ...rest } = Astro.props;
+---
+
+<!-- Internal page routes only. Use a plain <a> for external, anchor, or asset links. -->
+<a href={url(to)} {...rest}><slot /></a>

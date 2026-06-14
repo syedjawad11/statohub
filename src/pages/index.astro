@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Link from '../components/Link.astro';
+import type { RouteRef } from '../lib/links';
+
+const calculatorsHubRoute = { kind: 'calculatorsHub' } satisfies RouteRef;
 ---
 
 <BaseLayout
@@ -18,7 +22,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       trailing-slash URLs and calculator pages that work cleanly on Cloudflare Pages.
     </p>
     <p class="mt-8">
-      <a href="/normal-distribution/" class="font-medium">View the sample route</a>
+      <Link to={calculatorsHubRoute} class="font-medium">View calculators</Link>
     </p>
   </section>
 </BaseLayout>
