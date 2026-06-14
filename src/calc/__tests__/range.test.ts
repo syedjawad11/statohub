@@ -8,7 +8,7 @@ describe("range", () => {
     const result = range({ values });
 
     expect(result.value).toBe(7);
-    expect(result.outputs).toEqual({ min: 2, max: 9 });
+    expect(result.outputs).toEqual({ range: 7, min: 2, max: 9 });
   });
 
   it("returns an error for invalid input", () => {

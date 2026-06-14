@@ -21,6 +21,7 @@ export function range(input: RangeInput): CalcResult {
 
   const min = Math.min(...values);
   const max = Math.max(...values);
+  const spread = max - min;
 
-  return { value: max - min, outputs: { min, max } };
+  return { value: spread, outputs: { range: spread, min, max } };
 }

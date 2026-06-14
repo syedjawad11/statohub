@@ -1,0 +1,14 @@
+title: Range Calculator
+description: Find the range of a data set, plus its minimum and maximum values.
+engine: range
+category: descriptive-statistics
+standalone: true
+chart: false
+outputLabels:
+  range: Range
+  min: Minimum
+  max: Maximum
+keywords:
+  - range calculator
+  - how to find the range
+  - minimum and maximum calculator

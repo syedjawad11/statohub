@@ -1,0 +1,11 @@
+title: Mean Calculator
+description: Calculate the mean (average) of any set of numbers and see the result instantly.
+engine: mean
+category: descriptive-statistics
+standalone: true
+chart: false
+resultLabel: Mean
+keywords:
+  - mean calculator
+  - average calculator
+  - how to find the mean
