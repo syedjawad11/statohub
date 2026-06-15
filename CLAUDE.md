@@ -69,6 +69,31 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-15** — **GitHub + Claude write access CONFIRMED for the cloud
+  routine.** Root-caused why yesterday's cloud routine (`how-to-find-the-range`)
+  couldn't publish: the routine wrote + QA-passed + build-gate-passed the article
+  but every push 403'd — write access was missing. That article only ever existed
+  in the now-dead cloud session (NOT on `origin`, NOT in the local tree — verified
+  404 on remote); it will be **re-generated** by a routine run, nothing to recover.
+  **Fix applied by user:** installed the **Claude GitHub App** and granted it
+  **Read+write to `code`** (repo contents) on **`syedjawad11/statohub`** (verified
+  in the App's Permissions + Repository-access pages, saved). **Verified this
+  session:** local Claude Code push works (`gh` token has `repo` scope, admin on
+  repo, `git push --dry-run` clean); GitHub MCP here is a *separate read-only PAT*
+  (a write test 403'd with "not accessible by personal access token") — unrelated
+  to the App, so not a blocker for the cloud routine which uses the App. Checked
+  for pending work to push: **none** — working tree clean, `main` == `origin/main`
+  @ `d9c20fa`; yesterday's 4 backlog commits were all already pushed. The only
+  push this session is this log note. **Still unprovable from this machine:** that
+  the cloud routine actually *uses* this App grant — the one conclusive test is a
+  live routine run (it writes + pushes one article by design; no dry-run mode).
+  **Plan:** this evening, run **one** supervised cloud routine as the real test
+  (success = push + green GitHub Actions → Cloudflare deploy); if green, **schedule
+  the remaining launch articles** to auto-publish via Claude cloud routines (publish
+  order per `content-ops/cloud-routine/README.md`: how-to-find-the-range ->
+  correlation-vs-causation -> what-is-an-average -> linear-regression). If it 403s
+  again, re-check the App's saved repo grant.
+
 - **2026-06-14** — **First article LIVE-READY + built the cloud-routine content
   engine; pushed the whole launch backlog.** Ran the manual "test routine" end to
   end for the first launch article via subagents (to spare context):
