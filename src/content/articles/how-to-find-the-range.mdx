@@ -1,0 +1,325 @@
+---
+title: "How to Find the Range in Statistics"
+description: "Learn how to find the range in statistics: subtract the minimum value from the maximum. Step-by-step examples, formula, and a free range calculator."
+category: descriptive-statistics
+primaryKeyword: how to find the range
+keywords:
+  - how to find the range
+  - how do i calculate range
+  - how do you calculate range
+  - how do you calculate the range
+  - how do you find range in a data set
+  - how do you find the range
+  - how to calculate a range
+  - how to calculate for range
+  - how to calculate range
+  - how to calculate the range
+  - how to find range
+  - how to find the range of a data set
+phase: 1
+calculator: range
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **range** is the difference between the largest and smallest values in a dataset. To find the range, subtract the minimum value from the maximum value. That single subtraction gives you a direct, interpretable measure of how spread out your data is — and it is the fastest spread statistic you can compute by hand.
+
+Knowing how to find the range is one of the first skills in descriptive statistics. It tells you whether your data cluster tightly around a centre or sprawl across a wide span. A class of test scores with a range of 5 points shows very consistent performance; a range of 60 points signals wide variation. This article covers the formula, a step-by-step method, fully worked examples with real numbers, common mistakes, and a free calculator you can use on any dataset.
+
+---
+
+## What Is the Range in Statistics?
+
+The range measures **spread** — how far apart the data values are from each other at the extremes. It is the simplest of all variability statistics because it uses only two values from the dataset: the maximum and the minimum.
+
+In a dataset of exam scores such as 72, 85, 91, 63, and 78, the range tells you the gap between the highest-scoring and lowest-scoring student. A narrow range means the group performed similarly; a wide range means the scores vary a great deal.
+
+The range belongs to the family of **descriptive statistics** alongside the mean, median, mode, variance, and standard deviation. Unlike variance and standard deviation, which measure how each individual point deviates from the centre, the range looks only at the two endpoints. That makes it quick to compute and easy to communicate, but also sensitive to extreme values (outliers).
+
+---
+
+## The Range Formula
+
+The formula for the range is:
+
+```
+Range = Maximum value − Minimum value
+Range = x_max − x_min
+```
+
+Where:
+- `x_max` is the largest value in the dataset
+- `x_min` is the smallest value in the dataset
+
+Nothing more is required. You do not need the mean, the median, or any sum over all the data points — only the two extreme values.
+
+---
+
+## How to Find the Range: Step-by-Step
+
+Here is how to calculate the range for any dataset, using a reliable three-step process.
+
+### Step 1 — Identify All Values
+
+List out every value in the dataset. If the data is already sorted, great. If not, you do not have to sort the entire list — you only need to find the highest and lowest values, which you can do by scanning once.
+
+### Step 2 — Find the Maximum and the Minimum
+
+Scan the list and record:
+- the **largest** value (`x_max`)
+- the **smallest** value (`x_min`)
+
+For small datasets you can do this visually. For longer lists, sorting the data first makes it faster.
+
+### Step 3 — Subtract Minimum from Maximum
+
+Apply the formula:
+
+```
+Range = x_max − x_min
+```
+
+The result is always zero or positive. If you get a negative number, you subtracted in the wrong order.
+
+---
+
+## Worked Example 1: How to Find the Range of a Data Set
+
+**Dataset:** The daily high temperatures (°F) recorded over one week:
+88, 72, 95, 81, 67, 90, 78
+
+**Step 1 — List the values:** 88, 72, 95, 81, 67, 90, 78
+
+**Step 2 — Find the maximum and minimum:**
+- Maximum: 95
+- Minimum: 67
+
+**Step 3 — Subtract:**
+
+```
+Range = 95 − 67 = 28
+```
+
+The range is **28 °F**. Over that week, daily temperatures varied by as much as 28 degrees.
+
+---
+
+## Worked Example 2: Sorted Dataset
+
+**Dataset:** Monthly sales figures (in units): 120, 145, 132, 167, 118, 155, 141, 173, 129, 160
+
+**Sorted ascending:** 118, 120, 129, 132, 141, 145, 155, 160, 167, 173
+
+- Maximum: 173
+- Minimum: 118
+
+```
+Range = 173 − 118 = 55
+```
+
+The sales range is **55 units** across the ten months. Sorting the list first made the maximum and minimum obvious at a glance.
+
+---
+
+## Try the Range Calculator
+
+Enter any set of numbers below and the calculator will find the range, minimum, and maximum instantly.
+
+<StatCalc slug="range" variant="embed" />
+
+For a full-page experience, open the dedicated <Link to={routes.calculator('range')}>range calculator</Link>. You can browse all available tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## How to Find the Range of a Data Set With Negative Numbers
+
+Negative numbers follow the same formula — the math is identical. The key is to pay close attention to which value is smaller.
+
+**Dataset:** Winter temperature readings (°C): −12, 3, −7, 0, −18, 5, −4
+
+Sorted: −18, −12, −7, −4, 0, 3, 5
+
+- Maximum: 5
+- Minimum: −18
+
+```
+Range = 5 − (−18) = 5 + 18 = 23
+```
+
+The range is **23 °C**. Subtracting a negative number is equivalent to adding its absolute value. Many students make an error here by treating −18 as the range or forgetting to reverse the sign — always write the subtraction explicitly and apply the two-negative rule.
+
+---
+
+## How to Calculate Range With Decimal Values
+
+Decimals do not change the process. Find the max, find the min, subtract.
+
+**Dataset:** Body-mass index (BMI) readings: 22.4, 27.1, 19.8, 31.5, 24.6, 18.3
+
+- Maximum: 31.5
+- Minimum: 18.3
+
+```
+Range = 31.5 − 18.3 = 13.2
+```
+
+The BMI range is **13.2 units**. As long as you align decimal places correctly in the subtraction, the calculation is no different from whole numbers.
+
+---
+
+## How to Calculate the Range for Grouped Data
+
+When data is presented in a frequency table with class intervals, the range is approximated from the class boundaries, not from individual values (because individual values are not available in grouped form).
+
+**Example:**
+
+| Class interval | Frequency |
+|----------------|-----------|
+| 10 – 20        | 4         |
+| 20 – 30        | 11        |
+| 30 – 40        | 8         |
+| 40 – 50        | 3         |
+
+The apparent lower boundary of the lowest class is **10**; the apparent upper boundary of the highest class is **50**.
+
+```
+Range ≈ 50 − 10 = 40
+```
+
+This is an approximation — the true extreme values inside the first and last intervals are unknown. In practice, researchers often note that the range for grouped data is "at most 40" rather than stating it as an exact figure.
+
+---
+
+## Range vs. Other Measures of Spread
+
+Understanding how to find the range is more useful when you know where it fits among other spread statistics.
+
+### Range vs. Interquartile Range (IQR)
+
+The **interquartile range (IQR)** is the range of the middle 50% of the data — the distance between the 75th percentile (Q3) and the 25th percentile (Q1):
+
+```
+IQR = Q3 − Q1
+```
+
+The IQR ignores the extreme values entirely. This makes it **resistant to outliers**, which the range is not. If a dataset has one unusually large value, the range inflates dramatically while the IQR stays stable. For distributions with outliers, the IQR is a more reliable measure of typical spread.
+
+### Range vs. Standard Deviation
+
+The **standard deviation** measures the average distance of each data point from the mean. It uses all values, not just two. This makes it more informative about the overall spread of the data, at the cost of being more complex to calculate.
+
+A rule of thumb: for roughly normally distributed data, the range is approximately four to six standard deviations wide. Specifically, in a large, bell-shaped dataset the range tends to be about 4σ to 6σ. If your range is far outside that, it may signal an outlier or a skewed distribution.
+
+### Range vs. Variance
+
+**Variance** is the average of the squared deviations from the mean (σ² for a population, s² for a sample). It is in squared units, which makes it hard to compare directly to the original values. The standard deviation (the square root of variance) restores the original units. The range, by contrast, is always in the same units as the data — making it immediately interpretable.
+
+| Measure | Uses all values? | Outlier resistant? | Units | Complexity |
+|---------|------------------|--------------------|-------|------------|
+| Range | No (only 2) | No | Same as data | Very low |
+| IQR | No (middle 50%) | Yes | Same as data | Low |
+| Variance | Yes | No | Squared | Moderate |
+| Standard deviation | Yes | No | Same as data | Moderate |
+
+---
+
+## When the Range Is Useful — and When It Isn't
+
+The range shines when:
+- You want a **quick, first-pass assessment** of variability in a small dataset.
+- The audience is general (the range is easy to explain: "the highest score was 95 and the lowest was 63, so the range is 32 points").
+- You are checking data for **potential errors** — an unexpectedly large range can flag a typo or a recording mistake.
+- You need to set **bin widths** when constructing a histogram (a common rule of thumb divides the range by the desired number of bins).
+
+The range is less useful when:
+- **Outliers are present.** A single extreme value makes the range large even if 99% of the data clusters tightly.
+- You need to compare variability **across datasets of different sizes**. Larger datasets tend to have larger ranges simply because there are more chances for an extreme value to appear.
+- You want a summary of **typical** variability, not just the extremes.
+
+In these situations, prefer the IQR (for outlier resistance) or the standard deviation (for a measure that reflects every data point).
+
+---
+
+## Common Mistakes When Calculating Range
+
+### Subtracting in the Wrong Order
+
+The range is always maximum minus minimum, not minimum minus maximum. Reversing the order gives a negative number, which is not meaningful as a measure of spread. If your result is negative, flip the subtraction.
+
+### Confusing Range With Interval
+
+Some students confuse the range *statistic* (a single number: max − min) with the range as an *interval* (the set of all values from min to max). In statistics, the range is always reported as a single number. The expression "the data ranges from 67 to 95" describes the interval, but the **range** is 28.
+
+### Ignoring Negative Numbers
+
+When the minimum is negative, many students subtract the absolute value instead of the actual negative number. Remember that subtracting a negative adds:
+
+```
+Range = 5 − (−18) = 23, not 5 − 18 = −13
+```
+
+### Confusing Range With Other Spread Measures
+
+The range is not the standard deviation, and it is not the variance. After an exam, it is common to hear "the range was really high" when the speaker actually means the standard deviation was large. These are distinct statistics that measure spread differently.
+
+### Using Range to Describe Entire Datasets With Outliers
+
+Reporting only the range for a dataset with one extreme outlier can be misleading. A student who scores 100 on a test where everyone else scores 60–70 makes the range 40 even though typical variation is only about 10 points. In these situations, always pair the range with the IQR or the standard deviation.
+
+---
+
+## Frequently Asked Questions
+
+### How do you find the range?
+
+Find the largest value in the dataset (the maximum) and the smallest value (the minimum), then subtract: Range = maximum − minimum. That single result tells you how spread out the data values are from end to end.
+
+### How do you calculate the range?
+
+Apply the formula Range = x_max − x_min. Identify the highest and lowest values in your dataset and subtract the lower from the higher. No summing, no averaging, and no sorting is strictly required — though sorting first makes it easier to spot the extremes in a long list.
+
+### How do I calculate range when there are negative numbers?
+
+The method is identical. Find the maximum and minimum as usual, then subtract. Because you are subtracting a negative minimum, use the rule that subtracting a negative number adds its absolute value. For example, if x_max = 5 and x_min = −18, then Range = 5 − (−18) = 23.
+
+### How do you find range in a data set with many values?
+
+Sort the data in ascending order first. The minimum is the first value in the sorted list; the maximum is the last. Subtract to get the range. For very large datasets, a spreadsheet or calculator can find the max and min automatically — use the MAX() and MIN() functions in Excel or Google Sheets, then subtract.
+
+### How to calculate for range in a grouped frequency table?
+
+Use the upper boundary of the highest class interval minus the lower boundary of the lowest class interval. This gives an approximation, because individual values within each class are not known. The true range could be somewhat smaller than this approximation.
+
+### How to find the range of a data set that has repeated values?
+
+Repeated values do not change the calculation. If your dataset is 4, 7, 7, 9, 9, 9, 12, the maximum is 12 and the minimum is 4, so Range = 12 − 4 = 8. Each repeated value is still a data point, but only the maximum and minimum matter for the range.
+
+### When should I use the range versus the standard deviation?
+
+Use the range for a quick, easy-to-explain snapshot of spread, especially in small datasets without outliers. Use the standard deviation when you need a more complete picture — one that reflects how much every data point varies from the mean, not just the two extremes. For data with outliers, the IQR is preferable to both.
+
+### What is a good range for a dataset?
+
+There is no universal "good" range — it depends entirely on the context. A range of 5 points is tight for exam scores out of 100 and enormous for precision manufacturing tolerances measured in micrometres. Interpret the range relative to the scale of the measurement and the purpose of the analysis.
+
+---
+
+## Summary
+
+Finding the range is a two-step operation: identify the maximum and minimum values in your dataset, then subtract. The formula is:
+
+```
+Range = Maximum − Minimum
+```
+
+The range is the fastest variability statistic to compute and the simplest to communicate. It works equally well for positive numbers, negative numbers, decimals, and mixed datasets. Its main limitation is sensitivity to outliers — a single extreme value can inflate the range without reflecting the typical spread in the data. In those situations, the interquartile range or the standard deviation is a better choice.
+
+Use the range as a first-pass check of variability, to set histogram bin widths, or any time you need to report spread to a general audience quickly. For deeper analysis, pair it with other measures from the full descriptive statistics toolkit.
+
+For a reliable reference on measures of spread, including the range and its relationship to other variability statistics, see the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3.5 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+You can also explore the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link> for a deeper look at how spread statistics are notated, or head to the <Link to={routes.calculatorsHub()}>calculators hub</Link> to explore the full suite of tools.
