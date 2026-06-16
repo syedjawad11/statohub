@@ -1,11 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Link from '../components/Link.astro';
-import { routes, type CategoryId } from '../lib/links';
+import { routes, type ArticleId, type CategoryId } from '../lib/links';
 import type { BreadcrumbItem } from '../lib/schema';
 
 type CategoryData = CollectionEntry<'categories'>['data'];
+type ArticleEntry = CollectionEntry<'articles'>;
 
 interface Props {
   category: CategoryData;
@@ -17,6 +19,15 @@ const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
   { label: category.title, route: routes.categoryHub(slug) },
 ];
+
+const guides = (await getCollection('articles'))
+  .filter((entry: ArticleEntry) => !entry.data.draft && entry.data.category.id === slug)
+  .map((entry: ArticleEntry) => ({
+    id: entry.id.replace(/\.[^.]+$/, '') as ArticleId,
+    title: entry.data.title,
+    description: entry.data.description,
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
 ---
 
 <BaseLayout
@@ -29,15 +40,33 @@ const breadcrumbs: BreadcrumbItem[] = [
     <p class="page-kicker">Topic hub</p>
     <h1 class="page-title">{category.title}</h1>
     <p class="page-lede">{category.description}</p>
-    <div class="mt-8 rounded-[14px] border border-line bg-card p-6 shadow-[var(--shadow)]">
-      <p class="m-0 text-ink-soft">
-        Guides and tools for this topic are being added. For now, browse the
-        calculator library or keep exploring the seeded statistics guides.
-      </p>
-      <div class="mt-5 flex flex-wrap gap-3">
-        <Link to={routes.calculatorsHub()} class="btn btn-primary">Browse calculators</Link>
-        <Link to={routes.home()} class="btn">Return home</Link>
+
+    {guides.length > 0 ? (
+      <div class="mt-8 flex flex-col gap-4">
+        {guides.map((guide) => (
+          <Link
+            to={routes.article(guide.id)}
+            class="block rounded-[14px] border border-line bg-card p-6 no-underline shadow-[var(--shadow)] transition-colors hover:border-verm"
+          >
+            <h2 class="m-0 text-xl font-semibold text-ink">{guide.title}</h2>
+            <p class="mt-2 mb-0 text-ink-soft">{guide.description}</p>
+          </Link>
+        ))}
+        <div class="mt-2 flex flex-wrap gap-3">
+          <Link to={routes.calculatorsHub()} class="btn">Browse calculators</Link>
+        </div>
       </div>
-    </div>
+    ) : (
+      <div class="mt-8 rounded-[14px] border border-line bg-card p-6 shadow-[var(--shadow)]">
+        <p class="m-0 text-ink-soft">
+          Guides and tools for this topic are being added. For now, browse the
+          calculator library or keep exploring the seeded statistics guides.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <Link to={routes.calculatorsHub()} class="btn btn-primary">Browse calculators</Link>
+          <Link to={routes.home()} class="btn">Return home</Link>
+        </div>
+      </div>
+    )}
   </section>
 </BaseLayout>
