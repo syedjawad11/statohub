@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Link from '../components/Link.astro';
+import { routes, type CategoryId } from '../lib/links';
+import type { BreadcrumbItem } from '../lib/schema';
+
+type CategoryData = CollectionEntry<'categories'>['data'];
+
+interface Props {
+  category: CategoryData;
+  slug: CategoryId;
+}
+
+const { category, slug } = Astro.props as Props;
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: category.title, route: routes.categoryHub(slug) },
+];
+---
+
+<BaseLayout
+  title={`${category.title} | Statohub`}
+  description={category.description}
+  canonicalPath={routes.categoryHub(slug)}
+  breadcrumbs={breadcrumbs}
+>
+  <section class="max-w-3xl">
+    <p class="page-kicker">Topic hub</p>
+    <h1 class="page-title">{category.title}</h1>
+    <p class="page-lede">{category.description}</p>
+    <div class="mt-8 rounded-[14px] border border-line bg-card p-6 shadow-[var(--shadow)]">
+      <p class="m-0 text-ink-soft">
+        Guides and tools for this topic are being added. For now, browse the
+        calculator library or keep exploring the seeded statistics guides.
+      </p>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <Link to={routes.calculatorsHub()} class="btn btn-primary">Browse calculators</Link>
+        <Link to={routes.home()} class="btn">Return home</Link>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

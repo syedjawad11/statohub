@@ -5,15 +5,23 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          'Inter',
-          'ui-sans-serif',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'sans-serif',
-        ],
+        serif: ['var(--serif)'],
+        sans: ['var(--sans)'],
+        mono: ['var(--mono)'],
+      },
+      colors: {
+        paper: 'var(--paper)',
+        'paper-2': 'var(--paper-2)',
+        card: 'var(--card)',
+        ink: 'var(--ink)',
+        'ink-soft': 'var(--ink-soft)',
+        muted: 'var(--muted)',
+        line: 'var(--line)',
+        'line-2': 'var(--line-2)',
+        verm: 'var(--verm)',
+        'verm-soft': 'var(--verm-soft)',
+        teal: 'var(--teal)',
+        'teal-soft': 'var(--teal-soft)',
       },
     },
   },

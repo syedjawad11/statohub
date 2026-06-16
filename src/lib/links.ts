@@ -18,6 +18,7 @@ export type CategoryId = CategoryContentId;
 
 export type RouteRef =
   | { kind: 'home' }
+  | { kind: 'about' }
   | { kind: 'categoryHub'; id: CategoryId }
   | { kind: 'article'; id: ArticleId }
   | { kind: 'calculatorsHub' }
@@ -29,6 +30,8 @@ export function url(ref: RouteRef): string {
   switch (ref.kind) {
     case 'home':
       return '/';
+    case 'about':
+      return '/about/';
     case 'categoryHub':
       return `/${ref.id}/`;
     case 'article':
@@ -42,6 +45,7 @@ export function url(ref: RouteRef): string {
 
 export const routes = {
   home: (): RouteRef => ({ kind: 'home' }),
+  about: (): RouteRef => ({ kind: 'about' }),
   categoryHub: (id: CategoryId): RouteRef => ({ kind: 'categoryHub', id }),
   article: (id: ArticleId): RouteRef => ({ kind: 'article', id }),
   calculatorsHub: (): RouteRef => ({ kind: 'calculatorsHub' }),

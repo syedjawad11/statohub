@@ -69,6 +69,89 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-16** — **TASK-009 reviewed → CLOSED; TASK-010 brief finalized + Codex
+  kickoff prompt handed off.** This is part 2 of the two-task **front-end redesign**
+  to match the two new root-level mockups (`statohub_template.html` = home,
+  `statohub_article_template.html` = article). Earlier in this session I split the
+  redesign into TASK-009 (design system + shared chrome + resolve all nav targets)
+  and TASK-010 (bespoke homepage + rich article layout). **TASK-009 verified against
+  artifacts (not just the Work Log):** `npm run build` green (**14 pages, 387 internal
+  links, 0 violations**), `npx astro check` 0/0/0 (15 files), `npm test` 33 tests/12
+  files. Confirmed the two high-risk contracts held: (1) **StatCalc byte-stable hooks**
+  intact (`data-statcalc`, `data-config-id`, `data-statcalc-form/-results/-chart`, the
+  `<script type="application/json">` config block, `aria-live`, `import './statcalc/
+  client.ts'`) — TASK-009 was styling-only on the calculator; (2) **root `[slug]`
+  discriminated union** (articles + category hubs share `/{slug}/`; Astro allows one
+  root `[slug]` dir) with a **collision guard that throws** + draft exclusion. **Theme
+  mechanism preserved:** tokens on `:root` + `html.dark` (warm editorial palette —
+  paper/ink/vermillion/teal), NOT the mockups' `data-theme`; `.dark` class +
+  localStorage no-flash toggle unchanged. **`routes.about()` → `/about/`** added to
+  the typed registry. New untracked files from Codex: 5 `src/content/categories/*.yaml`,
+  `src/layouts/CategoryLayout.astro`, `src/pages/about/index.astro`. Accepted Codex
+  decisions: self-hosted fonts via `@fontsource` (Fraunces/Hanken Grotesk/JetBrains
+  Mono), Tailwind token-colors backed by CSS vars. Set TASK-009 `Status: CLOSED` +
+  wrote its Review. **TASK-010 (`handoff/TASK-010-redesign-home-article-layouts.md`,
+  Status: TODO)** is the next brief, prerequisite now satisfied. Scope: (a) bespoke
+  **homepage** — hero (mono eyebrow, serif H1 w/ vermillion italic em, CTA row), the
+  signature **fused teach/compute card embedding the REAL `<StatCalc
+  slug="standard-deviation" variant="embed" />`** (NOT the mockup's hand-coded JS),
+  six-category grid (`categoryHub(...)` links, counts static for now), popular-
+  calculators strip (link only built tools), how-it-works; (b) rich
+  **`ArticleLayout.astro`** — 3-col shell (~660px measure), reading-progress bar,
+  article header (breadcrumb **Home → Category → Title** with the category crumb finally
+  a real `categoryHub(article.category.id)` link — completes what TASK-008 deferred),
+  right-rail **sticky TOC w/ scroll-spy built from `entry.render()` headings**
+  (depth===2), `.article-prose` + `.callout` + `.formula-block` styles, related grid
+  from `related` refs; (c) wire the **article branch** of `src/pages/[slug]/index.astro`
+  to pass `headings`/category title/`hasCalculator` (don't disturb the category-hub
+  branch or draft exclusion). **Hard rules in the brief:** internal links only via
+  typed `Link`/`routes`/`url()` (never link an unbuilt id → `check-links` fails);
+  single H1; reuse `BaseLayout` for head/SEO/JSON-LD; no new deps; vanilla `is:inline`
+  + passive + `prefers-reduced-motion`-aware scripts; DoD = build/astro-check/test
+  green + manual preview of `/` and a temporarily un-drafted `/standard-deviation/`
+  (revert to `draft:true` after — ships no new live article). **Handed the user the
+  copy-paste Codex kickoff prompt for TASK-010 in chat.** **Next session (TASK-010
+  review):** when Codex returns TASK-010 `DONE`, verify against artifacts — re-run all
+  three gates; confirm the fused card embeds the real StatCalc (not mockup JS) and the
+  byte-stable hooks survived; confirm TOC/scroll-spy + progress bar are vanilla/passive/
+  reduced-motion-safe; confirm breadcrumb category crumb is a typed link; confirm
+  `standard-deviation.mdx` was reverted to `draft:true`; then set `Status: CLOSED` +
+  write the Review, and (per workflow) commit + push the redesign so it deploys.
+  **Still-owed follow-ups carried over:** SEO baselines on the live URL; rotate the
+  `cfut_…` Cloudflare token pasted in chat during CI setup; the launch-article
+  auto-publish routines (publish order: correlation-vs-causation → what-is-an-average
+  → linear-regression; how-to-find-the-range done).
+
+- **2026-06-15 (evening)** — **First cloud-routine TEST FIRED → article published
+  live. GitHub write access proven end-to-end through the routine itself.** This
+  was the conclusive test owed from this morning's entry: that the claude.ai cloud
+  routine actually *uses* the Claude GitHub App's repo-write grant (the one thing
+  unprovable from this machine). **Setup:** created a single one-time cloud routine
+  via the `/schedule` skill (`RemoteTrigger` API) — name *"statohub publish-next-
+  article (TEST)"*, id `trig_01JJTcpvqW5tpQpSvUKwY8bW`, model `claude-sonnet-4-6`,
+  repo `syedjawad11/statohub`, tools Bash/Read/Write/Edit/Glob/Grep, **one-time
+  `run_once_at` 2026-06-15T18:51:00Z** (auto-disables after firing). Prompt = the
+  README routine prompt (read + execute `content-ops/cloud-routine/publish-next-
+  article.md` exactly, publish one article, print PUBLISH_RESULT). The user's two
+  connected connectors (Google Drive, Ahrefs) were auto-attached by the API but go
+  unused (routine makes no MCP/network calls by design — harmless). **Result
+  (reported by user): the article published correctly** — the routine wrote the
+  next queued article (`how-to-find-the-range`), passed the QA + build gates,
+  **pushed to `main`** (the step that 403'd before the App grant), and the push
+  triggered GH Actions → Cloudflare deploy. **This closes the open question:** the
+  cloud routine has working push access; the supervised pilot is green, so the
+  remaining launch articles can now be auto-published via scheduled routines.
+  **Session ended here at the user's request (personal commitment)** — did NOT yet
+  create the 4 recurring/launch routines. **Next session:** (1) set up the
+  scheduled routines for the rest of the launch backlog — remaining publish order
+  is **correlation-vs-causation → what-is-an-average → linear-regression**
+  (`how-to-find-the-range` is now done), same routine prompt, staggered times (or
+  one daily recurring routine that no-ops when the queue empties); (2) verify the
+  new article live at `https://statohub.com/how-to-find-the-range/` + green Actions
+  run; (3) still-owed follow-ups carried over: category hubs `/{category}/` (fold
+  into root `[slug]`), SEO baselines on the live URL, rotate the `cfut_…`
+  Cloudflare token pasted in chat during CI setup.
+
 - **2026-06-15** — **GitHub + Claude write access CONFIRMED for the cloud
   routine.** Root-caused why yesterday's cloud routine (`how-to-find-the-range`)
   couldn't publish: the routine wrote + QA-passed + build-gate-passed the article

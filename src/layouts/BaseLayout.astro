@@ -15,6 +15,7 @@ interface Props {
   ogType?: 'website' | 'article';
   ogImage?: string;
   breadcrumbs?: BreadcrumbItem[];
+  showBreadcrumbs?: boolean;
   jsonLd?: object[];
   noindex?: boolean;
 }
@@ -26,6 +27,7 @@ const {
   ogType = 'website',
   ogImage,
   breadcrumbs,
+  showBreadcrumbs = true,
   jsonLd = [],
   noindex = false,
 } = Astro.props;
@@ -43,7 +45,28 @@ const schemas = breadcrumbs
   ? [breadcrumbList(breadcrumbs, site), ...jsonLd]
   : jsonLd;
 
-const homeRoute = routes.home();
+const navLinks = [
+  { label: 'Descriptive', route: routes.categoryHub('descriptive-statistics') },
+  { label: 'Probability', route: routes.categoryHub('probability-distributions') },
+  { label: 'Regression', route: routes.categoryHub('regression-correlation') },
+  { label: 'Inferential', route: routes.categoryHub('inferential-statistics') },
+  { label: 'Calculators', route: routes.calculatorsHub() },
+];
+
+const footerTopics = [
+  { label: 'Descriptive', route: routes.categoryHub('descriptive-statistics') },
+  { label: 'Probability', route: routes.categoryHub('probability-distributions') },
+  { label: 'Regression', route: routes.categoryHub('regression-correlation') },
+  { label: 'Inferential', route: routes.categoryHub('inferential-statistics') },
+  { label: 'Foundations', route: routes.categoryHub('foundations') },
+];
+
+const footerCalculators = [
+  { label: 'Standard deviation', route: routes.calculator('standard-deviation') },
+  { label: 'Mean', route: routes.calculator('mean') },
+  { label: 'Range', route: routes.calculator('range') },
+  { label: 'All tools', route: routes.calculatorsHub() },
+];
 ---
 
 <!doctype html>
@@ -70,43 +93,115 @@ const homeRoute = routes.home();
       })();
     </script>
   </head>
-  <body class="bg-slate-50 text-slate-950 transition-colors duration-150 dark:bg-slate-950 dark:text-slate-100">
-    <header class="border-b border-slate-200 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/85">
-      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <Link to={homeRoute} class="text-base font-semibold text-slate-950 no-underline dark:text-white">Statohub</Link>
+  <body>
+    <header class="site-header">
+      <div class="site-wrap site-nav">
+        <Link to={routes.home()} class="brand" aria-label="Statohub home">
+          <span class="brand-dot" aria-hidden="true"></span>
+          Statohub
+        </Link>
+        <nav class="nav-links" aria-label="Primary navigation">
+          {navLinks.map((item) => <Link to={item.route} class="nav-link">{item.label}</Link>)}
+        </nav>
+        <span class="nav-spacer"></span>
         <button
           id="theme-toggle"
           type="button"
-          class="inline-flex h-10 items-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-800 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+          class="btn icon-btn"
           aria-label="Toggle dark mode"
           aria-pressed="false"
+          title="Toggle theme"
         >
-          <span class="dark:hidden">Dark</span>
-          <span class="hidden dark:inline">Light</span>
+          <svg class="dark:hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path>
+          </svg>
+          <svg class="hidden dark:block" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"></path>
+          </svg>
+        </button>
+        <Link to={routes.calculatorsHub()} class="btn btn-primary nav-cta">Browse calculators</Link>
+        <button
+          id="menu-toggle"
+          type="button"
+          class="btn icon-btn menu-toggle"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18"></path>
+          </svg>
         </button>
       </div>
+      <div id="mobile-menu" class="mobile-panel site-wrap" data-open="false">
+        <nav aria-label="Mobile navigation">
+          {navLinks.map((item) => <Link to={item.route}>{item.label}</Link>)}
+          <Link to={routes.calculatorsHub()}>Browse calculators</Link>
+        </nav>
+      </div>
     </header>
-    <main class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-      <slot />
+    <main class="site-main">
+      <div class="site-wrap">
+        {showBreadcrumbs && breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+        <slot />
+      </div>
     </main>
+    <footer class="site-footer">
+      <div class="site-wrap">
+        <div class="foot-grid">
+          <div class="foot-brand">
+            <Link to={routes.home()} class="brand">
+              <span class="brand-dot" aria-hidden="true"></span>
+              Statohub
+            </Link>
+            <p>Statistics education and calculator tools for clear, practical learning.</p>
+          </div>
+          <div>
+            <h5>Topics</h5>
+            {footerTopics.map((item) => <Link to={item.route}>{item.label}</Link>)}
+          </div>
+          <div>
+            <h5>Calculators</h5>
+            {footerCalculators.map((item) => <Link to={item.route}>{item.label}</Link>)}
+          </div>
+          <div>
+            <h5>Site</h5>
+            <Link to={routes.about()}>About</Link>
+            <Link to={routes.categoryHub('foundations')}>Foundations</Link>
+            <a href="/sitemap.xml">Sitemap</a>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <span>&copy; 2026 Statohub</span>
+          <span class="font-mono">Built static - fast - flat URLs</span>
+        </div>
+      </div>
+    </footer>
     <script is:inline>
       (() => {
-        const button = document.getElementById('theme-toggle');
-        if (!button) return;
+        const themeButton = document.getElementById('theme-toggle');
+        const menuButton = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
 
         const syncPressed = () => {
-          button.setAttribute(
+          themeButton?.setAttribute(
             'aria-pressed',
             String(document.documentElement.classList.contains('dark')),
           );
         };
 
-        button.addEventListener('click', () => {
+        themeButton?.addEventListener('click', () => {
           const nextIsDark = !document.documentElement.classList.contains('dark');
           document.documentElement.classList.toggle('dark', nextIsDark);
           localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
           syncPressed();
+        });
+
+        menuButton?.addEventListener('click', () => {
+          const nextOpen = menu?.dataset.open !== 'true';
+          if (menu) menu.dataset.open = String(nextOpen);
+          menuButton.setAttribute('aria-expanded', String(nextOpen));
         });
 
         syncPressed();

@@ -2,7 +2,7 @@
 // Regenerated on every `npm run build` from the src/content/** collections.
 export const articleIds = ['how-to-find-the-range', 'standard-deviation', 'standard-deviation-symbol'] as const;
 export const calculatorIds = ['mean', 'median', 'range', 'standard-deviation'] as const;
-export const categoryIds = ['descriptive-statistics'] as const;
+export const categoryIds = ['combinatorics', 'descriptive-statistics', 'foundations', 'inferential-statistics', 'probability-distributions', 'regression-correlation'] as const;
 
 export type ArticleContentId = (typeof articleIds)[number];
 export type CalculatorContentId = (typeof calculatorIds)[number];

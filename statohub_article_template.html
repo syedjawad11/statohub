@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Calculate Standard Deviation — Statohub</title>
+<meta name="description" content="Learn what standard deviation is, how to calculate it step by step, and compute it instantly with the embedded calculator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF8F2; --paper-2:#F4EEE2; --card:#FFFFFF;
+  --ink:#211C17; --ink-soft:#5C5349; --muted:#8B8174;
+  --line:#E8DFCF; --line-2:#DDD2BE;
+  --verm:#D24326; --verm-soft:#FBEADF;
+  --teal:#145A63; --teal-soft:#E0EEEE;
+  --shadow:0 1px 2px rgba(33,28,23,.04), 0 8px 28px rgba(33,28,23,.06);
+  --max:1140px;
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Hanken Grotesk",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+[data-theme="dark"]{
+  --paper:#1A1714; --paper-2:#211D18; --card:#252017;
+  --ink:#F3ECDF; --ink-soft:#BBB1A1; --muted:#8B8174;
+  --line:#352F26; --line-2:#403930;
+  --verm:#F0613F; --verm-soft:#3A2118;
+  --teal:#4FB3BE; --teal-soft:#142A2C;
+  --shadow:0 1px 2px rgba(0,0,0,.2), 0 10px 30px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s}
+a{color:inherit; text-decoration:none}
+.wrap{max-width:var(--max); margin:0 auto; padding:0 24px}
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+
+/* header (shared) */
+header.site{position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--paper) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.nav{display:flex; align-items:center; gap:28px; height:66px}
+.brand{font-family:var(--serif); font-weight:600; font-size:1.32rem; letter-spacing:-.01em; display:flex; align-items:center; gap:9px}
+.brand .dot{width:11px; height:11px; border-radius:50%; background:var(--verm); box-shadow:0 0 0 4px var(--verm-soft)}
+.nav .links{display:flex; gap:22px; margin-left:8px; font-size:.93rem; font-weight:500; color:var(--ink-soft)}
+.nav .links a{padding:6px 0; transition:color .15s}
+.nav .links a:hover{color:var(--ink)}
+.nav .spacer{flex:1}
+.btn{font-family:var(--sans); font-weight:600; font-size:.9rem; border-radius:9px; padding:9px 16px; border:1px solid var(--line-2); background:var(--card); color:var(--ink); cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:7px}
+.btn:hover{border-color:var(--ink-soft)}
+.btn.primary{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.btn.primary:hover{background:var(--verm); border-color:var(--verm)}
+.icon-btn{width:38px;height:38px;padding:0;justify-content:center}
+
+/* reading progress */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--verm); width:0; z-index:60}
+
+/* article shell */
+.shell{display:grid; grid-template-columns:1fr 660px 1fr; gap:0; padding:40px 0 0}
+.shell > .col{padding:0 24px}
+.rail{padding-top:8px}
+.rail.left{justify-self:end}
+
+/* breadcrumb */
+.crumb{font-family:var(--mono); font-size:.74rem; color:var(--muted); margin-bottom:22px; display:flex; gap:8px; flex-wrap:wrap}
+.crumb a:hover{color:var(--verm)}
+.crumb span{color:var(--line-2)}
+
+/* article header */
+.cat-eyebrow{color:var(--verm); font-weight:600}
+.art-title{font-family:var(--serif); font-weight:500; font-size:clamp(2.1rem,4.2vw,3.1rem); line-height:1.06; letter-spacing:-.02em; margin:10px 0 16px}
+.standfirst{font-size:1.16rem; color:var(--ink-soft); margin:0 0 22px}
+.art-meta{display:flex; gap:18px; align-items:center; flex-wrap:wrap; font-family:var(--mono); font-size:.74rem; color:var(--muted); padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:36px}
+.level{display:inline-flex; align-items:center; gap:6px; color:var(--teal)}
+.level .pip{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+
+/* article body */
+.prose{font-size:1.075rem; line-height:1.72; color:var(--ink)}
+.prose h2{font-family:var(--serif); font-weight:600; font-size:1.65rem; letter-spacing:-.01em; margin:44px 0 14px; scroll-margin-top:90px}
+.prose h3{font-size:1.18rem; font-weight:700; margin:30px 0 10px}
+.prose p{margin:0 0 18px; color:var(--ink-soft)}
+.prose strong{color:var(--ink); font-weight:600}
+.prose ul{margin:0 0 18px; padding-left:22px; color:var(--ink-soft)}
+.prose li{margin-bottom:8px}
+.placeholder{color:var(--muted)!important; font-style:italic}
+
+/* definition callout */
+.callout{border-left:3px solid var(--verm); background:var(--verm-soft); border-radius:0 12px 12px 0; padding:18px 22px; margin:24px 0}
+.callout .lab{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--verm); margin-bottom:7px}
+.callout p{margin:0; color:var(--ink); font-size:1rem}
+
+/* formula block */
+.formula-block{font-family:var(--mono); font-size:1.05rem; text-align:center; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:22px; margin:24px 0; color:var(--ink)}
+.formula-block .cap{display:block; font-size:.72rem; color:var(--muted); margin-top:10px; letter-spacing:.05em}
+
+/* EMBEDDED CALCULATOR (signature, reused) */
+.embed{border:1px solid var(--line); border-radius:16px; overflow:hidden; margin:34px 0; box-shadow:var(--shadow); background:var(--card)}
+.embed-head{background:var(--teal); color:#fff; padding:14px 22px; display:flex; align-items:center; gap:10px}
+.embed-head .pip{width:8px;height:8px;border-radius:50%;background:#fff}
+.embed-head .lab{font-family:var(--mono); font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; opacity:.85}
+.embed-head h4{font-family:var(--serif); font-weight:600; font-size:1.18rem; margin:0}
+.embed-body{padding:22px}
+.embed-body label{display:block; font-size:.82rem; font-weight:600; color:var(--ink-soft); margin-bottom:7px}
+.embed-body textarea{width:100%; font-family:var(--mono); font-size:.95rem; border:1px solid var(--line-2); border-radius:10px; padding:12px; background:var(--paper); color:var(--ink); resize:vertical; min-height:64px}
+.embed-body textarea:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-soft)}
+.embed-body .row{display:flex; gap:10px; margin-top:12px}
+.embed-body .run{flex:1; background:var(--teal); color:#fff; border:none; border-radius:10px; padding:11px; font-family:var(--sans); font-weight:600; font-size:.92rem; cursor:pointer}
+.embed-body .run:hover{filter:brightness(1.08)}
+.toggle{display:flex; border:1px solid var(--line-2); border-radius:10px; overflow:hidden}
+.toggle button{background:var(--card); border:none; padding:0 14px; font-family:var(--mono); font-size:.74rem; color:var(--ink-soft); cursor:pointer}
+.toggle button.on{background:var(--teal); color:#fff}
+.results{margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.results .cell{background:var(--card); padding:12px 14px}
+.results .k{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.results .v{font-family:var(--mono); font-size:1.12rem; font-weight:600; margin-top:3px}
+
+/* right rail TOC */
+.rail.right{position:sticky; top:90px; align-self:start; height:max-content}
+.toc-lab{font-family:var(--mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:14px}
+.toc a{display:block; font-size:.86rem; color:var(--ink-soft); padding:6px 0 6px 12px; border-left:2px solid var(--line); transition:.15s}
+.toc a:hover,.toc a.active{color:var(--verm); border-color:var(--verm)}
+.rail .jump{margin-top:22px; width:100%; justify-content:center}
+
+/* related */
+.related{border-top:1px solid var(--line); margin-top:54px; padding:48px 0}
+.related .wrap-in{max-width:660px; margin:0 auto; padding:0 24px}
+.related h3{font-family:var(--serif); font-weight:600; font-size:1.4rem; margin:0 0 18px}
+.rel-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.rel{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; transition:.15s}
+.rel:hover{border-color:var(--line-2); transform:translateY(-2px); box-shadow:var(--shadow)}
+.rel .tag{font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); margin-bottom:7px}
+.rel .tag.t{color:var(--verm)}
+.rel h4{font-family:var(--serif); font-weight:600; font-size:1.05rem; margin:0}
+
+/* footer (shared, condensed) */
+footer.site{background:var(--ink); color:var(--paper); padding:40px 0}
+[data-theme="dark"] footer.site{background:#100E0B}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; font-size:.82rem; color:rgba(255,255,255,.55); flex-wrap:wrap; gap:12px}
+.foot-bottom .brand{color:var(--paper)}
+.foot-bottom a{color:rgba(255,255,255,.7)} .foot-bottom a:hover{color:#fff}
+.foot-links{display:flex; gap:18px; font-size:.86rem}
+
+@media(max-width:1080px){
+  .shell{grid-template-columns:1fr; max-width:660px; margin:0 auto}
+  .rail.left{display:none}
+  .rail.right{position:static; margin-top:30px; border-top:1px solid var(--line); padding-top:24px}
+  .rail .jump{display:none}
+}
+@media(max-width:620px){
+  .nav .links{display:none}
+  .results{grid-template-columns:1fr 1fr}
+  .rel-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; scroll-behavior:auto}}
+:focus-visible{outline:2px solid var(--teal); outline-offset:2px; border-radius:4px}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="dot"></span>Statohub</a>
+    <nav class="links">
+      <a href="/descriptive-statistics/">Descriptive</a>
+      <a href="/probability-distributions/">Probability</a>
+      <a href="/regression-correlation/">Regression</a>
+      <a href="/inferential-statistics/">Inferential</a>
+      <a href="/calculators/">Calculators</a>
+    </nav>
+    <span class="spacer"></span>
+    <button class="btn icon-btn" id="theme" aria-label="Toggle dark mode" title="Toggle theme">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>
+    </button>
+    <a class="btn primary" href="/calculators/">Browse calculators</a>
+  </div>
+</header>
+
+<main class="shell">
+  <div class="rail left col"></div>
+
+  <article class="col">
+    <div class="crumb">
+      <a href="/">Home</a><span>/</span>
+      <a href="/descriptive-statistics/">Descriptive Statistics</a><span>/</span>
+      <span style="color:var(--ink-soft)">Standard Deviation</span>
+    </div>
+
+    <p class="eyebrow cat-eyebrow">Descriptive Statistics</p>
+    <h1 class="art-title">How to calculate standard deviation</h1>
+    <p class="standfirst">What standard deviation measures, the two formulas you'll meet, and a worked example — plus a calculator to run your own data.</p>
+    <div class="art-meta">
+      <span class="level"><span class="pip"></span>Beginner</span>
+      <span>6 min read</span>
+      <span>Updated Jun 2026</span>
+    </div>
+
+    <div class="prose">
+      <p><span class="placeholder">[Intro paragraph — set up the question a reader arrives with: "I have a set of numbers and I want to know how spread out they are." One or two sentences, no notation yet.]</span></p>
+
+      <h2 id="what">What is standard deviation?</h2>
+      <p><span class="placeholder">[Plain-English definition. Explain spread around the mean using a quick intuitive contrast — two datasets with the same mean but different spread.]</span></p>
+
+      <div class="callout">
+        <div class="lab">Definition</div>
+        <p>Standard deviation is the typical distance between each value in a dataset and the dataset's mean. A low value means the points cluster near the mean; a high value means they're spread out.</p>
+      </div>
+
+      <h2 id="formula">The formula</h2>
+      <p><span class="placeholder">[Explain there are two versions and when to use each — population vs sample — in one short paragraph before showing the math.]</span></p>
+
+      <div class="formula-block">
+        σ = √( Σ(xᵢ − μ)² / N )
+        <span class="cap">Population standard deviation · divide by N</span>
+      </div>
+      <div class="formula-block">
+        s = √( Σ(xᵢ − x̄)² / (n − 1) )
+        <span class="cap">Sample standard deviation · divide by n − 1 (Bessel's correction)</span>
+      </div>
+
+      <h2 id="steps">Step by step</h2>
+      <p><span class="placeholder">[Walk through the procedure as a short list. Keep each step to one line.]</span></p>
+      <ul>
+        <li>Find the mean of all the values.</li>
+        <li>Subtract the mean from each value and square the result.</li>
+        <li>Add up all the squared differences.</li>
+        <li>Divide by N (population) or n − 1 (sample) to get the variance.</li>
+        <li>Take the square root — that's the standard deviation.</li>
+      </ul>
+
+      <h2 id="calculator">Try it yourself</h2>
+      <p><span class="placeholder">[One sentence inviting the reader to drop in their own numbers and check their working.]</span></p>
+
+      <!-- EMBEDDED CALCULATOR — the signature, reused inline -->
+      <div class="embed">
+        <div class="embed-head">
+          <span class="pip"></span>
+          <span class="lab">Calculator</span>
+          <h4 style="margin-left:2px">Standard Deviation</h4>
+        </div>
+        <div class="embed-body">
+          <label for="nums">Your data (comma or space separated)</label>
+          <textarea id="nums" spellcheck="false">12, 15, 9, 20, 14, 18, 11</textarea>
+          <div class="row">
+            <div class="toggle" role="group" aria-label="Population or sample">
+              <button id="pop" class="on" type="button">Population</button>
+              <button id="samp" type="button">Sample</button>
+            </div>
+            <button class="run" id="run" type="button">Calculate</button>
+          </div>
+          <div class="results" id="out"></div>
+        </div>
+      </div>
+
+      <h2 id="example">Worked example</h2>
+      <p><span class="placeholder">[Take a tiny dataset, e.g. {12, 15, 9, 20}, and carry it through every step with the actual arithmetic shown, ending at the same number the calculator gives.]</span></p>
+
+      <h2 id="mistakes">Common mistakes</h2>
+      <ul>
+        <li><span class="placeholder">[Using N when the data is a sample — explain the n − 1 trap.]</span></li>
+        <li><span class="placeholder">[Forgetting to square the differences before summing.]</span></li>
+        <li><span class="placeholder">[Confusing standard deviation with variance.]</span></li>
+      </ul>
+    </div>
+  </article>
+
+  <aside class="rail right col">
+    <div class="toc-lab">On this page</div>
+    <nav class="toc" id="toc">
+      <a href="#what" class="active">What is it?</a>
+      <a href="#formula">The formula</a>
+      <a href="#steps">Step by step</a>
+      <a href="#calculator">Try it yourself</a>
+      <a href="#example">Worked example</a>
+      <a href="#mistakes">Common mistakes</a>
+    </nav>
+    <a href="#calculator" class="btn jump"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h2M14 10h2M8 14h2M14 14h2M8 18h2M14 18h2"/></svg>Jump to calculator</a>
+  </aside>
+</main>
+
+<section class="related">
+  <div class="wrap-in">
+    <h3>Keep going</h3>
+    <div class="rel-grid">
+      <a class="rel" href="/variance/"><div class="tag t">Guide</div><h4>What is variance?</h4></a>
+      <a class="rel" href="/mean-median-mode/"><div class="tag t">Guide</div><h4>Mean, median &amp; mode</h4></a>
+      <a class="rel" href="/calculators/z-score/"><div class="tag">Calculator</div><h4>Z-score calculator</h4></a>
+      <a class="rel" href="/normal-distribution/"><div class="tag t">Guide</div><h4>The normal distribution</h4></a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap foot-bottom">
+    <a class="brand" href="/"><span class="dot"></span>Statohub</a>
+    <div class="foot-links">
+      <a href="/descriptive-statistics/">Descriptive</a>
+      <a href="/calculators/">Calculators</a>
+      <a href="/about/">About</a>
+    </div>
+    <span>© 2026 Statohub</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('theme').addEventListener('click',function(){
+  var h=document.documentElement; h.dataset.theme = h.dataset.theme==='dark'?'light':'dark';
+});
+
+// reading progress bar
+var bar=document.getElementById('progress');
+window.addEventListener('scroll',function(){
+  var h=document.documentElement;
+  var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  bar.style.width=(p*100)+'%';
+},{passive:true});
+
+// TOC scroll-spy
+var links=[].slice.call(document.querySelectorAll('#toc a'));
+var heads=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120, cur=0;
+  heads.forEach(function(h,i){ if(h && h.offsetTop<=pos) cur=i; });
+  links.forEach(function(a,i){ a.classList.toggle('active', i===cur); });
+},{passive:true});
+
+// population / sample toggle + calculator
+var mode='pop';
+document.getElementById('pop').addEventListener('click',function(){set('pop',this);});
+document.getElementById('samp').addEventListener('click',function(){set('samp',this);});
+function set(m,btn){mode=m; document.querySelectorAll('.toggle button').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); calc();}
+function calc(){
+  var raw=document.getElementById('nums').value;
+  var n=raw.split(/[\s,]+/).map(parseFloat).filter(function(x){return !isNaN(x);});
+  var out=document.getElementById('out');
+  if(n.length<2){out.innerHTML='<div class="cell" style="grid-column:1/4"><div class="k">Result</div><div class="v" style="font-size:.9rem;color:var(--muted)">Enter at least two numbers</div></div>';return;}
+  var mean=n.reduce(function(a,b){return a+b;},0)/n.length;
+  var ss=n.reduce(function(a,b){return a+Math.pow(b-mean,2);},0);
+  var div=mode==='samp'?(n.length-1):n.length;
+  var variance=ss/div, sd=Math.sqrt(variance);
+  function f(x){return (Math.round(x*1000)/1000).toString();}
+  out.innerHTML=
+    cell('Count',n.length)+cell('Mean',f(mean))+cell(mode==='samp'?'Std dev (s)':'Std dev (σ)',f(sd),'color:var(--teal)')+
+    cell('Variance',f(variance))+cell('Sum',f(n.reduce(function(a,b){return a+b;},0)))+cell('Divisor',div);
+}
+function cell(k,v,style){return '<div class="cell"><div class="k">'+k+'</div><div class="v" style="'+(style||'')+'">'+v+'</div></div>';}
+document.getElementById('run').addEventListener('click',calc);
+calc();
+</script>
+</body>
+</html>

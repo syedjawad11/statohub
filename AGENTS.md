@@ -43,3 +43,9 @@ re-run, don't work around them:
   not corruption. Task files are authored in plain ASCII to avoid this; if you
   still hit a patch mismatch, replace the bounded section rather than the exact
   glyph, then re-read to verify.
+
+## Next-session note
+
+- Next session: update this file with a concise Codex work-history summary for
+  the completed handoff tasks, including what was built, key implementation
+  decisions, verification commands, and reusable lessons for future reference.

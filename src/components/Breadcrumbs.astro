@@ -9,8 +9,8 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class="mb-8 text-sm text-slate-600 dark:text-slate-400">
-  <ol class="flex flex-wrap items-center gap-2">
+<nav aria-label="Breadcrumb" class="breadcrumb">
+  <ol>
     {
       items.map((item, index) => {
         const isLast = index === items.length - 1;
@@ -18,14 +18,14 @@ const { items } = Astro.props;
           <li class="flex items-center gap-2">
             {
               isLast ? (
-                <span aria-current="page" class="font-medium text-slate-900 dark:text-slate-100">
+                <span aria-current="page" class="breadcrumb-current">
                   {item.label}
                 </span>
               ) : (
                 <>
                   {
                     item.route ? (
-                      <Link to={item.route} class="font-medium text-teal-800 hover:text-teal-900 dark:text-teal-300 dark:hover:text-teal-200">
+                      <Link to={item.route}>
                         {item.label}
                       </Link>
                     ) : (

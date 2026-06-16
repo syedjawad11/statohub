@@ -1,20 +1,87 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import Link from '../components/Link.astro';
 import BaseLayout from './BaseLayout.astro';
-import { routes, type ArticleId } from '../lib/links';
+import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
 import { articleSchema, type BreadcrumbItem } from '../lib/schema';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
 
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface RelatedArticle {
+  id: ArticleId;
+  title: string;
+  description: string;
+}
+
+interface RelatedCalculator {
+  id: CalculatorId;
+  title: string;
+  description: string;
+  standalone: boolean;
+}
+
 interface Props {
   article: ArticleData;
   slug: ArticleId;
-  categoryTitle?: string;
+  category: {
+    id: CategoryId;
+    title: string;
+  };
+  headings: Heading[];
+  hasCalculator: boolean;
+  calculatorAnchor?: string;
+  readingTime?: string;
+  level?: string;
+  relatedArticles?: RelatedArticle[];
+  relatedCalculator?: RelatedCalculator;
 }
 
-const { article, slug, categoryTitle } = Astro.props as Props;
+const {
+  article,
+  slug,
+  category,
+  headings,
+  hasCalculator,
+  calculatorAnchor,
+  readingTime,
+  level = 'Beginner',
+  relatedArticles = [],
+  relatedCalculator,
+} = Astro.props as Props;
+
+const tocItems = headings.filter((heading) => heading.depth === 2);
+const updatedDate = article.updatedDate ?? article.pubDate;
+const formattedDate = updatedDate
+  ? new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' }).format(updatedDate)
+  : undefined;
+const keepGoingItems = [
+  ...relatedArticles.map((item) => ({
+    kind: 'Guide' as const,
+    title: item.title,
+    description: item.description,
+    route: routes.article(item.id),
+  })),
+  ...(relatedCalculator?.standalone
+    ? [
+        {
+          kind: 'Calculator' as const,
+          title: relatedCalculator.title,
+          description: relatedCalculator.description,
+          route: routes.calculator(relatedCalculator.id),
+        },
+      ]
+    : []),
+];
+
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
+  { label: category.title, route: routes.categoryHub(category.id) },
   { label: article.title, route: routes.article(slug) },
 ];
 const site = Astro.site ?? Astro.url;
@@ -38,22 +105,125 @@ const schema = articleSchema(
   ogType="article"
   ogImage={article.ogImage}
   breadcrumbs={breadcrumbs}
+  showBreadcrumbs={false}
   jsonLd={[schema]}
 >
-  <article class="mx-auto max-w-3xl">
-    {categoryTitle && (
-      <p class="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
-        {categoryTitle}
-      </p>
-    )}
-    <h1 class="mt-3 text-4xl font-bold tracking-normal text-slate-950 dark:text-white sm:text-5xl">
-      {article.title}
-    </h1>
-    <p class="mt-5 text-lg leading-8 text-slate-700 dark:text-slate-300">
-      {article.description}
-    </p>
-    <div class="article-prose mt-10">
-      <slot />
-    </div>
-  </article>
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+
+  <div class="article-shell">
+    <div class="article-rail article-rail-left" aria-hidden="true"></div>
+
+    <article class="article-column">
+      <nav class="article-crumb" aria-label="Breadcrumb">
+        <Link to={routes.home()}>Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link to={routes.categoryHub(category.id)}>{category.title}</Link>
+        <span aria-hidden="true">/</span>
+        <span class="article-crumb-current">{article.title}</span>
+      </nav>
+
+      <header class="article-head">
+        <p class="page-kicker">{category.title}</p>
+        <h1 class="article-title">{article.title}</h1>
+        <p class="article-standfirst">{article.description}</p>
+        <div class="article-meta">
+          {level && <span class="article-level"><span class="pip" aria-hidden="true"></span>{level}</span>}
+          {readingTime && <span>{readingTime}</span>}
+          {formattedDate && <span>Updated {formattedDate}</span>}
+        </div>
+      </header>
+
+      <div class="article-prose">
+        <slot />
+      </div>
+    </article>
+
+    <aside class="article-rail article-rail-right">
+      {tocItems.length > 0 && (
+        <>
+          <div class="toc-label">On this page</div>
+          <nav class="article-toc" id="article-toc" aria-label="On this page">
+            {
+              tocItems.map((heading, index) => (
+                <a href={`#${heading.slug}`} class:list={[index === 0 && 'active']}>{heading.text}</a>
+              ))
+            }
+          </nav>
+        </>
+      )}
+      {hasCalculator && calculatorAnchor && (
+        <a href={`#${calculatorAnchor}`} class="btn toc-jump">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+            <path d="M8 6h8M8 10h2M14 10h2M8 14h2M14 14h2M8 18h2M14 18h2"></path>
+          </svg>
+          Jump to calculator
+        </a>
+      )}
+    </aside>
+  </div>
+
+  {keepGoingItems.length > 0 && (
+    <section class="related-section">
+      <div class="related-inner">
+        <h2>Keep going</h2>
+        <div class="related-grid">
+          {
+            keepGoingItems.map((item) => (
+              <Link class="related-card" to={item.route}>
+                <div class:list={['related-tag', item.kind === 'Guide' && 'related-tag-guide']}>{item.kind}</div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </Link>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    (() => {
+      const progress = document.getElementById('reading-progress');
+      const tocLinks = Array.from(document.querySelectorAll('.article-toc a[href^="#"]'));
+      const sections = tocLinks
+        .map((link) => {
+          const id = link.getAttribute('href')?.slice(1);
+          return id ? document.getElementById(id) : null;
+        })
+        .filter(Boolean);
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const updateProgress = () => {
+        if (!progress) return;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? Math.min(1, Math.max(0, scrollTop / max)) : 0;
+        progress.style.width = `${pct * 100}%`;
+      };
+
+      const setActive = (id) => {
+        tocLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      };
+
+      if ('IntersectionObserver' in window && sections.length > 0) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+            if (visible?.target?.id) setActive(visible.target.id);
+          },
+          { rootMargin: '-18% 0px -66% 0px', threshold: reduceMotion ? 0 : 0.01 },
+        );
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('resize', updateProgress, { passive: true });
+      updateProgress();
+    })();
+  </script>
 </BaseLayout>

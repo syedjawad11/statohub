@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+import type { BreadcrumbItem } from '../../lib/schema';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'About', route: routes.about() },
+];
+---
+
+<BaseLayout
+  title="About | Statohub"
+  description="About Statohub, a statistics education and calculator site."
+  canonicalPath={routes.about()}
+  breadcrumbs={breadcrumbs}
+>
+  <section class="max-w-3xl">
+    <p class="page-kicker">About</p>
+    <h1 class="page-title">Statistics you can read and run.</h1>
+    <p class="page-lede">
+      Statohub pairs plain-English statistics guides with working calculators so
+      readers can understand the method and compute with their own numbers in
+      the same place.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <Link to={routes.calculatorsHub()} class="btn btn-primary">Browse calculators</Link>
+      <Link to={routes.categoryHub('foundations')} class="btn">Explore foundations</Link>
+    </div>
+  </section>
+</BaseLayout>
