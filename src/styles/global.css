@@ -439,6 +439,7 @@
 
   .article-prose pre code {
     background: transparent;
+    color: inherit;
     padding: 0;
   }
 

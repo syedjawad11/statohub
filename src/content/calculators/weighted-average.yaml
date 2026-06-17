@@ -1,0 +1,18 @@
+title: Weighted Average Calculator
+description: Calculate a weighted average from matching values and weights.
+engine: weightedMean
+category: descriptive-statistics
+standalone: true
+chart: false
+inputs:
+  - name: values
+    label: Values
+    type: numberList
+    placeholder: 85, 90, 78
+  - name: weights
+    label: Weights
+    type: numberList
+    placeholder: 0.4, 0.35, 0.25
+resultLabel: Weighted Average
+keywords:
+  - weighted average calculator

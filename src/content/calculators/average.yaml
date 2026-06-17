@@ -1,0 +1,9 @@
+title: Average Calculator
+description: Calculate the average of a data set using the arithmetic mean.
+engine: mean
+category: descriptive-statistics
+standalone: true
+chart: false
+resultLabel: Average
+keywords:
+  - average calculator

@@ -69,6 +69,78 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-17** — **Calculator build-out kicked off: authored TASK-011 → TASK-016
+  briefs; TASK-011 reviewed → CLOSED + committed/pushed (6 new calculator pages
+  live).** This is the execution of the 2026-06-16 strategy pivot (build all
+  calculators before resuming articles). Inventoried the planned set in
+  `content-ops/seed.json` (**28 calculators: 24 standalone + 4 embed-only**) vs. the
+  10 engines + 4 live pages already shipped, confirmed **standalone calc == article
+  embed** (one YAML drives both `<StatCalc variant="page">` and `variant="embed">`),
+  and split the ~25 remaining calculators into **6 handoff tasks by math/infra
+  affinity**, sequenced so each introduces ONE new piece of foundation the later
+  tasks reuse: **TASK-011** (6 config-only reuse calcs, zero engine work),
+  **TASK-012** (4 new descriptive engines + structured-output foundation —
+  table/list/text on `CalcResult`), **TASK-013** (4 combinatorics/probability +
+  `select` input type), **TASK-014** (4 normal-family + shared `_stats-math.ts` CDF
+  module), **TASK-015** (2 regression/correlation, paired x/y lists), **TASK-016** (5
+  inferential, +chi-square CDF). All 6 briefs written plain-ASCII from the template.
+  **Resolved the `range` vs `range-iqr` discrepancy** (repo shipped an off-seed
+  standalone `range`; seed plans embed-only `range-iqr`) → keep both, baked into
+  TASK-012. **TASK-011 reviewed against artifacts** (not just the Work Log): re-ran
+  all three gates clean — `astro check` 0/0/0, `npm test` 33/33, `npm run build` 21
+  pages / 600 links / **0 violations**; verified each config's `engine:` is a real
+  camelCase registry key matching the engine's input contract (the seed-kebab trap),
+  categories exist. Accepted two out-of-fence edits: a type-only `CategoryLayout.astro`
+  annotation (clears pre-existing astro-check hints) and an `AGENTS.md` work-history
+  append (AGENTS.md's own standing note had instructed it). Set TASK-011 `CLOSED` +
+  wrote its Review. **Committed + pushed** the 6 configs + task briefs + session log →
+  GitHub Actions → Cloudflare; 6 new pages now live
+  (`/calculators/{average,weighted-average,variance,mean-absolute-deviation,percentile,z-score}/`).
+  **Calculators live: 9; ~19 remain.** **Next:** Codex does **TASK-012 + TASK-013
+  together** (per user) — kickoff prompt handed off. **Still-owed follow-ups carried
+  over:** SEO baselines on the live URL; rotate the `cfut_…` Cloudflare token; paused
+  article backlog resumes only after all calculators ship.
+
+- **2026-06-16 (later)** — **TASK-010 reviewed → CLOSED + front-end redesign
+  deployed live; NEXT PHASE LOCKED: build all calculators before any more
+  articles.** Reviewed Codex's TASK-010 (bespoke homepage + rich `ArticleLayout`)
+  against artifacts: all three gates green, **StatCalc byte-stable hooks confirmed
+  in `dist/index.html`** (the fused home card embeds the REAL `<StatCalc
+  slug="standard-deviation" variant="embed" />`, not the mockup's JS), root
+  `[slug]` discriminated-union collision guard + draft exclusion intact, breadcrumb
+  category crumb now a real typed `categoryHub()` link, TOC built from
+  `entry.render().headings` (depth===2) with passive/reduced-motion-safe scroll-spy
+  + progress bar, and `standard-deviation.mdx` shipped `draft:true` (no new live
+  article). Set TASK-010 `Status: CLOSED` + wrote its Review. **Committed + pushed
+  the whole redesign (TASK-009 + TASK-010 together).** Hit a non-fast-forward on
+  push — the cloud routine had fired mid-session and pushed `how-to-find-the-range`
+  + a run log to `origin/main`; resolved by **`git rebase origin/main`** (clean, no
+  conflicts), re-ran `npm run build` to confirm the new article renders through the
+  new ArticleLayout (**15 pages, 431 links, 0 violations**), then pushed `feec87d`.
+  GitHub Actions run `27640517520` triggered → gate suite → Cloudflare deploy; the
+  redesign is live on https://statohub.com.
+  **>> STRATEGY PIVOT (user decision, this session) <<** Starting **tomorrow
+  (2026-06-17)** the focus shifts to **building calculators, not writing articles.**
+  The plan: **build + publish all the calculator engines + standalone calculator
+  pages first — especially the full set of 23 standalone calculators** — and only
+  **once every calculator is live do we resume article writing.** Rationale: the
+  founding wedge of statohub is *calculator embedded in the teaching article on the
+  same page*; articles are meant to consume real `<StatCalc>` embeds, so the tools
+  must exist before the articles that depend on them. **What this means
+  concretely:** article publishing (incl. the cloud-routine auto-publish backlog —
+  correlation-vs-causation → what-is-an-average → linear-regression) is **PAUSED**
+  until the calculator set is complete; new Codex `handoff/` tasks shift to
+  calculator engines (extending `src/calc/` past the 10 Descriptive engines:
+  correlation, regression, normal/binomial/Poisson CDF, p-value, t-test,
+  chi-square, combinatorics, etc.) + their `standalone:true` config + `/calculators/
+  {slug}/` pages, all behind the existing engine→registry→StatCalc→typed-link gates.
+  **Next session:** scope the calculator build — inventory the 23 standalone tools
+  (cross-ref `content-ops` seed: 28 calculators total, odds excluded) vs. the 10
+  engines already shipped, then write the first calculator-batch `handoff/` task.
+  **Still-owed follow-ups carried over (unchanged):** SEO baselines on the live
+  URL; rotate the `cfut_…` Cloudflare token pasted in chat during CI setup; the
+  paused article backlog resumes only after calculators are done.
+
 - **2026-06-16** — **TASK-009 reviewed → CLOSED; TASK-010 brief finalized + Codex
   kickoff prompt handed off.** This is part 2 of the two-task **front-end redesign**
   to match the two new root-level mockups (`statohub_template.html` = home,

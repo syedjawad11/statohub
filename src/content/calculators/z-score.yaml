@@ -1,0 +1,22 @@
+title: Z-Score Calculator
+description: Calculate a z-score from a value, mean, and standard deviation.
+engine: zScore
+category: inferential-statistics
+standalone: true
+chart: false
+inputs:
+  - name: x
+    label: Value
+    type: number
+    placeholder: "72"
+  - name: mean
+    label: Mean
+    type: number
+    placeholder: "68"
+  - name: sd
+    label: Standard Deviation
+    type: number
+    placeholder: "5"
+resultLabel: Z-Score
+keywords:
+  - z score calculator

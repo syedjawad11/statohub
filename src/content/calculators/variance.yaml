@@ -1,0 +1,11 @@
+title: Variance Calculator
+description: Calculate sample and population variance for a data set.
+engine: variance
+category: descriptive-statistics
+standalone: true
+chart: false
+outputLabels:
+  sample: Sample Variance
+  population: Population Variance
+keywords:
+  - variance calculator

@@ -1,0 +1,9 @@
+title: Mean Absolute Deviation Calculator
+description: Calculate the mean absolute deviation of a data set.
+engine: meanAbsoluteDeviation
+category: descriptive-statistics
+standalone: true
+chart: false
+resultLabel: Mean Absolute Deviation
+keywords:
+  - mean absolute deviation calculator
