@@ -1,0 +1,21 @@
+title: Z Table Calculator
+description: Calculate the standard normal left-tail probability for a z-score.
+engine: z-table
+category: probability-distributions
+standalone: true
+chart: false
+resultLabel: Cumulative probability
+outputLabels:
+  cumulative: Cumulative probability
+  rightTail: Right-tail probability
+  betweenZeroAndZ: Between 0 and z
+keywords:
+  - z table
+  - z score table
+  - standard normal table
+inputs:
+  - name: z
+    label: z-score
+    type: number
+    default: "0"
+    placeholder: "1.96"

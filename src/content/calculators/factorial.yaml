@@ -1,0 +1,15 @@
+title: Factorial Calculator
+description: Calculate n! for non-negative integers.
+engine: factorial
+category: combinatorics
+standalone: true
+chart: false
+resultLabel: Factorial
+keywords:
+  - factorial calculator
+inputs:
+  - name: n
+    label: n
+    type: number
+    default: "5"
+    placeholder: "5"

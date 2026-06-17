@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-013 -- Combinatorics + probability basics + select-input foundation
@@ -83,24 +83,54 @@ nPr should be computed without building the full factorial when avoidable.
 
 ## Work Log  *(Codex writes -- what was actually done)*
 
-- **Started:** <YYYY-MM-DD>
-- **Finished:** <YYYY-MM-DD>
+- **Started:** 2026-06-17
+- **Finished:** 2026-06-17
 
 **What changed (files + where):**
-- <path> -- <what + why>
+- `src/content/config.ts` -- added additive `select` input support and optional `options` metadata to calculator inputs.
+- `src/components/StatCalc.astro` -- renders select inputs with existing label/input classes and `data-input-type="select"`.
+- `src/components/statcalc/client.ts` -- passes select values through as raw strings while keeping number and numberList parsing unchanged.
+- `src/calc/combinatorics-core.ts` -- added shared BigInt helpers for factorial, nCr, and nPr with safe number conversion.
+- `src/calc/factorial.ts`, `combination.ts`, `probability.ts`, `binomial.ts` -- added the four standalone engines with validation and safe overflow behavior.
+- `src/calc/registry.ts` -- registered `factorial`, `combination`, `probability`, and `binomial`.
+- `src/calc/__tests__/factorial.test.ts`, `combination.test.ts`, `probability.test.ts`, `binomial.test.ts` -- added known-value and invalid-input coverage.
+- `src/content/calculators/factorial.yaml`, `combination.yaml`, `probability.yaml`, `binomial-distribution.yaml` -- added standalone calculator configs using existing category ids.
 
 **How to verify:**
-- <exact command / steps you ran and the result>
+- `npx astro check` -- passed with 0 errors, 0 warnings, 0 hints.
+- `npm test` -- passed with process-spawn approval, 20 test files and 57 tests.
+- `npm run build` -- passed; generated route ids, built 26 pages, and `check-links` scanned 740 internal links with 0 violations.
+- `Test-Path` confirmed `dist/calculators/factorial/index.html`, `combination/index.html`, `probability/index.html`, and `binomial-distribution/index.html` exist.
+- `Select-String` confirmed the built combination and binomial pages include `<select data-input-type="select">` controls and the expected mode options.
+- `rg "\b(window|document|fetch)\b|astro:" src/calc` returned no matches, confirming calc engines remain framework/DOM-free.
 
 **Blocked / couldn't do / decisions made:**
-- <anything Claude should know -- or "none">
+- No runtime dependencies were added.
+- Browser preview interaction was skipped to avoid extra runtime; the select HTML is verified from the production build and select-mode math is covered by unit tests (`10C3 = 120`, `10P3 = 720`, binomial exact/at-most/at-least).
+- BigInt helpers return exact counts when they fit inside `Number.MAX_SAFE_INTEGER`; larger counts return clean `value: null` errors rather than unsafe numeric output.
 
 ---
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:** <YYYY-MM-DD>
-- **Verdict:** <CLOSED | CHANGES_REQUESTED>
+- **Reviewed:** 2026-06-17
+- **Verdict:** CLOSED
 
 **Notes / what to improve:**
-- <specifics if sending back; or what was good if closing>
+- Verified against artifacts. The `select` foundation is additive: schema union now
+  `numberList | number | select` with optional `options`, existing configs still
+  validate; `StatCalc.astro` renders a `<select data-input-type="select">` with the
+  `default` option pre-selected; `client.ts` passes select values through as raw
+  strings and leaves number/numberList parsing untouched. Combinatorics live in a
+  shared `combinatorics-core.ts` using BigInt, kept pure. Engines guard
+  negatives/non-integers, r>n, k>n, p outside [0,1]. Categories `combinatorics` and
+  `probability-distributions` exist. Tests assert the known values (5!=120, 10C3=120,
+  10P3=720, Binomial(10,0.5,5 exactly) approx 0.24609).
+- Gates re-run clean: `astro check` 0/0/0; `npm test` 20 files / 57 tests;
+  `npm run build` 26 pages / 740 links / 0 violations; the 4 new standalone pages
+  exist in `dist/`.
+- Non-blocking observation (no fix required now): `binomial` sums exact integer nCr
+  terms, so for large n (count beyond Number.MAX_SAFE_INTEGER, around n > 57) it
+  returns a clean `value: null` error instead of a probability -- the test asserts
+  this for n=100. Acceptable for a small-n educational tool; revisit with a log-space
+  / normal-approximation path once `_stats-math.ts` lands in TASK-014.

@@ -1,0 +1,42 @@
+title: Confidence Interval Calculator
+description: Calculate a z-based confidence interval for a population mean.
+engine: confidence-interval
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: Margin of error
+outputLabels:
+  margin: Margin of error
+  lower: Lower bound
+  upper: Upper bound
+  standardError: Standard error
+  z: Critical z
+keywords:
+  - confidence interval calculator
+inputs:
+  - name: mean
+    label: Sample mean
+    type: number
+    default: "100"
+    placeholder: "100"
+  - name: sd
+    label: Standard deviation
+    type: number
+    default: "15"
+    placeholder: "15"
+  - name: n
+    label: Sample size
+    type: number
+    default: "100"
+    placeholder: "100"
+  - name: level
+    label: Confidence level
+    type: select
+    default: "0.95"
+    options:
+      - value: "0.9"
+        label: 90%
+      - value: "0.95"
+        label: 95%
+      - value: "0.99"
+        label: 99%

@@ -1,0 +1,38 @@
+title: Binomial Distribution Calculator
+description: Calculate exact and cumulative binomial probabilities.
+engine: binomial
+category: probability-distributions
+standalone: true
+chart: false
+resultLabel: Probability
+outputLabels:
+  probability: Probability
+keywords:
+  - binomial distribution calculator
+inputs:
+  - name: n
+    label: Trials (n)
+    type: number
+    default: "10"
+    placeholder: "10"
+  - name: p
+    label: Success probability (p)
+    type: number
+    default: "0.5"
+    placeholder: "0.5"
+  - name: k
+    label: Successes (k)
+    type: number
+    default: "5"
+    placeholder: "5"
+  - name: mode
+    label: Mode
+    type: select
+    default: exactly
+    options:
+      - value: exactly
+        label: Exactly P(X = k)
+      - value: atMost
+        label: At most P(X <= k)
+      - value: atLeast
+        label: At least P(X >= k)

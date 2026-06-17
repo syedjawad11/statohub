@@ -1,0 +1,28 @@
+title: Proportion Calculator
+description: Solve the missing fourth term in a proportion of the form a / b = c / d.
+engine: proportion
+category: foundations
+standalone: true
+chart: false
+resultLabel: Missing term (d)
+outputLabels:
+  d: Missing term (d)
+  ratio: Ratio
+keywords:
+  - proportion calculator
+inputs:
+  - name: a
+    label: a
+    type: number
+    default: "2"
+    placeholder: "2"
+  - name: b
+    label: b
+    type: number
+    default: "3"
+    placeholder: "3"
+  - name: c
+    label: c
+    type: number
+    default: "4"
+    placeholder: "4"

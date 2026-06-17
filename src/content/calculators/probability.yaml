@@ -1,0 +1,23 @@
+title: Probability Calculator
+description: Calculate simple probability from favorable and total outcomes.
+engine: probability
+category: probability-distributions
+standalone: true
+chart: false
+resultLabel: Probability
+outputLabels:
+  probability: Probability
+  complement: Complement
+keywords:
+  - probability calculator
+inputs:
+  - name: favorable
+    label: Favorable outcomes
+    type: number
+    default: "3"
+    placeholder: "3"
+  - name: total
+    label: Total outcomes
+    type: number
+    default: "10"
+    placeholder: "10"

@@ -1,0 +1,43 @@
+title: P Value Calculator
+description: Calculate left-tail, right-tail, or two-sided p-values from a z or Student-t test statistic.
+engine: p-value
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: P-value
+outputLabels:
+  statistic: Test statistic
+  df: Degrees of freedom
+keywords:
+  - p value calculator
+inputs:
+  - name: statistic
+    label: Test statistic
+    type: number
+    default: "1.96"
+    placeholder: "1.96"
+  - name: df
+    label: Degrees of freedom
+    type: number
+    default: "10"
+    placeholder: "10"
+  - name: distribution
+    label: Distribution
+    type: select
+    default: z
+    options:
+      - value: z
+        label: Standard normal (z)
+      - value: t
+        label: Student-t
+  - name: tail
+    label: Tail
+    type: select
+    default: two
+    options:
+      - value: left
+        label: Left tail P(X <= statistic)
+      - value: right
+        label: Right tail P(X >= statistic)
+      - value: two
+        label: Two-sided

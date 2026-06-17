@@ -1,0 +1,35 @@
+title: T-Test Calculator
+description: Run a one-sample t-test from a sample mean, hypothesized mean, sample standard deviation, and sample size.
+engine: t-test
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: t statistic
+outputLabels:
+  t: t statistic
+  df: Degrees of freedom
+  pValue: Two-tailed p-value
+  standardError: Standard error
+keywords:
+  - t-test calculator
+inputs:
+  - name: sampleMean
+    label: Sample mean
+    type: number
+    default: "105"
+    placeholder: "105"
+  - name: populationMean
+    label: Hypothesized mean
+    type: number
+    default: "100"
+    placeholder: "100"
+  - name: sampleSd
+    label: Sample standard deviation
+    type: number
+    default: "15"
+    placeholder: "15"
+  - name: n
+    label: Sample size (n)
+    type: number
+    default: "25"
+    placeholder: "25"

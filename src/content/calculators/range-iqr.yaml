@@ -1,0 +1,17 @@
+title: Range / IQR Calculator
+description: Find the range, quartiles, and interquartile range of a data set.
+engine: range-iqr
+category: descriptive-statistics
+standalone: false
+chart: false
+outputLabels:
+  min: Minimum
+  max: Maximum
+  range: Range
+  q1: Q1
+  q2: Median
+  q3: Q3
+  iqr: IQR
+keywords:
+  - range iqr calculator
+  - interquartile range calculator

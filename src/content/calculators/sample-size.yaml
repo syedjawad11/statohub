@@ -1,0 +1,35 @@
+title: Sample Size Calculator
+description: Estimate the required sample size for a population proportion.
+engine: sample-size
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: Required sample size
+outputLabels:
+  requiredN: Required sample size
+  nRaw: Unrounded sample size
+  z: Critical z
+keywords:
+  - sample size calculator
+inputs:
+  - name: level
+    label: Confidence level
+    type: select
+    default: "0.95"
+    options:
+      - value: "0.9"
+        label: 90%
+      - value: "0.95"
+        label: 95%
+      - value: "0.99"
+        label: 99%
+  - name: margin
+    label: Margin of error
+    type: number
+    default: "0.05"
+    placeholder: "0.05"
+  - name: p
+    label: Estimated proportion
+    type: number
+    default: "0.5"
+    placeholder: "0.5"

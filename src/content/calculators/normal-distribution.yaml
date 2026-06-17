@@ -1,0 +1,46 @@
+title: Normal Distribution Calculator
+description: Calculate normal distribution probabilities for one bound or an interval.
+engine: normal-distribution
+category: probability-distributions
+standalone: true
+chart: false
+resultLabel: Probability
+outputLabels:
+  probability: Probability
+  z: Z-score
+  zLower: Lower z-score
+  zUpper: Upper z-score
+keywords:
+  - normal distribution calculator
+inputs:
+  - name: mean
+    label: Mean
+    type: number
+    default: "0"
+    placeholder: "0"
+  - name: sd
+    label: Standard deviation
+    type: number
+    default: "1"
+    placeholder: "1"
+  - name: x
+    label: x value
+    type: number
+    default: "1.96"
+    placeholder: "1.96"
+  - name: upper
+    label: Upper bound
+    type: number
+    default: "2"
+    placeholder: "2"
+  - name: mode
+    label: Mode
+    type: select
+    default: lessThan
+    options:
+      - value: lessThan
+        label: P(X < x)
+      - value: greaterThan
+        label: P(X > x)
+      - value: between
+        label: P(x < X < upper)

@@ -1,0 +1,13 @@
+title: Frequency Distribution Table Generator
+description: Build a sorted frequency table with relative and cumulative frequency.
+engine: frequency-table
+category: descriptive-statistics
+standalone: true
+chart: false
+resultLabel: Total Values
+outputLabels:
+  total: Total Values
+keywords:
+  - frequency table calculator
+  - frequency distribution table
+  - relative frequency table

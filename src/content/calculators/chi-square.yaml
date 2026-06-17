@@ -1,0 +1,24 @@
+title: Chi Square Calculator
+description: Calculate a chi-square goodness-of-fit statistic and upper-tail p-value from observed and expected counts.
+engine: chi-square
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: Chi-square statistic
+outputLabels:
+  statistic: Chi-square statistic
+  df: Degrees of freedom
+  pValue: P-value
+keywords:
+  - chi square calculator
+inputs:
+  - name: observed
+    label: Observed counts
+    type: numberList
+    default: "20, 30"
+    placeholder: "20, 30"
+  - name: expected
+    label: Expected counts
+    type: numberList
+    default: "25, 25"
+    placeholder: "25, 25"

@@ -1,0 +1,40 @@
+title: T Table Calculator
+description: Look up critical t values by confidence level, degrees of freedom, and tail count.
+engine: t-table
+category: inferential-statistics
+standalone: true
+chart: false
+resultLabel: Critical t value
+outputLabels:
+  df: Degrees of freedom
+  alpha: Alpha
+keywords:
+  - t table
+  - t distribution table
+  - critical t value calculator
+inputs:
+  - name: df
+    label: Degrees of freedom
+    type: number
+    default: "10"
+    placeholder: "10"
+  - name: level
+    label: Confidence level
+    type: select
+    default: "0.95"
+    options:
+      - value: "0.9"
+        label: 90%
+      - value: "0.95"
+        label: 95%
+      - value: "0.99"
+        label: 99%
+  - name: tails
+    label: Tails
+    type: select
+    default: "2"
+    options:
+      - value: "2"
+        label: Two-tailed
+      - value: "1"
+        label: One-tailed

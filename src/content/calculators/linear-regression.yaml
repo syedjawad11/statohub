@@ -1,0 +1,26 @@
+title: Linear Regression Calculator
+description: Fit a least-squares regression line for paired x and y values.
+engine: linear-regression
+category: regression-correlation
+standalone: true
+chart: false
+resultLabel: Slope
+outputLabels:
+  slope: Slope
+  intercept: Intercept
+  r: Correlation coefficient
+  rSquared: R-squared
+  n: Paired values
+keywords:
+  - linear regression calculator
+inputs:
+  - name: x
+    label: x values
+    type: numberList
+    default: "1, 2, 3, 4, 5"
+    placeholder: "1, 2, 3, 4, 5"
+  - name: y
+    label: y values
+    type: numberList
+    default: "2, 4, 5, 4, 5"
+    placeholder: "2, 4, 5, 4, 6"

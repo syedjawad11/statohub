@@ -5,7 +5,8 @@ import { formatNumber, parseNumber, parseNumberList } from './format';
 type InputSpec = {
   name: string;
   label: string;
-  type: 'numberList' | 'number';
+  type: 'numberList' | 'number' | 'select';
+  options?: { value: string; label: string }[];
 };
 
 type StatCalcConfig = {
@@ -64,6 +65,62 @@ const renderResults = (target: HTMLElement, result: CalcResult, config: StatCalc
   }
 
   target.append(dl);
+
+  if (result.text) {
+    const p = document.createElement('p');
+    p.className = 'mt-4 text-slate-700 dark:text-slate-300';
+    p.textContent = result.text;
+    target.append(p);
+  }
+
+  if (result.list) {
+    const p = document.createElement('p');
+    p.className = 'mt-4 text-slate-700 dark:text-slate-300';
+    p.textContent = result.list.length > 0
+      ? result.list.map((value) => formatNumber(value, config.precision)).join(', ')
+      : 'None';
+    target.append(p);
+  }
+
+  if (result.table) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mt-4 overflow-x-auto';
+
+    const table = document.createElement('table');
+    table.className = 'min-w-full border-collapse text-left text-sm';
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+
+    for (const column of result.table.columns) {
+      const th = document.createElement('th');
+      th.className = 'border-b border-slate-200 px-3 py-2 font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200';
+      th.textContent = column;
+      headRow.append(th);
+    }
+
+    thead.append(headRow);
+    table.append(thead);
+
+    const tbody = document.createElement('tbody');
+
+    for (const values of result.table.rows) {
+      const tr = document.createElement('tr');
+
+      for (const value of values) {
+        const td = document.createElement('td');
+        td.className = 'border-b border-slate-100 px-3 py-2 text-slate-700 dark:border-slate-800 dark:text-slate-300';
+        td.textContent = typeof value === 'number' ? formatNumber(value, config.precision) : value;
+        tr.append(td);
+      }
+
+      tbody.append(tr);
+    }
+
+    table.append(tbody);
+    wrapper.append(table);
+    target.append(wrapper);
+  }
 };
 
 const readConfig = (root: HTMLElement): StatCalcConfig | null => {
@@ -78,11 +135,15 @@ const readConfig = (root: HTMLElement): StatCalcConfig | null => {
 
 const buildInput = (form: HTMLFormElement, config: StatCalcConfig) => {
   const formData = new FormData(form);
-  const input: Record<string, number | number[]> = {};
+  const input: Record<string, number | number[] | string> = {};
 
   for (const spec of config.inputs) {
     const raw = String(formData.get(spec.name) ?? '');
-    input[spec.name] = spec.type === 'numberList' ? parseNumberList(raw) : parseNumber(raw);
+    input[spec.name] = spec.type === 'numberList'
+      ? parseNumberList(raw)
+      : spec.type === 'select'
+        ? raw
+        : parseNumber(raw);
   }
 
   return input;

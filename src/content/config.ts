@@ -44,7 +44,8 @@ const calculators = defineCollection({
         z.object({
           name: z.string(),
           label: z.string(),
-          type: z.union([z.literal('numberList'), z.literal('number')]),
+          type: z.union([z.literal('numberList'), z.literal('number'), z.literal('select')]),
+          options: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
           placeholder: z.string().optional(),
           default: z.string().optional(),
         }),

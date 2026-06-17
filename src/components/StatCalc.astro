@@ -16,6 +16,7 @@ if (!entry) {
 
 type CalculatorData = CollectionEntry<'calculators'>['data'];
 type CalculatorInput = CalculatorData['inputs'][number];
+type CalculatorOption = NonNullable<CalculatorInput['options']>[number];
 
 const calc = entry.data as CalculatorData;
 const instanceId = `statcalc-${slug}-${Math.random().toString(36).slice(2)}`;
@@ -70,6 +71,19 @@ const config = {
                 >
                   {input.default ?? ''}
                 </textarea>
+              ) : input.type === 'select' ? (
+                <select
+                  id={fieldId}
+                  name={input.name}
+                  data-input-type={input.type}
+                  class="statcalc-input"
+                >
+                  {(input.options ?? []).map((option: CalculatorOption) => (
+                    <option value={option.value} selected={input.default === option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   id={fieldId}

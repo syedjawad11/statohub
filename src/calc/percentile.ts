@@ -23,7 +23,7 @@ function cleanInput(input: unknown): PercentileInput | null {
   return { values, p };
 }
 
-function type7Percentile(sortedValues: number[], p: number): number {
+export function type7Percentile(sortedValues: number[], p: number): number {
   if (sortedValues.length === 1) {
     return sortedValues[0];
   }

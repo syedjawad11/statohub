@@ -1,0 +1,16 @@
+title: Outlier (1.5xIQR) Calculator
+description: Detect outliers using the 1.5xIQR rule and show the lower and upper fences.
+engine: outlier
+category: descriptive-statistics
+standalone: false
+chart: false
+resultLabel: Outlier Count
+outputLabels:
+  q1: Q1
+  q3: Q3
+  iqr: IQR
+  lowerFence: Lower Fence
+  upperFence: Upper Fence
+keywords:
+  - outlier calculator
+  - 1.5 iqr rule

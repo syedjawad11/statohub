@@ -49,7 +49,7 @@ re-run, don't work around them:
 Update this section whenever Codex finishes a task in this repo. Keep entries
 concise: what changed, key decisions, verification commands, and reusable lessons.
 
-### Handoff tasks completed through TASK-011
+### Handoff tasks completed through TASK-016
 
 - **TASK-001 -- scaffold/trailing slash/Tailwind:** Astro 4 + MDX + sitemap +
   Tailwind v3/PostCSS scaffold, `astro.config.mjs` locked to
@@ -111,6 +111,40 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   engines and generated route ids. Added a type-only CategoryLayout annotation
   so `npx astro check` is clean. Verification used `npx astro check`, `npm test`
   after the expected spawn approval, and `npm run build` with 0 link violations.
+- **TASK-012 -- structured descriptive outputs:** extended `CalcResult` with
+  optional `table`, `list`, and `text` fields; appended client rendering for
+  structured output while preserving the numeric `<dl>` path; added `mmmr`,
+  `range-iqr`, `outlier`, and `frequency-table` engines/configs/tests. Only
+  `frequency-table` is standalone; the other three remain embed-only. Verification
+  used `npx astro check`, `npm test` after spawn approval, `npm run build`, route
+  existence checks, and a clean calc purity grep.
+- **TASK-013 -- select inputs and probability/combinatorics calculators:** added
+  schema/component/client support for `select` inputs, passing selected values as
+  raw strings; added BigInt-backed `factorial`, `combination`, `probability`, and
+  `binomial` engines with standalone configs and tests. Oversized combinatorics
+  results return clean errors instead of unsafe numbers. Verification used
+  `npx astro check`, `npm test` after spawn approval, `npm run build`, route and
+  select HTML checks, and a clean calc purity grep.
+- **TASK-014 -- normal-family calculators + stats math:** added pure
+  `_stats-math` helpers (`erf`, normal CDF/PDF, inverse normal CDF, z critical),
+  standalone normal-distribution, z-table, confidence-interval, and sample-size
+  engines/configs/tests, and registered their calculator routes. Verification
+  used focused Vitest, `npx astro check`, full `npm test` after spawn approval,
+  `npm run build`, route/select HTML checks, category checks, and a clean calc
+  purity grep.
+- **TASK-015 -- correlation/regression paired-list calculators:** added pure
+  `_regression-core` paired-list validation/sums, Pearson correlation and linear
+  regression engines/configs/tests, with two `numberList` inputs and equation
+  `text` output for regression. Verification used focused Vitest,
+  `npx astro check`, full `npm test` after spawn approval, `npm run build`,
+  route/textarea checks, category checks, and a clean calc purity grep.
+- **TASK-016 -- inferential calculators + t/chi-square math:** extended
+  `_stats-math` with log-gamma, regularized gamma/beta, chi-square CDF,
+  Student-t CDF/quantile, and critical-t helpers; added p-value, t-test,
+  chi-square, t-table, and proportion engines/configs/tests. Verification used
+  math-first focused Vitest after expected spawn approval, `npx astro check`,
+  full `npm test`, `npm run build`, route existence checks, select DOM checks,
+  and a clean calc purity grep.
 
 ### Reusable verification habits
 

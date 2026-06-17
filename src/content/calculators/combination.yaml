@@ -1,0 +1,31 @@
+title: Combination Calculator
+description: Calculate combinations (nCr) or permutations (nPr) from n and r.
+engine: combination
+category: combinatorics
+standalone: true
+chart: false
+resultLabel: Count
+outputLabels:
+  count: Count
+keywords:
+  - combination calculator
+inputs:
+  - name: n
+    label: n
+    type: number
+    default: "10"
+    placeholder: "10"
+  - name: r
+    label: r
+    type: number
+    default: "3"
+    placeholder: "3"
+  - name: mode
+    label: Mode
+    type: select
+    default: nCr
+    options:
+      - value: nCr
+        label: nCr (combinations)
+      - value: nPr
+        label: nPr (permutations)

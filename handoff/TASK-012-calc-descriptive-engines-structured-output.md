@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-012 -- New descriptive engines + structured-output foundation
@@ -91,24 +91,47 @@ SEPARATE embed-only calculator that adds quartiles + IQR. Do not delete or repur
 
 ## Work Log  *(Codex writes -- what was actually done)*
 
-- **Started:** <YYYY-MM-DD>
-- **Finished:** <YYYY-MM-DD>
+- **Started:** 2026-06-17
+- **Finished:** 2026-06-17
 
 **What changed (files + where):**
-- <path> -- <what + why>
+- `src/calc/types.ts` -- added optional `table`, `list`, and `text` fields to `CalcResult` for structured non-scalar outputs.
+- `src/components/statcalc/client.ts` -- appended structured output rendering for text, lists, and tables while leaving the existing numeric `value`/`outputs` `<dl>` path unchanged.
+- `src/calc/percentile.ts` -- exported the existing Hyndman-Fan Type 7 percentile helper so quartile engines reuse the same rule.
+- `src/calc/mmmr.ts`, `src/calc/range-iqr.ts`, `src/calc/outlier.ts`, `src/calc/frequency-table.ts` -- added the four descriptive engines.
+- `src/calc/registry.ts` -- registered `mmmr`, `range-iqr`, `outlier`, and `frequency-table`.
+- `src/calc/__tests__/mmmr.test.ts`, `range-iqr.test.ts`, `outlier.test.ts`, `frequency-table.test.ts` -- added known-value and edge-case coverage for the new engines.
+- `src/content/calculators/mean-median-mode-range.yaml`, `range-iqr.yaml`, `outlier.yaml`, `frequency-table.yaml` -- added the three embed-only configs and one standalone frequency-table config.
 
 **How to verify:**
-- <exact command / steps you ran and the result>
+- `npx astro check` -- passed with 0 errors, 0 warnings, 0 hints.
+- `npm test` -- first sandbox run hit expected `spawn EPERM`; rerun with process-spawn approval passed, 16 test files and 45 tests.
+- `npm run build` -- passed; generated route ids, built 22 pages, and `check-links` scanned 628 internal links with 0 violations.
+- `Test-Path dist/calculators/frequency-table/index.html` returned `True`; `mean-median-mode-range`, `range-iqr`, and `outlier` calculator route paths returned `False`, confirming embed-only behavior.
+- `Select-String` on `dist/calculators/standard-deviation/index.html` confirmed the existing static result region/config remains the same server-rendered numeric calculator shell.
 
 **Blocked / couldn't do / decisions made:**
-- <anything Claude should know -- or "none">
+- Browser preview was not required for TASK-012 after build and route checks passed; no preview server was left running after an interrupted attempt.
+- The outlier tests use Type 7 quartiles through the shared percentile helper; with that rule, the canonical `[2, 4, 4, 4, 5, 5, 7, 9]` dataset marks `9` as an outlier, so the no-outlier edge case uses all-identical values.
 
 ---
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:** <YYYY-MM-DD>
-- **Verdict:** <CLOSED | CHANGES_REQUESTED>
+- **Reviewed:** 2026-06-17
+- **Verdict:** CLOSED
 
 **Notes / what to improve:**
-- <specifics if sending back; or what was good if closing>
+- Verified against artifacts, not just the Work Log. `CalcResult` gained optional
+  `table`/`list`/`text` only; the numeric `value`/`outputs` `<dl>` path in
+  `renderResults` is unchanged and the structured blocks render after it, reusing
+  `formatNumber` and keeping the `aria-live` region. Engines are pure (no DOM /
+  window / fetch / astro: in `src/calc/**`). `range-iqr` and `outlier` reuse the
+  exported Hyndman-Fan Type 7 helper from `percentile.ts` rather than re-deriving a
+  quantile rule; `range.yaml` left intact and `range-iqr` is a separate embed-only
+  calc as instructed. Configs correct: `frequency-table` standalone, the other 3
+  embed-only.
+- Gates re-run clean from a fresh state: `astro check` 0/0/0; `npm test` 20 files /
+  57 tests; `npm run build` 26 pages / 740 links / 0 violations.
+  `dist/calculators/frequency-table/index.html` exists; mmmr / range-iqr / outlier
+  generate no route. Good work.
