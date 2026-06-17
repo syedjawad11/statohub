@@ -69,6 +69,41 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-17 (later)** — **Calculator build-out COMPLETE: TASK-012 → TASK-016 all
+  reviewed → CLOSED; the entire standalone set committed + pushed in one go (now
+  deploying).** This closes the 2026-06-16 strategy pivot — every planned calculator
+  is now built. Across this and the prior session, reviewed all five remaining batches
+  against artifacts (engines/core modules/configs/tests/gates), not just the Work Logs,
+  and set each to `CLOSED`: **TASK-012** (descriptive engines + structured-output
+  table/list/text on `CalcResult`), **TASK-013** (combinatorics/probability + the
+  `select` input type), **TASK-014** (normal-family calcs + shared pure
+  `src/calc/_stats-math.ts` — erf/normalCdf/inverseNormalCdf/zCritical, anchors
+  sampleSize=385, zCritical(0.95)≈1.95996), **TASK-015** (correlation + linear
+  regression on paired x/y `numberList` inputs via `_regression-core.ts`; corrected
+  anchors slope 0.6 / intercept 2.2 / text "y = 2.2 + 0.6x"), **TASK-016** (the final
+  inferential batch: p-value, t-test, chi-square, t-table, proportion + the Student-t
+  & chi-square distribution math added to `_stats-math.ts` — logGamma/Lanczos,
+  regularized incomplete gamma & beta, studentTCdf, chiSquareCdf, tCritical;
+  bisection inverse-t). **Caught + steered around the proportion category trap** in
+  TASK-016's brief: the seed files proportion under `statistics-basics`, which has NO
+  category file (the link gate would fail) → directed Codex to use `foundations`;
+  verified the four others use `inferential-statistics`. **TASK-016 verification (this
+  session):** purity grep over `src/calc/**` clean; `astro check` 0/0/0; `npm test`
+  **33 files / 89 tests**; `npm run build` **37 pages / 1048 internal links / 0
+  violations**; all 5 new pages built to `dist/calculators/{p-value,t-test,chi-square,
+  t-table,proportion}/`; registry now exposes **26 engines**. **Committed the whole
+  TASK-012 → TASK-016 build-out as one commit `70dec83` (75 files, +2994/-25) and
+  pushed `29caf40..70dec83` to `main`** (per the standing "commit everything in one go
+  once all tasks finish" instruction) → GitHub Actions gate suite → Cloudflare deploy
+  in flight. **Calculators: full standalone set now live/deploying (~26 engines, 24+
+  standalone pages).** **>> NEXT PHASE <<** the calculator-before-articles pivot is
+  satisfied, so the **paused article backlog resumes** (publish order:
+  correlation-vs-causation → what-is-an-average → linear-regression). **Still-owed
+  follow-ups carried over:** SEO baselines on the live URL; rotate the `cfut_…`
+  Cloudflare token; consider a `ui-designer` polish pass on StatCalc now that the
+  full set exists. **Next session:** verify the deploy went green + spot-check a few
+  new calculator pages live, then resume article writing.
+
 - **2026-06-17** — **Calculator build-out kicked off: authored TASK-011 → TASK-016
   briefs; TASK-011 reviewed → CLOSED + committed/pushed (6 new calculator pages
   live).** This is the execution of the 2026-06-16 strategy pivot (build all
