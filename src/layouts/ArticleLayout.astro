@@ -124,7 +124,7 @@ const schema = articleSchema(
 
       <header class="article-head">
         <p class="page-kicker">{category.title}</p>
-        <h1 class="article-title">{article.title}</h1>
+        <h1 class="article-title">{article.h1 ?? article.title}</h1>
         <p class="article-standfirst">{article.description}</p>
         <div class="article-meta">
           {level && <span class="article-level"><span class="pip" aria-hidden="true"></span>{level}</span>}

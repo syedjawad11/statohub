@@ -100,7 +100,8 @@ shape:
 **Frontmatter** (valid per `src/content/config.ts`):
 ```
 ---
-title: "<compelling title; primary keyword in it; this is the page's ONLY H1>"
+title: "<compelling title; primary keyword in it; ~50-60 chars; drives <title> + H1>"
+h1: "<OPTIONAL shorter/cleaner visible headline; omit to use title as H1>"
 description: "<=155-char meta description containing the primary keyword"
 category: <the brief's category slug>
 primaryKeyword: <the brief's primary keyword>
@@ -153,11 +154,28 @@ import { routes } from '../../lib/links';
   (`routes.calculator("<calc>")`, only if standalone), the calculators hub
   (`routes.calculatorsHub()`), and home (`routes.home()`). When unsure, link the
   calculator or hub -- never an unpublished article. Keep `related: []`.
-- **>= 1 authoritative external link** (.gov/.edu/NIST/SEMATECH/peer-reviewed;
-  the NIST/SEMATECH e-Handbook is a safe default). Never fabricate figures, study
-  results, or citations. Every number is either one you computed in a worked
-  example or sourced from a real reference.
-- Accuracy first (YMYL): verify every formula and every worked-example number.
+- **External links: aim for >= 2 authoritative sources** (.gov/.edu/NIST/SEMATECH/
+  peer-reviewed/official docs; the NIST/SEMATECH e-Handbook is a safe default). One
+  is the hard floor the build tolerates, but **two is the target** for a teaching
+  article -- e.g. NIST plus a university stats page or a statistical-agency
+  definition. **Distribute them naturally** in the relevant sections (a definition,
+  a method, a formula) -- never dump every link in the final line.
+- **Descriptive anchor text -- never bare URLs or generic phrases.** Write
+  `[NIST/SEMATECH e-Handbook, Measures of Scale](https://...)`, NOT
+  `[https://...](https://...)` and NOT "click here" / "source" / "read more" /
+  "this". The anchor should tell the reader (and a crawler) what the destination is.
+- **Verify before you write (YMYL accuracy).** When you explain a formula,
+  distribution, hypothesis test, regression model, probability concept, or any
+  technical claim, ground it in an authoritative academic/governmental/official
+  source (NIST handbook, a university stats department, a peer-reviewed text) and
+  make sure your statement matches it. Never fabricate figures, study results, or
+  citations. Every number is one you computed in a worked example or sourced from a
+  real reference; verify every formula and every worked-example number.
+- **Optional `h1` frontmatter field.** The `title` is the page's H1 by default. If
+  the SEO `title` is long (~60+ chars) or keyword-front-loaded, you MAY add an
+  `h1: "<shorter, cleaner headline>"` to the frontmatter -- the layout renders it as
+  the visible H1 while `title` still drives the `<title>` tag and metadata. Omit it
+  to keep `title` as the H1 (fully backward-compatible).
 
 ```bash
 python content-ops/content_db.py set-status "$SLUG" in_review
@@ -165,10 +183,14 @@ python content-ops/content_db.py set-status "$SLUG" in_review
 
 ---
 
-## Step 4 -- Mechanical QA gate (the reviewer checklist, automated)
+## Step 4 -- Mechanical QA gate (TIERED: hard fails block, warnings/advisories don't)
 
-This mirrors the HARD items in `.claude/seo-playbook.md` section 8. Run it and
-fix every failure before building. Adjust the `SLUG`/keyword inputs as needed.
+This mirrors `.claude/seo-playbook.md` section 8. It sorts findings into **three
+tiers** and **only exits non-zero on a hard fail**. Hard fails are objective
+indexing/accessibility/build breakers -- you MUST fix them before building.
+Warnings are soft signals (link counts, anchor quality, heading hierarchy, keyword
+placement) -- **fix them when you reasonably can**, but they never block a publish.
+Advisories are stylistic nudges, reported only. Adjust the `SLUG` input as needed.
 
 ```bash
 python - "$SLUG" <<'PY'
@@ -179,62 +201,146 @@ text = p.read_text(encoding="utf-8")
 m = re.match(r'^---\s*\n(.*?)\n---\s*\n(.*)$', text, re.DOTALL)
 if not m: print("QA_FAIL: no parseable frontmatter"); sys.exit(1)
 fm, body = m.group(1), m.group(2)
-fails = []
+hard, warn, adv = [], [], []
 
 # strip import lines + fenced code blocks for prose-based checks
 prose = re.sub(r'^import .*$', '', body, flags=re.MULTILINE)
 prose_no_code = re.sub(r'```.*?```', '', prose, flags=re.DOTALL)
 
-# 1. word count >= 2000 (body prose, code blocks excluded)
-wc = len(re.findall(r'\b\w+\b', prose_no_code))
-print(f"WORD_COUNT={wc}")
-if wc < 2000: fails.append(f"word_count {wc} < 2000")
+def fm_field(name):
+    mm = re.search(rf'^{name}:\s*(.+)$', fm, re.MULTILINE)
+    return mm.group(1).strip().strip('"').strip("'") if mm else ""
 
-# 2. no H1 in body (no leading '# ' and no <h1)
+STOP = {"the","a","an","of","in","is","to","for","vs","and","on","with","how","what","why"}
+def sig_tokens(s):
+    return [w for w in re.findall(r"[a-z0-9]+", s.lower()) if len(w) > 2 and w not in STOP]
+def tokens_in(s, target):
+    t = target.lower(); return [w for w in s if w in t]
+
+title = fm_field("title"); desc = fm_field("description")
+pkw   = fm_field("primaryKeyword").lower()
+h1    = fm_field("h1")
+pk_sig = sig_tokens(pkw)
+
+# ---------------- HARD FAILS (block publish) ----------------
+# H1: exactly one. In this repo the title IS the only H1, so the body must have none.
 if re.search(r'^#\s', body, re.MULTILINE) or re.search(r'<h1', body, re.I):
-    fails.append("body contains an H1 (must start at H2)")
-
-# 3. starts at H2 somewhere
-if not re.search(r'^##\s', body, re.MULTILINE):
-    fails.append("no H2 heading found")
-
-# 4. no raw LaTeX
+    hard.append("body contains an H1 (the frontmatter title is the only H1; start the body at H2)")
+# title present
+if not title:
+    hard.append("title missing")
+else:
+    # title not truncated (SERP cuts ~60 chars / ~600px; >70 is clearly truncated)
+    if len(title) > 70: hard.append(f"title too long to display ({len(title)} chars > 70, will truncate in SERP)")
+    if len(title) < 15: hard.append(f"title implausibly short ({len(title)} chars)")
+    # primary keyword in title (exact phrase OR all significant tokens present -- allows natural variation)
+    tl = title.lower()
+    if pkw and pkw not in tl and not (pk_sig and all(w in tl for w in pk_sig)):
+        hard.append(f"primary keyword '{pkw}' not present in title")
+# meta description present
+if not desc:
+    hard.append("meta description missing")
+# slug contains the primary keyword (a clean variant is fine: >=50% of significant tokens in slug)
+if pk_sig:
+    matched = tokens_in(pk_sig, slug)
+    if len(matched) / len(pk_sig) < 0.5:
+        hard.append(f"slug '{slug}' does not contain the primary keyword (matched {matched} of {pk_sig})")
+# build-safety hard gates (orthogonal -- keep as hard)
+wc = len(re.findall(r'\b\w+\b', prose_no_code))
+if wc < 2000: hard.append(f"word_count {wc} < 2000")
+if not re.search(r'^##\s', body, re.MULTILINE): hard.append("no H2 heading found")
 if re.search(r'\$\$|\\dfrac|\\frac|\\sqrt|\\sum|\\cmd|\\left|\\right', body):
-    fails.append("raw LaTeX detected (use fenced Unicode formulas)")
-
-# 5. frontmatter has draft: true at this stage
+    hard.append("raw LaTeX detected (use fenced Unicode formulas -- it breaks the MDX build)")
 if not re.search(r'^draft:\s*true\s*$', fm, re.MULTILINE):
-    fails.append("frontmatter draft must be 'true' until both gates pass")
-
-# 6. at least one external authoritative link
-ext = re.findall(r'\]\((https?://[^)]+)\)', body)
-if not any(re.search(r'\.(gov|edu)|nist|sematech', u, re.I) for u in ext):
-    fails.append("no authoritative external link (.gov/.edu/NIST/SEMATECH)")
-
-# 7. no hand-typed internal hrefs (internal links must use Link/url/routes)
+    hard.append("frontmatter draft must be 'true' until both gates pass")
 if re.search(r'\]\((/[^)]*)\)', body) or re.search(r'href="/', body):
-    fails.append("hand-typed internal link found (use <Link to={routes.X()}>)")
+    hard.append("hand-typed internal link found (use <Link to={routes.X()}>)")
 
-# 8. primary keyword present in first ~100 words (case-insensitive)
-pk = re.search(r'^primaryKeyword:\s*(.+)$', fm, re.MULTILINE)
-if pk:
-    pkw = pk.group(1).strip().strip('"').lower()
-    first100 = ' '.join(re.findall(r'\b[\w-]+\b', prose_no_code)[:100]).lower()
-    if pkw not in first100:
-        fails.append(f"primary keyword '{pkw}' not in first 100 words")
+# ---------------- WARNINGS (log, do not block) ----------------
+# external links + anchor quality
+links = re.findall(r'\[([^\]]*)\]\((https?://[^)]+)\)', body)
+ext = [(a, u) for (a, u) in links]
+auth = [u for (a, u) in ext if re.search(r'\.(gov|edu)|nist|sematech', u, re.I)]
+if not auth:
+    hard.append("no authoritative external link at all (.gov/.edu/NIST/SEMATECH) -- minimum 1 to build")
+if len(ext) < 2:
+    warn.append(f"only {len(ext)} external link(s); soft target for a teaching article is >= 2 authoritative sources")
+GENERIC = {"click here","here","this","link","source","read more","learn more","more","this page","website","click","read"}
+for a, u in ext:
+    al = a.strip().lower()
+    if al.startswith("http") or a.strip() == u:
+        warn.append(f"bare-URL anchor text for {u} (use a descriptive phrase)")
+    elif al.strip(" .") in GENERIC:
+        warn.append(f"generic anchor text '{a}' for {u} (describe the destination)")
+# primary keyword in first ~100 words
+first100 = ' '.join(re.findall(r'\b[\w-]+\b', prose_no_code)[:100]).lower()
+if pkw and pkw not in first100 and not (pk_sig and all(w in first100 for w in pk_sig)):
+    warn.append(f"primary keyword '{pkw}' not in the first ~100 words")
+# heading hierarchy: never skip a level (e.g. H2 -> H4)
+headings = [(len(h2), txt.strip()) for h2, txt in re.findall(r'^(#{2,6})\s+(.+)$', body, re.MULTILINE)]
+prev = 1
+for lvl, txt in headings:
+    if lvl > prev + 1: warn.append(f"heading level skip (H{prev} -> H{lvl}): '{txt}'")
+    prev = lvl
+# possible keyword stuffing in headings
+if pkw:
+    stuffed = sum(1 for _, txt in headings if pkw in txt.lower())
+    if stuffed > 3: warn.append(f"primary keyword appears in {stuffed} headings (possible stuffing)")
+# title length outside the ideal 50-60 range (within hard bounds)
+if title and not (50 <= len(title) <= 60):
+    warn.append(f"title length {len(title)} outside the ideal 50-60 chars")
+# meta description length outside ~120-160
+if desc and not (120 <= len(desc) <= 160):
+    warn.append(f"meta description length {len(desc)} outside the ideal ~150-160 chars")
 
-if fails:
-    print("QA_RESULT: FAIL")
-    for f in fails: print("  - "+f)
-    sys.exit(1)
-print("QA_RESULT: PASS")
+# ---------------- ADVISORIES (report only) ----------------
+if title and len(title) > 60 and not h1:
+    adv.append("title > 60 chars and no 'h1' override -- consider adding a shorter h1 field")
+if title and pkw and pkw not in title.lower():
+    adv.append("primary keyword is not an exact-match substring of the H1 (acceptable; natural variation)")
+
+def emit(label, items):
+    print(f"{label}: {len(items)}")
+    for it in items: print("  - " + it)
+print(f"WORD_COUNT={wc}")
+emit("HARD_FAILS", hard); emit("WARNINGS", warn); emit("ADVISORIES", adv)
+if hard:
+    print("QA_RESULT: FAIL (hard fails present)"); sys.exit(1)
+print("QA_RESULT: PASS (warnings/advisories are non-blocking)")
 PY
 ```
 
-Also verify, by reading: every brief keyword appears and reads naturally; the
-worked example numbers are correct; no AI-writing tells. If QA fails, fix the
-article and re-run, up to **2 revision rounds**. If it still fails after 2 rounds,
-go to the **Deferred** failure path (Step 6b) -- do not force a bad article live.
+**Broken-link check (hard fail on 4xx/5xx; unreachable = warning only).** External
+links that resolve to an error page are a hard fail; a sandbox network failure
+(no response) is NOT -- we can't penalize an article for the sandbox lacking egress.
+
+```bash
+python - "$SLUG" <<'PY' | tee /tmp/linkstatus.txt
+import sys, re, pathlib
+b = pathlib.Path(f"src/content/articles/{sys.argv[1]}.mdx").read_text(encoding="utf-8")
+for u in sorted(set(re.findall(r'\]\((https?://[^)]+)\)', b))): print(u)
+PY
+BROKEN=0
+while IFS= read -r u; do
+  [ -z "$u" ] && continue
+  CODE=$(curl -s -o /dev/null -L --max-time 20 -A "Mozilla/5.0 statohub-linkcheck" -w "%{http_code}" "$u" || echo "000")
+  echo "LINKCHECK $CODE $u"
+  case "$CODE" in
+    4??|5??) echo "  -> BROKEN (hard fail)"; BROKEN=1 ;;
+    000)     echo "  -> unreachable from sandbox (warning only, not blocking)" ;;
+  esac
+done < /tmp/linkstatus.txt
+echo "BROKEN_LINKS=$BROKEN"
+[ "$BROKEN" -eq 0 ] || { echo "QA_FAIL: a broken external link (4xx/5xx) was found"; }
+```
+
+If `BROKEN_LINKS=1`, treat it as a hard fail: fix or replace the dead link before
+building. Also verify, by reading: every brief keyword appears and reads naturally;
+the worked-example numbers are correct against an authoritative source; no
+AI-writing tells. If a HARD fail remains, fix the article and re-run, up to
+**2 revision rounds**. If it still hard-fails after 2 rounds, go to the **Deferred**
+failure path (Step 6b) -- do not force a bad article live. Warnings and advisories
+do **not** trigger the deferred path; record them and proceed.
 
 ---
 

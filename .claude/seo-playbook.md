@@ -9,6 +9,25 @@ The site's wedge (from the SEO study): **teach the concept AND give the
 calculator on the same page.** Calculator giants have tools with no teaching;
 educators teach with no tools. Every article does both.
 
+### How rules are enforced — three tiers
+
+Not every rule is equal. The pipeline (the mechanical QA gate in
+`content-ops/cloud-routine/publish-next-article.md` and the reviewer) sorts every
+SEO check into one of three tiers. Each rule below is tagged with its tier.
+
+- **[HARD]** — objective indexing / accessibility / build breakers. **Blocks
+  publish** (non-zero exit; reviewer returns CHANGES_REQUESTED). Examples: exactly
+  one H1, primary keyword in `<title>`, title present and not truncated, meta
+  description present, slug contains the primary keyword, no broken external link,
+  plus the §7 build contracts.
+- **[WARN]** — soft ranking signals. **Logged and annotated, never blocks.** Fix
+  when reasonable. Examples: too few external links, primary keyword missing from
+  the first 100 words, generic/bare-URL anchor text, a skipped heading level,
+  keyword stuffing in headings, title length outside the ideal range.
+- **[ADVISORY]** — stylistic nudges. **Reported only.** Examples: a shorter `h1`
+  variation vs the SEO title, exact-match keyword in the H1, link distribution
+  beyond the minimum, semantic/related-keyword coverage.
+
 ---
 
 ## 1. Length & depth
@@ -23,9 +42,10 @@ educators teach with no tools. Every article does both.
 - Use **every keyword in the brief**, worked in **naturally**. No stuffing, no
   awkward verbatim repetition. Aim for semantic coverage — synonyms, related
   sub-topics, the questions a learner actually asks.
-- The **primary keyword** appears in the **title (which the layout renders as the
-  page's only H1) and the first 100 words** of the body, then naturally
-  thereafter.
+- The **primary keyword** appears in the **`<title>`** **[HARD]** — exact phrase or
+  all of its significant words, so natural variation is fine ("What Is an Average?"
+  satisfies the keyword "what is the average"). It should also appear in the **first
+  ~100 words** of the body **[WARN]**, then naturally thereafter.
 - **One keyword → one article.** Never target a keyword the brief didn't assign —
   it belongs to another article (the DB enforces this; respect it in prose too).
 - Tool-intent keywords (e.g. "… calculator") live on the standalone calculator
@@ -44,11 +64,19 @@ educators teach with no tools. Every article does both.
   flags genuinely tangled prose, not every formula.
 
 ## 4. Structure (semantic MDX)
-- The page title (from frontmatter) is the **only H1** — `ArticleLayout` renders
-  it automatically above the body. **Never write an H1 in the MDX body** (no
-  `# Heading` and no `<h1>`). A body H1 duplicates the title and trips
-  duplicate-H1 SEO audits (Ahrefs flags it). **Start the body at H2** and nest H3
-  below it — no skipped levels, no decorative headings.
+- **Exactly one H1 [HARD].** The page title (from frontmatter) is the only H1 —
+  `ArticleLayout` renders it automatically above the body. **Never write an H1 in
+  the MDX body** (no `# Heading` and no `<h1>`). A body H1 duplicates the title and
+  trips duplicate-H1 SEO audits (Ahrefs flags it). **Start the body at H2** and nest
+  H3 below it.
+- **No skipped heading levels [WARN].** Go H2 → H3 → H4 in order; never jump H2 → H4.
+  No decorative headings, and don't cram the primary keyword into many headings
+  (keyword stuffing in headings is a **[WARN]**).
+- **Optional shorter `h1` [ADVISORY].** The SEO `title` doubles as the visible H1 by
+  default. If the `title` is long (~60+ chars) or keyword-front-loaded for the SERP,
+  you MAY add an `h1: "<cleaner headline>"` frontmatter field — the layout renders it
+  as the visible H1 while `title` still drives the `<title>` tag and metadata. Omit
+  it to keep `title` as the H1 (backward-compatible).
 - Lead with a short answer / definition so a reader (and an AI overview) gets the
   gist in the first paragraph.
 - Include **at least one fully worked example** with real numbers.
@@ -59,13 +87,31 @@ educators teach with no tools. Every article does both.
   placed right after the formula/worked-example section ("try it yourself").
 
 ## 5. External links & evidence (E-E-A-T)
-- **At least one external link** to a reliable, authoritative source — prefer
-  `.gov`, `.edu`, NIST/SEMATECH, peer-reviewed or a recognised standards body
-  (e.g. the NIST/SEMATECH e-Handbook of Statistical Methods). Open-access
-  textbooks and official documentation are acceptable.
-- **Never fabricate** statistics, study results, citations, or quotes. If you
-  state a figure, it must be either a worked example you computed or sourced from
-  a real, linkable reference.
+- **No broken external links [HARD].** Every outbound link must resolve (no 4xx/5xx).
+  The gate curl-checks each one; a dead link blocks publish. (A link that's merely
+  unreachable from the build sandbox — no response at all — is a warning, not a
+  block, since that's a sandbox-egress issue, not a bad link.)
+- **At least one authoritative external link [HARD floor]; aim for two [WARN].** One
+  reliable source (`.gov`, `.edu`, NIST/SEMATECH, peer-reviewed, or a recognised
+  standards body — the NIST/SEMATECH e-Handbook is a safe default; open-access
+  textbooks and official docs are fine) is the minimum the build tolerates. The
+  **target for a teaching article is two** (editorial/round-up pieces lean toward
+  three) — e.g. NIST plus a university stats page. Fewer than the soft target is a
+  **[WARN]**, not a block.
+- **Descriptive anchor text [WARN].** Anchor text must describe the destination —
+  `[NIST/SEMATECH e-Handbook, Measures of Scale](…)`, never a bare URL
+  `[https://…](https://…)` and never "click here" / "source" / "read more" / "this".
+- **Distribute links naturally [ADVISORY].** Place each link in the section it
+  supports (a definition, a method, a formula); don't pile them all into the final
+  line.
+- **Verify before you write — accuracy first (YMYL) [HARD on fabrication].** When you
+  explain a formula, distribution, hypothesis test, regression model, probability
+  concept, or any technical claim, ground it in an authoritative academic /
+  governmental / official source (NIST handbook, a university statistics department,
+  a peer-reviewed text) and confirm your statement matches it **before** writing.
+  **Never fabricate** statistics, study results, citations, or quotes — a fabricated
+  figure or citation is a hard fail. Every figure is either a worked example you
+  computed or one sourced from a real, linkable reference.
 - Show formulas and make examples reproducible (a reader can follow the numbers).
 - Definitions should be precise and consistent with standard usage.
 
@@ -81,7 +127,8 @@ educators teach with no tools. Every article does both.
 - **Frontmatter must satisfy `src/content/config.ts`:** `title`, `description`
   (meta description), `category` (a real category slug), `primaryKeyword`,
   `keywords` (array, all from the brief), `phase` (1|2|3), `calculator` (the
-  embed slug, when assigned), optional `related`, and `draft: true`.
+  embed slug, when assigned), optional `h1` (shorter visible headline), optional
+  `related`, and `draft: true`.
 - **`draft: true`** until the reviewer passes it and a human flips it. Unfinished
   articles never ship.
 - **Flat trailing-slash URLs**, primary-keyword-only slug, no category in the
@@ -105,22 +152,35 @@ educators teach with no tools. Every article does both.
   until it ships, formulas must be MDX-safe.)
 
 ## 8. Reviewer pass/fail checklist (score /100)
-A draft **passes** only if all hard items hold; soft items inform the score.
+The verdict is driven by the **HARD** tier only: a draft returns
+**CHANGES_REQUESTED** if (and only if) any HARD item fails. WARN and ADVISORY items
+shape the score and are reported as a fix-list, but they **never** flip the verdict
+to CHANGES_REQUESTED on their own.
 
-Hard (any failure → CHANGES_REQUESTED):
-1. ≥ 2000 words of real teaching.
-2. Every brief keyword present and used naturally (no stuffing).
-3. Primary keyword in title (= page H1) + first 100 words of the body. **No H1
-   in the MDX body** — body starts at H2.
-4. ≥ 1 authoritative external link that actually resolves.
-5. No fabricated statistics/citations.
-6. Frontmatter valid per `src/content/config.ts`; `draft: true`.
-7. Internal links use `Link`/`url()`; no hand-typed or non-slash hrefs.
-8. No keyword owned by another article (cannibalization).
+**HARD (any failure → CHANGES_REQUESTED):**
+1. Exactly one H1 — the frontmatter title; **no H1 in the MDX body** (body starts at H2).
+2. Primary keyword present in the `<title>` (exact phrase or all significant words).
+3. `<title>` present and not truncated (≤ ~70 chars; ~50–60 ideal).
+4. Meta `description` present.
+5. Slug contains the primary keyword (a clean variant is fine).
+6. No broken external link (every outbound URL resolves; no 4xx/5xx).
+7. ≥ 1 authoritative external link present.
+8. ≥ 2000 words of real teaching.
+9. No raw LaTeX; no hand-typed/non-slash internal hrefs (`Link`/`url()` only); valid
+   frontmatter per `src/content/config.ts`; `draft: true`.
+10. No fabricated statistics/citations; no keyword owned by another article
+    (cannibalization).
 
-Soft (shape the score, flag for improvement):
-- Active-voice ratio, readability, tone.
-- Worked example quality; FAQ where warranted.
-- E-E-A-T signals (sourced definitions, reproducible math).
-- Absence of AI-writing tells (see the `content-quality-editor` agent for the
-  optional final polish pass).
+**WARN (lower the score, list as a fix — do not block):**
+- Fewer than the soft external-link target (teaching ≥ 2, editorial ≥ 3).
+- Primary keyword missing from the first ~100 words.
+- Generic or bare-URL anchor text.
+- Skipped heading level (e.g. H2 → H4); keyword stuffing in headings.
+- Title or meta-description length outside the ideal range.
+- Active-voice ratio, readability, tone; worked-example quality; FAQ where warranted.
+
+**ADVISORY (note only):**
+- A shorter `h1` variation vs the SEO title; exact-match keyword in the H1.
+- Link distribution beyond the minimum; semantic/related-keyword coverage.
+- AI-writing tells (see the `content-quality-editor` agent for the optional final
+  polish pass).

@@ -32,11 +32,14 @@ command first.
 ## Write the article
 Produce `src/content/articles/<slug>.mdx`:
 
-- **Frontmatter** valid per `src/content/config.ts`: `title`, `description`
-  (compelling ≤155-char meta description containing the primary keyword),
-  `category` (the brief's slug), `primaryKeyword`, `keywords` (every keyword from
-  the brief), `phase`, `calculator` (the embed slug when assigned), `related`
-  (the brief's internal-link targets that exist), and **`draft: true`**.
+- **Frontmatter** valid per `src/content/config.ts`: `title` (primary keyword in it,
+  ~50–60 chars so it doesn't truncate in the SERP — this drives both the `<title>`
+  tag and the H1), `description` (compelling ≤155-char meta description containing the
+  primary keyword), `category` (the brief's slug), `primaryKeyword`, `keywords`
+  (every keyword from the brief), `phase`, `calculator` (the embed slug when
+  assigned), an **optional `h1`** (a shorter/cleaner visible headline — add it only
+  when the SEO `title` is long or awkward as a headline; omit to use `title` as the
+  H1), `related` (the brief's internal-link targets that exist), and **`draft: true`**.
 - **Body** (≥2000 words) following the playbook. **Do not write an H1 in the body**
   — `ArticleLayout` already renders the frontmatter `title` as the page's only H1,
   so a body `#`/`<h1>` would create a duplicate H1 (an SEO audit failure). **Start
@@ -47,8 +50,18 @@ Produce `src/content/articles/<slug>.mdx`:
 - **Every brief keyword used naturally**; primary keyword in title and the first
   100 words of the body. Active voice, educational tone, short paragraphs,
   grade ~8–10.
-- **≥1 authoritative external link** (.gov/.edu/NIST/peer-reviewed; the
-  NIST/SEMATECH e-Handbook is a reliable default). Never fabricate figures.
+- **External links: ≥1 is the hard floor, aim for 2** authoritative sources
+  (.gov/.edu/NIST/peer-reviewed/official docs; the NIST/SEMATECH e-Handbook is a
+  reliable default) — e.g. NIST plus a university stats page. **Use descriptive
+  anchor text** that names the destination (`[NIST/SEMATECH e-Handbook, Measures of
+  Scale](…)`), **never a bare URL** (`[https://…](https://…)`) or a generic phrase
+  ("click here", "source", "read more"). **Distribute** the links into the sections
+  they support — don't dump them in the last line. Confirm each URL resolves.
+- **Verify technical claims against authoritative sources before writing.** For any
+  formula, distribution, hypothesis test, regression model, or probability concept,
+  check it against an authoritative academic/governmental/official source (NIST
+  handbook, a university statistics department, a peer-reviewed text) and make sure
+  your statement matches it. Never fabricate figures, study results, or citations.
 - **Internal links only via the typed `Link` / `url(id)` registry** — never
   hand-type an internal href. Match how existing pages do it.
 - **Formulas must be MDX-safe — NO raw LaTeX.** There is no math renderer, and

@@ -15,44 +15,54 @@ A drafted `src/content/articles/<slug>.mdx` and its brief. Load
 **`.claude/seo-playbook.md`** (the rules) and **`src/content/config.ts`** (the
 frontmatter contract) before scoring.
 
-## Score against the playbook §8 checklist (out of 100)
+## Score against the playbook §8 checklist (out of 100) — three tiers
 
-Run mechanical checks with your tools, don't eyeball:
-- **Word count:** `Bash` a word count on the body (exclude frontmatter). Must be
-  ≥ 2000.
-- **Keyword coverage:** for each keyword in the brief, Grep the draft. Flag any
-  missing keyword and any keyword that reads as stuffed/unnatural.
-- **Primary keyword placement:** present in title (the layout renders it as the
-  page H1) and the first ~100 words of the body.
-- **No H1 in the body:** Grep the draft for a markdown `# ` heading or `<h1>` —
-  the body must start at H2. A body H1 duplicates the frontmatter title's H1 and
-  is an automatic CHANGES_REQUESTED.
-- **External link:** ≥ 1 link to an authoritative source (.gov/.edu/NIST/
-  peer-reviewed/official). Confirm the URL is well-formed and resolves
-  (`Bash` curl -sI is acceptable). Flag any fabricated-looking statistic or
-  citation.
-- **Frontmatter validity:** matches `src/content/config.ts` (category is a real
-  slug, `keywords` array present, `phase` valid, `calculator` slug exists when
-  set, `draft: true`).
-- **Internal links:** Grep for raw `href="/` or markdown `](/` internal links —
-  internal links must go through the `Link` / `url()` registry. Flag hand-typed
-  ones. (`scripts/check-links.mjs` is the build's hard gate; pre-empt it.)
-- **Cannibalization:** query the board —
-  `python content-ops/content_db.py show <slug>` for the article's own keywords,
-  and check the draft isn't targeting a keyword owned by a different article
-  (`Grep` the other articles or query the DB). One keyword → one article.
+Run mechanical checks with your tools, don't eyeball. Sort every finding into the
+playbook's three tiers. **Only HARD failures flip the verdict to
+CHANGES_REQUESTED**; WARN and ADVISORY items lower the score and go on the fix-list
+but never block on their own.
 
-Soft factors that shape the score: active-voice ratio, readability (~grade
-8–10 guide-rail; don't penalise necessary stats terms), tone, worked-example
-quality, FAQ presence where warranted, E-E-A-T signals, and AI-writing tells
-(generic intros, "in conclusion", repetitive scaffolding, em-dash overuse,
-listicle bloat).
+**HARD (any failure → CHANGES_REQUESTED):**
+- **One H1, none in the body:** Grep for a markdown `# ` heading or `<h1>` — the body
+  must start at H2 (the frontmatter title is the only H1).
+- **Primary keyword in the `<title>`:** the title contains the primary keyword as an
+  exact phrase or via all of its significant words (natural variation is fine).
+- **Title present and not truncated:** ≤ ~70 chars (≤ ~60 is ideal).
+- **Meta `description` present.**
+- **Slug contains the primary keyword** (a clean variant is acceptable).
+- **No broken external links:** `Bash` curl each outbound URL — any 4xx/5xx is a hard
+  fail. (No response at all = sandbox egress issue → treat as WARN, not a block.)
+- **≥ 1 authoritative external link present** (.gov/.edu/NIST/peer-reviewed/official).
+- **Word count ≥ 2000** on the body (exclude frontmatter).
+- **No raw LaTeX; internal links via `Link`/`url()`** (Grep for raw `href="/` or
+  markdown `](/`); valid frontmatter per `src/content/config.ts` (real category,
+  `keywords` array, valid `phase`, `calculator` slug exists when set, `draft: true`).
+- **No fabricated statistics/citations; no cannibalization** — query the board
+  (`python content-ops/content_db.py show <slug>`) and confirm the draft targets no
+  keyword owned by another article. One keyword → one article.
+
+**WARN (lower the score, list as a fix — do NOT block):**
+- **External link count below the soft target** (teaching ≥ 2, editorial ≥ 3).
+- **Primary keyword missing from the first ~100 words.**
+- **Generic/bare-URL anchor text** — Grep for `[http` anchors or "click here" /
+  "source" / "read more" / "this".
+- **Skipped heading level** (e.g. H2 → H4); **keyword stuffing in headings.**
+- **Title/meta-description length outside the ideal range.**
+- Keyword coverage gaps (a brief keyword missing or reading as stuffed/unnatural),
+  active-voice ratio, readability (~grade 8–10 guide-rail; don't penalise necessary
+  stats terms), tone, worked-example quality, FAQ presence where warranted.
+
+**ADVISORY (note only):**
+- A shorter `h1` variation vs the SEO title; exact-match keyword in the H1.
+- Link distribution; AI-writing tells (generic intros, "in conclusion", repetitive
+  scaffolding, em-dash overuse, listicle bloat).
 
 ## Verdict
-- **PASS** only if **every hard item** holds. Otherwise **CHANGES_REQUESTED**.
-- Return: the numeric score, the verdict, and a **specific, actionable fix list**
-  (quote the offending text / name the missing keyword / give the exact rule).
-  No vague advice.
+- **PASS** if **every HARD item** holds (WARN/ADVISORY items may remain — list them).
+  Otherwise **CHANGES_REQUESTED**.
+- Return: the numeric score, the verdict, and a **tiered, specific, actionable
+  fix list** (mark each item HARD/WARN/ADVISORY; quote the offending text / name the
+  missing keyword / give the exact rule). No vague advice.
 
 ## Log it
 Record the result on the board:

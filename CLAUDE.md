@@ -69,6 +69,101 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-18** — **SEO baseline shipped: tiered article-validation spec wired into
+  the whole publishing pipeline + the 4 published articles retrofitted.** Scope was
+  **articles only** (calculator-page prose optimization explicitly deferred). Replaced
+  the old flat "everything is a hard must" QA model with a **three-tier spec**: **HARD**
+  (blocks publish / non-zero exit — objective indexing/accessibility/build breakers:
+  exactly one H1, primary keyword in `<title>`, title present + not truncated, meta
+  description present, slug contains the primary keyword, **no broken external link**
+  via curl, ≥1 authoritative link, ≥2000 words, no LaTeX, typed internal links, no
+  fabrication/cannibalization); **WARN** (logged, never blocks — <2 external links,
+  primary kw not in first 100 words, generic/bare-URL anchors, heading-level skips,
+  heading keyword-stuffing, title/desc length out of ideal range); **ADVISORY** (report
+  only — shorter `h1` variation, exact-match kw in H1, link distribution). Plus a YMYL
+  **accuracy directive**: verify formulas/distributions/tests/regression/probability
+  against authoritative sources *before* writing. **Part A (pipeline) — re-tiered 4
+  files:** [`content-ops/cloud-routine/publish-next-article.md`](content-ops/cloud-routine/publish-next-article.md)
+  (rewrote Step 4's Python QA gate to collect `hard_fails`/`warnings`/`advisories` and
+  exit non-zero only on hard fails, added a curl broken-link check where 4xx/5xx =
+  hard fail but unreachable-from-sandbox = warning, demoted external-link-min + kw-in-100w
+  to warnings, added bare/generic-anchor + heading-skip + heading-stuffing warnings,
+  added kw-in-title/title-len/slug-contains-kw hard checks, and updated Step 3 prose
+  rules: descriptive anchors, distribute links, verify-before-writing, optional `h1`),
+  [`.claude/seo-playbook.md`](.claude/seo-playbook.md) (new "three tiers" section; §2/§4/§5/§7/§8
+  re-tagged `[HARD]`/`[WARN]`/`[ADVISORY]`), and both agents
+  ([`stats-article-writer.md`](.claude/agents/stats-article-writer.md) +
+  [`stats-article-reviewer.md`](.claude/agents/stats-article-reviewer.md) — reviewer now
+  flips CHANGES_REQUESTED **only** on hard fails; WARN/ADVISORY are non-blocking notes).
+  **Key matching nuance baked in:** primary-keyword-in-title and slug-contains-keyword
+  use **tolerant token matching** (exact phrase OR all significant words), so natural
+  variation passes — e.g. title "What Is an Average?" satisfies primary keyword "what
+  is the average". Verified the new gate against all 4 published articles: the **only**
+  hard fail is the (expected) `draft:true` check; every new hard check passes. **Part B
+  — optional H1:** added `h1: z.string().optional()` to the articles schema in
+  [`src/content/config.ts`](src/content/config.ts) and wired
+  [`ArticleLayout.astro`](src/layouts/ArticleLayout.astro) line 127 to render
+  `{article.h1 ?? article.title}` (visible H1 only; `<title>`, breadcrumb, and
+  `articleSchema` still use `title`) — fully backward-compatible (built
+  correlation page H1 still falls back to the title). **Part C — retrofitted the 4
+  published articles** (`git pull --rebase` first; local tree was 4 commits behind —
+  the 2 cloud-published articles `correlation-vs-causation` + `what-is-an-average`
+  weren't local). **Corrected the user's premise:** all 4 already had ≥1 external link
+  (not "missing" as thought) — but **3 of 4 used bare-URL anchors**
+  (`[https://…](https://…)`), and **correlation-vs-causation cited the wrong NIST page**
+  (`eda333` is actually titled "1.3.3.3. Block Plot" — an off-topic citation the cloud
+  routine grabbed by accident, with a fabricated description). So the retrofit was a
+  quality pass: fixed all 3 bare anchors to descriptive text, **replaced** the wrong
+  Block Plot link with the canonical [ABS — Correlation and causation] gov source,
+  relocated `what-is-an-average`'s end-only link into context, and brought **each
+  article to the soft target of 2 authoritative links** (added OpenStax open-access
+  textbook sections + Penn State STAT 800), **all 8 links curl-verified 200**. Re-ran
+  the tiered gate: all 4 now `WARN: NONE`. **Part D — gates green:** `astro check`
+  0/0/0, `npm test` **33 files / 89 tests**, `npm run build` **39 pages / 1112 internal
+  links / 0 violations**; committed + pushed to `main` (triggers Actions → Cloudflare
+  deploy). **Effect:** future auto-published articles are validated by the tiered gate
+  (cloud routines read `publish-next-article.md` at run time — no trigger reconfig
+  needed); the 4 live articles now have clean, descriptive, dual-source citations.
+  **Still owed (carried over):** the `seo-technical` + `seo-drift` baseline capture on
+  the live URL (separate from this content/pipeline baseline); a future
+  calculator-page-prose SEO pass. **Next session:** verify this push deployed green +
+  spot-check a retrofitted article live (e.g. `/correlation-vs-causation/` shows the
+  ABS + PSU links); optionally run the live-URL technical SEO baseline.
+
+- **2026-06-17 (evening)** — **Article-publishing engine SCHEDULED: two recurring
+  claude.ai cloud routines now drain the queue at 2 articles/day, hands-off.** This
+  resumes the paused article backlog via automation rather than manual writing. Built
+  on the proven path (the 2026-06-15 one-time TEST routine that published
+  `how-to-find-the-range` end-to-end: write → QA gate → build gate → push to `main` →
+  Actions → Cloudflare). Created **two recurring `RemoteTrigger` cloud routines** (NOT
+  `CronCreate`, which is session-only and dies with the REPL), each running the
+  self-contained `content-ops/cloud-routine/publish-next-article.md` against the
+  connected `syedjawad11/statohub` repo, model `claude-sonnet-4-6`, tools
+  Bash/Read/Write/Edit/Glob/Grep, with the "no fabricated success" prompt (only report
+  success after the push SHA is confirmed). **Times set in Malta time** (user is on
+  CEST = UTC+2 in June): **23:00 Malta → `0 21 * * *` UTC** (`trig_011bnYzdcX76mXawduUgnHnP`,
+  next_run 2026-06-17T21:02:47Z) and **03:00 Malta → `0 1 * * *` UTC**
+  (`trig_01DhQoEV3sRaKynzFC88xTzh`, next_run 2026-06-18T01:01:37Z). Both `enabled:true`;
+  verified each `next_run_at` lands on the correct UTC hour (21 / 01) — the ~1–2 min
+  offset is backend jitter, harmless. **(later, same session) Routine A moved 23:00 →
+  23:45 Malta per user** — `update` to `45 21 * * *` (`trig_011bnYzdcX76mXawduUgnHnP`,
+  next_run 2026-06-17T21:45:00Z); Routine B unchanged. The routine no-ops cleanly
+  (`PUBLISH_RESULT: nothing_to_do`) once the **44 planned** articles drain. Publish
+  order (DB: phase → kd_min → volume DESC): **correlation-vs-causation →
+  what-is-an-average → linear-regression → …** (already published:
+  `standard-deviation-symbol`, `how-to-find-the-range`). **DST caveat (future, not
+  blocking):** a fixed-UTC cron drifts when Malta falls back to CET (UTC+1) in late
+  Oct 2026 — `45 21`/`0 1` UTC would then be 22:45/02:00 Malta; one-line `update` to
+  `45 22`/`0 2` at that point. **Cloudflare token cleanup: DROPPED per user** (tokens
+  already rotated/dead — explicitly told to ignore). **SEO baseline: DEFERRED to
+  tomorrow** (user low on session usage; better done whole than started + abandoned) —
+  still owed: `seo-technical` + `seo-drift` baseline on the live URL. Dormant leftover
+  test triggers (`trig_01HuCPCJrcTmtwJzM6gfDqq1` statohub#1, `trig_01632qYF7JLCL7zqPGktmogx`
+  devnook — both empty-cron, never fire) left as-is. **Next session:** capture the SEO
+  baseline; then verify the first auto-published article (`correlation-vs-causation`)
+  went live — confirm the cloud-routine commit on `main`, a green Actions run, and
+  `https://statohub.com/correlation-vs-causation/` 200.
+
 - **2026-06-17 (later)** — **Calculator build-out COMPLETE: TASK-012 → TASK-016 all
   reviewed → CLOSED; the entire standalone set committed + pushed in one go (now
   deploying).** This closes the 2026-06-16 strategy pivot — every planned calculator

@@ -14,6 +14,7 @@ const articles = defineCollection({
   type: 'content', // MDX - filename = flat slug
   schema: z.object({
     title: z.string(),
+    h1: z.string().optional(),                  // optional shorter visible H1; falls back to title
     description: z.string(),                    // meta description
     category: reference('categories'),
     primaryKeyword: z.string(),
