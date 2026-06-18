@@ -1,0 +1,331 @@
+---
+title: "Linear Regression: Equation, Formula & How It Works"
+description: "Understand linear regression: the regression equation, slope and intercept formula, and how to fit a least-squares line with a fully worked numeric example."
+category: regression-correlation
+primaryKeyword: linear regression
+keywords:
+  - linear regression
+  - linear regression formula
+  - logistic regression
+  - regression analysis
+  - regression equation
+  - regression equations
+  - what is linear regression
+  - which regression equation best fits the data
+  - which regression equation best fits these data
+phase: 1
+calculator: linear-regression
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Linear regression** is a statistical method that describes the straight-line relationship between two numerical variables. Given a set of paired data points — an independent variable *x* and a dependent variable *y* — linear regression finds the single straight line that passes as close as possible to every point at once. That line is described by a regression equation, and once you have that equation, any value of *x* lets you predict a corresponding value of *y*.
+
+Regression analysis is one of the most widely used tools across statistics, economics, biology, engineering, and machine learning. The foundational version — simple linear regression with one predictor — is the starting point for every more complex model. Understanding what linear regression is, how its formula works, and how to read the output of a regression analysis gives you a transferable framework for all of quantitative research.
+
+---
+
+## What Is Linear Regression?
+
+Linear regression fits a straight line to a scatter plot of (x, y) data pairs. The goal is to choose the line's position and angle so that the vertical distances between the actual data points and the line are as small as possible. The standard method for choosing that line is **ordinary least squares (OLS)**: minimise the sum of the squared vertical gaps — called *residuals* — between each observed *y* and the corresponding predicted point on the line.
+
+The result is a unique line — there is exactly one least-squares line for any dataset — described by two numbers: the **slope** and the **intercept**. Every linear regression analysis reduces, at its core, to estimating those two numbers from the data and then using them to make predictions or understand a relationship.
+
+Simple linear regression involves exactly one predictor variable *x* and one response variable *y*. When two or more predictors are involved, the method extends to **multiple linear regression**, which uses the same underlying formula logic but in matrix form. This article focuses on the simple case.
+
+---
+
+## The Regression Equation
+
+The **regression equation** — also called the regression line, the line of best fit, or the least-squares line — takes the form:
+
+```
+ŷ = b₀ + b₁x
+```
+
+where:
+
+- **ŷ** (pronounced "y-hat") is the *predicted* value of the response variable for a given *x*
+- **b₀** is the **intercept** — the predicted value of *y* when *x* equals zero
+- **b₁** is the **slope** — how many units *y* changes for every one-unit increase in *x*
+- **x** is the value of the predictor (independent) variable
+
+Some textbooks write regression equations as *ŷ = a + bx* (intercept first) or *y = mx + c* (slope first). The letters differ but the meaning is the same: two parameters fix the position and angle of a straight line. The form *b₀ + b₁x* is the notation most commonly used in modern statistics courses and software.
+
+One important detail about notation: the hat on *ŷ* signals that this is a *predicted* or *fitted* value, not an observed one. Actual observed values are written as *y*; predicted values from the line are *ŷ*. The difference *y − ŷ* for each data point is the **residual**, a measure of how far the model's prediction misses the actual observation at that point.
+
+You will also encounter the plural form: the **regression equations** for a dataset are the collection of prediction formulas at different *x* values. When a statistics problem asks you to compare two or more candidate regression equations to see which one fits best, each candidate is a different line with different slope and intercept values.
+
+---
+
+## The Linear Regression Formula: Slope and Intercept
+
+The **linear regression formula** for slope and intercept comes directly from minimising the sum of squared residuals. Setting the partial derivatives of that sum to zero yields two equations — the **normal equations** — whose solution gives:
+
+### Slope Formula
+
+```
+b₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)²
+```
+
+where:
+- xᵢ and yᵢ are individual data values
+- x̄ is the sample mean of all *x* values (x-bar)
+- ȳ is the sample mean of all *y* values (y-bar)
+- Σ is the summation operator (sum the expression for every data pair)
+
+The numerator, Σ(xᵢ − x̄)(yᵢ − ȳ), measures how much *x* and *y* vary together — the same quantity that sits at the heart of the correlation coefficient. The denominator, Σ(xᵢ − x̄)², is the total variability in *x* alone. Their ratio is the slope: the fraction of *y*'s co-movement with *x* that can be attributed to a one-unit increase in *x*.
+
+An equivalent computational form, easier to use when working with raw data sums:
+
+```
+b₁ = (n·Σxᵢyᵢ − Σxᵢ·Σyᵢ) / (n·Σxᵢ² − (Σxᵢ)²)
+```
+
+Both forms produce identical results. Use whichever is more convenient for the numbers at hand.
+
+### Intercept Formula
+
+Once the slope is known, the intercept follows from a key geometric property: the regression line always passes through the point of means (x̄, ȳ). Substituting that point into the line equation gives:
+
+```
+b₀ = ȳ − b₁ · x̄
+```
+
+This guarantees that if you substitute the mean of *x* into the regression equation, you get exactly the mean of *y* as the prediction. The line is anchored at the centre of the data cloud and tilted by the slope. The [NIST/SEMATECH e-Handbook of Statistical Methods, 4.1.4.1 — Simple Linear Regression](https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm) provides a full algebraic derivation of these formulas, including the matrix form used by statistical software.
+
+---
+
+## Fully Worked Example
+
+Work through the five paired values **x = 1, 2, 3, 4, 5** and **y = 2, 4, 5, 4, 5** — the default data for the linear regression calculator on this page — using the formulas above step by step.
+
+### Step 1: Calculate the Means
+
+```
+Sum of x:  1 + 2 + 3 + 4 + 5 = 15    x̄ = 15 / 5 = 3
+Sum of y:  2 + 4 + 5 + 4 + 5 = 20    ȳ = 20 / 5 = 4
+```
+
+### Step 2: Build the Deviation Table
+
+For each pair, compute the deviation of each value from its mean, the product of those two deviations, and the squared deviation of *x*:
+
+| xᵢ | yᵢ | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)(yᵢ − ȳ) | (xᵢ − x̄)² |
+|----|----|---------|---------|-------------------|------------|
+| 1  | 2  | −2      | −2      | 4                 | 4          |
+| 2  | 4  | −1      | 0       | 0                 | 1          |
+| 3  | 5  | 0       | +1      | 0                 | 0          |
+| 4  | 4  | +1      | 0       | 0                 | 1          |
+| 5  | 5  | +2      | +1      | 2                 | 4          |
+| **Sum** | | | | **6** | **10** |
+
+Sum of cross-products: Σ(xᵢ − x̄)(yᵢ − ȳ) = 4 + 0 + 0 + 0 + 2 = **6**
+Sum of squared x-deviations: Σ(xᵢ − x̄)² = 4 + 1 + 0 + 1 + 4 = **10**
+
+### Step 3: Calculate the Slope
+
+```
+b₁ = 6 / 10 = 0.6
+```
+
+The slope is **0.6**. For every one-unit increase in *x*, the predicted *y* value rises by 0.6 units.
+
+### Step 4: Calculate the Intercept
+
+```
+b₀ = ȳ − b₁ · x̄
+b₀ = 4 − 0.6 × 3
+b₀ = 4 − 1.8
+b₀ = 2.2
+```
+
+The intercept is **2.2**.
+
+### Step 5: Write the Regression Equation
+
+```
+ŷ = 2.2 + 0.6x
+```
+
+This is the regression equation for this dataset. To predict *y* for a new value of *x*, substitute it in directly. For x = 6 (a value outside the training set): ŷ = 2.2 + 0.6 × 6 = 2.2 + 3.6 = **5.8**.
+
+---
+
+## Try the Linear Regression Calculator
+
+Enter any pair of number lists below to find the slope, intercept, correlation coefficient, and R² instantly. The default values reproduce the worked example above.
+
+<StatCalc slug="linear-regression" variant="embed" />
+
+For a larger workspace and more input options, open the full <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> page. You can also find every statistical tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## Interpreting a Regression Analysis
+
+Running the formula gives you numbers. A regression analysis is only useful if you can read what those numbers mean in context.
+
+### The Slope
+
+The slope *b₁* tells you the direction and rate of change in the linear relationship, measured in units of *y* per unit of *x*. A slope of 0.6 in the worked example means: for each additional unit of *x*, the model predicts *y* increases by 0.6 units. A positive slope indicates that *y* tends to rise as *x* rises (positive linear association). A negative slope signals an inverse relationship. A slope of exactly zero means there is no linear trend at all.
+
+The slope's unit is the ratio of *y*'s unit to *x*'s unit. If *y* is sales revenue in dollars and *x* is advertising spend in dollars, the slope is dimensionless (dollars per dollar = a pure ratio). If *y* is height in centimetres and *x* is age in years, the slope is centimetres per year.
+
+### The Intercept
+
+The intercept *b₀* is the predicted *y* when *x* = 0. In many practical applications, *x* = 0 lies far outside the range of observed data, making the intercept a mathematical anchor rather than a meaningful prediction. In the worked example, b₀ = 2.2 means the model predicts y = 2.2 when x = 0 — plausible given the data, but extrapolation far beyond the observed range of x values is unreliable regardless of the regression equation used.
+
+### R-squared (R²)
+
+R-squared is the **coefficient of determination**, the proportion of the total variability in *y* that the linear model explains. It ranges from 0 (none of the variation in *y* is explained) to 1 (perfect fit — every point lies exactly on the line).
+
+For the worked example, the sum of squared y-deviations is:
+
+```
+Σ(yᵢ − ȳ)² = (2−4)² + (4−4)² + (5−4)² + (4−4)² + (5−4)²
+            = 4 + 0 + 1 + 0 + 1
+            = 6
+```
+
+R² is computed as:
+
+```
+R² = [Σ(xᵢ − x̄)(yᵢ − ȳ)]² / [Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)²]
+R² = 6² / (10 × 6)
+R² = 36 / 60
+R² = 0.60
+```
+
+An R² of 0.60 means the linear regression with this slope and intercept accounts for 60 % of the variation in *y*. The remaining 40 % is due to factors not captured by *x* alone — other variables, random noise, or possibly a nonlinear component.
+
+### Correlation Coefficient (r)
+
+The Pearson correlation coefficient *r* is the square root of R², with the sign of the slope:
+
+```
+r = √0.60 ≈ 0.775
+```
+
+A value of 0.775 indicates a moderately strong positive linear association between *x* and *y*. Penn State's STAT 501 course — [Regression Methods, Lesson 1: Simple Linear Regression](https://online.stat.psu.edu/stat501/lesson/1) — provides a thorough treatment of how slope, intercept, R², and hypothesis tests on the slope coefficient are connected within a regression analysis.
+
+---
+
+## Which Regression Equation Best Fits the Data?
+
+The question "which regression equation best fits the data?" — or equivalently "which regression equation best fits these data?" — arises whenever you compare two or more candidate models for the same dataset. There are several criteria; use them together for a complete picture.
+
+**Sum of squared residuals (SSR).** The least-squares line minimises the sum of squared residuals by construction. When two different regression equations are proposed (perhaps a linear model and a polynomial model), the one with the smaller SSR fits the observed data more closely. A multiple-choice question that provides two specific regression equations and asks which fits best is almost always asking you to compute SSR for each and pick the smaller one.
+
+**R² (coefficient of determination).** Equivalently, higher R² means more of the variation in *y* is explained. A model with R² = 0.90 describes the data better than one with R² = 0.60, all else equal. Be aware that R² always increases when you add more predictor variables to a model — use adjusted R² or out-of-sample validation when comparing models of different complexity.
+
+**Root mean squared error (RMSE).** RMSE is the square root of the average squared residual, expressed in the same units as *y*. A lower RMSE means more accurate predictions. It is especially useful when comparing models on a holdout dataset to assess how well the regression equation generalises to new data.
+
+**Residual plots.** Neither R² nor RMSE tells the whole story. Always plot the residuals (observed *y* minus predicted *ŷ*) against *x* and against the fitted values. If a pattern remains — a curve, a wedge shape, or alternating runs above and below zero — the model is missing systematic structure. The best-fitting linear regression equation still leaves randomly scattered residuals. A curve in the residuals is evidence that a linear regression equation is fundamentally the wrong shape, and a polynomial or other nonlinear regression equation would fit better.
+
+---
+
+## Linear Regression vs. Logistic Regression
+
+**Logistic regression** is a closely related but fundamentally different method. The two names look similar enough that their distinction is worth addressing explicitly.
+
+| Feature | Linear Regression | Logistic Regression |
+|---------|------------------|---------------------|
+| Response variable *y* | Continuous (price, temperature, score) | Categorical — typically binary (0/1, yes/no, pass/fail) |
+| Output of the model | A predicted numerical value | A predicted probability (between 0 and 1) |
+| Model equation | ŷ = b₀ + b₁x (a straight line) | log(p ÷ (1 − p)) = b₀ + b₁x (a logistic curve) |
+| Example use case | Predict exam score from hours studied | Predict whether a student passes (yes/no) from hours studied |
+
+The core distinction: **linear regression** predicts a number on a continuous scale; **logistic regression** predicts the probability that a binary outcome occurs. Both fit a model to data with the goal of making predictions, and both can include multiple predictor variables. However, fitting a linear regression equation to a binary 0/1 outcome produces predicted values outside the [0, 1] interval — meaningless as probabilities — so logistic regression exists specifically to handle categorical response variables correctly.
+
+When you see a problem that asks you to predict whether something will or will not happen (a patient recovers or does not, a loan defaults or does not, an email is spam or is not), logistic regression is the appropriate tool. When the response is a numeric measurement, a linear regression equation is the natural starting point.
+
+---
+
+## Assumptions of Linear Regression Analysis
+
+The least-squares formulas always produce a slope and an intercept, but those estimates are only reliable when four key assumptions are satisfied.
+
+**Linearity.** The true relationship between *x* and *y* must be linear — a straight line through the data is an appropriate model. Check with a scatter plot before fitting; if the data follows a curve, linear regression will produce biased estimates no matter how large the dataset.
+
+**Independence of observations.** Each (xᵢ, yᵢ) pair must be independent of the others. Time-series data (daily temperature readings) and clustered data (students within schools) often violate this assumption and require specialised methods such as time-series regression or mixed-effects models.
+
+**Constant variance (homoscedasticity).** The spread of the residuals around the regression line should be roughly the same for all values of *x*. A residual plot that fans out as *x* grows signals heteroscedasticity — a violation that inflates or deflates the standard errors of the slope and intercept, making hypothesis tests unreliable.
+
+**Approximate normality of residuals.** For hypothesis tests and confidence intervals on the slope to be valid in small samples, residuals should be approximately normally distributed. This assumption becomes less critical as the sample size grows, thanks to the Central Limit Theorem.
+
+---
+
+## Common Mistakes in Regression Analysis
+
+**Extrapolating beyond the data range.** The regression equation is a good predictor only within, or very close to, the range of *x* values used to fit it. Substituting an extreme *x* value far outside that range can produce wildly inaccurate — sometimes physically impossible — predictions.
+
+**Treating the regression as proof of causation.** A strong fit and a significant slope show that *x* and *y* are linearly associated; they do not prove that *x* causes *y*. Regression analysis is a correlation-based method. For a detailed treatment of that distinction, see our article on <Link to={routes.article('correlation-vs-causation')}>why correlation does not imply causation</Link>.
+
+**Relying on R² alone.** A high R² does not confirm that a linear model is appropriate. A curved relationship with no scatter can yield R² ≈ 0.99 for a linear model that is fundamentally misspecified. Always combine R² with a residual plot.
+
+**Ignoring influential observations.** A single outlying data point can pull the regression line substantially away from the rest of the data. Always check whether the slope and intercept change dramatically if you remove a suspected outlier — that sensitivity is itself diagnostic information.
+
+**Forgetting the units of the slope.** The slope carries the unit ratio of *y* to *x*. If you rescale either variable (converting kilograms to grams, for instance), the slope changes proportionally. Make sure the regression equation is interpreted in the units it was fitted with.
+
+---
+
+## Frequently Asked Questions
+
+### What is linear regression?
+
+Linear regression is a statistical method that fits a straight line to paired (x, y) data by minimising the total squared distance between observed *y* values and the predicted values on the line. It is the most common form of regression analysis and produces a regression equation of the form ŷ = b₀ + b₁x, where the slope and intercept are calculated from the data.
+
+### What is the linear regression formula?
+
+The linear regression formula has two parts. The slope is:
+
+```
+b₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)²
+```
+
+The intercept is:
+
+```
+b₀ = ȳ − b₁ · x̄
+```
+
+Together they define the regression equation ŷ = b₀ + b₁x, the least-squares line through the data.
+
+### What is a regression equation?
+
+A regression equation expresses the predicted relationship between a predictor *x* and a response *y* as a mathematical formula. For simple linear regression the standard form is ŷ = b₀ + b₁x, where b₀ is the intercept and b₁ is the slope. Substituting a specific value of *x* into the regression equation yields the model's prediction for *y* at that point.
+
+### What do the slope and intercept tell you?
+
+The **slope** is the rate of change: how much *y* is predicted to increase (positive slope) or decrease (negative slope) for each additional unit of *x*. The **intercept** is the predicted *y* when *x* equals zero, anchoring the line's vertical position. Together, the slope and intercept completely specify the regression equation.
+
+### Which regression equation best fits the data?
+
+The regression equation that best fits the data is the one that minimises the sum of squared residuals — that is, the ordinary least-squares line. When comparing two or more specific candidate equations, compute the sum of squared residuals for each and choose the smallest. You can also compare R² values: a higher R² indicates more of the variation in *y* is explained by the model.
+
+### What is the difference between linear regression and logistic regression?
+
+Linear regression predicts a continuous numerical outcome. Logistic regression predicts the probability of a categorical (typically binary) outcome. Both use predictor variables and fit parameters from data, but the model form and the type of response variable they handle are different. Use linear regression for numerical predictions; use logistic regression when the outcome is a category such as yes/no or pass/fail.
+
+### What does R² mean in regression analysis?
+
+R² is the **coefficient of determination**. It measures the proportion of the total variability in *y* that is explained by the regression model. An R² of 0.60 means 60 % of the variability in *y* is captured by the linear relationship with *x*; the other 40 % is unexplained. R² ranges from 0 (no fit) to 1 (perfect fit). A high R² is encouraging, but always check residual plots to confirm the linear model is actually appropriate for the data.
+
+### How is the regression equation used to make predictions?
+
+Substitute any *x* value into the regression equation ŷ = b₀ + b₁x. For the worked example (b₀ = 2.2, b₁ = 0.6), if x = 4 then ŷ = 2.2 + 0.6 × 4 = 2.2 + 2.4 = 4.6. Note that predictions are most reliable within the range of *x* values used to fit the model; extrapolation beyond that range is less trustworthy.
+
+---
+
+## Summary
+
+Linear regression is the foundational tool of regression analysis. Its job is to describe a linear relationship between two variables with a regression equation of the form ŷ = b₀ + b₁x — a slope and intercept calculated from the data to minimise the sum of squared prediction errors. The linear regression formula follows directly from the least-squares principle: the slope is the ratio of the co-variability of *x* and *y* to the variability of *x* alone, and the intercept anchors the line through the point of means.
+
+The fully worked example (x = 1, 2, 3, 4, 5 and y = 2, 4, 5, 4, 5) gives slope b₁ = 0.6, intercept b₀ = 2.2, and the regression equation ŷ = 2.2 + 0.6x — verifiable instantly with the calculator on this page. R² for this dataset is 0.60, meaning 60 % of the variation in *y* is explained by the linear model.
+
+Four principles tie it all together: inspect a scatter plot before fitting to confirm linearity; check residual plots after fitting to confirm the model is appropriate; distinguish linear regression (continuous response) from logistic regression (categorical response); and never extrapolate the regression equation far beyond the range of observed *x* values. Follow those four principles and the linear regression formula becomes a reliable tool for turning data into insight.
