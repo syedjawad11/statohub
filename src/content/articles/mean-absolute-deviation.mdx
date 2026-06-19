@@ -1,0 +1,274 @@
+---
+title: "Mean Absolute Deviation & Coefficient of Variation"
+description: "Learn what mean absolute deviation is, how to calculate it step by step, and how the coefficient of variation lets you compare data sets on any scale."
+category: descriptive-statistics
+primaryKeyword: mean absolute deviation
+keywords:
+  - mean absolute deviation
+  - coefficient of variation
+  - deviation mean
+  - using mean and mean absolute deviation to compare data iready
+  - what is mean absolute deviation
+phase: 1
+calculator: mean-absolute-deviation
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **mean absolute deviation** (MAD) measures how spread out a data set is by calculating the average distance of every value from the mean. Where variance and standard deviation square those distances before averaging, mean absolute deviation keeps them in their original units — the same units as the data itself. That directness makes MAD one of the most intuitive measures of spread available.
+
+Understanding what is mean absolute deviation gives you a practical tool for comparing datasets, spotting whether values cluster tightly or fan out widely, and building the conceptual foundation for more advanced statistics. This article covers the definition, formula, a fully worked numerical example, the related coefficient of variation, and how to use both measures together to compare two groups — including the comparison method taught in curricula such as iReady Math.
+
+---
+
+## What Is Mean Absolute Deviation?
+
+Mean absolute deviation is the average of the **absolute differences** between each data value and the data set's mean. The word "absolute" means you ignore the sign of each difference: whether a value falls above or below the mean, its contribution to the MAD is always a non-negative distance.
+
+Why drop the sign? Because signed deviations cancel. If a data set is 1 and 5 with a mean of 3, the deviation for 1 is −2 and the deviation for 5 is +2. Their sum is 0 — a number that implies zero spread, which is plainly wrong. Taking absolute values gives |−2| = 2 and |+2| = 2, which sum to 4. Divide by n = 2 and the MAD = 2: a number that correctly reflects the actual spread of the data.
+
+This result — the mean of the absolute deviations — is also called the **deviation mean**, a phrase used in some textbooks and curricula to emphasise that it is itself a kind of average applied to the deviations. The two terms, mean absolute deviation and deviation mean, describe the same calculation.
+
+MAD is classified as a **measure of variability** (also called a measure of spread or scale). Other measures in this family include the range, interquartile range (IQR), variance, and standard deviation. Each answers the same question — how much do the data vary? — through a different mathematical lens.
+
+---
+
+## The Mean Absolute Deviation Formula
+
+The formula is written as:
+
+```
+MAD = (1/n) × SUM |xᵢ − x̄|
+```
+
+Where:
+
+- **n** is the total number of data values
+- **xᵢ** represents each individual value (x₁, x₂, …, xₙ)
+- **x̄** (x-bar) is the arithmetic mean of all n values
+- **| |** denotes the absolute value — the unsigned distance from the mean
+- **SUM** means add up all n absolute deviations
+
+The result is a single number in the same units as the original data. If the values are test scores in points, the MAD is in points. If the values are daily rainfall in millimetres, the MAD is in millimetres. This unit-preservation sets MAD apart from variance, which squares the deviations and therefore produces a result in squared units.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.6 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm), mean absolute deviation is one of the standard robust measures of scale used in exploratory data analysis, valued for its direct interpretability alongside the standard deviation and interquartile range.
+
+---
+
+## How to Calculate Mean Absolute Deviation: Step-by-Step
+
+Work through this example using the data set **10, 20, 30, 40, 50** — five evenly spaced values chosen for their clean arithmetic.
+
+### Step 1: Find the Mean
+
+Add all values and divide by the count.
+
+Sum = 10 + 20 + 30 + 40 + 50 = 150
+
+Mean (x̄) = 150 ÷ 5 = **30**
+
+### Step 2: Find Each Absolute Deviation
+
+Subtract the mean from each value and take the absolute value of the result.
+
+| Value (xᵢ) | xᵢ − x̄ | Absolute deviation |
+|-----------|---------|-------------------|
+| 10 | 10 − 30 = −20 | 20 |
+| 20 | 20 − 30 = −10 | 10 |
+| 30 | 30 − 30 = 0 | 0 |
+| 40 | 40 − 30 = +10 | 10 |
+| 50 | 50 − 30 = +20 | 20 |
+
+### Step 3: Sum the Absolute Deviations
+
+20 + 10 + 0 + 10 + 20 = **60**
+
+### Step 4: Divide by n
+
+MAD = 60 ÷ 5 = **12**
+
+The mean absolute deviation of this data set is **12**. On average, each data point sits 12 units away from the mean of 30. This is easy to verify by inspection: 10 and 50 are each 20 units from 30, while 20 and 40 are each 10 units away, and 30 is exactly at the mean. The average distance is (20 + 10 + 0 + 10 + 20) ÷ 5 = 12.
+
+### A Second Example: Tighter Data
+
+Now try the data set **28, 29, 30, 31, 32** — the same mean but values packed much closer together.
+
+Mean = (28 + 29 + 30 + 31 + 32) ÷ 5 = 150 ÷ 5 = 30
+
+Absolute deviations: |28 − 30| = 2, |29 − 30| = 1, |30 − 30| = 0, |31 − 30| = 1, |32 − 30| = 2
+
+Sum = 2 + 1 + 0 + 1 + 2 = 6
+
+MAD = 6 ÷ 5 = **1.2**
+
+Both data sets have a mean of 30, yet the first has MAD = 12 and the second has MAD = 1.2. The MAD captures exactly what changes between them: the second set is ten times more tightly grouped than the first.
+
+---
+
+## Try the Mean Absolute Deviation Calculator
+
+Enter any comma-separated list of numbers to compute the mean absolute deviation instantly.
+
+<StatCalc slug="mean-absolute-deviation" variant="embed" />
+
+For a full-page version with a larger display, open the <Link to={routes.calculator('mean-absolute-deviation')}>mean absolute deviation calculator</Link>. All statistical calculators on this site are available from the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## The Coefficient of Variation
+
+The **coefficient of variation** (CV) solves a problem that MAD alone cannot: comparing spread across data sets that have different means or different units of measurement.
+
+Suppose a basketball team's points per game have a standard deviation of 8, while a sprinter's race times have a standard deviation of 0.4 seconds. Which measurement is more variable relative to its typical value? The raw spread values of 8 and 0.4 are in different units on different scales — direct comparison is meaningless. The coefficient of variation converts each spread value into a percentage of the mean, putting both on the same dimensionless scale.
+
+The standard formula for the coefficient of variation uses the standard deviation (s) and the mean (x̄):
+
+```
+CV = (s / x̄) × 100 %
+```
+
+A lower CV means the data are more consistent relative to the mean. A higher CV means greater relative variability. Because CV is a percentage, two data sets measured in completely different units become directly comparable.
+
+### Coefficient of Variation Example
+
+Two student groups both scored a mean of 75 points on an exam, but their spreads differ considerably.
+
+- Group A standard deviation: s = 5 points → CV = (5 ÷ 75) × 100 = **6.7 %**
+- Group B standard deviation: s = 15 points → CV = (15 ÷ 75) × 100 = **20.0 %**
+
+Despite having identical means, Group B is nearly three times as variable relative to that mean. Group A's scores cluster tightly around 75; Group B's scores span a much wider range.
+
+CV is widely used in quality control, biology, economics, and finance to compare measurements that differ in scale, magnitude, or physical units. A manufacturing process with a CV below 5 % is often considered highly consistent; an investment portfolio with a CV above 30 % is considered highly volatile.
+
+### When to Use CV vs. MAD
+
+MAD gives you absolute spread in the original units — ideal when you want to say "on average, scores differ from the mean by 4 points." CV gives you relative spread as a percentage — ideal when you want to say "scores vary by 5 % of the typical score." Use MAD when context and units are shared across the comparison; use CV when the scales or units differ.
+
+---
+
+## Using Mean and Mean Absolute Deviation to Compare Data
+
+One of the most useful applications of MAD — and a core skill in curricula such as iReady Math — is comparing two distributions using both the mean and mean absolute deviation together. When two groups have different means, MAD provides the context needed to judge whether that difference is meaningful given the within-group variability.
+
+The comparison method has three steps:
+
+1. Calculate the mean and MAD for each group.
+2. Note how far apart the two means are.
+3. Compare that gap to the typical MAD values. If the mean difference is much larger than the MADs, the groups are genuinely distinct. If the mean difference is small relative to the MADs, the groups overlap heavily and may be more similar than their averages suggest.
+
+### Worked Comparison Example
+
+Two classes took the same mathematics quiz. Their scores are:
+
+- **Class A:** 68, 72, 74, 76, 80
+- **Class B:** 55, 65, 75, 85, 95
+
+**Class A:**
+
+Mean = (68 + 72 + 74 + 76 + 80) ÷ 5 = 370 ÷ 5 = **74**
+
+Absolute deviations from 74:
+|68 − 74| = 6, |72 − 74| = 2, |74 − 74| = 0, |76 − 74| = 2, |80 − 74| = 6
+
+MAD = (6 + 2 + 0 + 2 + 6) ÷ 5 = 16 ÷ 5 = **3.2**
+
+**Class B:**
+
+Mean = (55 + 65 + 75 + 85 + 95) ÷ 5 = 375 ÷ 5 = **75**
+
+Absolute deviations from 75:
+|55 − 75| = 20, |65 − 75| = 10, |75 − 75| = 0, |85 − 75| = 10, |95 − 75| = 20
+
+MAD = (20 + 10 + 0 + 10 + 20) ÷ 5 = 60 ÷ 5 = **12**
+
+**Interpretation:**
+
+Both classes scored almost the same mean (74 vs 75), so looking at means alone would suggest equivalent performance. But the MADs reveal a major difference: Class A's scores lie within about 3.2 points of the mean, while Class B's scores deviate by an average of 12 points from the mean. Class A is highly consistent; Class B contains a wide mix of high and low performers.
+
+The difference between means (75 − 74 = 1 point) is far smaller than either group's MAD, confirming that the two groups overlap substantially. A teacher comparing these results would rightly conclude: the classes performed at the same level on average, but Class B's performance was much less uniform.
+
+In iReady Math, students practise exactly this kind of reasoning: examine the mean to understand typical performance, then examine the MAD to understand consistency. Using mean and mean absolute deviation to compare data makes it possible to distinguish between "similar average outcomes" and "similar distributions" — two very different situations.
+
+---
+
+## Mean Absolute Deviation vs. Standard Deviation
+
+Both MAD and standard deviation measure spread, but they differ in how they treat deviations and how sensitive each is to extreme values.
+
+| Property | MAD | Standard Deviation |
+|----------|-----|--------------------|
+| Formula | Average of absolute deviations | Square root of mean squared deviations |
+| Units | Same as original data | Same as original data |
+| Outlier sensitivity | Lower — absolute value grows linearly | Higher — squaring amplifies large deviations |
+| Computational simplicity | High — no squaring or square roots for intermediates | Moderate |
+| Use in inferential statistics | Rare | Near-universal |
+
+Because squaring exaggerates large deviations, the standard deviation reacts more strongly to outliers than MAD does. If a data set contains extreme values and you want a measure of typical spread that is not pulled toward those extremes, MAD can be more representative of the majority of the data.
+
+The standard deviation, however, has superior mathematical properties. It connects naturally to the normal distribution, variance, and the full toolbox of inferential statistics — t-tests, confidence intervals, ANOVA, and regression all rely on variance rather than MAD. For most statistical modelling and hypothesis testing, standard deviation is the standard choice.
+
+The open-access textbook [OpenStax, *Introductory Statistics* — 2.7 Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) covers both measures of spread with additional worked examples, clarifying when each is most useful and how they relate to the shape of a distribution.
+
+For a deep dive into standard deviation notation and the difference between the population symbol σ and the sample symbol s, see the guide on <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbols and notation</Link>. If you want to understand the simplest measure of spread first, the article <Link to={routes.article('how-to-find-the-range')}>how to find the range in statistics</Link> is a good starting point.
+
+---
+
+## Common Mistakes When Calculating MAD
+
+### Forgetting the Absolute Value
+
+The most frequent error is summing raw signed deviations — (xᵢ − x̄) — instead of absolute deviations — |xᵢ − x̄|. Signed deviations always sum to zero by the definition of the mean, so averaging them will always produce 0. Every deviation must be made positive before summing.
+
+### Using the Median Instead of the Mean
+
+Mean absolute deviation is defined as deviation from the **arithmetic mean**. Some references define a separate statistic called the median absolute deviation (also abbreviated MAD) that uses the median instead. The two are numerically different. Unless a problem specifically says "median absolute deviation," always use the mean.
+
+### Dividing by n − 1
+
+Standard deviation divides by n − 1 (Bessel's correction) when estimating a population spread from a sample, in order to produce an unbiased estimator. Mean absolute deviation does not have a universally accepted bias correction of this kind. The standard formula divides by n. Unless your course or software documentation specifies otherwise, use n as the denominator.
+
+### Interpreting MAD Without Context
+
+A MAD of 5 is large for a quiz out of 10 but trivial for heights measured in centimetres. Always interpret MAD relative to the scale and units of the data, or use CV to make the spread comparable across different measurements.
+
+---
+
+## Frequently Asked Questions
+
+### What is mean absolute deviation?
+
+Mean absolute deviation is the average of the absolute differences between each value in a data set and the data set's mean. The formula is MAD = (1/n) × SUM |xᵢ − x̄|. It tells you how far, on average, the data points sit from the mean. A small MAD means the data cluster tightly; a large MAD means the values are widely spread.
+
+### What does the deviation mean represent?
+
+The term "deviation mean" refers to the mean of the absolute deviations — that is, the MAD itself. It is an alternative phrase for the same statistic: first compute the deviation of each value from the mean, then average those deviations. The two phrases, mean absolute deviation and deviation mean, describe the same calculation.
+
+### How do you use mean and mean absolute deviation to compare data in iReady?
+
+The iReady Math approach is to compute the mean and MAD for each group, then interpret both numbers together. If two groups have means that differ by much more than their typical MAD values, the groups are genuinely distinct in their typical performance. If the difference in means is smaller than or close to the MADs, the distributions overlap heavily and the groups are more similar than their averages alone imply. The worked comparison example above illustrates this process with two quiz-score distributions.
+
+### How is the coefficient of variation related to MAD?
+
+The coefficient of variation and MAD are both measures of spread, but they serve different purposes. MAD is an absolute measure in the original data units. CV is a relative measure — it expresses the standard deviation as a percentage of the mean, making it possible to compare variability across data sets with different scales, units, or magnitudes. Use MAD when you want spread in context; use CV when you need to compare spread across different types of measurements.
+
+### When should I use MAD rather than standard deviation?
+
+Use MAD when you want a simple, intuitive, outlier-resistant measure that stays in the original units and is easy to explain to a non-technical audience. Use standard deviation when you need to connect your analysis to inferential statistics, probability distributions, or any method that requires variance as an input. For most academic and professional statistical work, standard deviation is the default.
+
+### Does MAD work for any type of data?
+
+MAD requires data that has a well-defined arithmetic mean — in practice, quantitative (numeric) data measured on an interval or ratio scale. It is not appropriate for ordinal rankings, categorical data, or nominal labels, which do not have a meaningful arithmetic mean.
+
+---
+
+## Summary
+
+The **mean absolute deviation** is the average of how far each data point sits from the mean, measured as a non-negative distance: MAD = (1/n) × SUM |xᵢ − x̄|. It produces a result in the original data units that is straightforward to compute, easy to interpret, and less sensitive to outliers than the standard deviation.
+
+The **coefficient of variation** extends the idea of spread to relative comparisons: CV = (s ÷ x̄) × 100 % lets you measure variability as a percentage of the mean, making it possible to compare data sets with different units or scales.
+
+Together, the mean and MAD enable the kind of distributional comparison that reveals what averages alone conceal. Two groups can share the same mean yet differ dramatically in consistency — a difference the MAD exposes immediately. Whether you are comparing classroom performance in iReady Math, evaluating process consistency in manufacturing, or simply trying to understand a data set, mean absolute deviation and coefficient of variation give you complementary tools: one for absolute spread, the other for relative spread.
