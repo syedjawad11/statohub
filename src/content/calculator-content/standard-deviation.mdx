@@ -1,0 +1,76 @@
+---
+calculator: standard-deviation
+keywords:
+  - standard deviation calculator
+  - sample standard deviation
+  - population standard deviation
+  - how to calculate standard deviation
+draft: false
+updatedDate: 2026-06-20
+---
+
+Standard deviation measures how spread out a set of numbers is — the typical
+distance between each value and the mean. A small standard deviation means the
+data clusters tightly around the average; a large one means the values are
+scattered widely. This standard deviation calculator returns both the sample and
+the population standard deviation so you can pick the one that matches your data.
+
+## How to use this calculator
+
+1. Enter your numbers in the values box, separated by commas, spaces, or new
+   lines (for example, `2, 4, 4, 4, 5, 5, 7, 9`).
+2. Read the **sample standard deviation** if your data is a sample drawn from a
+   larger group — this is the most common case and the default for most
+   coursework and research.
+3. Read the **population standard deviation** if your data covers the entire
+   group you care about, with no one left out.
+
+The only difference between the two is the divisor: the sample version divides by
+`n − 1` (Bessel's correction, which corrects the bias when estimating from a
+sample), while the population version divides by `n`.
+
+## Worked example
+
+Take the data set `2, 4, 4, 4, 5, 5, 7, 9` (8 values).
+
+```
+mean (x̄) = (2+4+4+4+5+5+7+9) / 8 = 5
+```
+
+Subtract the mean from each value, square the result, and add them up:
+
+```
+Σ(xi − x̄)² = 9 + 1 + 1 + 1 + 0 + 0 + 4 + 16 = 32
+```
+
+Now divide and take the square root:
+
+```
+population σ = √(32 / 8) = √4   = 2.000
+sample     s = √(32 / 7) = √4.571 ≈ 2.138
+```
+
+So a typical value sits about 2 units away from the mean of 5. For the precise
+formulas and conventions, see the
+[NIST/SEMATECH e-Handbook on standard deviation and variance](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+## Frequently asked questions
+
+### Should I use sample or population standard deviation?
+
+Use the **sample standard deviation** (divide by `n − 1`) when your numbers are a
+sample from a larger population — the usual situation in statistics homework,
+surveys, and experiments. Use the **population standard deviation** (divide by
+`n`) only when your data includes every member of the group.
+
+### Why does the sample version divide by n − 1?
+
+Dividing by `n − 1` instead of `n` corrects a downward bias: a sample tends to
+underestimate the true spread of the population it came from. The `n − 1`
+adjustment, called Bessel's correction, makes the estimate unbiased.
+
+### What is the difference between standard deviation and variance?
+
+Variance is the average of the squared distances from the mean; standard
+deviation is the square root of the variance. Standard deviation is easier to
+interpret because it is expressed in the same units as your original data.

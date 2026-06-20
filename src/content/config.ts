@@ -58,4 +58,22 @@ const calculators = defineCollection({
   }),
 });
 
-export const collections = { categories, articles, calculators };
+// Short teaching block rendered BELOW the tool on a standalone /calculators/{slug}/
+// page. One MDX file per calculator; filename === calculator slug. The page title
+// (from the calculator) is the only H1, so the body starts at H2.
+const calculatorContent = defineCollection({
+  type: 'content', // MDX - filename = calculator slug
+  schema: z.object({
+    calculator: reference('calculators'),       // integrity: the calc must exist + be standalone
+    keywords: z.array(z.string()).default([]),  // keywords to weave into the prose
+    draft: z.boolean().default(true),            // unpublished prose never renders
+    updatedDate: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = {
+  categories,
+  articles,
+  calculators,
+  'calculator-content': calculatorContent,
+};

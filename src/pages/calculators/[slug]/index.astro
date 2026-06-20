@@ -27,6 +27,20 @@ interface Props {
 }
 
 const { calc, slug } = Astro.props as Props;
+
+// Optional short teaching block (intro + how-to + worked example + FAQ) rendered
+// below the tool. Source: src/content/calculator-content/{slug}.mdx, draft:false.
+type TeachingEntry = CollectionEntry<'calculator-content'>;
+const teachingEntries = await getCollection('calculator-content');
+const teaching = teachingEntries.find(
+  (entry: TeachingEntry) => entry.id.replace(/\.[^.]+$/, '') === slug && !entry.data.draft,
+);
+let Teaching: Awaited<ReturnType<TeachingEntry['render']>>['Content'] | undefined;
+if (teaching) {
+  const rendered = await teaching.render();
+  Teaching = rendered.Content;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
   { label: 'Calculators', route: routes.calculatorsHub() },
@@ -57,5 +71,10 @@ const calculatorSchema = softwareApplicationSchema(
     <div class="mt-8">
       <StatCalc slug={slug} variant="page" />
     </div>
+    {Teaching && (
+      <div class="article-prose calc-teaching">
+        <Teaching />
+      </div>
+    )}
   </article>
 </BaseLayout>

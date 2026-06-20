@@ -371,6 +371,12 @@
     margin-top: 1.5rem;
   }
 
+  .calc-teaching {
+    margin-top: 3rem;
+    padding-top: 2.25rem;
+    border-top: 1px solid var(--rule, rgba(0, 0, 0, 0.08));
+  }
+
   .article-prose h2 {
     margin: 44px 0 14px;
     color: var(--ink);
