@@ -75,6 +75,55 @@ export function articleSchema(input: ArticleSchemaInput, site: URL) {
   return schema;
 }
 
+interface OrganizationSchemaInput {
+  name?: string;
+  logo?: string;
+  /** Official brand profile URLs (e.g. X, LinkedIn). Left empty until provided. */
+  sameAs?: string[];
+}
+
+interface WebSiteSchemaInput {
+  name?: string;
+  alternateName?: string;
+}
+
+export function organizationSchema(site: URL, input: OrganizationSchemaInput = {}) {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': new URL('#organization', site).href,
+    name: input.name ?? 'Statohub',
+    url: site.href,
+  };
+
+  if (input.logo) {
+    schema.logo = absoluteAsset(input.logo, site);
+  }
+
+  if (input.sameAs && input.sameAs.length > 0) {
+    schema.sameAs = input.sameAs;
+  }
+
+  return schema;
+}
+
+export function webSiteSchema(site: URL, input: WebSiteSchemaInput = {}) {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': new URL('#website', site).href,
+    name: input.name ?? 'Statohub',
+    url: site.href,
+    publisher: { '@id': new URL('#organization', site).href },
+  };
+
+  if (input.alternateName) {
+    schema.alternateName = input.alternateName;
+  }
+
+  return schema;
+}
+
 export function softwareApplicationSchema(input: SoftwareApplicationSchemaInput, site: URL) {
   return {
     '@context': 'https://schema.org',

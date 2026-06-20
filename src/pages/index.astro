@@ -5,8 +5,15 @@ import Link from '../components/Link.astro';
 import StatCalc from '../components/StatCalc.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { routes, type CategoryId } from '../lib/links';
+import { organizationSchema, webSiteSchema } from '../lib/schema';
 
 type CategoryEntry = CollectionEntry<'categories'>;
+
+const site = Astro.site ?? Astro.url;
+const homeJsonLd = [
+  webSiteSchema(site),
+  organizationSchema(site, { logo: '/apple-touch-icon.png' }),
+];
 
 const categoryEntries = await getCollection('categories');
 const categoryById = new Map<CategoryId, CategoryEntry>(
@@ -100,6 +107,7 @@ const calculatorChips = [
   title="Statohub — Statistics Calculators & Plain-English Lessons"
   description="Every Statohub page pairs a plain-English explanation with a working calculator. Learn the method and get the number in the same place."
   canonicalPath={routes.home()}
+  jsonLd={homeJsonLd}
 >
   <section class="home-hero">
     <p class="eyebrow">Statistics, taught and computed</p>
