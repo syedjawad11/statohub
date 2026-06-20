@@ -965,7 +965,8 @@
 
   .article-shell {
     display: grid;
-    grid-template-columns: 1fr minmax(0, 660px) 1fr;
+    grid-template-columns: minmax(0, 760px) clamp(220px, 24vw, 280px);
+    column-gap: 32px;
     padding-top: 10px;
   }
 
@@ -976,10 +977,6 @@
 
   .article-rail {
     padding-top: 8px;
-  }
-
-  .article-rail-left {
-    justify-self: end;
   }
 
   .article-crumb {
@@ -1237,10 +1234,6 @@
       grid-template-columns: 1fr;
       max-width: 660px;
       margin-inline: auto;
-    }
-
-    .article-rail-left {
-      display: none;
     }
 
     .article-rail-right {
