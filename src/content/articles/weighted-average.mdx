@@ -1,0 +1,272 @@
+---
+title: "Weighted Average: Definition, Formula & Calculator"
+description: "A weighted average gives each value a different importance. Learn the weighted average formula, how to calculate it step by step, and when to use it."
+category: descriptive-statistics
+primaryKeyword: weighted average
+keywords:
+  - weighted average
+  - average calculator for grades
+  - how to calculate weighted average
+  - mean and weighted mean
+  - weighted average calculator grades
+  - weighted average formula
+phase: 1
+calculator: weighted-average
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **weighted average** assigns a different level of importance — called a weight — to each value before combining them into a single number. Unlike a plain arithmetic mean, which treats every data point equally, a weighted average reflects the fact that some values matter more than others. A final exam worth 40% of a course grade should count four times as much as a quiz worth 10%, and the weighted average formula handles that automatically.
+
+Weighted averages appear in grade calculations, investment portfolio returns, survey aggregation, consumer price indices, and scientific measurement. Understanding the weighted average and when to use it is one of the most practical skills in introductory statistics.
+
+---
+
+## What Is a Weighted Average?
+
+A weighted average (also called a weighted mean) is a type of average where each data point is multiplied by a number called its weight before the final result is computed. The weights reflect the relative importance, frequency, or size of each data point.
+
+In a plain arithmetic mean, every value gets the same weight. If you average three quiz scores — 70, 80, and 90 — the result is (70 + 80 + 90) / 3 = 80. Each score counts equally. But if those quizzes are worth 10%, 20%, and 70% of a final grade, the highest-weight quiz should dominate the result. The weighted average accounts for this by multiplying each score by its fractional weight before averaging.
+
+The key insight: when all the weights are equal, the weighted average is identical to the simple arithmetic mean. The weighted mean is therefore a generalisation of the ordinary mean — more flexible, and more accurate whenever the data points do not all carry the same significance.
+
+---
+
+## Weighted Average Formula
+
+The weighted average formula is:
+
+```
+x̄_w = Σ(wᵢ × xᵢ) / Σwᵢ
+```
+
+Where:
+- `x̄_w` is the weighted average (weighted mean)
+- `xᵢ` are the individual data values (x₁, x₂, …, xₙ)
+- `wᵢ` are the corresponding weights (w₁, w₂, …, wₙ)
+- `Σ` means "sum of" (add up all the terms)
+
+Expanded for three values:
+
+```
+x̄_w = (w₁ × x₁ + w₂ × x₂ + w₃ × x₃) / (w₁ + w₂ + w₃)
+```
+
+The weights can be any positive numbers. They do not have to sum to 1 or to 100. When the weights are percentages that sum to 100%, the denominator is 100 and the arithmetic simplifies slightly. When the weights represent counts or group sizes, the denominator is the total count across all groups. The formula produces the correct result in both cases.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the weighted mean among the core measures of location, noting that it is particularly useful when measurements are taken with varying precision or when data points represent groups of different sizes.
+
+---
+
+## Step-by-Step Calculation
+
+The steps for how to calculate a weighted average follow directly from the formula. Work through them once and the pattern becomes automatic.
+
+### Step 1 — List Each Value and Its Weight
+
+Write every data point alongside the weight that applies to it. The weights should reflect the relative importance you want each value to have in the result.
+
+### Step 2 — Multiply Each Value by Its Weight
+
+Compute `wᵢ × xᵢ` for every pair. These products are the weighted contributions of each data point.
+
+### Step 3 — Sum the Weighted Products
+
+Add all the products from Step 2: `Σ(wᵢ × xᵢ)`. This is the numerator of the formula.
+
+### Step 4 — Divide by the Sum of the Weights
+
+Divide the total from Step 3 by the sum of all the weights: `Σwᵢ`. The result is the weighted average.
+
+---
+
+## Fully Worked Example: Course Grade
+
+The most common real-world use of the weighted average formula is a course grade calculation. Here is a complete example you can verify by hand.
+
+A student's grades for a statistics course are recorded below, with the percentage weight each component carries:
+
+| Assessment | Score (out of 100) | Weight |
+|---|---|---|
+| Homework | 88 | 10% |
+| Quiz 1 | 74 | 10% |
+| Quiz 2 | 82 | 10% |
+| Midterm Exam | 76 | 30% |
+| Final Exam | 91 | 40% |
+
+**Step 1 — Multiply each score by its weight** (converted to a decimal):
+
+- Homework: 88 × 0.10 = 8.80
+- Quiz 1: 74 × 0.10 = 7.40
+- Quiz 2: 82 × 0.10 = 8.20
+- Midterm: 76 × 0.30 = 22.80
+- Final: 91 × 0.40 = 36.40
+
+**Step 2 — Sum the products:**
+
+8.80 + 7.40 + 8.20 + 22.80 + 36.40 = **83.60**
+
+**Step 3 — Divide by the sum of weights:**
+
+The weights already sum to 1.00 (10% + 10% + 10% + 30% + 40% = 100%), so:
+
+```
+x̄_w = 83.60 / 1.00 = 83.6
+```
+
+The student's weighted average grade is **83.6**.
+
+For comparison, the simple (unweighted) arithmetic mean would be:
+
+```
+x̄ = (88 + 74 + 82 + 76 + 91) / 5 = 411 / 5 = 82.2
+```
+
+The weighted average (83.6) is higher than the simple mean (82.2) because the student performed best on the highest-weighted component — the final exam (91). That single exam carries 40% of the grade, so a strong performance there lifts the overall result more than any quiz could.
+
+This difference illustrates the core purpose of the weighted average: it ensures that more significant components have a proportionally larger influence on the final number.
+
+---
+
+## Try the Calculator
+
+Enter your scores and their corresponding weights below. The calculator applies the weighted average formula instantly so you can verify grade calculations or explore different weighting scenarios.
+
+<StatCalc slug="weighted-average" variant="embed" />
+
+For a larger, standalone interface, open the full <Link to={routes.calculator('weighted-average')}>weighted average calculator</Link>. All statistics tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## Mean and Weighted Mean: Key Differences
+
+Understanding the relationship between the mean and weighted mean makes it easier to choose the right tool for any dataset.
+
+**The arithmetic mean** treats all data points as equally important. It works well when every observation is a separate, equally valid measurement of the same quantity — averaging daily temperatures, prices per unit, or test scores from equally weighted assessments.
+
+**The weighted mean** assigns variable importance to data points. It is the better choice when:
+- Assessments carry different weights (a final exam worth more than a quiz).
+- You are combining averages from groups of different sizes.
+- Some measurements are more precise than others and should be trusted more.
+- A financial portfolio holds positions of different dollar values.
+
+The mathematical relationship is clean: the arithmetic mean is the special case of the weighted mean where all weights are equal. If you set every `wᵢ = 1` in the formula, you get:
+
+```
+Σ(1 × xᵢ) / Σ(1) = Σxᵢ / n = x̄
+```
+
+This is the plain arithmetic mean. The weighted mean contains the ordinary mean as a special case and generalises it.
+
+The open-access textbook [OpenStax *Introductory Statistics*, 2.5 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) presents both formulas and illustrates when each applies with worked examples from education and survey data.
+
+---
+
+## Real-World Applications
+
+### Average Calculator for Grades
+
+An average calculator for grades is the most familiar use of the weighted average. Universities calculate GPA by weighting each course grade by the number of credit hours the course carries. A 4-credit course counts four times as much toward a GPA as a 1-credit seminar.
+
+Example: A student earns a 3.5 in a 4-credit course and a 2.0 in a 1-credit course. The weighted GPA for those two courses is:
+
+```
+GPA = (3.5 × 4 + 2.0 × 1) / (4 + 1) = (14.0 + 2.0) / 5 = 3.20
+```
+
+The simple average of the two grades would be (3.5 + 2.0) / 2 = 2.75, which undervalues the 4-credit course. The weighted average calculator for grades corrects this by giving the heavier course its proper share.
+
+### Investment Portfolio Returns
+
+An investment portfolio holds positions in multiple assets. The overall return is not the simple average of the individual asset returns — it is a weighted average, where each return is weighted by the proportion of the portfolio allocated to that asset.
+
+Example:
+- Asset A: 5.0% return, 60% of portfolio
+- Asset B: 9.0% return, 30% of portfolio
+- Asset C: −2.0% return, 10% of portfolio
+
+```
+Portfolio return = (5.0 × 0.60) + (9.0 × 0.30) + (−2.0 × 0.10)
+                = 3.0 + 2.7 + (−0.2)
+                = 5.5%
+```
+
+The simple average of the three returns would be (5.0 + 9.0 − 2.0) / 3 = 4.0%, which misrepresents the actual outcome because it ignores the 60/30/10 allocation split. A larger allocation to Asset A means Asset A's return dominates the portfolio result.
+
+### Price Indices and Economic Data
+
+Consumer Price Indices (CPI) and stock market indices such as the S&P 500 are weighted averages. Each component is weighted by its relative importance in the economy or the index methodology. The CPI weights spending categories — housing, food, transportation — by the share of household spending each represents. A large rise in the cost of housing therefore affects the CPI far more than the same rise in the cost of postage stamps.
+
+### Precision Weighting in Scientific Measurement
+
+When multiple measurements of the same quantity are taken with instruments of different precision, the weighted mean gives more influence to the more precise readings. The weight for each measurement is typically set proportional to `1 / σᵢ²` (the inverse of its variance), so that a reading with a small error margin contributes more to the final estimate than one with a large margin. This is the standard approach in combining measurements from different laboratories or detectors.
+
+---
+
+## Common Calculation Mistakes
+
+### Forgetting to Divide by the Sum of Weights
+
+The most frequent error is computing `Σ(wᵢ × xᵢ)` and treating that sum as the weighted average. You must always divide by `Σwᵢ`. If the weights are percentage decimals that sum to 1, the division changes nothing numerically — but it is still conceptually required, and failing to do it when the weights do not sum to 1 gives a wrong answer.
+
+### Averaging Group Averages Without Weighting by Group Size
+
+Suppose two teaching sections take the same exam. Section A has 25 students and averages 78%. Section B has 10 students and averages 92%. The combined class average is NOT (78 + 92) / 2 = 85%. It is:
+
+```
+Combined = (78 × 25 + 92 × 10) / (25 + 10) = (1950 + 920) / 35 ≈ 81.7%
+```
+
+The simple average of 85% overstates combined performance because Section B's higher average applies to fewer students. Any time you average averages from groups of different sizes, use a weighted mean with group sizes as weights.
+
+### Using Percentages Without Consistent Units
+
+The weighted average formula works with any consistent scale of weights. If weights are whole percentages (10, 30, 60), divide by 100. If they are decimal fractions (0.10, 0.30, 0.60), divide by 1.00. Mixing the two formats — multiplying some values by 0.10 and others by 10 — produces an incorrect result.
+
+### Applying the Simple Mean When Groups Differ in Size
+
+Combining the average price per unit from two suppliers without accounting for the different quantities ordered from each is the same error as the grade example above. Whenever the items being averaged represent groups of different counts, the weighted mean with counts as weights is correct; the plain mean is not.
+
+---
+
+## Frequently Asked Questions
+
+### Definition and Meaning
+
+A weighted average is an average that assigns a different level of importance (a weight) to each value in a dataset. Values with higher weights have a greater influence on the result than values with lower weights. It equals the sum of each value multiplied by its weight, divided by the sum of all the weights: `x̄_w = Σ(wᵢ × xᵢ) / Σwᵢ`.
+
+### Applying the Formula
+
+Write each value next to its weight, multiply every pair together, sum all the products, then divide by the total of all the weights. When the weights are percentages that sum to 100%, convert each to a decimal first (divide by 100), then apply the formula. The result is the weighted average.
+
+### Calculating a Course Grade Step by Step
+
+List each graded component, its score, and its percentage weight. Divide each percentage by 100 to get a decimal weight. Multiply each score by its decimal weight. Sum all those products. Divide by the sum of the decimal weights (which equals 1.0 if the percentages total 100%). The worked example above shows every step for a five-component course. This is how to calculate weighted average for grades using the standard formula.
+
+### Mean vs. Weighted Mean
+
+The arithmetic mean treats every value equally — each gets a weight of 1/n. The weighted mean assigns a specific weight to each value so that some contribute more to the result than others. When all weights are equal, the two formulas produce the same number. Use the weighted mean whenever the data points differ in importance, group size, or reliability.
+
+### Using an Online Grade Calculator
+
+An average calculator for grades automates the multiplication-and-division steps: enter each assessment score and its weight, and the calculator returns the final grade. The calculator on this page does exactly that. Knowing the underlying formula lets you verify the result and adapt it when a grading scheme changes — a useful skill even when a weighted average calculator grades tool is available.
+
+### Why It Differs from the Simple Mean
+
+The result differs from the simple mean when the highest-scoring items carry the most weight (pushing it upward) or when the lowest-scoring items carry the most weight (pulling it down). A student who excels on a heavily weighted final exam will finish above their simple mean; one who struggles on the final will be below it. The direction of the gap reveals which components had the greatest influence.
+
+### When It Equals the Arithmetic Mean
+
+The weighted average equals the arithmetic mean exactly when all the weights are equal — each weight is the same value, say 1. In fact, the arithmetic mean is the special case of the weighted mean where every data point has equal importance. In practice, the two match whenever the grading scheme, allocation, or group sizes are identical for every item being averaged.
+
+---
+
+## Summary
+
+A weighted average is the right tool whenever the values you are combining carry different levels of importance. The weighted average formula — sum of (weight × value) divided by the sum of the weights — is a direct extension of the arithmetic mean that handles unequal importance naturally and reduces to the plain mean when all weights are equal. Whether you are calculating a course grade with a weighted average calculator, combining portfolio returns, or aggregating survey data from groups of different sizes, the steps are the same: multiply each value by its weight, sum the products, then divide by the total weight.
+
+For the plain arithmetic mean and an overview of the median and mode, see the <Link to={routes.article('what-is-an-average')}>what is an average</Link> guide. To understand how spread is measured and what the standard deviation symbol σ means, see the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol</Link> article.
