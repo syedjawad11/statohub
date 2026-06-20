@@ -150,11 +150,30 @@ indexing if ignored:
   ```
   Inside fenced blocks, braces and backslashes are literal and safe.
 - **>= 1 authoritative external link, with a descriptive anchor.** Cite at least one
-  authoritative source (.gov / .edu / NIST/SEMATECH e-Handbook / OpenStax) for the
-  concept or formula, placed in context (the worked example or an FAQ answer), e.g.
-  `[NIST/SEMATECH e-Handbook on standard deviation](https://www.itl.nist.gov/...)`.
-  NEVER a bare URL anchor (`[https://...](https://...)`) and NEVER generic anchors
-  ("click here", "source", "this"). Verify the formula/claim matches the source.
+  authoritative source for the concept or formula, placed in context (the worked
+  example or an FAQ answer). NEVER a bare URL anchor (`[https://...](https://...)`)
+  and NEVER generic anchors ("click here", "source", "this"). Verify the formula/claim
+  matches the source.
+  **Do NOT guess deep URLs.** Fragile paths like `online.stat.psu.edu/stat500/lesson/2/2.2`
+  or invented OpenStax page slugs often 404 and will FAIL the broken-link gate (Step 4),
+  forcing a defer. Strongly PREFER a link from this **curated, verified-stable allowlist**
+  (every one of these returns HTTP 200 and rarely moves) -- pick the closest topical match:
+  - NIST/SEMATECH e-Handbook (rock-stable, ideal default):
+    - measures of location / mean / median: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm`
+    - standard deviation & variance: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm`
+    - measures of scale / spread / range: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm`
+    - histogram / frequency: `https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm`
+    - normal distribution: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm`
+    - confidence interval for the mean: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm`
+    - correlation: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda35d.htm`
+    - linear least squares fit: `https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm`
+    - hypothesis test / t-test / p-value / chi-square: `https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm`
+    - probability distributions overview: `https://www.itl.nist.gov/div898/handbook/eda/section3/eda36.htm`
+  - OpenStax Introductory Statistics 2e (use ONLY these exact, verified slugs):
+    - measures of center: `https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data`
+  If none of the above fits, you MAY cite another `.gov`/`.edu`/NIST/OpenStax page, but
+  you MUST keep it for publication ONLY if the Step 4 curl returns 200; if it 4xx/5xx,
+  replace it with the closest allowlist link above rather than guessing again.
 - **No internal links required.** If you want one, the ONLY safe targets are the
   calculators hub `[all calculators](/calculators/)` or home `[home](/)` -- both
   must keep the trailing slash. Do NOT link any other internal path (it may not

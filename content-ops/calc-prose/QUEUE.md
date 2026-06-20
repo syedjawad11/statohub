@@ -16,7 +16,7 @@ which terms to weave in naturally.
 | #  | slug                    | primary keyword                  | supporting keywords | status  |
 |----|-------------------------|----------------------------------|---------------------|---------|
 | 1  | standard-deviation      | standard deviation calculator    | sample standard deviation; population standard deviation; how to calculate standard deviation | done (pilot, human-authored) |
-| 2  | mean                    | mean calculator                  | average calculator; how to find the mean; arithmetic mean | pending |
+| 2  | mean                    | mean calculator                  | average calculator; how to find the mean; arithmetic mean | done |
 | 3  | average                 | average calculator               | how to find the average; calculate average; mean of numbers | pending |
 | 4  | variance                | variance calculator              | sample variance; population variance; how to calculate variance | pending |
 | 5  | range                   | range calculator                 | how to find the range; minimum and maximum; range in statistics | pending |
