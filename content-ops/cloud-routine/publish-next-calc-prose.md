@@ -251,20 +251,62 @@ print("QA_RESULT: PASS (warnings are non-blocking)")
 PY
 ```
 
-**Broken-link check (hard fail on 4xx/5xx; unreachable = warning only):**
+**Broken-link check (network-aware; hard fail on a genuine 4xx/5xx only):**
+
+This check FIRST probes known-good **control URLs** to learn whether the sandbox has
+any outbound connectivity. Some cloud sandboxes egress-block the whole internet, so
+*every* host -- even `example.com` -- returns 403/000. In that case a 4xx/5xx tells
+you nothing about the link, so a blanket hard fail would wrongly defer a perfectly
+good page (this is exactly what happened to `average` on 2026-06-21). The rule:
+
+- **Network is UP** (a control URL returns 2xx/3xx): a 4xx/5xx on a content link is a
+  REAL dead link -> hard fail. This is the case that must still block (e.g. a guessed
+  PSU deep URL that genuinely 404s).
+- **Network is DOWN / fully blocked** (all control URLs fail): we cannot verify
+  anything. Demote 4xx/5xx to a **warning** -- but ONLY for trusted authoritative
+  hosts (`.gov`/`.edu`/NIST/SEMATECH/OpenStax), which the writer is told to prefer and
+  which are verified-stable. A 4xx/5xx on any OTHER host in a blackout still hard-fails
+  (we won't ship an unverifiable random link). `000` (timeout/DNS) stays a warning.
 
 ```bash
+# 1) Probe control URLs to detect outbound connectivity.
+NETWORK_OK=0
+for ctl in "https://example.com" "https://www.iana.org" "https://www.cloudflare.com"; do
+  C=$(curl -s -o /dev/null -L --max-time 20 -A "Mozilla/5.0 statohub-linkcheck" -w "%{http_code}" "$ctl" || echo "000")
+  C="${C: -3}"   # normalize: some curl builds concatenate a code per redirect hop
+  echo "CONTROL $C $ctl"
+  case "$C" in 2??|3??) NETWORK_OK=1; break ;; esac
+done
+echo "NETWORK_OK=$NETWORK_OK"
+
+# 2) Extract the content links.
 python - "$SLUG" <<'PY' | tee /tmp/calclinks.txt
 import sys, re, pathlib
 b = pathlib.Path(f"src/content/calculator-content/{sys.argv[1]}.mdx").read_text(encoding="utf-8")
 for u in sorted(set(re.findall(r'\]\((https?://[^)]+)\)', b))): print(u)
 PY
+
+# 3) Check each link, interpreting the code through NETWORK_OK.
 BROKEN=0
 while IFS= read -r u; do
   [ -z "$u" ] && continue
   CODE=$(curl -s -o /dev/null -L --max-time 20 -A "Mozilla/5.0 statohub-linkcheck" -w "%{http_code}" "$u" || echo "000")
+  CODE="${CODE: -3}"   # normalize: some curl builds concatenate a code per redirect hop
   echo "LINKCHECK $CODE $u"
-  case "$CODE" in 4??|5??) echo "  -> BROKEN (hard fail)"; BROKEN=1 ;; 000) echo "  -> unreachable (warning only)";; esac
+  TRUSTED=0
+  echo "$u" | grep -Eiq '\.(gov|edu)(/|$|:)|nist|sematech|openstax' && TRUSTED=1
+  case "$CODE" in
+    4??|5??)
+      if [ "$NETWORK_OK" = "1" ]; then
+        echo "  -> BROKEN (hard fail: network is up, this link genuinely failed)"; BROKEN=1
+      elif [ "$TRUSTED" = "1" ]; then
+        echo "  -> unverifiable in sandbox blackout; trusted authoritative host -> WARNING (publish)"
+      else
+        echo "  -> BROKEN (hard fail: blackout AND non-authoritative host -> cannot trust)"; BROKEN=1
+      fi
+      ;;
+    000) echo "  -> unreachable (warning only)";;
+  esac
 done < /tmp/calclinks.txt
 echo "BROKEN_LINKS=$BROKEN"
 ```
@@ -272,6 +314,13 @@ echo "BROKEN_LINKS=$BROKEN"
 If `BROKEN_LINKS=1`, fix or replace the dead link. If a HARD fail remains, fix and
 re-run, up to **2 revision rounds**. If it still hard-fails, go to the **Deferred**
 path (Step 6b). Warnings do not trigger the deferred path.
+
+**Why this is safe:** in a blackout we only trust links the writer was already
+instructed to prefer (the curated NIST/OpenStax/.gov/.edu allowlist in Step 3), every
+one of which is verified-200 and rarely moves. A genuinely dead link is still caught
+whenever the sandbox HAS connectivity, and a non-authoritative link can never ride
+through a blackout. Net effect: the queue keeps draining instead of deferring every
+single day, without ever shipping a link we had a real chance to verify and failed.
 
 ---
 
@@ -400,7 +449,10 @@ or `PUBLISH_FAILED [<step>]: <reason>` (pushed nothing; safe to re-run)
 
 ## Hard rules recap
 - One calculator teaching block per run. Claude writes; no external LLM/network calls.
-- Never push a non-building tree or a broken link to `main`.
+- Never push a non-building tree or a broken link to `main`. The broken-link gate is
+  network-aware (Step 4): a 4xx/5xx only hard-fails when control URLs prove the sandbox
+  has connectivity; in a full egress blackout, trusted authoritative links (the Step 3
+  allowlist) are demoted to warnings so the queue still drains.
 - `draft: true` until BOTH the light QA gate and the build gate pass.
 - No H1 in the body (calculator title is the only H1). No LaTeX; fenced formulas.
 - >= 1 authoritative external link with a descriptive anchor. Short (~300-700 words).
