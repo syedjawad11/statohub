@@ -1,0 +1,298 @@
+---
+title: "Correlation Definition: Positive, Negative & Types Explained"
+description: "Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained."
+category: regression-correlation
+primaryKeyword: correlation definition
+keywords:
+  - correlation definition
+  - correlation basics
+  - correlation def
+  - correlation meaning
+  - mean correlation
+  - positive correlation
+  - which table shows a positive correlation
+phase: 1
+related: []
+draft: false
+---
+
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Correlation appears in almost every branch of statistics — from medical research to finance to education — because it answers a straightforward question: do two measured quantities tend to move together? This article builds the correlation definition up from first principles, works through the Pearson formula with real numbers, then covers positive and negative correlation, mean correlation, and how to identify which table shows a positive correlation.
+
+## The Correlation Definition
+
+**Correlation** is a statistical measure of the strength and direction of the linear relationship between two quantitative variables. When one variable consistently rises as the other rises — or falls as the other falls — the variables are positively correlated. When one rises as the other falls, they are negatively correlated. When no systematic pattern links them, the correlation is near zero.
+
+The standard measure is **Pearson's r** (the Pearson product-moment correlation coefficient), named after the statistician Karl Pearson. It compresses both the strength and the direction of the relationship into a single number on a scale from −1 to +1.
+
+| r value | Meaning |
+|---------|---------|
+| +1.0 | Perfect positive correlation |
+| +0.7 to +0.9 | Strong positive correlation |
+| +0.3 to +0.7 | Moderate positive correlation |
+| 0.0 to +0.3 | Weak positive correlation |
+| 0.0 | No linear correlation |
+| −0.3 to 0.0 | Weak negative correlation |
+| −0.7 to −0.3 | Moderate negative correlation |
+| −1.0 to −0.7 | Strong negative correlation |
+| −1.0 | Perfect negative correlation |
+
+The boundaries above follow conventions from Cohen (1988) and are widely used in social-science research. What counts as "strong" depends on the field: an r of 0.50 may be unremarkable in psychology but exceptionally high in ecology, where dozens of variables compete to explain variance.
+
+### The Pearson r Formula
+
+The Pearson formula is:
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / √[Σ(xᵢ − x̄)² × Σ(yᵢ − ȳ)²]
+```
+
+where `xᵢ` and `yᵢ` are paired observations, `x̄` and `ȳ` are the respective means, and `Σ` denotes summing over all n pairs.
+
+An equivalent form using sample standard deviations makes the scale-independence of r explicit:
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / [(n − 1) × sₓ × sᵧ]
+```
+
+Multiplying every x value by a constant leaves r unchanged, because that constant cancels in both the numerator and the denominator. Pearson's r is therefore dimensionless — it carries no units and can be compared across variables measured in completely different scales. The [NIST/SEMATECH e-Handbook of Statistical Methods, section on the Linear Correlation Coefficient](https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm) provides a rigorous derivation and examples of how r is used in quality-control analysis.
+
+## A Fully Worked Example
+
+A teacher records weekly study hours and end-of-term exam scores for five students:
+
+| Student | Study hours (x) | Exam score (y) |
+|---------|-----------------|----------------|
+| A | 2 | 60 |
+| B | 3 | 65 |
+| C | 4 | 70 |
+| D | 5 | 80 |
+| E | 6 | 85 |
+
+**Step 1 — Compute the means:**
+
+```
+x̄ = (2 + 3 + 4 + 5 + 6) / 5 = 20 / 5 = 4.0
+ȳ = (60 + 65 + 70 + 80 + 85) / 5 = 360 / 5 = 72.0
+```
+
+**Step 2 — Compute the deviations, cross-products, and squared deviations:**
+
+| Student | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)(yᵢ − ȳ) | (xᵢ − x̄)² | (yᵢ − ȳ)² |
+|---------|---------|---------|-------------------|------------|------------|
+| A | −2 | −12 | 24 | 4 | 144 |
+| B | −1 | −7 | 7 | 1 | 49 |
+| C | 0 | −2 | 0 | 0 | 4 |
+| D | +1 | +8 | 8 | 1 | 64 |
+| E | +2 | +13 | 26 | 4 | 169 |
+| **Sum** | | | **65** | **10** | **430** |
+
+**Step 3 — Apply the formula:**
+
+```
+r = 65 / √(10 × 430)
+r = 65 / √4300
+r = 65 / 65.57
+r ≈ 0.991
+```
+
+An r of 0.991 is very close to +1, confirming that as study hours increase, exam scores rise in an almost perfectly linear pattern.
+
+To compute Pearson's r for your own datasets, the <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> handles every step and returns r, r², and the regression equation automatically.
+
+## Positive Correlation
+
+**Positive correlation** occurs when both variables move in the same direction: as one increases, the other tends to increase as well. The r value falls between 0 and +1.
+
+Common real-world examples of positive correlation:
+
+- **Height and weight.** Taller people tend to weigh more (individual variation is large, but the trend is positive).
+- **Study time and exam score.** As in the worked example above, more preparation typically produces a higher score.
+- **Temperature and ice-cream sales.** Warmer days drive more purchases; as temperature rises, sales rise.
+- **Advertising spend and revenue.** Higher marketing budgets often accompany higher sales figures, especially in early growth phases.
+
+A scatter plot of two positively correlated variables shows a cloud of data points sloping upward from left to right. The tighter the cloud hugs that upward line, the closer r is to +1. When r = +1 exactly, every point lies on the same straight line — perfect positive correlation. In real data, r = +1 is essentially never observed because measurement error and unmeasured variables always introduce some scatter.
+
+## Negative Correlation
+
+**Negative correlation** occurs when variables move in opposite directions: as one increases, the other tends to decrease. The r value falls between −1 and 0.
+
+Examples of negative correlation:
+
+- **Exercise frequency and resting heart rate.** People who exercise more regularly tend to have lower resting heart rates.
+- **Car age and resale value.** Older vehicles generally command lower prices.
+- **Class absences and exam score.** Students who miss more sessions tend to score lower.
+
+A scatter plot of negatively correlated variables shows a cloud sloping downward from left to right. An r of −0.85 indicates a strong negative relationship — as meaningful as a positive r of +0.85, just in the opposite direction.
+
+## Zero Correlation
+
+When r is close to 0, the two variables have **no linear correlation**: knowing one variable's value gives you no useful information about the other. A scatter plot looks like a roughly circular or randomly scattered cloud with no discernible slope.
+
+Zero correlation does **not** mean the variables are completely unrelated. Two variables can follow a strong curved (non-linear) relationship — a U-shape or a step function, for instance — and still produce r ≈ 0, because Pearson's formula measures only straight-line association. This is one reason why always plotting your data before computing r is good practice. Correlation is a summary, not a substitute for visualization.
+
+## Correlation Meaning: Interpreting the Number
+
+The **correlation meaning** depends on both the sign and the magnitude of r:
+
+- **Sign (+ or −):** Positive means variables move together; negative means they move in opposite directions.
+- **Magnitude (distance from 0):** Values near ±1 indicate a tight linear relationship; values near 0 indicate weak or no linear association.
+- **r² (the coefficient of determination):** Squaring r gives the proportion of variance in one variable that is linearly explained by the other. An r of 0.70 yields r² = 0.49, meaning 49% of the variance in y is accounted for by the linear relationship with x. The remaining 51% comes from other variables or random variation.
+
+Pearson's r is dimensionless and bounded between −1 and +1, which makes it comparable across studies regardless of the units each variable was measured in. The [Penn State STAT 501 Regression Analysis course notes, Introduction to Linear Correlation](https://online.stat.psu.edu/stat501/lesson/1/1.9) offer a detailed treatment of how r relates to the slope and intercept of the fitted regression line.
+
+## Mean Correlation: How to Average Multiple r Values
+
+When you have Pearson correlations from several independent studies or subgroups and want to combine them into a single average, you cannot simply add the r values and divide. Pearson's r is not measured on a linear scale, especially near ±1 — straightforward averaging of raw r values produces a biased (typically underestimated) result.
+
+The correct approach uses **Fisher's z-transformation**, introduced by Ronald Fisher in 1915.
+
+### Fisher's z-Transformation Formula
+
+Convert each r to a z' value:
+
+```
+z' = 0.5 × ln[(1 + r) / (1 − r)]
+```
+
+This maps the bounded [−1, +1] scale onto an unbounded (−∞, +∞) scale where the values behave approximately like a normal distribution, making arithmetic averaging valid.
+
+### Step-by-Step Mean Correlation Example
+
+Suppose two studies report r₁ = 0.50 and r₂ = 0.80.
+
+**Step 1 — Convert each r to z':**
+
+```
+z'₁ = 0.5 × ln[(1 + 0.50) / (1 − 0.50)]
+     = 0.5 × ln(1.50 / 0.50)
+     = 0.5 × ln(3.00)
+     = 0.5 × 1.099
+     = 0.549
+
+z'₂ = 0.5 × ln[(1 + 0.80) / (1 − 0.80)]
+     = 0.5 × ln(1.80 / 0.20)
+     = 0.5 × ln(9.00)
+     = 0.5 × 2.197
+     = 1.099
+```
+
+**Step 2 — Average the z' values:**
+
+```
+z'_mean = (0.549 + 1.099) / 2 = 1.648 / 2 = 0.824
+```
+
+**Step 3 — Back-transform to r:**
+
+```
+r_mean = tanh(z'_mean) = tanh(0.824)
+```
+
+Using the definition of tanh:
+
+```
+r_mean = (e^(2 × 0.824) − 1) / (e^(2 × 0.824) + 1)
+        = (e^1.648 − 1) / (e^1.648 + 1)
+        ≈ (5.197 − 1) / (5.197 + 1)
+        ≈ 4.197 / 6.197
+        ≈ 0.677
+```
+
+The mean correlation is approximately **r = 0.68**. Averaging the raw values directly gives (0.50 + 0.80) / 2 = 0.65 — a slight underestimate, because the r scale compresses near ±1.
+
+When studies differ in sample size, weight each z' by `(nᵢ − 3)` before averaging:
+
+```
+z'_weighted = Σ[(nᵢ − 3) × z'ᵢ] / Σ(nᵢ − 3)
+```
+
+This gives larger samples proportionally more influence, producing a more precise mean correlation estimate.
+
+## Correlation Basics: What It Is and Is Not
+
+Understanding **correlation basics** means grasping both the power and the limits of r:
+
+1. **Correlation measures only linear association.** A strong non-linear pattern — a U-curve, an S-shape — can produce r ≈ 0 even when the variables are strongly related. Always check a scatter plot first.
+2. **Correlation does not imply causation.** A high r between two variables does not mean one causes the other. Both may be driven by an unmeasured third variable (a confounder), or the association may be entirely coincidental. See the fuller discussion in our article on <Link to={routes.article('correlation-vs-causation')}>correlation vs causation</Link>.
+3. **Outliers can distort r substantially.** A single extreme data point can pull r toward ±1 or toward 0. Report whether your analysis checked for outliers.
+4. **Range restriction deflates r.** If you sample only part of the natural spread of x — for instance, only participants above a certain score threshold — r will be artificially smaller than in a full-range sample.
+5. **Sample size affects reliability.** An r of 0.80 from n = 8 observations is far less trustworthy than the same r from n = 200. Statistical significance testing (a t-test for r, or a confidence interval) quantifies this uncertainty.
+
+For related computations, the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> fits the least-squares line through your paired data and reports r, r², slope, and intercept together.
+
+## How to Read a Correlation Table
+
+A **correlation table** — also called a correlation matrix — displays pairwise Pearson r values for three or more variables at once. Each cell shows the correlation between the variable named in that row and the variable named in that column.
+
+Here is an example matrix for three variables: study time (X), exam score (Y), and sleep hours (Z):
+
+|   | X | Y | Z |
+|---|---|---|---|
+| **X** | 1.00 | 0.85 | −0.12 |
+| **Y** | 0.85 | 1.00 | 0.30 |
+| **Z** | −0.12 | 0.30 | 1.00 |
+
+How to read it:
+
+- The **main diagonal** is always 1.00 — every variable is perfectly correlated with itself.
+- The matrix is **symmetric**: the r for X and Y is the same as r for Y and X.
+- **X and Y** share a strong positive correlation (0.85): more study time strongly accompanies higher exam scores.
+- **X and Z** share a weak negative correlation (−0.12): study time has almost no linear relationship with sleep hours.
+- **Y and Z** share a weak positive correlation (0.30): higher exam scores are weakly associated with more sleep.
+
+### Which Table Shows a Positive Correlation?
+
+A correlation table **shows a positive correlation** when its off-diagonal cells contain **positive values noticeably above zero** — roughly 0.3 or higher for a meaningful relationship. In the matrix above, both the X–Y cell (0.85) and the Y–Z cell (0.30) indicate positive correlation.
+
+In contrast, a table showing a negative correlation has negative off-diagonal values (e.g., −0.65), and a table showing no correlation has off-diagonal values hovering near 0. When answering a multiple-choice question about which table shows a positive correlation, look for the table where the off-diagonal cells contain positive numbers between 0 and +1.
+
+Larger correlation tables (five or more variables) are read the same way — scan the off-diagonal half for strong positive values, note their variable-pair labels, and check both the sign and magnitude.
+
+## Correlation Def: Other Correlation Coefficients
+
+The Pearson correlation definition covers linear relationships between two continuous variables. Other **correlation def** variants handle different data types:
+
+- **Spearman's rₛ (rank correlation):** Ranks all x values and all y values first, then applies the Pearson formula to those ranks. Robust to outliers and appropriate for monotone (consistently increasing or decreasing but not necessarily linear) relationships, or when data contain ordinal ranks.
+- **Kendall's τ (tau):** Counts the proportion of concordant minus discordant pairs across all possible pairings. More conservative than Spearman for small samples and more interpretable as a probability statement.
+- **Point-biserial r:** Measures the correlation between one continuous variable and one binary (0/1) variable. It is mathematically equivalent to the Pearson formula applied to the continuous-versus-0/1 pair.
+
+All three share the same −1 to +1 interpretation as Pearson's r; the choice depends on data type, sample size, and whether a strictly linear relationship is a reasonable assumption.
+
+---
+
+## Frequently Asked Questions
+
+### What is the correlation definition?
+
+Correlation is a numerical measure of the strength and direction of the linear relationship between two variables. The Pearson correlation coefficient r ranges from −1 (a perfect negative linear relationship, where one variable decreases exactly as the other increases) to +1 (a perfect positive linear relationship), with 0 indicating no linear association.
+
+### What does correlation mean in statistics?
+
+The **correlation meaning** in statistics is a description of how closely two variables track each other along a straight line. A high positive r means they rise and fall together; a large negative r means one rises as the other falls. The magnitude — the distance of r from 0 — tells you the strength, while the sign tells you the direction. Squaring r gives r², the proportion of variance in one variable that the linear relationship with the other accounts for.
+
+### What is the difference between positive and negative correlation?
+
+Positive correlation (r between 0 and +1) means both variables increase together or both decrease together. Negative correlation (r between −1 and 0) means one increases as the other decreases. A correlation of +0.80 is just as strong as −0.80 — the only difference is direction. Zero correlation means no systematic linear relationship exists.
+
+### Which table shows a positive correlation?
+
+A correlation table shows a positive correlation when its off-diagonal values are positive numbers between 0 and +1. A cell showing, say, 0.72 indicates that the two variables share a moderately strong positive correlation. Cells near 0 show little or no linear relationship; cells near −1 show a strong negative relationship. When identifying which table shows a positive correlation in a multiple-choice problem, look for the table whose off-diagonal entries are clearly positive.
+
+### What is mean correlation?
+
+**Mean correlation** is the average Pearson r across multiple studies or subgroups. Because the r scale is not linear near ±1, you cannot average raw r values directly. The correct method is Fisher's z-transformation: convert each r to z' = 0.5 × ln[(1 + r)/(1 − r)], average the z' values (weighting by nᵢ − 3 if sample sizes differ), then back-transform with r = tanh(z'_mean). This corrects for the compression of the scale near ±1ough and produces an unbiased estimate of the true mean correlation.
+
+### What are the correlation basics every student should know?
+
+The essential **correlation basics** are: r measures only linear association and misses curved patterns; r ranges from −1 to +1; positive r means variables move together, negative r means they move in opposite directions; r = 0 does not rule out a strong non-linear relationship; and high r never proves causation. Always plot your data before interpreting r, and always consider sample size when judging how reliable an r value is.
+
+---
+
+## Summary
+
+Correlation is a foundational concept in statistics. The **correlation definition** — a measure of the strength and direction of the linear relationship between two variables — underlies regression analysis, factor analysis, and countless research designs. A **positive correlation** (r > 0) means variables rise and fall together; a negative correlation (r < 0) means one rises as the other falls. For combining r values across studies, Fisher's z-transformation is the statistically correct approach to computing mean correlation. And when reading a matrix to identify which table shows a positive correlation, the answer comes down to finding off-diagonal values that are clearly positive and above the noise threshold of roughly 0.3.
+
+To compute correlations and the associated regression line for your own data, visit the <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link>. For the full suite of statistical tools, the <Link to={routes.calculatorsHub()}>calculators hub</Link> has everything in one place.
