@@ -1,0 +1,349 @@
+---
+title: "Skewed Distributions: Left Skew, Right Skew & Shape"
+description: "Learn what a left skewed distribution means, how it compares to a right-skewed distribution, how to measure skewness, and how to identify distribution shape."
+category: probability-distributions
+primaryKeyword: left skewed distribution
+keywords:
+  - left skewed distribution
+  - bimodality distribution
+  - distribution skewed left
+  - left vs right-skewed distribution
+  - left-skewed distribution
+  - skewed left distribution
+phase: 1
+related: []
+draft: false
+---
+
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **left skewed distribution** is one where the tail of the data stretches out to the left while the bulk of the values pile up on the right side. The skew tells you which direction the long tail points — left for negative skew, right for positive skew — and it matters because it changes which summary statistic best represents your data.
+
+Understanding skewed distributions is foundational to statistics. When a distribution is skewed left, the mean is pulled down toward the low outliers, making it a poor measure of the typical value. Knowing how to recognise a left-skewed distribution from a histogram, a box plot, or a simple comparison of mean and median helps you choose the right statistics and avoid misleading conclusions.
+
+---
+
+## What Is a Skewed Distribution?
+
+A distribution describes how data values spread across a range. A **symmetric distribution** has a mirror-image shape: the left and right halves match. The normal distribution (the familiar bell curve) is the classic example — mean, median, and mode all land at the same central point.
+
+A **skewed distribution** breaks that symmetry. Values cluster more heavily on one side, and a long tail extends in the opposite direction. The direction of that tail gives the distribution its name:
+
+- **Left-skewed** (negative skew): tail stretches to the left.
+- **Right-skewed** (positive skew): tail stretches to the right.
+
+Skewness is not about where most values sit — it is about where the tail goes. This distinction trips up many students. If you see most of the data bunched on the right and a thin tail pulling left, the distribution is **left-skewed**, even though the peak is on the right.
+
+---
+
+## Left-Skewed Distribution (Negative Skew)
+
+A **left-skewed distribution**, also called a negatively skewed distribution, has its tail on the left side. Most observations are concentrated near the upper end of the scale, with a smaller number of unusually low values dragging the tail downward.
+
+The term **distribution skewed left** is sometimes used interchangeably with left-skewed distribution and left-skewed distribution — they all describe the same shape.
+
+### The Tail Points the Way
+
+The cardinal rule: **the tail tells you the skew direction.** If the tail is on the left → the distribution is skewed left. If the tail is on the right → the distribution is skewed right. Do not let the location of the hump mislead you. In a left-skewed distribution, most data lives on the right side, but the word "left" refers to where the tail goes, not where the data concentrates.
+
+### Mean, Median, and Mode in a Left-Skewed Distribution
+
+For a unimodal distribution skewed left, the three main measures of centre fall in a predictable order:
+
+```
+Mode ≥ Median ≥ Mean
+```
+
+The mode sits at the peak (highest point of the data). The median is the middle value when data is sorted. The mean is pulled toward the low tail values by the few extreme low observations.
+
+In practical terms: when the mean is noticeably lower than the median, a left skew is the likely cause. A few unusually low values drag the mean down without moving the median much.
+
+### Real-World Examples of a Left-Skewed Distribution
+
+**Exam scores on an easy test.** When a professor gives a straightforward exam, most students score in the 80s and 90s, but a small number struggle and score in the 40s or 50s. Those low outliers pull the mean down and create a left tail. The bulk of the grades cluster near the top of the scale.
+
+**Age at retirement.** In a developed economy, most workers retire in their early-to-mid 60s, but very few retire at 30 or 40. The small group that retires unusually early creates a left tail in the retirement-age distribution.
+
+**Time to complete a task when most people are fast.** In a timed competition where most contestants finish quickly, the few slow participants drag the time distribution to the left (on the number line, longer times are higher values — but if "completion time" is measured as "minutes before the deadline," early finishers score high, making the few who finish late become low outliers).
+
+---
+
+## Right-Skewed Distribution (Positive Skew)
+
+A **right-skewed distribution** — also called positively skewed — has its tail on the right. Most values cluster at the low end, and a few very high values stretch the tail rightward.
+
+```
+Mean ≥ Median ≥ Mode
+```
+
+The mean is pulled upward by the high outliers, overshooting the median. This is why income statistics typically report the median household income rather than the mean: a handful of billionaires inflate the mean far above what a typical household earns.
+
+### Real-World Examples of Right-Skewed Distributions
+
+**Household income.** Most households earn modest to moderate incomes. A small number of very high earners create an extreme right tail that pushes the mean income well above the median.
+
+**City populations.** Thousands of small towns exist, but a few megacities have populations in the tens of millions. The distribution of city sizes is heavily right-skewed.
+
+**Insurance claim amounts.** Most claims are small. A few catastrophic claims are enormous and pull the right tail out dramatically.
+
+**Waiting times and queues.** Most customers wait a short time; an occasional service failure causes very long waits, forming a right tail.
+
+---
+
+## Left vs Right-Skewed Distribution: Key Differences
+
+The table below compares a left-skewed distribution and a right-skewed distribution across the most important properties:
+
+| Property | Left-Skewed (Negative) | Right-Skewed (Positive) |
+|---|---|---|
+| Tail direction | Left (lower values) | Right (higher values) |
+| Mean vs. median | Mean < Median | Mean > Median |
+| Mean vs. mode | Mean < Mode | Mean > Mode |
+| Skewness coefficient | Negative (< 0) | Positive (> 0) |
+| Typical context | Exam scores (easy test), retirement age | Income, house prices, city size |
+| Best measure of centre | Median | Median |
+
+Both left-skewed and right-skewed distributions favour the **median** as the measure of centre because the mean is distorted by the tail. This is one of the most practical takeaways from understanding skew: always check whether a dataset is symmetric before reporting the mean as "typical."
+
+---
+
+## Bimodality and Skewed Distributions
+
+A **bimodality distribution** (bimodal distribution) has two distinct peaks instead of one. Bimodality and skewness are separate properties, but they can occur together.
+
+Consider a group where half the members are beginners and half are experts. Their scores on a skills test might form two peaks — one in the low 50s for beginners and one in the high 80s for experts. That shape is bimodal. If the beginner peak is shorter than the expert peak, the combined distribution might also have a slight left skew.
+
+In a true bimodal distribution, the usual rules about mean, median, and mode do not apply cleanly. The mean often falls between the two peaks — in a valley — representing no actual cluster of data. This is why analysts always look at a histogram before relying on summary statistics. A bimodal shape in your data usually signals that two distinct subpopulations have been mixed together, and analysing them separately is often more informative.
+
+To detect bimodality, plot a histogram with enough bins that two humps would be visible if present. A box plot will not reveal bimodality, because it compresses the shape into five summary values.
+
+---
+
+## Measuring Skewness: The Formula
+
+Skewness has both a visual definition (which way the tail goes) and a precise numerical definition. Two formulas are commonly taught.
+
+### Pearson's Second Skewness Coefficient
+
+A quick approximation:
+
+```
+skewness ≈ 3 × (mean − median) / standard deviation
+```
+
+This coefficient is negative when the mean is less than the median (left skew) and positive when the mean exceeds the median (right skew). A value of zero indicates (approximate) symmetry.
+
+### Fisher's Moment Coefficient of Skewness
+
+The more statistically rigorous definition uses the third standardised central moment:
+
+```
+g₁ = (1/n) × Σ((xᵢ − x̄) / s)³
+```
+
+where `n` is the number of observations, `x̄` is the sample mean, and `s` is the sample standard deviation. This is what statistical software (R, Python, Excel) computes by default. Positive values indicate right skew; negative values indicate left skew; zero means symmetric.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.11 — Measures of Skewness and Kurtosis](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm) gives a thorough treatment of both approaches, along with guidance on interpreting the magnitude of the coefficient.
+
+---
+
+## Worked Example: Computing Skewness for a Left-Skewed Dataset
+
+Use the exam-score dataset **55, 75, 82, 87, 90, 91, 92, 93, 95, 95** — ten students on an easy test where most scored well but one student struggled.
+
+### Step 1: Calculate the Mean
+
+Sum all ten values:
+
+```
+55 + 75 + 82 + 87 + 90 + 91 + 92 + 93 + 95 + 95 = 855
+```
+
+```
+mean (x̄) = 855 / 10 = 85.5
+```
+
+### Step 2: Find the Median
+
+The data are already sorted. With n = 10 (even), the median is the average of the 5th and 6th values:
+
+```
+Median = (90 + 91) / 2 = 90.5
+```
+
+Notice that the median (90.5) is higher than the mean (85.5). This gap is the first sign of a left skew — the few low scores are pulling the mean downward.
+
+### Step 3: Identify the Mode
+
+The value 95 appears twice; all others appear once. Mode = **95**.
+
+Ordering confirms: Mode (95) > Median (90.5) > Mean (85.5) — the classic left-skewed pattern.
+
+### Step 4: Calculate the Standard Deviation
+
+Compute each squared deviation from the mean (x̄ = 85.5):
+
+| xᵢ | xᵢ − 85.5 | (xᵢ − 85.5)² |
+|---|---|---|
+| 55 | −30.5 | 930.25 |
+| 75 | −10.5 | 110.25 |
+| 82 | −3.5 | 12.25 |
+| 87 | 1.5 | 2.25 |
+| 90 | 4.5 | 20.25 |
+| 91 | 5.5 | 30.25 |
+| 92 | 6.5 | 42.25 |
+| 93 | 7.5 | 56.25 |
+| 95 | 9.5 | 90.25 |
+| 95 | 9.5 | 90.25 |
+| **Sum** | | **1384.5** |
+
+Sample variance:
+
+```
+s² = 1384.5 / (10 − 1) = 1384.5 / 9 ≈ 153.83
+```
+
+Sample standard deviation:
+
+```
+s = √153.83 ≈ 12.40
+```
+
+### Step 5: Apply Pearson's Second Skewness Coefficient
+
+```
+skewness ≈ 3 × (mean − median) / s
+         = 3 × (85.5 − 90.5) / 12.40
+         = 3 × (−5) / 12.40
+         = −15 / 12.40
+         ≈ −1.21
+```
+
+The coefficient is **−1.21** — clearly negative, confirming this is a **left-skewed distribution**. A value of −1.21 represents moderate-to-strong negative skew; anything below −1 is generally considered highly skewed.
+
+The [OpenStax Introductory Statistics, 2.6 — Skewness and the Mean, Median, and Mode](https://openstax.org/books/introductory-statistics/pages/2-6-skewness-and-the-mean-median-and-mode) provides additional worked examples of skewed distributions alongside their histograms, which is a helpful companion to this numerical approach.
+
+---
+
+## How to Identify a Skewed Distribution
+
+Several methods reveal skewness, each suited to different situations.
+
+### Visual Inspection: The Histogram
+
+A histogram is the most direct way to see skewness. Draw bars for each bin. If the bars slope down toward the left with a long flat tail on that side, the distribution is left-skewed. If they slope down toward the right, it is right-skewed.
+
+The height and width of the bins matters — choose enough bins to see the shape clearly without creating noise from too-small bins.
+
+### Box Plots
+
+A box plot shows the five-number summary (minimum, Q1, median, Q3, maximum). In a left-skewed distribution:
+
+- The median line inside the box sits closer to the **right** (upper) edge of the box.
+- The left whisker is longer than the right whisker.
+- Outliers, if any, appear on the left.
+
+The asymmetry in whisker length is a reliable visual signal of skew even when you cannot draw a full histogram.
+
+### Mean vs. Median Rule of Thumb
+
+Without a plot at all, compare the mean and median:
+
+- Mean substantially **less than** the median → suspect a **left skew**.
+- Mean substantially **greater than** the median → suspect a **right skew**.
+- Mean ≈ Median → roughly symmetric.
+
+This rule is a quick diagnostic, not a formal test. It can fail for multimodal data or when the difference is small. Always confirm with a plot when the stakes are high.
+
+### Computing the Skewness Coefficient
+
+Statistical software computes the skewness coefficient automatically. In Python:
+
+```
+from scipy import stats
+data = [55, 75, 82, 87, 90, 91, 92, 93, 95, 95]
+print(stats.skew(data))
+```
+
+In Excel, the function `SKEW(range)` returns Fisher's skewness coefficient. A negative value confirms left skew.
+
+---
+
+## Why Skewness Matters for Analysis
+
+Skewness affects which statistical tools are appropriate.
+
+**Choosing a measure of centre.** For a skewed left distribution, the median is a more representative "typical value" than the mean. If you report the mean of a left-skewed dataset without noting the skew, readers may overestimate the typical observation because the mean sits below where most of the data lies.
+
+**Choosing a statistical test.** Many classical hypothesis tests (t-tests, ANOVA, Pearson correlation) assume approximately normal — that is, symmetric — data. When data is strongly skewed, these tests can give misleading p-values. Non-parametric alternatives such as the Mann-Whitney U test or the Kruskal-Wallis test do not assume symmetry and are more appropriate for heavily skewed distributions.
+
+**Transforming data.** Analysts frequently transform skewed data before analysis. A logarithm (`log(x)`) compresses right-skewed data toward symmetry; a square or power transform can help with left-skewed data. The goal is to make the analysis valid, not to hide the shape of the data.
+
+**Interpreting risk.** In finance and insurance, understanding whether returns or losses are left-skewed (more extreme downside events than upside) or right-skewed (rare very large gains) directly affects risk assessment and portfolio management.
+
+---
+
+## Common Mistakes When Working with Skewed Distributions
+
+### Confusing Tail Direction with Data Location
+
+Students sometimes say a distribution is "skewed right" because most values are on the right. That is backwards. The skew name refers to the tail, not the bulk. If most values are on the right and the tail goes left, the distribution is **left-skewed**.
+
+A memory trick: think of the skew as the direction a runner would sprint away from the crowd. If the outliers sprint to the left, the skew is left.
+
+### Using the Mean as "Typical" Without Checking Skew
+
+The mean is a fine measure of centre for symmetric data, but it is misleading for a skewed left distribution. Always plot your data and compare mean to median before deciding which to report. Median income, median home price, and median survival time are reported by convention precisely because those distributions are skewed.
+
+### Treating Skewness as an Error
+
+Skewness is a property of the data, not a mistake to be corrected. Exam scores on easy tests are genuinely left-skewed because most students understand the material well. Forcing the data to look symmetric — for example, by dropping the low scores — introduces bias. The appropriate response is to use methods suited to the actual shape: the median for centre, non-parametric tests for inference.
+
+### Assuming Bimodal Means Skewed
+
+A bimodal distribution is not necessarily skewed. Two symmetric peaks centred at the same distance above and below the overall mean can produce a distribution with zero skewness. Bimodality distribution and skewness are separate features; always examine both when exploring a new dataset.
+
+---
+
+## Frequently Asked Questions
+
+### What is a left skewed distribution?
+
+A left skewed distribution is a data distribution where the tail extends to the left (toward lower values) while most observations cluster on the right. The skewness coefficient is negative. Common examples include exam scores on easy tests and retirement ages in countries with a defined retirement age, where occasional early retirees form a left tail.
+
+### What does it mean when a distribution is skewed left?
+
+A distribution skewed left means that a few unusually low values pull the mean below the median. Most of the data is concentrated near the higher end of the range, but the low outliers stretch the distribution toward the left. In practice, this signals that the median is a more reliable measure of the typical value than the mean.
+
+### How do left and right-skewed distributions differ?
+
+In a left-skewed distribution the tail goes left, the mean is less than the median, and the skewness coefficient is negative. In a right-skewed distribution the tail goes right, the mean is greater than the median, and the skewness coefficient is positive. Both types are better summarised by the median than the mean, because the tail distorts the mean.
+
+### What is an example of a left-skewed distribution?
+
+Classic examples include: exam scores when a test is easy (most students score high; a few score very low); age at death in a high-life-expectancy society (most people live into their 70s and 80s, but a small number die young); and time to complete a task in which most participants finish quickly. In each case, the low-value tail distinguishes these as left-skewed or skewed left distributions.
+
+### Is skewed left positive or negative skewness?
+
+Skewed left is **negative skewness**. The skewness coefficient is negative because the tail extends in the direction of lower (more negative) values. Right-skewed distributions have positive skewness coefficients.
+
+### How do you tell if a distribution is skewed from the mean and median?
+
+Compare the two values. If the mean is noticeably lower than the median, the distribution is likely left-skewed. If the mean is noticeably higher, it is likely right-skewed. If they are close, the distribution is approximately symmetric. This rule of thumb works well for unimodal distributions but is unreliable for bimodal distributions, so always supplement it with a histogram.
+
+### Can a distribution be both bimodal and left-skewed?
+
+Yes. A bimodality distribution can also be left-skewed if the two peaks are not mirror images and the overall distribution has a tail extending to the left. For example, a dataset mixing a large group of high scorers and a small group of very low scorers could have two modes and a left tail simultaneously. Bimodality and skewness are separate properties; a distribution can exhibit either, both, or neither.
+
+---
+
+## Summary
+
+A **left skewed distribution** has its tail on the left, a negative skewness coefficient, and a mean that falls below the median. The **skewed left distribution** shape appears whenever a small number of unusually low values pull the tail downward while the majority of observations sit near the upper end of the scale.
+
+The key contrasts: in a **left vs right-skewed distribution**, the tail direction and the sign of the skewness coefficient reverse. Left-skewed → negative coefficient → mean < median. Right-skewed → positive coefficient → mean > median. In both cases, the median is the more trustworthy measure of centre.
+
+A **bimodality distribution** — one with two peaks — is a separate concept from skewness, though the two can coexist. Always look at a histogram before applying summary statistics: the shape of a distribution tells you which tools are appropriate and prevents the common mistake of using the mean to describe data that the median describes far better.
+
+For a deeper treatment of skewness formulas and their statistical properties, the <Link to={routes.calculatorsHub()}>statistics calculators</Link> on this site let you explore measures like the mean, standard deviation, and related descriptive statistics with your own data. You can also review the article on <Link to={routes.article('what-is-an-average')}>what the average means</Link> and how it relates to other measures of centre.
