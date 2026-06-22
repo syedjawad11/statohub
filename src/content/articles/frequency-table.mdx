@@ -1,0 +1,306 @@
+---
+title: "Frequency Tables: How to Build & Read Them"
+description: "A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions."
+category: descriptive-statistics
+primaryKeyword: frequency table
+keywords:
+  - frequency table
+  - frequency distribution
+  - how to find relative frequency
+  - relative frequency table
+  - statistics frequency polygon
+  - what is the relative frequency in statistics
+phase: 1
+calculator: frequency-table
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **frequency table** turns a raw list of data values into an organised summary that shows exactly how often each value appears. You have a dataset — say, 20 quiz scores — and you want to answer the simplest question in statistics: how many times does each value show up? The frequency table answers that question at a glance, making patterns visible that a stream of numbers hides.
+
+Frequency tables are one of the first tools you reach for when exploring a new dataset. They underpin the frequency distribution, the relative frequency table, and visual displays like the frequency polygon. Learning to build and read one well is a foundational skill in descriptive statistics.
+
+---
+
+## What Is a Frequency Table?
+
+A frequency table is a summary that lists every distinct value in a dataset alongside the count of how many times that value occurs. The "frequency" in the name is simply the count — a raw whole number telling you how many observations fell in that category or at that value.
+
+The [OpenStax *Introductory Statistics*, §1.3 — Frequency, Frequency Tables, and Levels of Measurement](https://openstax.org/books/introductory-statistics/pages/1-3-frequency-frequency-tables-and-levels-of-measurement) defines frequency precisely: "A **frequency** is the number of times a value of the data occurs." A frequency table collects all those individual counts into one organised structure so you can compare them side by side.
+
+Frequency tables handle any type of data:
+
+- **Categorical data** — values are labels such as blood type, eye colour, or pass/fail. The table lists each label and its count.
+- **Discrete numeric data** — values are whole numbers such as quiz scores, number of goals scored, or household size. The table lists each value and its count.
+- **Continuous data** — values can fall anywhere on a scale, such as height in centimetres or reaction time in milliseconds. Here you group values into class intervals first, then count how many observations fall in each interval. This produces a grouped frequency table, also called a frequency distribution.
+
+---
+
+## The Parts of a Frequency Table
+
+A standard frequency table has at least two columns:
+
+| Column | What it contains |
+|--------|-----------------|
+| Value (or Class) | The distinct data value, category, or class interval |
+| Frequency (f) | The count of how many times that value appears in the data |
+
+Extended frequency tables add further columns:
+
+- **Relative Frequency** — the proportion each count represents out of the total number of observations
+- **Cumulative Frequency** — a running total of frequencies starting from the smallest value
+- **Cumulative Relative Frequency** — the running total of relative frequencies, showing what fraction of the data falls at or below each value
+
+Each additional column adds a new analytical lens. The raw count tells you size; the relative frequency tells you the share; the cumulative columns provide ranking and percentile position.
+
+---
+
+## How to Build a Frequency Table: Step by Step
+
+A worked example is the fastest way to learn. Use this dataset and follow each step yourself.
+
+**Dataset:** Quiz scores for 20 students (scores range from 6 to 10):
+
+6, 7, 8, 6, 9, 7, 8, 8, 6, 10, 7, 8, 9, 6, 7, 8, 9, 7, 8, 10
+
+### Step 1: Identify Every Distinct Value
+
+Scan the data and list each unique score once, in ascending order:
+
+6, 7, 8, 9, 10
+
+There are five distinct scores in this dataset.
+
+### Step 2: Tally the Occurrences
+
+Go through the dataset from left to right. For each observation, make a tally mark next to the matching score. Working through the 20 scores produces:
+
+| Score | Tally |
+|-------|-------|
+| 6 | IIII |
+| 7 | IIIII |
+| 8 | IIII I |
+| 9 | III |
+| 10 | II |
+
+Tally marks are optional once you are comfortable — the key is to process every observation exactly once and in order, so nothing is skipped or counted twice.
+
+### Step 3: Record the Frequency
+
+Replace each set of tally marks with its total count:
+
+| Score | Frequency (f) |
+|-------|--------------|
+| 6 | 4 |
+| 7 | 5 |
+| 8 | 6 |
+| 9 | 3 |
+| 10 | 2 |
+| **Total** | **20** |
+
+Always include a totals row. The sum of all frequencies must equal the total number of observations (n = 20). If it does not, you have a counting error — the totals row is your built-in check.
+
+Looking at the finished table, the story is immediate: a score of 8 was the most common, followed by 7, then 6, with fewer students scoring 9 or 10. That pattern was invisible inside the raw list.
+
+---
+
+## How to Find Relative Frequency
+
+Raw counts are useful, but if you want to compare groups of different sizes you need the **relative frequency** — the proportion each count represents out of the total.
+
+The formula:
+
+```
+relative frequency = f / n
+```
+
+where `f` is the frequency for a given value and `n` is the total number of observations.
+
+Apply this to the quiz-score data with n = 20:
+
+| Score | Frequency (f) | Relative Frequency (f / 20) | Percentage |
+|-------|--------------|----------------------------|------------|
+| 6 | 4 | 0.20 | 20% |
+| 7 | 5 | 0.25 | 25% |
+| 8 | 6 | 0.30 | 30% |
+| 9 | 3 | 0.15 | 15% |
+| 10 | 2 | 0.10 | 10% |
+| **Total** | **20** | **1.00** | **100%** |
+
+The relative frequencies must sum to exactly 1.00 (100%). That is the second error-check confirming your table is correct.
+
+### What Is a Relative Frequency Table?
+
+A **relative frequency table** is a frequency table that includes the relative frequency column — showing proportions alongside or instead of raw counts. When a news article reports "30 percent of students scored an 8," the journalist is reading from a relative frequency table. The proportion makes the finding meaningful regardless of whether the class had 20 students or 200.
+
+Relative frequency matters most when:
+
+- **Comparing groups of different sizes** — a count of 30 is meaningless unless you know the group had 60 or 6,000 members.
+- **Estimating probability** — under repeated sampling, the relative frequency of an outcome converges to its probability. If 30% of students scored an 8 this year, and you randomly select one student from a similar population, the estimated probability of picking someone who scored 8 is about 0.30.
+- **Scaling histograms** — a relative frequency histogram (y-axis shows proportions, not counts) is directly comparable to another dataset's histogram regardless of sample size.
+
+---
+
+## Cumulative Frequency: Tracking Running Totals
+
+Add a third numeric column to create a **cumulative frequency table**. Start with the frequency of the lowest value and add each successive frequency as you move up the table:
+
+| Score | Frequency | Cumulative Frequency | Cumulative Relative Frequency |
+|-------|-----------|----------------------|------------------------------|
+| 6 | 4 | 4 | 0.20 |
+| 7 | 5 | 9 | 0.45 |
+| 8 | 6 | 15 | 0.75 |
+| 9 | 3 | 18 | 0.90 |
+| 10 | 2 | 20 | 1.00 |
+
+The cumulative frequency of 15 at score 8 means that 15 out of 20 students scored 8 or below — that is the 75th percentile. The cumulative relative frequency column converts counts into percentile statements, which is exactly how standardised test reports describe results to students and parents.
+
+The final row of the cumulative frequency column must always equal n (20 here), and the final row of the cumulative relative frequency column must always equal 1.00. These are additional self-checks.
+
+---
+
+## Try the Frequency Table Calculator
+
+Enter any list of values below and the calculator will build the complete table — frequency, relative frequency, and cumulative frequency — automatically.
+
+<StatCalc slug="frequency-table" variant="embed" />
+
+For a larger display with extra options, open the full <Link to={routes.calculator('frequency-table')}>frequency table calculator</Link>. To browse every statistics tool on the site, visit the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## Frequency Distribution: The Bigger Picture
+
+A **frequency distribution** is the complete picture of how a variable's values are spread across its possible range. The frequency table IS the frequency distribution in tabular form. The same information displayed as a bar chart (bars for each value, height = frequency) becomes a **frequency histogram**. When you connect the top midpoints of those bars with straight lines, you produce a **frequency polygon**.
+
+The shape of a frequency distribution carries analytical meaning:
+
+- **Symmetric, bell-shaped** — values concentrate in the middle and taper off at both ends. This is the shape of a normal distribution.
+- **Right-skewed** — most values cluster at the low end with a long tail stretching to the right. Income distributions often look like this.
+- **Left-skewed** — a long tail on the left, with values bunched toward the high end.
+- **Uniform** — roughly equal frequencies across all values, indicating no dominant outcome.
+- **Bimodal** — two peaks, suggesting two distinct subgroups in the data.
+
+Reading the shape from a frequency table — before plotting anything — is a skill worth developing. In the quiz example, the highest frequency is at 8 and counts drop in both directions, suggesting a roughly symmetric distribution for this small sample.
+
+---
+
+## Frequency Polygon in Statistics
+
+A **frequency polygon** in statistics is a line graph that plots frequency (or relative frequency) against data values or class midpoints, with consecutive plotted points connected by straight lines. It conveys the same information as a histogram but is easier to overlay on a second dataset for direct visual comparison.
+
+To draw a frequency polygon from the quiz-score table:
+
+1. Place the five scores (6, 7, 8, 9, 10) along the horizontal axis.
+2. Plot a point at the height of each score's frequency: (6, 4), (7, 5), (8, 6), (9, 3), (10, 2).
+3. Connect the points in order with straight lines.
+4. Anchor the polygon to zero at a phantom class below the first value (score 5, frequency 0) and above the last value (score 11, frequency 0), so the shape is a closed polygon resting on the axis.
+
+The resulting shape mirrors the bell profile already visible in the frequency table. A statistics frequency polygon is especially useful in biology, psychology, and education research when you want to compare the score distributions of two groups — two classes, two treatment arms, two academic years — on a single chart. Overlaid polygons make the comparison intuitive in a way that two separate histograms placed side by side do not.
+
+For continuous data, you plot the midpoint of each class interval on the horizontal axis rather than the raw value. A class interval of 60–69 has a midpoint of 64.5; that is the x-coordinate of the plotted point.
+
+---
+
+## Grouped Frequency Tables for Continuous Data
+
+When data is continuous — times, heights, weights, temperatures — individual values rarely repeat exactly. A simple value-count table would have a separate row for every observation, each with a frequency of 1, which is useless as a summary. Instead, you group values into **class intervals** (also called bins or classes) and count how many observations fall in each interval.
+
+**Example:** Suppose you record the heights of 30 adults to the nearest centimetre. You might create class intervals of width 5: 155–159 cm, 160–164 cm, 165–169 cm, and so on. Count how many heights fall in each interval and you have a grouped frequency table.
+
+Rules for choosing class intervals:
+
+- **Between 5 and 15 classes** is the standard guideline for most datasets. Fewer than 5 classes lose too much detail; more than 15 make the table hard to scan.
+- All classes should share the **same width** so the bars in any histogram you draw are equal in width and the frequencies are directly comparable.
+- Classes must be **mutually exclusive** — each observation belongs to exactly one class. Use clear conventions such as [155, 160) meaning "155 or more but less than 160."
+- Classes must be **exhaustive** — every observation has a place in the table.
+
+The [Penn State STAT 200, Lesson 2.1 — Organizing Data](https://online.stat.psu.edu/stat200/lesson/2/2.1) covers grouped frequency distributions in detail, including guidance on choosing the number of classes and class width for various dataset sizes.
+
+---
+
+## How to Read a Frequency Table
+
+Reading a finished frequency table is about asking the right questions of each column.
+
+**Which value has the highest frequency?** That is the **mode** — the most commonly occurring observation. In the quiz table, the mode is 8 (frequency = 6).
+
+**What does the total n tell you?** The sum of the frequency column is the sample size. Every subsequent calculation — <Link to={routes.article('what-is-an-average')}>the mean</Link>, percentiles, <Link to={routes.article('how-to-find-the-range')}>the range</Link> — depends on knowing n and the observed values.
+
+**Where does the cumulative relative frequency cross 0.50?** That point marks the approximate **median** — the value below which half the data falls. In the quiz table, the cumulative relative frequency reaches 0.45 at score 7 and jumps to 0.75 at score 8, so the median is 8.
+
+**Is the distribution symmetric?** Look at whether frequencies increase then decrease in a roughly balanced way around the modal class, or whether they are bunched at one end with a long tail at the other. The shape guides which summary statistics to use: symmetric distributions report the mean; strongly skewed ones often report the median instead.
+
+**Do the relative frequencies sum to 1.00?** If they do not (ignoring minor rounding), you have a calculation error to find and fix.
+
+---
+
+## Common Mistakes When Building Frequency Tables
+
+### Omitting the Totals Row
+
+The most common oversight. Without the totals row, you cannot verify the frequencies sum to n, and a reader cannot compute relative frequencies independently. Always include it.
+
+### Overlapping Class Intervals
+
+In a grouped frequency table, writing intervals as "60–70" and "70–80" creates ambiguity: does an observation of exactly 70 go in the first class or the second? Use half-open interval notation such as [60, 70) — including 60, excluding 70 — or write "60 to under 70" in plain language. Every observation must have exactly one class.
+
+### Unequal Class Widths Without Adjustment
+
+Using class intervals of different widths is occasionally valid, but if you then draw a histogram, the bar heights must represent **frequency density** (frequency divided by class width), not raw frequency. Plotting raw frequency against unequal-width classes makes wider bars appear artificially more prominent, which misrepresents the shape of the distribution.
+
+### Confusing Frequency and Relative Frequency
+
+Frequency is a raw count; relative frequency is a proportion. They answer different questions. If a teacher says "eight students scored a 7," that is the frequency (f = 5 actually, but conceptually this is a count). If the teacher says "25 percent of students scored a 7," that is the relative frequency (5 / 20 = 0.25). Neither is wrong; they are answering different questions.
+
+### Letting Relative Frequencies Sum to a Value Other Than 1.00
+
+Rounding each relative frequency to two decimal places can cause the column total to be 0.99 or 1.01 due to rounding error. This is expected and is not a mistake in your data — but note it explicitly so a reader understands the table is correct.
+
+---
+
+## Frequently Asked Questions
+
+### What is a frequency table in statistics?
+
+A frequency table is an organised summary that lists each distinct value (or class interval) in a dataset alongside the count of how many times that value occurs. It is the tabular form of a frequency distribution and the starting point for identifying the mode, estimating the median, computing relative frequencies, and building histograms or frequency polygons.
+
+### What is the relative frequency in statistics?
+
+In statistics, the relative frequency of a value is the proportion of all observations that equal that value. It is calculated by dividing the value's count by the total number of observations. If 6 out of 20 students scored an 8, the relative frequency of a score of 8 is 6/20 = 0.30, meaning 30% of the class achieved that score.
+
+### How do you find relative frequency?
+
+Divide each value's frequency by the total number of observations (n):
+
+```
+relative frequency = f / n
+```
+
+Multiply by 100 to express the result as a percentage. Compute this for every row, then verify the column sums to 1.00 (or 100%). If it does not, recheck your counts or your arithmetic.
+
+### What is a relative frequency table?
+
+A relative frequency table is a frequency table that includes a column showing the relative frequency — the proportion or percentage — for each value, alongside or instead of the raw count. It allows meaningful comparisons between datasets of different sizes and is also used to estimate probabilities under repeated sampling.
+
+### What is a frequency polygon in statistics?
+
+A frequency polygon in statistics is a line graph of frequencies (or relative frequencies) plotted against the corresponding data values or class midpoints, with consecutive points connected by straight lines. The polygon is anchored to zero one class before the first bar and one class after the last, creating a closed shape. It is particularly useful for overlaying and comparing the frequency distributions of two or more groups on a single chart.
+
+### How many classes should a grouped frequency table have?
+
+A common guideline is 5 to 15 classes. A useful rule of thumb is to use approximately the square root of the number of observations: for 100 data points, aim for about 10 classes. Fewer classes suppress detail and can hide important features of the distribution; more classes fragment the data so much that the pattern becomes hard to see.
+
+---
+
+## Summary
+
+A frequency table organises raw data into a structured, readable format by pairing each distinct value with the number of times it appears. Building one requires three steps: identify the distinct values, tally the occurrences, and record the counts. Verify the result by summing the frequency column — it must equal n.
+
+Extend the table with a relative frequency column (divide each count by n) and a cumulative frequency column (add the counts progressively from smallest to largest) to unlock additional analytical power. The relative frequency makes results comparable across datasets of different sizes and directly estimates probability. The cumulative frequency gives percentile positions at a glance.
+
+Display the same information as a bar chart and you have a histogram. Connect the tops of those bars with a line and you have a frequency polygon — standard tools in statistics for visualising how data is distributed. Whether you build the table by hand or with a calculator, understanding what each column measures is what makes the numbers useful rather than just decorative.
