@@ -1,0 +1,87 @@
+---
+calculator: variance
+keywords:
+  - variance calculator
+  - sample variance
+  - population variance
+  - how to calculate variance
+draft: false
+updatedDate: 2026-06-22
+---
+
+Variance measures how spread out a set of values is around their mean — the larger
+the variance, the more scattered the data. This variance calculator returns both the
+**sample variance** and the **population variance**, so you can pick the result that
+matches your situation. If you've wondered how to calculate variance by hand, the
+worked example below shows every step.
+
+## How to use this calculator
+
+1. Enter your numbers in the values box, separated by commas or spaces (for
+   example, `2, 4, 6, 8, 10`).
+2. Read the **Sample Variance** if your data is a sample drawn from a larger
+   population — the standard choice for coursework, surveys, and research.
+3. Read the **Population Variance** if your numbers represent every member of the
+   group, with nothing left out.
+
+The key difference: sample variance divides the sum of squared deviations by `n − 1`
+(Bessel's correction), while population variance divides by `n`.
+
+## Worked example
+
+Take the five values `2, 4, 6, 8, 10`.
+
+```
+mean (x̄) = (2 + 4 + 6 + 8 + 10) / 5 = 30 / 5 = 6
+```
+
+Subtract the mean from each value and square the result:
+
+```
+(2  − 6)² = 16
+(4  − 6)² =  4
+(6  − 6)² =  0
+(8  − 6)² =  4
+(10 − 6)² = 16
+            ──
+Σ(xi − x̄)² = 40
+```
+
+Divide by `n` for population or by `n − 1` for sample:
+
+```
+population variance (σ²) = 40 / 5 =  8.000
+sample variance     (s²) = 40 / 4 = 10.000
+```
+
+The formal definition and notation for variance is documented in the
+[NIST/SEMATECH e-Handbook on standard deviation and variance](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+## Frequently asked questions
+
+### What is variance?
+
+Variance is the average of the squared deviations from the mean. Squaring the
+differences prevents negative and positive gaps from cancelling out, producing a
+single number that describes how spread out the data is.
+
+### When should I use sample variance versus population variance?
+
+Use **sample variance** (divide by `n − 1`) when your data is a sample drawn from
+a larger group — the usual case for surveys, experiments, and statistics homework.
+Use **population variance** (divide by `n`) only when every member of the group is
+included in your data set.
+
+### Why does sample variance divide by n − 1?
+
+Dividing by `n − 1` is Bessel's correction. A sample tends to underestimate the
+true spread of the population it comes from; reducing the denominator by one
+corrects that downward bias, making the sample variance an unbiased estimator of
+the population variance.
+
+### What is the difference between variance and standard deviation?
+
+Standard deviation is the square root of variance. Both measure spread, but
+standard deviation is expressed in the same units as the original data, which makes
+it easier to interpret. Variance, in squared units, is more useful when combining
+or decomposing spread across multiple variables.
