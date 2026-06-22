@@ -1,0 +1,378 @@
+---
+title: "Probability Distributions Explained: Types, Mean & Examples"
+description: "A probability distribution maps every outcome to its probability. Learn types, how to calculate the distribution mean, marginal distributions, and Bayesian uses."
+category: probability-distributions
+primaryKeyword: probability distribution
+keywords:
+  - probability distribution
+  - bayesian statistics
+  - distribution mean
+  - distribution of population
+  - distribution of the population
+  - distribution population
+  - marginal distribution definition
+  - marginal distribution meaning
+  - marginal probability distribution
+phase: 1
+related: []
+draft: false
+---
+
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **probability distribution** describes every possible outcome of a random variable together with the probability assigned to each one. Rather than giving you a single number, a probability distribution gives you the whole picture — a map showing which values are common, which are rare, and exactly how likely each one is.
+
+Probability distributions sit at the heart of statistics, data science, and machine learning. Every time a statistician models a coin flip, estimates the height of a randomly chosen adult from the distribution of population values, or tests whether a drug truly works, a probability distribution is doing the heavy lifting in the background.
+
+This article explains what a probability distribution is, covers the most important types, shows how to calculate the distribution mean, defines the marginal probability distribution, and connects all of it to Bayesian statistics.
+
+---
+
+## What Is a Probability Distribution?
+
+A **probability distribution** is a function or table that links each possible value of a random variable to the probability that the variable takes that value. Two rules must always hold:
+
+1. Every probability is between 0 and 1 (inclusive): `0 ≤ P(X = x) ≤ 1`
+2. All probabilities together sum — or integrate — to exactly 1: `Σ P(X = xᵢ) = 1`
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.6 — Probability Distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/eda36.htm) defines a probability distribution as a listing of all possible outcomes of an experiment together with their corresponding probability values, subject to those two conditions.
+
+A **random variable** X is the quantity being measured — a count, a time, a length, a test score. The distribution of the population from which you sample determines how X behaves before any data is collected.
+
+### Probability Mass Functions vs. Probability Density Functions
+
+The mathematical form of a probability distribution depends on whether the random variable is **discrete** (countable values, like the number of heads in five flips) or **continuous** (any value in a range, like a person's height).
+
+- **Discrete distributions** use a **probability mass function (PMF)**. The PMF gives the exact probability that X equals a specific value: `P(X = x)`.
+- **Continuous distributions** use a **probability density function (PDF)**. Because the probability of any single exact value is zero for a continuous variable, the PDF gives density. You integrate over an interval to find the probability that X falls there: `P(a ≤ X ≤ b) = ∫ f(x) dx` from a to b.
+
+This discrete-versus-continuous split is the most important dividing line when working with probability distributions.
+
+---
+
+## Discrete Probability Distributions
+
+A discrete probability distribution assigns probabilities to a finite or countably infinite set of values. Rolling a fair six-sided die is the simplest example — the outcomes are {1, 2, 3, 4, 5, 6}, each with probability 1/6.
+
+### Binomial Distribution
+
+The **binomial distribution** describes the number of successes in a fixed number of independent yes/no trials, where each trial has the same probability of success p.
+
+```
+P(X = k) = C(n, k) · pᵏ · (1 − p)ⁿ⁻ᵏ
+```
+
+Where:
+- n = number of trials
+- k = number of successes
+- p = probability of success on each trial
+- C(n, k) = the binomial coefficient (combinations of n things taken k at a time)
+
+**Example:** Flip a fair coin 10 times. The probability of getting exactly 6 heads follows a binomial distribution with n = 10, p = 0.5, k = 6. Substituting: C(10, 6) · 0.5⁶ · 0.5⁴ = 210 · 0.015625 · 0.0625 ≈ 0.2051, so about a 20.5 % chance.
+
+The binomial distribution is the workhorse of any fixed-trial, two-outcome setting — quality-control tests, clinical trials with pass/fail endpoints, and A/B tests all use it. Explore binomial probabilities with the <Link to={routes.calculator('binomial-distribution')}>binomial distribution calculator</Link>.
+
+### Poisson Distribution
+
+The **Poisson distribution** counts the number of events in a fixed interval of time or space, when events occur at a constant average rate and independently of each other.
+
+```
+P(X = k) = (λᵏ · e⁻λ) / k!
+```
+
+Where:
+- λ (lambda) = the average number of events per interval
+- k = the number of events
+- e ≈ 2.71828 (Euler's number)
+
+**Example:** A call centre receives an average of 4 calls per minute. The Poisson distribution with λ = 4 gives the probability of receiving exactly 7 calls in a given minute: (4⁷ · e⁻⁴) / 7! = 16384 · 0.01832 / 5040 ≈ 0.0595, roughly 6 %.
+
+### Geometric Distribution
+
+The **geometric distribution** counts the number of trials needed to get the first success. If each trial has probability p of success:
+
+```
+P(X = k) = (1 − p)ᵏ⁻¹ · p
+```
+
+It answers questions like: "How many rolls until I get a six?" With p = 1/6, the distribution mean (expected number of rolls) is 1/p = 6.
+
+---
+
+## Continuous Probability Distributions
+
+Continuous distributions model variables that can take any value in a range. You always ask about intervals rather than exact values.
+
+### Normal Distribution
+
+The **normal distribution** (bell curve) is the most important continuous probability distribution in statistics. Its PDF is:
+
+```
+f(x) = (1 / (σ · √(2π))) · exp( −(x − μ)² / (2σ²) )
+```
+
+Where:
+- μ = the distribution mean
+- σ = the standard deviation
+
+The normal distribution is symmetric around its mean. The empirical rule states that approximately 68 % of values fall within one σ of the mean, 95 % within two σ, and 99.7 % within three σ.
+
+The distribution of population heights in a large group, measurement errors in a precisely calibrated instrument, and the average of large samples (by the Central Limit Theorem) all follow a normal or near-normal distribution. Use the <Link to={routes.calculator('normal-distribution')}>normal distribution calculator</Link> to find probabilities and critical values for any μ and σ.
+
+### Exponential Distribution
+
+The **exponential distribution** models the waiting time between events in a Poisson process — the time until the next bus arrives if buses come at a constant average rate, or the lifetime of a component until failure.
+
+```
+f(x) = λ · e⁻λˣ    for x ≥ 0
+```
+
+The exponential distribution has the **memoryless property**: knowing you have already waited t minutes tells you nothing about how much longer you must wait. If events happen at rate λ = 2 per hour, the distribution mean waiting time between events is 1/λ = 0.5 hours = 30 minutes.
+
+### Uniform Continuous Distribution
+
+The **continuous uniform distribution** assigns equal probability density to every value in an interval [a, b]:
+
+```
+f(x) = 1 / (b − a)    for a ≤ x ≤ b
+```
+
+Every sub-interval of the same length has the same probability. Rounding errors and the arrival time of an event known only to fall in a particular hour are often modelled as uniform.
+
+---
+
+## The Distribution Mean (Expected Value)
+
+The **distribution mean** — also called the **expected value** and written E(X) or μ — is the probability-weighted average of all possible values of a random variable. It is the single number that best represents the centre of a distribution of the population.
+
+### Formula for Discrete Distributions
+
+For a discrete random variable, multiply each outcome by its probability and sum across all outcomes:
+
+```
+E(X) = Σ xᵢ · P(X = xᵢ)
+```
+
+**Worked example:** A game pays £2 for rolling a 6, £1 for rolling a 4 or 5, and nothing otherwise on a fair six-sided die.
+
+| Outcome | Payout (x) | Probability P(X = x) | x · P(X = x) |
+|---------|-----------|----------------------|--------------|
+| 1, 2, 3 | £0 | 3/6 = 0.500 | £0.000 |
+| 4 or 5 | £1 | 2/6 ≈ 0.333 | £0.333 |
+| 6 | £2 | 1/6 ≈ 0.167 | £0.333 |
+
+Distribution mean = 0.000 + 0.333 + 0.333 = **£0.667 per roll**
+
+If you played this game thousands of times, your average payout per roll would converge to £0.67. The word "expected" does not mean you will receive exactly £0.67 on any single roll — you will receive £0, £1, or £2. It describes the long-run average of the distribution population outcomes.
+
+### Formula for Continuous Distributions
+
+For a continuous random variable with PDF f(x), the distribution mean is:
+
+```
+E(X) = ∫ x · f(x) dx   (over the entire support)
+```
+
+**Example — Exponential distribution:**
+
+```
+E(X) = 1 / λ
+```
+
+If events happen at rate λ = 4 per hour, the average time between events is 1/4 hour = 15 minutes.
+
+**Example — Normal distribution N(μ, σ²):**
+
+```
+E(X) = μ
+```
+
+The distribution mean of a normal distribution is exactly its μ parameter — which is why the parameter is named μ.
+
+### Distribution Mean vs. Sample Mean
+
+The **distribution mean** is a parameter — a true, fixed property of a theoretical probability distribution. The **sample mean** x̄ is a statistic — an estimate computed from observed data. As sample size grows, x̄ converges to the distribution mean by the Law of Large Numbers. The distribution of the population is what you are trying to learn; the sample gives you an estimate of it.
+
+---
+
+## Marginal Probability Distribution
+
+The **marginal probability distribution** arises when you have a joint distribution over two or more random variables and want to focus on just one, setting the others aside.
+
+### Marginal Distribution Definition
+
+The **marginal distribution definition**: given a joint distribution P(X, Y), the marginal distribution of X is obtained by summing (discrete) or integrating (continuous) over all possible values of Y:
+
+```
+P(X = x) = Σ_y P(X = x, Y = y)      (discrete)
+f(x)      = ∫ f(x, y) dy             (continuous)
+```
+
+The term "marginal" has a practical origin: you write a joint probability table and literally sum values into the margins of the table.
+
+### Marginal Distribution Meaning
+
+The **marginal distribution meaning** in practice: it reveals how one variable behaves on its own, regardless of the other variable. The joint distribution P(X, Y) encodes the relationship between X and Y; the marginal probability distribution P(X) strips out Y entirely.
+
+**Worked example:** A survey of 400 people records age group (Young / Middle / Senior) and diet type (Vegetarian / Non-vegetarian). The joint distribution counts all six combinations:
+
+| | Vegetarian | Non-vegetarian | **Marginal (Age)** |
+|---|---|---|---|
+| Young | 60 | 100 | **160** |
+| Middle | 50 | 120 | **170** |
+| Senior | 20 | 50 | **70** |
+| **Marginal (Diet)** | **130** | **270** | 400 |
+
+The **marginal probability distribution of age** sums across each row:
+
+- P(Young) = 160 / 400 = 0.400
+- P(Middle) = 170 / 400 = 0.425
+- P(Senior) = 70 / 400 = 0.175
+
+The **marginal probability distribution of diet** sums down each column:
+
+- P(Vegetarian) = 130 / 400 = 0.325
+- P(Non-vegetarian) = 270 / 400 = 0.675
+
+### Marginal vs. Conditional Distribution
+
+The marginal distribution answers "What is the distribution of X overall?" The conditional distribution P(X | Y = y) answers "What is the distribution of X given that Y equals y?" These two are identical only when X and Y are statistically independent — when knowing Y tells you nothing about X.
+
+---
+
+## Bayesian Statistics and Probability Distributions
+
+**Bayesian statistics** treats probability as a measure of belief or uncertainty that is updated as evidence arrives. Probability distributions are not just descriptions of data in this framework — they are the formal language for expressing what you know (and do not know) about unknown parameters.
+
+In Bayesian statistics, you model uncertainty about an unknown parameter θ as a **prior distribution** — a full probability distribution over possible values of θ, set before any data is collected. After observing data, you update the prior using Bayes' theorem to produce the **posterior distribution**:
+
+```
+P(θ | data) ∝ P(data | θ) · P(θ)
+```
+
+Where:
+- `P(θ | data)` = the posterior distribution (updated belief about θ)
+- `P(data | θ)` = the likelihood (how probable is the observed data given θ?)
+- `P(θ)` = the prior distribution (initial belief about θ)
+
+**Example:** You flip a coin 10 times and get 7 heads. A Bayesian analyst starts with a uniform prior over the coin's probability of heads p — no preference for any value from 0 to 1. After observing 7 heads in 10 flips, Bayes' theorem shifts the posterior distribution to concentrate around p = 0.7, while still allowing for uncertainty (because 10 flips is limited evidence). After 1000 flips showing roughly 70 % heads, the posterior would be sharply concentrated near 0.70 with little spread.
+
+Bayesian statistics is widely used in medical diagnosis, spam filtering, A/B testing, and machine learning. What distinguishes it from frequentist statistics is that both the unknowns (parameters) and the knowns (data) are treated as probability distributions. The prior, the likelihood, and the posterior are all fully specified probability distributions.
+
+---
+
+## Shape Characteristics of a Probability Distribution
+
+The distribution mean captures only the centre. Three additional characteristics describe the full shape of a distribution of the population:
+
+### Variance and Standard Deviation
+
+**Variance** measures how widely values spread from the mean:
+
+```
+Var(X) = E( (X − μ)² )
+```
+
+**Standard deviation** σ = √Var(X) is in the same units as X, making it easier to interpret. A distribution with a large σ has fat tails — extreme values occur more often. A small σ means values cluster tightly around the mean.
+
+### Skewness
+
+**Skewness** quantifies asymmetry. A symmetric distribution like the normal has skewness = 0. A right-skewed (positively skewed) distribution has a long tail stretching to the right — income and house prices are common examples. A left-skewed distribution stretches to the left. You can see how skewness changes the shape of a distribution by reading about <Link to={routes.article('skewed-distribution')}>skewed distributions</Link>.
+
+### Kurtosis
+
+**Kurtosis** measures the heaviness of the tails relative to the normal distribution. High kurtosis (leptokurtic) distributions have heavier tails and more extreme values than the normal predicts — financial returns often show this pattern. Low kurtosis (platykurtic) distributions have lighter tails and a flatter centre.
+
+---
+
+## How to Choose the Right Probability Distribution
+
+Choosing the correct distribution is a key modelling decision. Match the generating process to a distribution, not just the shape of a histogram.
+
+| Situation | Distribution to use |
+|-----------|---------------------|
+| Count of successes in n yes/no trials | Binomial |
+| Count of events in a fixed time or space | Poisson |
+| Number of trials until first success | Geometric |
+| Waiting time between events | Exponential |
+| Heights, weights, averages of large samples | Normal |
+| Completely unknown value in a bounded range | Uniform |
+
+A probability distribution governs what data look like before you collect them. Fitting a distribution to observed data means estimating its parameters — the distribution mean μ, the spread σ, the rate λ — from the sample.
+
+---
+
+## Common Mistakes with Probability Distributions
+
+### Treating the Distribution Mean as a Certain Outcome
+
+The distribution mean is the long-run average over many repetitions, not a guaranteed result. In the die example, E(X) = £0.667, but no single roll ever pays £0.667. Understanding this prevents misinterpretation of expected-value calculations.
+
+### Applying a Discrete Distribution to a Continuous Variable
+
+Binomial and Poisson distributions count whole-number events. Applying them to continuous measurements — body weight, reaction time — gives wrong answers. Use a continuous distribution when the variable can take any value in a range.
+
+### Forgetting That All Probabilities Must Sum to One
+
+Every valid probability distribution must satisfy Σ P(X = xᵢ) = 1 (discrete) or ∫ f(x) dx = 1 (continuous). If you assign probabilities that do not sum to one, the distribution is invalid and any calculation built on it is unreliable.
+
+### Ignoring Shape Beyond the Mean
+
+Two distributions can share the same distribution mean but have very different variances, skewness, and tail behaviour. A symmetric, low-variance distribution and a right-skewed, high-variance distribution with equal means predict very different outcomes at the extremes. Always look at the full shape of the distribution of the population, not just its centre.
+
+### Assuming Normality Without Checking
+
+The normal distribution is mathematically convenient, but it does not fit every situation. Income distributions are typically right-skewed. Waiting times are often exponential. Count data can be Poisson. Applying normal-distribution methods to skewed or count data leads to incorrect confidence intervals, p-values, and predictions. Test distributional assumptions before relying on them.
+
+---
+
+## Frequently Asked Questions
+
+### What is a probability distribution?
+
+A **probability distribution** is a complete description of all possible values of a random variable and the probability associated with each. For discrete variables it takes the form of a table or PMF; for continuous variables it is a PDF. Both obey the same two rules: probabilities are non-negative and they total exactly 1.
+
+### What is the distribution mean?
+
+The **distribution mean** (also written E(X) or μ) is the probability-weighted average of all possible outcomes. For a discrete distribution: `E(X) = Σ xᵢ · P(X = xᵢ)`. For a continuous distribution: `E(X) = ∫ x · f(x) dx`. It represents the long-run average value of the random variable over an unlimited number of repetitions.
+
+### What is the difference between the distribution of the population and the sample distribution?
+
+The **distribution of the population** (population distribution) is the true probability distribution that governs every member of the entire group. The **sample distribution** is the empirical frequency distribution of a subset you have observed. The sample distribution is an estimate of the population distribution; as the sample grows, the two converge by the Law of Large Numbers.
+
+### What is a marginal probability distribution?
+
+A **marginal probability distribution** is the distribution of a single variable extracted from a joint distribution of two or more variables. You find it by summing (discrete) or integrating (continuous) the joint distribution over all values of the other variables. The **marginal distribution meaning**: it shows one variable's behaviour in isolation, without conditioning on any other variable.
+
+### What is the marginal distribution definition?
+
+The **marginal distribution definition**: given a joint distribution P(X, Y) for discrete variables, the marginal distribution of X is `P(X = x) = Σ_y P(X = x, Y = y)`. For continuous variables: `f(x) = ∫ f(x, y) dy`. The name comes from the practice of summing joint-probability table entries into the table's margins.
+
+### How does a probability distribution relate to Bayesian statistics?
+
+In **Bayesian statistics**, every unknown quantity is modelled as a random variable with its own probability distribution. The **prior distribution** encodes initial beliefs about a parameter before data is observed. The **posterior distribution** encodes updated beliefs after applying Bayes' theorem: `posterior ∝ likelihood × prior`. This makes probability distributions the fundamental unit of inference in Bayesian statistics, not just a description of observed data.
+
+### What is the difference between a PMF and a PDF?
+
+A **probability mass function (PMF)** applies to discrete random variables and gives the exact probability `P(X = x)` for each value. A **probability density function (PDF)** applies to continuous random variables and gives density rather than probability. You find the probability of an interval by integrating the PDF: `P(a ≤ X ≤ b) = ∫ f(x) dx` from a to b.
+
+### Which probability distributions are most common in statistics?
+
+The most commonly encountered distributions in introductory and applied statistics are the **normal** (symmetric, bell-shaped, used for averages and many natural measurements), the **binomial** (counts of successes in fixed trials), the **Poisson** (counts of events in a fixed interval), and the **exponential** (waiting times). The normal distribution is particularly central because the Central Limit Theorem shows that averages of large samples follow it regardless of the original distribution.
+
+---
+
+## Summary
+
+A **probability distribution** maps every possible outcome of a random variable to its probability, subject to two constraints: each probability is non-negative and they all sum to one. The two main families — discrete (PMF) and continuous (PDF) — include widely used named distributions such as the binomial, Poisson, normal, and exponential.
+
+The **distribution mean** (expected value E(X)) is the probability-weighted centre of any distribution: `Σ xᵢ · P(X = xᵢ)` for discrete variables, or the integral of `x · f(x)` for continuous ones. It is the long-run average of the distribution of population outcomes.
+
+The **marginal probability distribution** isolates one variable's distribution from a joint distribution of several, obtained by summing or integrating over the unwanted variables. It answers "What is the distribution of X on its own?" while the joint distribution answers "What is the distribution of X and Y together?"
+
+**Bayesian statistics** uses probability distributions as the formal language of uncertainty. A prior distribution encodes initial beliefs; observing data shifts it to the posterior distribution through Bayes' theorem. Every inference in the Bayesian framework is a statement about a probability distribution rather than a point estimate.
+
+The [Penn State STAT 414 — Probability Theory course notes](https://online.stat.psu.edu/stat414/) cover all major named distributions with derivations and moment calculations, and are freely available as a comprehensive reference.
+
+Browse the <Link to={routes.calculatorsHub()}>statistics calculators</Link> on this site to apply these distributions to your own data.
