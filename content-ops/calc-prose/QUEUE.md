@@ -20,7 +20,7 @@ which terms to weave in naturally.
 | 3  | average                 | average calculator               | how to find the average; calculate average; mean of numbers | done |
 | 4  | variance                | variance calculator              | sample variance; population variance; how to calculate variance | done |
 | 5  | range                   | range calculator                 | how to find the range; minimum and maximum; range in statistics | done |
-| 6  | percentile              | percentile calculator            | how to calculate percentile; percentile rank; nth percentile | pending |
+| 6  | percentile              | percentile calculator            | how to calculate percentile; percentile rank; nth percentile | done |
 | 7  | weighted-average        | weighted average calculator      | weighted mean; how to calculate weighted average; weighted grade | pending |
 | 8  | mean-absolute-deviation | mean absolute deviation calculator | how to find mean absolute deviation; MAD statistics; average absolute deviation | pending |
 | 9  | frequency-table         | frequency table calculator       | frequency distribution table; relative frequency table; cumulative frequency | pending |

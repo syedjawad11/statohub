@@ -1,0 +1,83 @@
+---
+calculator: percentile
+keywords:
+  - percentile calculator
+  - how to calculate percentile
+  - percentile rank
+  - nth percentile
+draft: false
+updatedDate: 2026-06-24
+---
+
+A percentile tells you what share of a data set falls at or below a given value. If
+your score is at the 90th percentile, then 90% of the other values in the set are
+equal to or lower than yours. This percentile calculator finds any nth percentile you
+choose and also returns the four quartiles (Q1, Q2/Median, Q3) and the interquartile
+range (IQR), so you can describe the full spread of your data in one step.
+
+## How to use this calculator
+
+1. Type your numbers into the **Values** box, separated by commas or spaces (for
+   example, `2, 4, 4, 5, 7, 9`).
+2. Enter the **Percentile** you want — any number from 0 to 100 (for example, `90`
+   for the 90th percentile).
+3. Click **Calculate**. The tool shows the requested percentile value, then Q1, the
+   median (Q2), Q3, and the IQR below it.
+
+## Worked example
+
+Take the data set `2, 4, 4, 5, 7, 9` (six values) and find the 90th percentile.
+
+The calculator uses the Hyndman-Fan Type 7 linear interpolation formula, which is the
+standard in R and NumPy. It locates the target between two adjacent sorted values:
+
+```
+position = (p / 100) x (n - 1)
+         = 0.90 x (6 - 1)
+         = 4.5
+
+P90 = value[4] + 0.5 x (value[5] - value[4])
+    = 7 + 0.5 x (9 - 7)
+    = 8
+```
+
+The same method gives the quartiles automatically:
+
+```
+Q1  (P25) = 4.0   (25th percentile)
+Q2  (P50) = 4.5   (median / 50th percentile)
+Q3  (P75) = 6.5   (75th percentile)
+IQR       = Q3 - Q1 = 6.5 - 4.0 = 2.5
+```
+
+The NIST/SEMATECH e-Handbook covers percentiles in its
+[discussion of measures of location and order statistics](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm),
+including how percentiles relate to the rank of each observation.
+
+## Frequently asked questions
+
+### What is a percentile rank?
+
+Percentile rank is the percentage of values in a data set that fall at or below a
+particular score. If a test score sits at the 75th percentile, three-quarters of all
+scores in the group are equal to or lower than that score.
+
+### What is the nth percentile?
+
+The nth percentile (sometimes written Pn) is the value below which n% of observations
+fall. The 50th percentile is the median; the 25th and 75th are the lower and upper
+quartiles. The 90th and 95th percentiles are common benchmarks in growth charts,
+performance testing, and quality control.
+
+### How is the IQR calculated?
+
+The interquartile range is Q3 minus Q1 — the width of the middle 50% of your data.
+Because it ignores the lowest and highest quarters, the IQR is resistant to outliers
+and a reliable measure of spread when data is skewed or contains extreme values.
+
+### Which percentile formula does this calculator use?
+
+This calculator uses the Hyndman-Fan Type 7 linear interpolation method. It computes
+a fractional index across the sorted list and blends two adjacent values using a
+weighted average. This is the default in R, NumPy, and most modern statistics
+packages, so results match those tools when you supply the same data.
