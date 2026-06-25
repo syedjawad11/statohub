@@ -81,3 +81,8 @@ at publish time too (human visibility).
 
 - **Session 1 (2026-06-25):** `mean-absolute-deviation`, `frequency-table`, `z-score` —
   ✅ published (build green, 53 pages, 0 link violations). 10 of 25 done, 15 remaining.
+- **Session 2 (2026-06-25):** `z-table`, `normal-distribution`, `probability` —
+  ✅ published (commit `1ab0a76`, build green 53 pages / 0 link violations, Actions run
+  `28188634889` green incl. Cloudflare deploy, all 3 pages verified live HTTP 200).
+  **13 of 25 done, 12 remaining.** Next = Session 3: `binomial-distribution`,
+  `combination`, `factorial` (queue rows 14–16).
