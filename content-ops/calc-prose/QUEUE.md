@@ -22,9 +22,9 @@ which terms to weave in naturally.
 | 5  | range                   | range calculator                 | how to find the range; minimum and maximum; range in statistics | done |
 | 6  | percentile              | percentile calculator            | how to calculate percentile; percentile rank; nth percentile | done |
 | 7  | weighted-average        | weighted average calculator      | weighted mean; how to calculate weighted average; weighted grade | done |
-| 8  | mean-absolute-deviation | mean absolute deviation calculator | how to find mean absolute deviation; MAD statistics; average absolute deviation | pending |
-| 9  | frequency-table         | frequency table calculator       | frequency distribution table; relative frequency table; cumulative frequency | pending |
-| 10 | z-score                 | z score calculator               | how to calculate z score; standard score; z score formula | pending |
+| 8  | mean-absolute-deviation | mean absolute deviation calculator | how to find mean absolute deviation; MAD statistics; average absolute deviation | done |
+| 9  | frequency-table         | frequency table calculator       | frequency distribution table; relative frequency table; cumulative frequency | done |
+| 10 | z-score                 | z score calculator               | how to calculate z score; standard score; z score formula | done |
 | 11 | z-table                 | z table                          | z score table; standard normal table; how to read a z table | pending |
 | 12 | normal-distribution     | normal distribution calculator   | bell curve; gaussian distribution; probability under the curve | pending |
 | 13 | probability             | probability calculator           | how to calculate probability; probability of an event; single event probability | pending |

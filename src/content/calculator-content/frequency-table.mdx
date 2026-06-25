@@ -1,0 +1,78 @@
+---
+calculator: frequency-table
+keywords:
+  - frequency table calculator
+  - frequency distribution table
+  - relative frequency table
+  - cumulative frequency
+draft: false
+updatedDate: 2026-06-25
+---
+
+A frequency table organizes a list of numbers by showing how often each distinct
+value appears, along with its share of the whole and a running total. This
+frequency table calculator sorts your values, counts each one, and returns a
+table with four columns — Value, Frequency, Relative Frequency, and Cumulative
+Frequency — plus a total count of all the values you entered.
+
+## How to use this calculator
+
+1. Type your numbers into the values box, separated by commas, spaces, or new
+   lines (for example, `1, 2, 2, 3, 3, 3, 3, 4, 4, 5`).
+2. The calculator sorts the values from smallest to largest and groups identical
+   ones together.
+3. Read across each row to see the value, how many times it occurs, its relative
+   frequency (its proportion of the total), and the cumulative frequency (the
+   running total of counts down to that row).
+4. Check the **Total Values** figure to confirm the calculator read every number
+   you entered.
+
+## Worked example
+
+Take the data set `1, 2, 2, 3, 3, 3, 3, 4, 4, 5` — 10 values in all, so the total
+is 10. Counting each distinct value and building the running total gives:
+
+| Value | Frequency | Relative Frequency | Cumulative Frequency |
+|-------|-----------|--------------------|----------------------|
+| 1     | 1         | 0.1                | 1                    |
+| 2     | 2         | 0.2                | 3                    |
+| 3     | 4         | 0.4                | 7                    |
+| 4     | 2         | 0.2                | 9                    |
+| 5     | 1         | 0.1                | 10                   |
+
+Each column answers a different question:
+
+```
+frequency           = how many times a value appears
+relative frequency  = frequency / total            (here, each frequency / 10)
+cumulative frequency = running sum of frequencies down the rows
+```
+
+The value `3` appears 4 times, so its relative frequency is 4 / 10 = 0.4, which
+you can read as the proportion 0.4 or 40%. The cumulative frequency column adds
+the counts row by row — 1, then 1 + 2 = 3, then 3 + 4 = 7, and so on — ending at
+10, the total count. For the conventions behind grouping data this way, see the
+[NIST/SEMATECH e-Handbook on histograms and frequency distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm).
+
+## Frequently asked questions
+
+### What is the difference between frequency and relative frequency?
+
+Frequency is the raw count of how many times a value appears, while a relative
+frequency table expresses that count as a proportion of the total (frequency
+divided by the number of values). Relative frequency lets you compare data sets
+of different sizes on the same scale.
+
+### What is cumulative frequency used for?
+
+Cumulative frequency is a running total of the counts, so each row tells you how
+many values fall at or below that point. It makes it easy to answer questions
+like "how many values are 3 or less?" and to find medians, quartiles, and
+percentiles.
+
+### How do I build a frequency distribution table by hand?
+
+List every distinct value in order from smallest to largest, tally how many times
+each one occurs to get its frequency, divide each frequency by the total for the
+relative frequency, then add the frequencies down the column to fill in the
+cumulative frequency.

@@ -1,0 +1,58 @@
+---
+calculator: mean-absolute-deviation
+keywords:
+  - mean absolute deviation calculator
+  - how to find mean absolute deviation
+  - MAD statistics
+  - average absolute deviation
+draft: false
+updatedDate: 2026-06-25
+---
+
+The mean absolute deviation (MAD) measures how spread out a data set is by averaging how far each value sits from the mean. Unlike variance and standard deviation, it uses absolute values instead of squaring, so the result stays in the same units as your data and is easy to read. This mean absolute deviation calculator returns the MAD for any list of numbers you enter.
+
+## How to use this calculator
+
+1. Type your numbers into the values box, separated by commas, spaces, or new lines (for example, `2, 4, 6, 8`).
+2. Click calculate. The tool finds the mean, measures each value's distance from it, and averages those distances.
+3. Read the result labeled **Mean Absolute Deviation** — the typical distance of a value from the mean.
+
+## Worked example
+
+Take the data set `2, 4, 6, 8` (4 values). First find the mean:
+
+```
+mean = (2 + 4 + 6 + 8) / 4 = 5
+```
+
+Next, measure the absolute distance of each value from the mean:
+
+```
+|2 − 5| = 3
+|4 − 5| = 1
+|6 − 5| = 1
+|8 − 5| = 3
+```
+
+Add those distances and divide by the number of values:
+
+```
+sum of absolute deviations = 3 + 1 + 1 + 3 = 8
+MAD = 8 / 4 = 2
+```
+
+So on average, each value sits 2 units away from the mean of 5. For more on how absolute and squared spread measures compare, see the [NIST/SEMATECH e-Handbook on measures of spread](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+## Frequently asked questions
+
+### How do you find mean absolute deviation by hand?
+
+Find the mean of your data, then subtract the mean from each value and take the absolute value (drop the minus signs). Add those absolute distances together and divide by the number of values to get the MAD.
+
+### How is MAD different from standard deviation?
+
+Both describe spread, but MAD averages the absolute distances from the mean, while standard deviation squares those distances, averages them, and takes the square root. Squaring gives larger gaps more weight, so in MAD statistics outliers pull the result less than they do in standard deviation.
+
+### What does the average absolute deviation tell you?
+
+It tells you the typical distance between a single value and the mean. A small MAD means the data clusters tightly around the average; a large MAD means the values are more scattered.
