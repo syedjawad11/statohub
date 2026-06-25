@@ -4,7 +4,7 @@ Statistics education + calculators website. Astro (SSG) + Tailwind + MDX →
 Cloudflare Pages. Built from the completed SEO study + content-architecture in
 `../Claude_OS/project ideas/statistics-calculator-seo-study/`.
 
-**Authoritative build spec:** [`BUILD-PLAN.md`](BUILD-PLAN.md) — read it first.
+**Authoritative build spec:** [`doc/BUILD-PLAN.md`](doc/BUILD-PLAN.md) — read it first.
 
 ---
 
@@ -68,6 +68,205 @@ the workflow (not a credential). First fully-green run verified live.
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-25 (calc-prose SESSION 2)** — **Published 3 more calculator teaching
+  blocks — `z-table`, `normal-distribution`, `probability` — via the SESSION-PLAN
+  manual procedure. 13 of 25 done, 12 remaining.** Ran the documented per-session
+  procedure exactly: `git fetch` + confirmed local == `origin/main` @ `baf2d54` (true
+  baseline 10/25 — counted against origin, not the local tree, per the SESSION 1
+  lesson). Wrote each block via 3 parallel `general-purpose` subagents (NOT
+  `stats-article-writer`; these are short ~300–700-word blocks), each handed a worked
+  example pre-computed from the real engine in `src/calc/<slug>.ts` so the prose matches
+  the live tool: **z-table** z=1.96 → cumulative 0.9750 / right-tail 0.0250 / between-0-
+  and-z 0.4750 (via `normalCdf`); **normal-distribution** mean=100, sd=15, x=130, mode
+  P(X<x) → z=2, P=0.9772; **probability** 3 favorable / 10 total → 0.30, complement 0.70.
+  Reviewed all 3, ran the light QA gate (all PASS — 0 hard fails / 0 warnings; 444/500/399
+  words), curl-verified both distinct NIST links 200 (eda3661 normal dist + eda36
+  probability distributions), flipped `draft:false`, marked QUEUE rows 11–13 `done`,
+  build gate green (**astro check 0/0/0, 53 pages, 0 link violations** — page count
+  unchanged since these render on existing `/calculators/<slug>/` pages). Staged ONLY the
+  3 new MDX + QUEUE.md (left the user's in-progress doc restructure untouched), committed
+  `1ab0a76`, pushed → Actions run `28188634889` fully green incl. Cloudflare deploy → all
+  3 pages verified live (HTTP 200, FAQ block present). Logged progress in SESSION-PLAN
+  (commit `a82903b`). **STATE: 13 of 25 calc teaching blocks done, 12 remaining.**
+  **>> NEXT = SESSION 3 <<** `binomial-distribution`, `combination`, `factorial`
+  (QUEUE rows 14–16); same procedure in
+  [`content-ops/calc-prose/SESSION-PLAN.md`](content-ops/calc-prose/SESSION-PLAN.md).
+  **Remaining session map:** S4 correlation-coefficient/linear-regression/confidence-
+  interval, S5 sample-size/t-test/t-table, S6 p-value/chi-square/proportion.
+
+- **2026-06-25 (calc-prose → manual sessions)** — **Switched the calculator
+  teaching-block backlog from the 1/day cloud routine to manual active-session writing
+  (3 pages/session); disabled the routine; SESSION 1 PUBLISHED LIVE.** The user wanted
+  to finish faster than 1/day, so we stopped draining the queue via the cloud routine
+  and now write **3 calc teaching blocks per active session** by hand.
+  **Routine DISABLED (reversible):** `trig_01M1XqCSGchNEjJsKjJG3hix` ("statohub
+  calc-prose 06:00 Malta", cron `0 4 * * *`) set `enabled: false` via RemoteTrigger —
+  **not deleted**; re-enable it if ever reverting to hands-off draining. Keep it OFF
+  while manual sessions run so the two don't pick the same slug. **(The article
+  publishing routines are SEPARATE and STILL ACTIVE — untouched.)**
+  **Plan saved:** [`content-ops/calc-prose/SESSION-PLAN.md`](content-ops/calc-prose/SESSION-PLAN.md)
+  has the full cadence, per-session procedure, and hard rules. **CORRECTED A STALE-TREE
+  COUNTING BUG:** the local working tree was **26 commits behind `origin/main`** (the
+  cloud routine pushes straight to origin from its sandbox), so my first read of "3 of
+  25 done" was wrong — the routine had ALREADY shipped variance/range/percentile/
+  weighted-average. True baseline was **7 of 25**. My first subagent batch
+  (variance/range/percentile) were duplicates → discarded; synced to origin without
+  disturbing the user's unrelated in-progress doc restructure. **LESSON (now in
+  [[monitor-cloud-routine-publishing]] + SESSION-PLAN): always count done/pending against
+  `origin/main` after `git fetch`, never the local tree.**
+  **SESSION 1 DONE (this session):** wrote teaching blocks for **`mean-absolute-deviation`,
+  `frequency-table`, `z-score`** via 3 parallel `general-purpose` subagents (NOT
+  `stats-article-writer` — that targets 2000-word articles; these are short ~300–700-word
+  blocks). Each subagent got a worked example pre-computed from the real engine in
+  `src/calc/<slug>.ts` so the prose matches the live tool: MAD `2,4,6,8`→mean 5→MAD 2;
+  frequency-table `1,2,2,3,3,3,3,4,4,5` (n=10, relative 0.1/0.2/0.4/0.2/0.1) rendered as
+  a Markdown table; z-score x=72,mean=68,sd=5→0.8. Reviewed all 3, ran the light QA gate
+  (all PASS, 0 hard fails), curl-verified the 3 NIST links 200, flipped `draft:false`,
+  build gate green (**astro check 0/0/0, 53 pages, 0 link violations**), marked QUEUE
+  rows 8–10 `done`, staged ONLY the 5 feature files, committed `baf2d54`, pushed →
+  Actions run `28188047475` fully green (incl. Cloudflare deploy) → all 3 pages verified
+  live (HTTP 200, FAQ block present). **STATE: 10 of 25 calc teaching blocks done, 15
+  remaining.**
+  **>> NEXT SESSION = SESSION 2 <<** Just run the SESSION-PLAN procedure for the next 3
+  pending slugs: **`z-table`, `normal-distribution`, `probability`** (queue rows 11–13;
+  keywords in [`content-ops/calc-prose/QUEUE.md`](content-ops/calc-prose/QUEUE.md)).
+  Procedure is fully documented in SESSION-PLAN.md §"Per-session procedure": `git fetch`
+  + confirm against `origin/main` → 3 parallel `general-purpose` subagents writing
+  `src/content/calculator-content/<slug>.mdx` as `draft:true` (each following
+  [`content-ops/cloud-routine/publish-next-calc-prose.md`](content-ops/cloud-routine/publish-next-calc-prose.md)
+  Steps 2–3 + the gold-standard pilot `src/content/calculator-content/standard-deviation.mdx`,
+  each handed a worked example pre-computed from `src/calc/<slug>.ts`) → review → light
+  QA gate + broken-link curl → flip `draft:false` → `npx astro check` + `npm run build`
+  → mark QUEUE rows `done` → stage only the new MDX + QUEUE.md → one commit → push →
+  confirm Actions green + one page live. **Remaining session map:** S2 z-table/
+  normal-distribution/probability, S3 binomial-distribution/combination/factorial, S4
+  correlation-coefficient/linear-regression/confidence-interval, S5 sample-size/t-test/
+  t-table, S6 p-value/chi-square/proportion.
+
+- **2026-06-20 (calculator prose)** — **Stood up the calculator teaching-block pipeline
+  + published the first two blocks (standard-deviation pilot + mean); a daily 06:00-Malta
+  cloud routine now drains the rest one calc/day.** This executes the deferred
+  calculator-page prose SEO pass (the "only major SEO item left" from this morning's
+  entry) per the user's 3-step plan. **Content model settled:** each standalone
+  `/calculators/{slug}/` page gets its OWN short teaching block (lead + `## How to use`
+  + `## Worked example` + `## Frequently asked questions`) rendered BELOW the tool — NOT
+  a pointer to the article — kept short (~300-700 words) so it complements rather than
+  duplicates the full `/{slug}/` articles. **Infra (committed `5869c0c`):** new
+  `calculator-content` MDX collection in [`src/content/config.ts`](src/content/config.ts)
+  (one file per calc slug; `draft:true` until gated; page title stays the only H1 so the
+  body starts at H2), [`calculators/[slug]/index.astro`](src/pages/calculators/[slug]/index.astro)
+  renders the matching published block in `.article-prose` with a `.calc-teaching`
+  separator, plus the human-authored gold-standard pilot
+  [`standard-deviation.mdx`](src/content/calculator-content/standard-deviation.mdx).
+  **Lighter validation TIER (no 2000-word floor):** a self-contained cloud routine
+  [`content-ops/cloud-routine/publish-next-calc-prose.md`](content-ops/cloud-routine/publish-next-calc-prose.md)
+  whose hard gate is only — no body H1, ≥2 H2 sections, primary keyword present, ~≥200
+  words, no LaTeX, ≥1 authoritative external link with a descriptive anchor (curl-checked,
+  4xx/5xx = hard fail), internal links only `/calculators/` or `/` — then the REAL build
+  gate (`astro check` + `npm run build` incl. link gate). It picks the next pending slug
+  from [`content-ops/calc-prose/QUEUE.md`](content-ops/calc-prose/QUEUE.md) (all **25
+  standalone** calcs in publish order with primary + supporting keywords), defers safely
+  (keeps `draft:true`) on failure. **Scheduling:** ONE recurring `RemoteTrigger`
+  (`trig_01M1XqCSGchNEjJsKjJG3hix`, cron `0 4 * * *` = **06:00 Malta**, next run
+  2026-06-21T04:01:56Z) drains the queue 1/day and no-ops when empty (~25 days out, before
+  the Oct DST change so fixed UTC is safe). **Test run fired now → it correctly DEFERRED
+  `mean`** because the cloud writer cited a Penn State deep URL
+  (`online.stat.psu.edu/stat500/lesson/2/2.2`) that **404s** — the broken-link gate caught
+  it and refused to ship a dead link (gate working as designed, not a bug). **Fixed both
+  halves (commit `4e9bf8e`, live + verified):** (1) replaced the dead link with the
+  verified NIST e-Handbook *measures of location* page (`eda351.htm`, 200), flipped
+  `mean.mdx` to published, marked the queue done; (2) **hardened the routine** with a
+  curated, all-HTTP-200-verified authoritative link **allowlist** (NIST e-Handbook
+  sections for mean/sd/histogram/normal/CI/correlation/regression/hypothesis-tests +
+  OpenStax measures-of-center) so the writer stops guessing fragile deep URLs. Local gates
+  green (astro check 0/0/0, build 42 pages / **0 link violations**), pushed (rebased over
+  two interleaved `[cloud-routine]` log commits), Actions run 27869304497 green →
+  Cloudflare; **verified live:** `https://statohub.com/calculators/mean/` 200 with the
+  teaching block, How-to, FAQ, and working NIST link. **Next:** tomorrow's 06:00 run picks
+  `average` (mean now done); spot-check it published green. **Note:** the working tree
+  carries an unrelated in-progress doc restructure (deleted BUILD-PLAN/SITE-ARCHITECT/
+  CONTENT-WORKFLOW + templates, new `doc/`) — left untouched; I staged only my feature
+  files each commit. This session-log append is left uncommitted to avoid entangling it.
+
+- **2026-06-20** — **All 3 Medium technical-SEO fixes shipped to production (commit
+  `bc7e8f3`, live + verified); only the calculator-page prose pass remains open.** This
+  closes the Medium tier deferred from 2026-06-19. **(a) Security headers** via a new
+  Cloudflare Pages [`public/_headers`](public/_headers) file applied edge-wide to `/*`:
+  HSTS `max-age=31536000; includeSubDomains; preload`, `X-Frame-Options: SAMEORIGIN`,
+  `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
+  `Cross-Origin-Opener-Policy: same-origin`, and a baseline CSP (`default-src 'self'`;
+  `script-src`/`style-src 'self' 'unsafe-inline'` — the site uses `is:inline` theme
+  scripts, so a stricter nonce-based CSP is a documented future option, **not** done) →
+  lifts Lighthouse Best Practices 77 → ~100. Chose the `_headers` file over the
+  dashboard/CLI deliberately: Wrangler can't set these, the OAuth token is `zone (read)`
+  only, and CSP/XFO need the file regardless. **(b) Homepage JSON-LD** — added
+  `webSiteSchema` + `organizationSchema` helpers to [`src/lib/schema.ts`](src/lib/schema.ts)
+  (`WebSite` brand entity + `Organization`, linked via `@id` `#website`/`#organization`;
+  Org `logo` = `/apple-touch-icon.png`) and wired them through BaseLayout's `jsonLd` prop
+  from [`src/pages/index.astro`](src/pages/index.astro). `sameAs`/social + the WebSite
+  `SearchAction` are left empty by design — no on-site search endpoint exists and brand
+  social URLs aren't provided yet. **(c) Render-blocking resources — skipped by design**
+  (Perf already 100; not worth the churn). Committed `bc7e8f3` + pushed to `main` →
+  Actions gate suite green → Cloudflare deploy; verified live on prod. **Backlog still
+  open (documented, none urgent):** IndexNow, re-pull CrUX field CWV once GSC shows
+  impressions, per-page dynamic OG images, an optional stricter nonce-based CSP, an
+  optional brand `sameAs` once social profiles exist. **>> ONLY MAJOR SEO ITEM LEFT <<**
+  the **calculator-page prose SEO pass** (the deferred *other half* of the SEO baseline —
+  see [[next-session-seo-followups]]): the ~24 standalone `/calculators/{slug}/` pages
+  carry the tool but **no teaching prose**, so they're thin for ranking. Plan (3 steps):
+  **(1) settle the content model** — does each calc page get its *own* short teaching block
+  (intro + how-to + worked example + small FAQ) or lean on the embedded-article-same-page
+  wedge (point at the full `/{slug}/` article)? Decide first to avoid thin/duplicate
+  overlap with the articles. **(2) build a SEPARATE lighter validation tier** — NO
+  2000-word floor (the article gate's thresholds do NOT apply to short calc prose); just
+  one H1, primary keyword in `<title>`, a meta description, and ≥1 authoritative external
+  link with a descriptive anchor. **(3) write + pilot on `standard-deviation` first**,
+  confirm the model + lighter gate feel right, then roll out to all ~24 standalone
+  calculators. Purely backlog/optional — nothing is broken, not urgent. **Next session:**
+  start at step 1 (settle + recommend the content model), then build the lighter tier,
+  then pilot SD.
+
+- **2026-06-19** — **Technical SEO baseline captured on the live URL + all 3 High-priority
+  fixes shipped to production.** This closes the carried-over "live-URL technical SEO
+  baseline" follow-up (the 2026-06-18 work was the *content/pipeline* baseline; this is
+  the *technical* layer). **Baseline:** ran the `seo-technical` audit against
+  https://statohub.com via live curl probes + DataForSEO `on_page_instant_pages` (mobile)
+  + `on_page_lighthouse` (desktop, JS rendering on); wrote the report to the new
+  [`SEO-Audit/technical-seo-baseline-2026-06-19.md`](SEO-Audit/technical-seo-baseline-2026-06-19.md)
+  (**score 88/100**; no critical/indexing issues — deductions are off-page polish). Lab
+  CWV excellent (LCP 343ms, CLS 0.015, INP-proxy 18ms; Perf 100 / SEO 100 / A11y 94 /
+  **BP 77** — the 77 is purely missing security headers). Report carries a category
+  breakdown, prioritized findings, and a **drift-baseline snapshot table** for future
+  diffing. **Per the user, fixed ONLY the 3 High-priority items this session** (Medium
+  deferred to tomorrow): **(1) homepage `<title>`** was bare "Statohub" (8 chars, zero
+  keywords) → now `Statohub — Statistics Calculators & Plain-English Lessons` in
+  [`src/pages/index.astro`](src/pages/index.astro) (propagates to og:title/twitter:title
+  via `Meta.astro`); **(2) favicon** (was 404) → created `public/favicon.svg` (vermillion
+  bar-chart glyph), `public/favicon.ico` (multi-size), `public/apple-touch-icon.png`
+  (180×180), and added the 3 `<link rel="icon">`/apple-touch tags in
+  [`BaseLayout.astro`](src/layouts/BaseLayout.astro) `<head>`; **(3) og:image** (was
+  absent, twitter:card was `summary`) → created `public/og-default.png` (1200×630 branded)
+  + set `ogImage = '/og-default.png'` as a BaseLayout prop default so it propagates
+  site-wide, and `Meta.astro` already auto-switches `twitter:card` →
+  `summary_large_image` when an ogImage resolves (no edit needed there). **Committed
+  `5e92ac8`** ("seo: fix homepage title, add favicon + default og:image; capture technical
+  SEO baseline", 7 files, +163/-2) — deliberately excluded the regenerated
+  `src/lib/content-route-ids.ts` (CRLF-only, content-neutral). **Pushed to `main`**
+  (`6ae2765..5e92ac8`) → **Actions run 27847196274 green in 47s** (type check → 89 tests →
+  build+link gate → Cloudflare deploy; only the harmless Node 20→24 runner-deprecation
+  annotation). **Verified live on production:** `/favicon.ico` `/favicon.svg`
+  `/apple-touch-icon.png` `/og-default.png` all 200 w/ correct content-types; homepage
+  `<title>` updated; `og:image` = `https://statohub.com/og-default.png`; `twitter:card` =
+  `summary_large_image`; both favicon `<link>` tags present. **Deferred to tomorrow
+  (user's explicit call — Medium fixes):** (a) **security headers** via a Cloudflare Pages
+  `_headers` file (HSTS `max-age=31536000; includeSubDomains; preload` + baseline CSP +
+  `X-Frame-Options: SAMEORIGIN`) → lifts Best Practices 77 → ~100; (b) **homepage JSON-LD**
+  (`WebSite` for sitelinks search box + `Organization` brand entity) via the existing
+  `schema.ts` helpers + `JsonLd.astro`; (c) render-blocking resources (cosmetic, Perf
+  already 100). **Backlog (documented, not requested):** IndexNow, re-pull CrUX field CWV
+  once Search Console shows impressions, per-page dynamic OG images. **Next session:**
+  execute the 3 Medium fixes.
 
 - **2026-06-18** — **SEO baseline shipped: tiered article-validation spec wired into
   the whole publishing pipeline + the 4 published articles retrofitted.** Scope was
