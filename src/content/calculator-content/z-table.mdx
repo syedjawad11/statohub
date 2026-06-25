@@ -1,0 +1,65 @@
+---
+calculator: z-table
+keywords:
+  - z table
+  - z score table
+  - standard normal table
+  - how to read a z table
+draft: false
+updatedDate: 2026-06-25
+---
+
+A z table maps a z-score to the area under the standard normal curve — the
+probability of landing at or below that point. Instead of hunting across rows and
+columns by hand, this calculator takes a single z-score and instantly returns the
+cumulative (left-tail) probability, the right-tail probability, and the area
+between 0 and your z.
+
+## How to use this calculator
+
+1. Enter a **z-score** in the input box (for example, `1.96`). A z-score is the
+   number of standard deviations a value sits above or below the mean.
+2. Read the **cumulative (left-tail) probability** — the area under the curve to
+   the left of your z, or the chance of a value at or below it.
+3. Read the **right-tail probability** — the area to the right of your z, which is
+   simply `1 − cumulative`.
+4. Read the **between 0 and z** value — the area from the center of the curve out
+   to your z-score, which is the figure a printed table body usually lists.
+
+## Worked example
+
+Take a z-score of `1.96`, the value behind 95% confidence intervals.
+
+```
+cumulative P(Z < 1.96) = 0.9750   (area to the left)
+right-tail  P(Z > 1.96) = 0.0250   = 1 - 0.9750
+between 0 and 1.96      = 0.4750   = 0.9750 - 0.5000
+```
+
+So 97.5% of the standard normal curve lies to the left of 1.96, leaving just 2.5%
+in the right tail. That 2.5% in each tail is exactly why 1.96 marks the cutoff for
+a 95% confidence interval. For the underlying formulas and conventions, see the
+[NIST/SEMATECH e-Handbook on the normal distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm).
+
+## Frequently asked questions
+
+### How do I read a z table by hand?
+
+To learn how to read a z table, split your z-score into two parts: the row gives
+the ones and tenths (for `1.96`, the `1.9` row) and the column gives the
+hundredths (the `0.06` column). The cell where they meet is the probability. This
+calculator does that lookup for you and shows all three areas at once.
+
+### What is the standard normal table?
+
+The standard normal table, also called the z score table, lists probabilities for
+a normal distribution with a mean of 0 and a standard deviation of 1. Any normal
+variable can be converted to this scale with a z-score, so one table covers every
+normal distribution.
+
+### Why do some z tables show different numbers?
+
+Some versions of the z score table give the cumulative left-tail area, while
+others (the "0 to z" style) give only the area from the center out to z. They are
+two views of the same curve — this tool reports both so you never have to guess
+which convention a table uses.

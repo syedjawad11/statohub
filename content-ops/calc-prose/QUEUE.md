@@ -25,9 +25,9 @@ which terms to weave in naturally.
 | 8  | mean-absolute-deviation | mean absolute deviation calculator | how to find mean absolute deviation; MAD statistics; average absolute deviation | done |
 | 9  | frequency-table         | frequency table calculator       | frequency distribution table; relative frequency table; cumulative frequency | done |
 | 10 | z-score                 | z score calculator               | how to calculate z score; standard score; z score formula | done |
-| 11 | z-table                 | z table                          | z score table; standard normal table; how to read a z table | pending |
-| 12 | normal-distribution     | normal distribution calculator   | bell curve; gaussian distribution; probability under the curve | pending |
-| 13 | probability             | probability calculator           | how to calculate probability; probability of an event; single event probability | pending |
+| 11 | z-table                 | z table                          | z score table; standard normal table; how to read a z table | done |
+| 12 | normal-distribution     | normal distribution calculator   | bell curve; gaussian distribution; probability under the curve | done |
+| 13 | probability             | probability calculator           | how to calculate probability; probability of an event; single event probability | done |
 | 14 | binomial-distribution   | binomial distribution calculator | binomial probability; n choose k; binomial formula | pending |
 | 15 | combination             | combination calculator           | n choose r; how to calculate combinations; nCr | pending |
 | 16 | factorial               | factorial calculator             | how to calculate factorial; n factorial; factorial formula | pending |

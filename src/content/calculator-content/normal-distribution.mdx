@@ -1,0 +1,77 @@
+---
+calculator: normal-distribution
+keywords:
+  - normal distribution calculator
+  - bell curve
+  - gaussian distribution
+  - probability under the curve
+draft: false
+updatedDate: 2026-06-25
+---
+
+The normal distribution is the familiar bell-shaped curve where most values cluster
+near the average and fewer fall far from it. This normal distribution calculator
+finds the probability that a value lands below, above, or between the points you
+choose. It works by converting your x value into a z-score, then reading the matching
+area under the standard normal curve.
+
+## How to use this calculator
+
+1. Enter the **mean** of your distribution (the center of the bell curve).
+2. Enter the **standard deviation** (how spread out the values are).
+3. Enter the **x value** you want to test — and the **upper bound** too, if you are
+   using the between mode.
+4. Pick a **mode**: `P(X < x)` for the area to the left, `P(X > x)` for the area to
+   the right, or `P(x < X < upper)` for the area between two points.
+5. Read off the **probability** and the **z-score(s)** the calculator returns.
+
+## Worked example
+
+Suppose test scores follow a normal distribution with a mean of 100 and a standard
+deviation of 15, and you want the probability of scoring below 130. Set the mean to
+100, the standard deviation to 15, x to 130, and the mode to `P(X < x)`.
+
+First, convert x to a z-score:
+
+```
+z = (x - mean) / standard deviation
+z = (130 - 100) / 15 = 2
+```
+
+A z-score of 2 means 130 sits two standard deviations above the mean. The calculator
+then reads the area to the left of that point:
+
+```
+P(X < 130) = area to the left of x under the bell curve = 0.9772
+```
+
+So about **97.72%** of scores fall below 130. If you switched the mode to `P(X > x)`,
+the calculator would return the area to the right instead: `1 - 0.9772 = 0.0228`, or
+about 2.28%. For the exact formula and reference tables, see the
+[NIST/SEMATECH e-Handbook on the normal distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm).
+
+## Frequently asked questions
+
+### What is the normal distribution?
+
+The normal distribution, also called the gaussian distribution, is a symmetric,
+bell-shaped curve defined by its mean and standard deviation. The mean marks the
+center of the bell curve, and the standard deviation sets how wide it spreads.
+
+### What does the probability mean?
+
+The probability is the area under the curve for the region you selected — the
+proportion of values expected to fall there. Because the total probability under the
+curve always equals 1, the answer is a number between 0 and 1.
+
+### Why does the calculator show a z-score?
+
+The z-score restates your x value as the number of standard deviations from the mean.
+Converting to a z-score lets the tool look up the probability under the curve from a
+single standard normal table, no matter what mean or spread your data has.
+
+### Is the bell curve always symmetric?
+
+Yes — every normal distribution is perfectly symmetric around its mean, so the left
+and right halves of the bell curve mirror each other. That symmetry is why `P(X < x)`
+and `P(X > x)` for the same x always add up to 1.
