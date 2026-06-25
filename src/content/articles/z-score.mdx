@@ -1,0 +1,361 @@
+---
+title: "Z-Score: Formula, How to Calculate & What It Means"
+description: "A z score measures standard deviations from the mean. Learn the z score formula, how to calculate z score step-by-step, and how to read a z-score chart."
+category: inferential-statistics
+primaryKeyword: z score
+keywords:
+  - z score
+  - how to calculate z score
+  - how to find z score
+  - standard normal distribution
+  - z score formula
+  - z-score chart
+phase: 1
+calculator: z-score
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **z score** — also written z-score or standard score — measures how many standard deviations a single data point lies above or below the mean of its distribution. A positive z score means the value is above the mean; a negative z score means it is below; and a z score of zero means the value equals the mean exactly. Because every z score uses the same standardised scale, you can compare numbers from completely different data sets — a test result, a height, a blood pressure reading — regardless of the original units or spread.
+
+The z score formula is the backbone of inferential statistics. It powers hypothesis tests, confidence intervals, outlier detection, and the probability tables used throughout introductory and advanced statistics courses. Knowing how to calculate z score values from raw data, how to interpret the result, and how to use a z-score chart to find probabilities is one of the most transferable skills in quantitative analysis.
+
+---
+
+## What Is a Z-Score?
+
+A z score answers a simple question: *how unusual is this observation relative to its group?* Every raw value in a data set can be converted to a z score by subtracting the group mean and dividing by the standard deviation. The resulting number sits on a universal scale where 0 is average, +1 is one standard deviation above average, and −2 is two standard deviations below average.
+
+The concept is built on the **standard normal distribution**, a symmetric bell-shaped distribution with a mean of 0 and a standard deviation of 1. When you convert a data set with any mean and any standard deviation into z scores, the transformed values automatically follow this standard normal distribution — which is why z scores are also called *standard scores*.
+
+Z scores appear across a wide range of fields:
+
+- **Education:** Standardised exam scores such as the SAT express raw results as scaled z scores, enabling fair comparison across different test dates and test forms.
+- **Quality control:** Manufacturing engineers track whether measurements fall within ±3 standard deviations of a target to detect process drift and defects.
+- **Medicine:** Paediatric growth charts report children's height and weight as z scores relative to age-group norms, making it easy to identify values that need clinical attention.
+- **Finance:** The Altman Z-Score model combines weighted financial ratios — themselves z-score-like standardisations — to estimate a company's credit risk.
+- **Research:** Any hypothesis test that uses a z-statistic (such as a z-test for proportions or the one-sample z-test for a mean) relies on the z score formula to produce a p-value.
+
+In every case the principle is the same: translate a raw measurement into a signed distance from the centre of its distribution, expressed in standard deviation units.
+
+---
+
+## The Z-Score Formula
+
+The standard z score formula is:
+
+```
+z = (x − μ) / σ
+```
+
+Where:
+- `x` is the raw data value you are converting
+- `μ` (mu) is the **population mean**
+- `σ` (sigma) is the **population standard deviation**
+- `z` is the resulting z score
+
+When you are working with a **sample** rather than the full population, substitute the sample statistics:
+
+```
+z = (x − x̄) / s
+```
+
+Where `x̄` (x-bar) is the sample mean and `s` is the sample standard deviation.
+
+The z score formula looks identical for the two cases; only the symbols differ. Use the population formula whenever you know the true μ and σ — for example, when working with a complete census or a well-characterised manufacturing process. Use the sample formula when those values are estimated from data, which is the case for almost every real-world analysis involving surveys, experiments, or observational studies.
+
+### Reading the Sign
+
+The sign of the z score carries direction:
+- **z > 0**: the value is above the mean.
+- **z < 0**: the value is below the mean.
+- **z = 0**: the value equals the mean exactly.
+
+The magnitude carries distance: a z score of 2.5 is further from the mean than a z score of 1.0. Because the standard normal distribution is symmetric, a z score of +2.0 and a z score of −2.0 represent equally unusual values — just on opposite sides of the centre.
+
+---
+
+## How to Calculate a Z-Score: Step-by-Step Example
+
+**Problem:** A statistics class sat an exam. The class mean was 72 and the standard deviation was 8. Student A scored 88 and Student B scored 60. Calculate the z score for each student and interpret the results.
+
+### Step 1 — Identify the components
+
+- Population mean (μ): **72**
+- Standard deviation (σ): **8**
+- Student A raw score (x): **88**
+- Student B raw score (x): **60**
+
+### Step 2 — Apply the z score formula for Student A
+
+```
+z = (x − μ) / σ
+z = (88 − 72) / 8
+z = 16 / 8
+z = 2.00
+```
+
+Student A's z score is **+2.00**, meaning the score of 88 is exactly two standard deviations above the class average.
+
+### Step 3 — Apply the z score formula for Student B
+
+```
+z = (x − μ) / σ
+z = (60 − 72) / 8
+z = −12 / 8
+z = −1.50
+```
+
+Student B's z score is **−1.50**, meaning the score of 60 is one and a half standard deviations below the class average.
+
+### Step 4 — Interpret the results
+
+In a normally distributed class, approximately 97.7% of students score below a z score of 2.00, so Student A is in roughly the top 2.3%. Student B's z score of −1.50 corresponds to about the 6.7th percentile — roughly 6 or 7 students in every 100 would score lower.
+
+These two z scores — computed from raw scores on the same exam — are directly comparable. If the students had sat different exams with different total marks and different class averages, z scores would still allow a fair comparison: a z score of 2.00 from one exam outperforms a z score of 1.50 from another, regardless of the raw numbers.
+
+### Reverse: Finding the Raw Score from a Z-Score
+
+Sometimes the question runs backwards: *what raw score corresponds to a given z score?* Rearrange the z score formula:
+
+```
+x = μ + (z × σ)
+```
+
+For the class above, the score at z = 1.00 is:
+
+```
+x = 72 + (1.00 × 8) = 72 + 8 = 80
+```
+
+A raw score of 80 corresponds to a z score of +1.00 in this data set. This reverse calculation is used when setting cut-off scores, constructing reference intervals, or converting back from a standardised scale.
+
+---
+
+## Try the Z-Score Calculator
+
+Enter a value, the group mean, and the standard deviation below. The calculator applies the z score formula directly and returns the standardised result.
+
+<StatCalc slug="z-score" variant="embed" />
+
+For the full standalone tool with more workspace, open the <Link to={routes.calculator('z-score')}>z-score calculator</Link>. You can also explore related statistical tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## Interpreting Z-Scores: What the Numbers Mean
+
+A z score is only useful if you can translate it into a meaningful statement about rarity or position. Two frameworks help with that.
+
+### The 68–95–99.7 Rule
+
+For any data that follows a normal distribution, the **empirical rule** gives a quick sense of what proportion of values fall within a given number of standard deviations:
+
+- About **68%** of values lie within z = ±1.00.
+- About **95%** of values lie within z = ±2.00.
+- About **99.7%** of values lie within z = ±3.00.
+
+Values with |z| greater than 3 are rare — less than 0.3% of a normal distribution — which is why |z| > 3 is a common rule of thumb for flagging a potential outlier.
+
+### Common Z-Score Reference Points
+
+| Z-Score | Cumulative percentile (approx.) | Interpretation |
+|---------|--------------------------------|----------------|
+| −3.00 | 0.1% | Extremely low |
+| −2.00 | 2.3% | Significantly below average |
+| −1.00 | 15.9% | Below average |
+| 0.00 | 50.0% | Average |
+| +1.00 | 84.1% | Above average |
+| +1.96 | 97.5% | Critical value at α = 0.05 (two-tailed) |
+| +2.00 | 97.7% | Significantly above average |
+| +3.00 | 99.9% | Extremely high |
+
+These percentile values assume a normal distribution. In skewed or heavy-tailed data the mapping between z scores and percentiles differs, so always check whether the normality assumption is reasonable for your data before reading z scores as exact probabilities.
+
+---
+
+## The Standard Normal Distribution
+
+The **standard normal distribution** is the reference distribution that makes the z score formula universally useful. It is a normal distribution with:
+- **Mean = 0**
+- **Standard deviation = 1**
+
+When you apply the z score formula `z = (x − μ) / σ` to any normally distributed variable, the resulting z scores follow the standard normal distribution. This transformation is called *standardisation*. It means that, regardless of the original scale — centimetres, marks, dollars — the z scores all share a single reference distribution, and a single table of probabilities covers every case.
+
+The standard normal distribution is written as N(0, 1), following the compact notation `X ~ N(μ, σ²)`. A variable X that follows N(0, 1) has mean 0 and variance 1. Its probability density peaks at x = 0 and falls off symmetrically on both sides, becoming negligible beyond about ±4.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods — Normal Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm) documents the probability density function, the cumulative distribution function, and the full set of quantile values for the standard normal distribution — including the critical values that appear throughout hypothesis testing.
+
+---
+
+## How to Use a Z-Score Chart
+
+A **z-score chart** — also called a standard normal table or z-table — lists the cumulative probability associated with each z score. Each entry in the table gives the area under the standard normal curve to the **left** of that z score, which is the probability that a randomly chosen standard normal value will be less than the given z.
+
+### How the Table Is Organised
+
+A standard z-table works in two parts:
+
+1. The **row** gives the z score to one decimal place (e.g., 1.9).
+2. The **column** gives the second decimal place (e.g., 0.04, for a combined z of 1.94).
+3. The **cell** contains the cumulative probability (e.g., 0.9738 for z = 1.94).
+
+To find the probability that a value is **above** a given z, subtract the table value from 1:
+
+```
+P(Z > 1.94) = 1 − 0.9738 = 0.0262
+```
+
+About 2.6% of a normal distribution lies above z = 1.94.
+
+To find the probability that a value falls **between** two z scores, subtract the smaller cumulative probability from the larger:
+
+```
+P(−1.00 < Z < 1.00) = 0.8413 − 0.1587 = 0.6826
+```
+
+This matches the 68% figure from the empirical rule.
+
+### Negative Z Scores in the Table
+
+Many z-tables show only positive z values. For a negative z score, use the symmetry of the standard normal distribution:
+
+```
+P(Z < −z) = 1 − P(Z < z)
+```
+
+So P(Z < −1.96) = 1 − 0.9750 = 0.0250, meaning 2.5% of the distribution lies below z = −1.96 — the figure behind the two-tailed critical value at the 5% significance level.
+
+### When You Do Not Have a Table
+
+In modern practice, z-table lookups are handled by statistical software, spreadsheet functions, and online calculators. However, understanding how to read the table is essential for interpreting research papers, textbook problems, and exam questions. The z score formula gives you the standardised input; the table (or an equivalent function) gives you the probability output.
+
+---
+
+## How to Find a Z-Score in Different Situations
+
+### How to Find Z Score for a Single Value
+
+This is the standard case: given a raw value x, a mean μ (or x̄), and a standard deviation σ (or s), compute:
+
+```
+z = (x − μ) / σ
+```
+
+The step-by-step example earlier in this article demonstrates this in full.
+
+### How to Find Z Score for a Sample Mean
+
+When you want to know how unusual a **sample mean** is — rather than a single observation — replace σ with the **standard error of the mean**, which is σ divided by the square root of the sample size:
+
+```
+z = (x̄ − μ) / (σ / √n)
+```
+
+This is the formula for a one-sample z-test. It measures how far the observed sample mean sits from the hypothesised population mean, expressed in standard error units. The larger the sample, the smaller the standard error, and the more precisely you can detect a real shift in the mean.
+
+### How to Find Z Score from a Percentile
+
+If you know the desired percentile and want the corresponding z score, use the inverse of the standard normal distribution (often called the *z-critical value* or *quantile function*). For common significance levels:
+
+- 90th percentile → z ≈ 1.282
+- 95th percentile → z ≈ 1.645
+- 97.5th percentile → z ≈ 1.960
+- 99th percentile → z ≈ 2.326
+
+Statistical software and most scientific calculators provide an inverse-normal function for any percentile.
+
+---
+
+## Z-Scores vs. Other Standardised Scales
+
+Z scores are one of several ways to express a standardised measurement. The differences matter when choosing which to use.
+
+### Z-Score vs. T-Score
+
+A t-score uses the sample standard deviation s and is appropriate when the population standard deviation σ is unknown and the sample size is small (typically n < 30). The t-distribution has heavier tails than the standard normal distribution to account for the extra uncertainty of estimating σ from the data. For large samples the two converge: a t-score with many degrees of freedom is essentially a z score.
+
+### Z-Score vs. Percentile Rank
+
+A percentile rank is the percentage of scores that fall at or below a given value. A z score of 0 equals the 50th percentile; z = 1 equals roughly the 84th percentile; z = 2 equals roughly the 97.7th percentile. Converting between the two requires the standard normal table or an equivalent function. The mapping is non-linear: the difference in percentile terms between z = 0 and z = 1 (about 34 percentage points) is much larger than between z = 2 and z = 3 (about 2 percentage points).
+
+### Z-Score vs. Standardised Test Scales
+
+Familiar standardised tests rescale z scores into a more readable range. IQ tests use mean 100 and standard deviation 15, so IQ = 100 + (z × 15). The SAT post-2016 redesign uses mean 500 and standard deviation roughly 100 per section for most administrations. Both are linear transformations of z scores — the underlying calculation is identical.
+
+The [OpenStax *Introductory Statistics*, Section 6.1 — The Standard Normal Distribution](https://openstax.org/books/introductory-statistics/pages/6-1-the-standard-normal-distribution) covers how z scores, cumulative probabilities, and raw scores relate to one another, with additional worked examples using both the standard normal table and technology.
+
+---
+
+## Common Mistakes When Calculating Z-Scores
+
+### Using the Wrong Reference Values
+
+A z score is only meaningful relative to the correct group mean and standard deviation. If you compute a student's z score using the statistics from a different class, or a patient's z score using the wrong age-group norms, the result is misleading. Always confirm that μ and σ (or x̄ and s) describe the same population or sample as the value x.
+
+### Dropping the Negative Sign
+
+A z score of −1.5 and +1.5 represent very different positions: one is at roughly the 7th percentile, the other at roughly the 93rd percentile. Dropping the negative sign in a calculation is one of the most common arithmetic errors in introductory statistics. Carry the sign through every step.
+
+### Assuming Normality Without Checking
+
+The z score formula is pure arithmetic and works on any data. But interpreting a z score as a percentile assumes a normal distribution. If your data is heavily skewed, has extreme outliers, or follows a different distribution (e.g., binomial, exponential), the z score will not map reliably to a standard-table probability. Check the distribution before converting z scores to probabilities.
+
+### Using σ When Only s Is Available
+
+If your data is a sample, the denominator should be the sample standard deviation s, not the population standard deviation σ. Using σ when it was actually estimated from the sample overstates precision, especially for small samples where s can deviate noticeably from σ. For small samples (n < 30), consider using the t-distribution rather than the standard normal.
+
+### Confusing Z-Scores with Percentiles
+
+A z score is not a percentile number. A z score of 1 does not mean "the 1st percentile" — it means the 84th percentile. You must convert via the standard normal table or a calculator function. Skipping that step and treating the z score directly as a rank is a category error.
+
+---
+
+## Frequently Asked Questions
+
+### How do I calculate a z score?
+
+Subtract the mean from the raw value, then divide by the standard deviation: `z = (x − μ) / σ`. For a sample, use `z = (x − x̄) / s`. The result is how many standard deviations the value lies from the mean — positive means above, negative means below.
+
+### How do I find a z score without a table?
+
+The z score itself comes from the formula `z = (x − μ) / σ` — no table needed. If you also want to convert the z score to a probability or percentile, use the interactive calculator on this page, a spreadsheet's NORM.S.DIST function, or Python's `scipy.stats.norm.cdf()` function.
+
+### What does a z score of 2 mean?
+
+A z score of 2 means the value is exactly two standard deviations above the mean. In a normally distributed data set, approximately 97.7% of values fall below this point, so a z score of 2 represents a result in roughly the top 2.3%.
+
+### Can a z score be negative?
+
+Yes. A negative z score means the value is below the mean. There is no minimum; extremely low values can produce large negative z scores (e.g., −3.5 or lower). A z score of −1.96, for example, sits at approximately the 2.5th percentile in a normal distribution.
+
+### What is a "good" z score?
+
+It depends on the context. In quality control, |z| > 3 signals a process shift worth investigating. In academic testing, z > 0 means above average, with z > 2 indicating strong performance. In hypothesis testing, a z score beyond the critical value — typically ±1.96 for a 5% significance level — indicates a statistically significant result.
+
+### What is the z score formula used for in hypothesis testing?
+
+In a one-sample z-test, the formula is `z = (x̄ − μ₀) / (σ / √n)`, where μ₀ is the hypothesised population mean. The resulting z score is compared against a critical value from the standard normal distribution. If the z score exceeds the critical value (e.g., |z| > 1.96 for α = 0.05 two-tailed), the null hypothesis is rejected, indicating the sample mean is too far from μ₀ to be explained by chance alone.
+
+### What is the difference between a z score and a z-score chart?
+
+A z score is the numerical output of the formula `z = (x − μ) / σ`. A **z-score chart** (standard normal table) is a lookup table that converts a z score into a cumulative probability — the area under the standard normal curve to the left of that z score. You compute the z score first, then use the chart to find the associated probability. Modern calculators and software combine both steps automatically.
+
+---
+
+## Summary
+
+The z score translates any raw measurement into a standard, interpretable unit: the number of standard deviations from the mean. The z score formula `z = (x − μ) / σ` is straightforward arithmetic, but its implications reach across nearly every area of applied statistics.
+
+Key points to carry forward:
+
+- **Positive z scores** are above the mean; **negative z scores** are below it; **zero** is exactly average.
+- The **standard normal distribution** N(0, 1) is the reference distribution for all z score probabilities. Standardising any normal variable produces a standard normal variable.
+- Use a **z-score chart** to convert a z score to a cumulative probability, or subtract from 1 to find the probability of exceeding that z score.
+- The **empirical rule** gives quick benchmarks: 68% of values fall within ±1, 95% within ±2, and 99.7% within ±3.
+- Interpret z scores as percentiles only when the data is approximately normally distributed.
+
+To compute a z score for your own data, use the <Link to={routes.calculator('z-score')}>z-score calculator</Link> on this site.
