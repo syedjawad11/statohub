@@ -1,0 +1,405 @@
+---
+title: "Probability Formula: How to Calculate Probability Step by Step"
+h1: "Probability Formula: A Complete Step-by-Step Guide"
+description: "Learn the probability formula, conditional probability formula, binomial probability formula, and expected value formula with clear worked examples."
+category: probability-distributions
+primaryKeyword: probability formula
+keywords:
+  - probability formula
+  - binomial probability formula
+  - conditional probability formula
+  - expectation probability formula
+  - formula for expected value
+  - how to calculate probability
+  - how to find probability
+  - probability and statistics
+phase: 1
+calculator: probability
+related: []
+draft: false
+---
+
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **probability formula** gives you the chance that a specific event will occur. In its simplest form, probability equals the number of favorable outcomes divided by the total number of equally likely outcomes. Expressed as a fraction, decimal, or percentage, a probability value always falls between 0 (impossible) and 1 (certain).
+
+Understanding how to calculate probability unlocks a wide range of tools in probability and statistics: the conditional probability formula tells you how one event affects another; the binomial probability formula counts successes in repeated trials; and the formula for expected value tells you what a random variable averages out to over the long run.
+
+This article walks through each formula with a clear definition, step-by-step worked examples, and the underlying logic that connects them all.
+
+---
+
+## The Basic Probability Formula
+
+The foundation of probability and statistics is the classical probability model. When each outcome is equally likely, the probability of event A is:
+
+```
+P(A) = (number of favorable outcomes) / (total number of possible outcomes)
+```
+
+This probability formula has three parts:
+- **P(A)** — the probability of event A occurring, a number between 0 and 1.
+- **Favorable outcomes** — the outcomes that count as event A happening.
+- **Total outcomes** — every possible result of the experiment.
+
+### Worked Example: Rolling a Die
+
+Roll a standard six-sided die. What is the probability of rolling a 4?
+
+- Favorable outcomes: 1 (only the face showing 4)
+- Total outcomes: 6 (faces 1, 2, 3, 4, 5, 6)
+
+```
+P(rolling a 4) = 1 / 6 ≈ 0.1667
+```
+
+Expressed as a percentage: about 16.67%.
+
+### Worked Example: Drawing a Card
+
+From a standard 52-card deck, what is the probability of drawing a heart?
+
+- Favorable outcomes: 13 (the 13 hearts in the deck)
+- Total outcomes: 52
+
+```
+P(heart) = 13 / 52 = 1 / 4 = 0.25
+```
+
+There is a 25% chance of drawing a heart.
+
+### Probability as a Complement
+
+Every event A has a complement, written P(A'), which represents the probability that A does **not** occur. The complement rule is:
+
+```
+P(A') = 1 − P(A)
+```
+
+From the die example: P(not rolling a 4) = 1 − 1/6 = 5/6 ≈ 0.833.
+
+This shortcut matters when it is easier to count what you *do not* want than what you do. The rule holds because all probabilities in a sample space sum to 1. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section 5.3.3 — Probability](https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm) provides a formal treatment of these foundational probability rules.
+
+---
+
+## Try the Probability Calculator
+
+Enter any number of favorable outcomes and total outcomes below to compute probability instantly.
+
+<StatCalc slug="probability" variant="embed" />
+
+For a full-page view, open the <Link to={routes.calculator('probability')}>probability calculator</Link>. You can also browse every available tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## How to Find Probability: Addition and Multiplication Rules
+
+Many problems involve more than one event. Two rules extend the basic probability formula to handle these combinations.
+
+### Addition Rule: P(A or B)
+
+The addition rule calculates the probability that event A *or* event B occurs (or both).
+
+**For mutually exclusive events** (they cannot both happen at the same time):
+
+```
+P(A or B) = P(A) + P(B)
+```
+
+Example: Rolling a 1 or a 2 on a die.
+
+```
+P(1 or 2) = 1/6 + 1/6 = 2/6 = 1/3 ≈ 0.333
+```
+
+**For events that are not mutually exclusive** (they can overlap):
+
+```
+P(A or B) = P(A) + P(B) − P(A and B)
+```
+
+The subtraction removes the overlap that would otherwise be counted twice.
+
+Example: Drawing a card that is a heart *or* a face card.
+
+- P(heart) = 13/52
+- P(face card: J, Q, K in any suit) = 12/52
+- P(face card that is a heart) = 3/52 (J♥, Q♥, K♥)
+
+```
+P(heart or face card) = 13/52 + 12/52 − 3/52 = 22/52 = 11/26 ≈ 0.423
+```
+
+### Multiplication Rule: P(A and B)
+
+The multiplication rule calculates the probability that event A *and* event B both occur.
+
+**For independent events** (one outcome does not change the other):
+
+```
+P(A and B) = P(A) × P(B)
+```
+
+Example: Flipping heads on two independent coin tosses.
+
+```
+P(heads and heads) = 1/2 × 1/2 = 1/4 = 0.25
+```
+
+**For dependent events** (the outcome of A affects B):
+
+```
+P(A and B) = P(A) × P(B | A)
+```
+
+Here P(B | A) is the conditional probability of B given A, which is covered in the next section.
+
+---
+
+## The Conditional Probability Formula
+
+The **conditional probability formula** calculates the probability that event B occurs given that event A has already occurred. The notation is P(B | A), read "the probability of B given A."
+
+```
+P(B | A) = P(A and B) / P(A)
+```
+
+This formula adjusts for the restricted sample space — once you know A happened, you only consider outcomes in which A is true. The divisor P(A) re-normalises the result so that probabilities in the restricted space still sum to 1.
+
+### Worked Example: Drawing Without Replacement
+
+A bag contains 5 red marbles and 3 blue marbles (8 total). You draw one marble and do not replace it, then draw a second.
+
+**What is the probability that both marbles are red?**
+
+- P(first marble is red) = 5/8
+- P(second marble is red | first was red) = 4/7 (now 4 reds remain out of 7 total)
+
+```
+P(both red) = 5/8 × 4/7 = 20/56 = 5/14 ≈ 0.357
+```
+
+The conditional probability formula P(B | A) = 4/7 is what makes this calculation exact — after drawing one red marble, the total pool shrinks and the red count drops by one.
+
+### Independence and the Conditional Probability Formula
+
+Two events A and B are **independent** if knowing A occurred tells you nothing about B. In formal terms:
+
+```
+Events A and B are independent if: P(B | A) = P(B)
+```
+
+For independent events, the multiplication rule simplifies: P(A and B) = P(A) × P(B). If P(B | A) ≠ P(B), the events are dependent.
+
+### Bayes' Theorem
+
+Bayes' theorem is a powerful extension of the conditional probability formula. It lets you reverse the direction: given that B occurred, how does that update your probability estimate for A?
+
+```
+P(A | B) = [ P(B | A) × P(A) ] / P(B)
+```
+
+Bayes' theorem is used throughout probability and statistics — from medical test interpretation to machine learning classifiers. It is a formal statement that new evidence should update prior beliefs in proportion to how likely that evidence is under each hypothesis.
+
+---
+
+## The Binomial Probability Formula
+
+Many real-world scenarios involve a fixed number of independent trials, each with exactly two outcomes: success or failure. The **binomial probability formula** gives the probability of getting exactly k successes in n trials, where p is the probability of success on any single trial.
+
+```
+P(X = k) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ
+```
+
+Where:
+- **n** — total number of trials
+- **k** — number of successes you want to count
+- **p** — probability of success on one trial
+- **C(n, k)** — the binomial coefficient (n choose k): C(n, k) = n! / (k! × (n − k)!)
+- **(1 − p)** — probability of failure on one trial (often written q)
+
+The binomial coefficient C(n, k) counts how many different ways k successes can be arranged among n trials.
+
+### Worked Example: Quality Control
+
+A factory produces light bulbs. Based on historical data, 10% of bulbs are defective (p = 0.10). A batch of 5 bulbs is selected. What is the probability that exactly 2 of the 5 bulbs are defective?
+
+Here: n = 5, k = 2, p = 0.10, (1 − p) = 0.90.
+
+**Step 1 — Binomial coefficient:**
+
+```
+C(5, 2) = 5! / (2! × 3!) = (5 × 4) / (2 × 1) = 10
+```
+
+**Step 2 — Apply the binomial probability formula:**
+
+```
+P(X = 2) = 10 × (0.10)² × (0.90)³
+         = 10 × 0.01 × 0.729
+         = 10 × 0.00729
+         = 0.0729
+```
+
+There is a **7.29% probability** that exactly 2 of the 5 bulbs are defective.
+
+### When to Use the Binomial Probability Formula
+
+Use the binomial model when all four conditions hold:
+1. A fixed number of trials (n is set in advance).
+2. Each trial has exactly two outcomes (success / failure).
+3. The probability of success p is constant across trials.
+4. Trials are independent — the outcome of one does not affect any other.
+
+Coin flips, quality-control inspections, and multiple-choice test guessing all fit this model. If the trials are not independent (for example, drawing without replacement from a small group), use the hypergeometric distribution instead.
+
+---
+
+## The Formula for Expected Value
+
+The **formula for expected value** (also called the expectation probability formula) tells you the long-run average of a random variable. If you repeated a random experiment many times, the expected value is the average outcome you would converge to.
+
+For a **discrete random variable** X with possible values x₁, x₂, …, xₙ and corresponding probabilities p₁, p₂, …, pₙ:
+
+```
+E(X) = x₁ · p₁ + x₂ · p₂ + … + xₙ · pₙ
+     = Σ xᵢ · pᵢ
+```
+
+### Worked Example: A Simple Game
+
+You roll a six-sided die. If you roll a 6, you win $5. If you roll anything else, you lose $1. What is the expected value of one roll?
+
+Define the outcomes:
+- Roll a 6: outcome = +$5, probability = 1/6
+- Roll 1–5: outcome = −$1, probability = 5/6
+
+Apply the expectation probability formula:
+
+```
+E(X) = ($5) × (1/6) + (−$1) × (5/6)
+     = 5/6 − 5/6
+     = 0
+```
+
+The expected value is **$0 per roll**. This is a **fair game** — over many rolls, neither player gains a systematic advantage.
+
+### Worked Example: Insurance Decision
+
+Suppose a travel insurance policy costs $50 and pays out $1,000 if your trip is cancelled. The probability of cancellation (based on actuarial data) is 4%.
+
+```
+E(payout) = $1,000 × 0.04 + $0 × 0.96
+           = $40 + $0
+           = $40
+```
+
+The expected payout is **$40**, but the policy costs $50. In pure expected-value terms the policy costs more than it returns. Nevertheless, insurance is still rational when the cost of a loss is high relative to your resources — the expected value framework captures the average, but risk-aversion (preferring certain losses over uncertain large losses) is a separate and valid consideration.
+
+### Expected Value for the Binomial Distribution
+
+When X follows a binomial distribution with n trials and success probability p, the expected value has a clean closed form:
+
+```
+E(X) = n × p
+```
+
+For the bulb example: E(defective bulbs) = 5 × 0.10 = **0.5**. On average, you expect half a defective bulb in every batch of five — meaning in the long run, roughly one in two batches will have exactly one defect and the rest will have none.
+
+---
+
+## Probability Rules: A Quick Summary
+
+| Rule | Formula | When to Use |
+|------|---------|-------------|
+| Basic probability | P(A) = favorable / total | Equally likely outcomes |
+| Complement | P(A') = 1 − P(A) | Easier to count non-events |
+| Addition (mutually exclusive) | P(A or B) = P(A) + P(B) | Events cannot overlap |
+| Addition (general) | P(A or B) = P(A) + P(B) − P(A and B) | Events can overlap |
+| Multiplication (independent) | P(A and B) = P(A) × P(B) | Trials do not affect each other |
+| Multiplication (dependent) | P(A and B) = P(A) × P(B\|A) | First outcome changes the pool |
+| Conditional probability | P(B\|A) = P(A and B) / P(A) | Known condition restricts sample space |
+| Binomial | P(X=k) = C(n,k) × pᵏ × (1−p)ⁿ⁻ᵏ | Fixed n trials, two outcomes |
+| Expected value | E(X) = Σ xᵢ · pᵢ | Average over repeated experiments |
+
+---
+
+## How to Calculate Probability: A Step-by-Step Process
+
+Regardless of which formula applies, the same thought process guides you through any probability problem:
+
+**Step 1 — Define the experiment.** What is the random process? Rolling a die, drawing a card, running a clinical trial?
+
+**Step 2 — Identify the sample space.** List (or count) every possible outcome. Confirm whether outcomes are equally likely or whether different outcomes have different probabilities.
+
+**Step 3 — Define the event.** Which outcomes count as "success" for the event you care about?
+
+**Step 4 — Choose the right formula.** Use the basic probability formula for simple equally likely events; the conditional probability formula when one outcome is already known; the binomial probability formula for repeated independent trials with two outcomes; and the expected value formula when you need a long-run average.
+
+**Step 5 — Calculate and interpret.** Compute the number and express it as a fraction, decimal, or percentage. Check that all probabilities in your sample space sum to 1.
+
+**Step 6 — Check your answer.** Does the result make intuitive sense? A probability above 1 or below 0 means an arithmetic error. A value very close to 0 or 1 deserves a sanity check against the problem description.
+
+---
+
+## Common Mistakes When Using Probability Formulas
+
+### Forgetting to Check Whether Events Are Mutually Exclusive
+
+Many students apply P(A or B) = P(A) + P(B) without verifying that A and B cannot overlap. If they can overlap, the subtraction P(A and B) is required. Skipping it leads to probabilities greater than 1.
+
+### Confusing P(A | B) with P(B | A)
+
+These two conditional probabilities are not equal in general. The probability that someone has a disease given a positive test result is not the same as the probability of a positive test given the disease. Bayes' theorem is the correct tool for reversing the direction of conditioning.
+
+### Applying the Binomial Formula When Trials Are Not Independent
+
+The binomial probability formula requires independent trials. If you draw cards without replacement, the probability of each draw changes — the binomial formula does not apply. Use the hypergeometric distribution in that case.
+
+### Treating Expected Value as a Prediction for a Single Trial
+
+The expected value is a long-run average, not a prediction. If you play the $5 die game once, you will win $5 or lose $1 — you will never receive the expected value of $0 on a single play. Expected value describes the average outcome over many repetitions.
+
+---
+
+## Frequently Asked Questions
+
+### What is the probability formula?
+
+The basic probability formula is P(A) = favorable outcomes / total outcomes. It applies when all outcomes are equally likely. For more complex scenarios, there are additional formulas: the addition rule for "or" events, the multiplication rule for "and" events, the conditional probability formula, the binomial probability formula, and the expected value formula.
+
+### How do I calculate probability when outcomes are not equally likely?
+
+Assign a probability to each outcome based on observed frequency, physical symmetry, or a theoretical model (such as the binomial or normal distribution). Then sum the probabilities of the outcomes that belong to your event. The total of all outcome probabilities must equal 1.
+
+### What is the conditional probability formula?
+
+The conditional probability formula is P(B | A) = P(A and B) / P(A). It gives the probability of event B occurring given that event A is already known to have occurred. The formula restricts the sample space to outcomes where A is true and re-normalises the remaining probabilities.
+
+### When should I use the binomial probability formula?
+
+Use the binomial probability formula when you have a fixed number of independent trials (n), each with only two possible outcomes (success or failure), and the probability of success (p) is constant across all trials. The formula P(X = k) = C(n,k) × pᵏ × (1−p)ⁿ⁻ᵏ gives the probability of exactly k successes.
+
+### What is the formula for expected value?
+
+The formula for expected value (also called the expectation) is E(X) = Σ xᵢ · pᵢ, which means: multiply each possible outcome by its probability and sum all those products. For a binomial random variable specifically, E(X) = n × p.
+
+### What is the difference between probability and statistics?
+
+Probability starts with a known model and predicts what data you are likely to observe. Statistics works in reverse: it starts with observed data and infers properties of the underlying model. Both disciplines use the same mathematical framework — probability formulas describe how likely outcomes are, and statistical methods use those formulas to draw conclusions from real measurements. The [OpenStax *Introductory Statistics* textbook, Chapter 3 — Probability Topics](https://openstax.org/books/introductory-statistics/pages/3-introduction) provides a clear treatment of how these two fields connect.
+
+### How do I find probability for continuous variables?
+
+For continuous random variables (like height or weight), individual outcomes have probability zero. Instead, you calculate the probability that a value falls within a range by integrating the probability density function (PDF) over that range. The normal distribution and its corresponding z-table are the most commonly used tools for this; they arise naturally whenever a continuous variable is shaped by many small, independent influences.
+
+---
+
+## Summary
+
+The probability formula P(A) = favorable / total is the starting point for all of probability and statistics. Extend it to dependent or overlapping events with the addition and multiplication rules, apply the conditional probability formula when one outcome is already known, count successes in repeated trials with the binomial probability formula, and measure long-run averages with the expected value formula.
+
+Each formula rests on the same foundation: outcomes, their probabilities, and the rules for combining them. Mastering how to calculate probability at this level — knowing which formula to reach for and why — is the skill that makes the rest of statistics legible.
+
+For rigorous definitions and additional worked examples, consult the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 5.3 — Probability](https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm) and the open-access [OpenStax *Introductory Statistics*, Chapter 3 — Probability Topics](https://openstax.org/books/introductory-statistics/pages/3-introduction), both of which are authoritative references for the formulas covered here.
