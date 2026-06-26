@@ -1,0 +1,71 @@
+---
+calculator: binomial-distribution
+keywords:
+  - binomial distribution calculator
+  - binomial probability
+  - n choose k
+  - binomial formula
+draft: false
+updatedDate: 2026-06-26
+---
+
+The binomial distribution describes the chance of getting a certain number of
+"successes" in a fixed number of independent yes/no trials, where each trial has
+the same probability of success. This binomial distribution calculator returns the
+binomial probability for an exact count of successes, or the cumulative chance of
+getting at most or at least that many.
+
+## How to use this calculator
+
+1. Enter the number of trials **n** — how many times the experiment is repeated
+   (for example, 10 coin flips).
+2. Enter the success probability **p** for a single trial, as a decimal between 0
+   and 1 (a fair coin is `0.5`).
+3. Enter the number of successes **k** you want the probability for.
+4. Pick a **mode**: *exactly* `P(X = k)`, *at most* `P(X ≤ k)`, or *at least*
+   `P(X ≥ k)`. "At most" and "at least" add up several individual probabilities
+   for you.
+
+## Worked example
+
+Flip a fair coin 10 times. What is the probability of getting *exactly* 5 heads?
+Use `n = 10`, `p = 0.5`, `k = 5`, mode *exactly*. The binomial formula is:
+
+```
+P(X = k) = C(n, k) × p^k × (1 − p)^(n − k)
+```
+
+Here `C(n, k)` is the number of ways to choose k successes from n trials
+(the "n choose k" count):
+
+```
+C(10, 5) = 252
+P(X = 5) = 252 × 0.5^5 × 0.5^5
+         = 252 × (1 / 1024)
+         = 0.2461
+```
+
+So there is about a 24.6% chance of exactly 5 heads in 10 flips. For the formal
+definition and properties, see the
+[NIST/SEMATECH e-Handbook on the binomial distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm).
+
+## Frequently asked questions
+
+### What is "n choose k" in the binomial formula?
+
+`C(n, k)`, read "n choose k", counts how many different ways k successes can land
+among n trials, ignoring order. In the example above there are 252 distinct
+arrangements of 5 heads across 10 flips, and the binomial formula multiplies that
+count by the probability of any single arrangement.
+
+### When can I use the binomial distribution?
+
+Use it when you have a fixed number of independent trials, each with only two
+outcomes (success or failure) and the same success probability p every time. Coin
+flips, pass/fail tests, and yes/no survey answers all fit this pattern.
+
+### What is the difference between "exactly", "at most", and "at least"?
+
+*Exactly* gives the binomial probability for a single value of k. *At most* sums
+the probabilities from 0 up to k, and *at least* sums from k up to n, giving you
+cumulative chances instead of a single point.

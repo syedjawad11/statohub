@@ -86,3 +86,10 @@ at publish time too (human visibility).
   `28188634889` green incl. Cloudflare deploy, all 3 pages verified live HTTP 200).
   **13 of 25 done, 12 remaining.** Next = Session 3: `binomial-distribution`,
   `combination`, `factorial` (queue rows 14–16).
+- **Session 3 (2026-06-26):** `binomial-distribution`, `combination`, `factorial` —
+  ✅ published (build green 55 pages / 0 link violations). Worked examples computed from
+  the engines: binomial n=10/p=0.5/k=5 exactly → C(10,5)=252, 252/1024 = 0.2461;
+  combination n=10,r=3 nCr → 120 (nPr=720); factorial 5! → 120. Links: NIST eda366
+  (binomial) + OpenStax College Algebra 9.5 counting principles (combination, factorial),
+  both curl-verified 200. **16 of 25 done, 9 remaining.** Next = Session 4:
+  `correlation-coefficient`, `linear-regression`, `confidence-interval` (queue rows 17–19).

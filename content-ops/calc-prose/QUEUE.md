@@ -28,9 +28,9 @@ which terms to weave in naturally.
 | 11 | z-table                 | z table                          | z score table; standard normal table; how to read a z table | done |
 | 12 | normal-distribution     | normal distribution calculator   | bell curve; gaussian distribution; probability under the curve | done |
 | 13 | probability             | probability calculator           | how to calculate probability; probability of an event; single event probability | done |
-| 14 | binomial-distribution   | binomial distribution calculator | binomial probability; n choose k; binomial formula | pending |
-| 15 | combination             | combination calculator           | n choose r; how to calculate combinations; nCr | pending |
-| 16 | factorial               | factorial calculator             | how to calculate factorial; n factorial; factorial formula | pending |
+| 14 | binomial-distribution   | binomial distribution calculator | binomial probability; n choose k; binomial formula | done |
+| 15 | combination             | combination calculator           | n choose r; how to calculate combinations; nCr | done |
+| 16 | factorial               | factorial calculator             | how to calculate factorial; n factorial; factorial formula | done |
 | 17 | correlation-coefficient | correlation coefficient calculator | pearson correlation; r value; how to calculate correlation | pending |
 | 18 | linear-regression       | linear regression calculator     | line of best fit; least squares; slope and intercept | pending |
 | 19 | confidence-interval     | confidence interval calculator   | margin of error; 95 percent confidence interval; how to calculate confidence interval | pending |

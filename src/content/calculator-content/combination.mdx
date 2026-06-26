@@ -1,0 +1,63 @@
+---
+calculator: combination
+keywords:
+  - combination calculator
+  - n choose r
+  - how to calculate combinations
+  - nCr
+draft: false
+updatedDate: 2026-06-26
+---
+
+A combination counts how many ways you can choose a group of items from a larger
+set when the order of selection does not matter. This combination calculator
+returns nCr (combinations, order ignored) or nPr (permutations, order counts) for
+any whole numbers n and r, so you can answer "how many different groups are
+possible?" in one step.
+
+## How to use this calculator
+
+1. Enter **n** — the total number of items you are choosing from.
+2. Enter **r** — how many items you pick (r cannot be larger than n).
+3. Choose a **mode**: *nCr* for combinations, where the order of the chosen items
+   does not matter, or *nPr* for permutations, where order does matter.
+
+## Worked example
+
+How many ways can you choose 3 people from a group of 10, when the order does not
+matter? Use `n = 10`, `r = 3`, mode *nCr*. The "n choose r" formula is:
+
+```
+nCr = n! / ( r! × (n − r)! )
+nCr = 10! / (3! × 7!)
+    = (10 × 9 × 8) / (3 × 2 × 1)
+    = 720 / 6
+    = 120
+```
+
+So there are **120** possible groups of 3. If order *did* matter — say you were
+ranking the 3 people first, second, and third — you would switch to *nPr* and get
+`10 × 9 × 8 = 720`, exactly six times larger because each group of 3 can be
+arranged in `3! = 6` orders. For more on counting principles, see the
+[OpenStax College Algebra section on counting principles](https://openstax.org/books/college-algebra-2e/pages/9-5-counting-principles).
+
+## Frequently asked questions
+
+### What is the difference between nCr and nPr?
+
+Use **nCr** (combinations) when order does not matter, such as picking a committee
+or a hand of cards. Use **nPr** (permutations) when order matters, such as filling
+ranked positions. nPr is always larger because it counts each arrangement of the
+same group separately.
+
+### How do I calculate combinations by hand?
+
+Apply the formula `nCr = n! / (r! × (n − r)!)`. A shortcut is to cancel the larger
+factorial first: `10! / 7!` collapses to `10 × 9 × 8`, then divide by `3!` to get
+120. Choosing the smaller of r and n − r keeps the arithmetic light.
+
+### Why is n choose r the same as n choose (n − r)?
+
+Choosing which r items to include is the same as choosing which n − r items to
+leave out, so the two counts are always equal — for example, choosing 3 from 10
+gives the same 120 as choosing 7 from 10.
