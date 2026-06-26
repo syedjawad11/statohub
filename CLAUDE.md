@@ -69,6 +69,36 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-26 (calc-prose SESSION 3)** — **Published 3 more calculator teaching
+  blocks — `binomial-distribution`, `combination`, `factorial` — via the SESSION-PLAN
+  manual procedure. 16 of 25 done, 9 remaining.** Ran the documented per-session
+  procedure: `git fetch` then `git pull --rebase` (local was 4 commits behind
+  `origin/main` — two `[cloud-routine]` ARTICLE publishes, `test-statistic` +
+  `probability-formula`; those are the SEPARATE still-active article routines, not
+  calc-prose); rebased clean to `09a956f` = true baseline 13/25. Wrote each block
+  **inline** (not via subagents this session — these are short ~280–400-word blocks and
+  I had all inputs; faster + full control), each from a worked example pre-computed from
+  the real engine in `src/calc/<slug>.ts`: **binomial-distribution** n=10/p=0.5/k=5 mode
+  *exactly* → C(10,5)=252, 252×0.5¹⁰ = 252/1024 = **0.2461** (via `binomial.ts` +
+  `combinatorics-core.ts`); **combination** n=10/r=3 *nCr* → **120** (formula
+  10!/(3!·7!) = 720/6; nPr=720, 6× larger); **factorial** n=5 → 5! = **120**. Confirmed
+  all 3 YAMLs `standalone: true`. External links curl-verified 200: NIST eda366
+  (binomial distribution) for binomial; OpenStax College Algebra 2e §9.5 *Counting
+  Principles* for combination + factorial (NIST DADS dictionary pages 403'd → avoided;
+  OpenStax 9.5 covers permutations/combinations/factorial). Ran the light QA gate (all 3
+  **PASS** — 0 hard fails / 0 warnings; 402/380/283 words), flipped `draft:false`, marked
+  QUEUE rows 14–16 `done` + logged SESSION-PLAN Session 3, build gate green (**astro check
+  0/0/0, 55 pages, 0 link violations** — page count 53→55 reflects the 2 new cloud-routine
+  articles, not calc blocks, which render on existing `/calculators/<slug>/` pages). Staged
+  ONLY the 3 new MDX + QUEUE.md + SESSION-PLAN.md (left the regenerated CRLF-only
+  `content-route-ids.ts` + the user's in-progress doc restructure untouched), committed
+  `3db7f9d`, pushed → Actions run `28219513115` fully green incl. Cloudflare deploy → all
+  3 pages verified live (HTTP 200, FAQ block present). **STATE: 16 of 25 calc teaching
+  blocks done, 9 remaining.** **>> NEXT = SESSION 4 <<** `correlation-coefficient`,
+  `linear-regression`, `confidence-interval` (QUEUE rows 17–19); same procedure in
+  [`content-ops/calc-prose/SESSION-PLAN.md`](content-ops/calc-prose/SESSION-PLAN.md).
+  **Remaining session map:** S5 sample-size/t-test/t-table, S6 p-value/chi-square/proportion.
+
 - **2026-06-25 (calc-prose SESSION 2)** — **Published 3 more calculator teaching
   blocks — `z-table`, `normal-distribution`, `probability` — via the SESSION-PLAN
   manual procedure. 13 of 25 done, 12 remaining.** Ran the documented per-session
