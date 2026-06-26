@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-26
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A combination counts how many ways you can choose a group of items from a larger
 set when the order of selection does not matter. This combination calculator
@@ -21,6 +23,8 @@ possible?" in one step.
 2. Enter **r** — how many items you pick (r cannot be larger than n).
 3. Choose a **mode**: *nCr* for combinations, where the order of the chosen items
    does not matter, or *nPr* for permutations, where order does matter.
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability Formula Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -40,6 +44,8 @@ ranking the 3 people first, second, and third — you would switch to *nPr* and 
 `10 × 9 × 8 = 720`, exactly six times larger because each group of 3 can be
 arranged in `3! = 6` orders. For more on counting principles, see the
 [OpenStax College Algebra section on counting principles](https://openstax.org/books/college-algebra-2e/pages/9-5-counting-principles).
+
+<RelatedLink to={routes.calculator('factorial')} label="factorial calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

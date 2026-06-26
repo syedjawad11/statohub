@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-26
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 Linear regression finds the straight line that best predicts one variable from
 another — the line of best fit through a scatter of paired points. This linear
@@ -27,6 +29,8 @@ your data and predict new y values from any x.
 
 You need at least two paired points and some spread in the x values — a vertical
 column of identical x's has no slope to estimate.
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -50,6 +54,8 @@ So each one-unit increase in x raises the predicted y by 0.6, and the line
 crosses the y-axis at 2.2. Predicting at x = 6, for instance, gives
 y = 2.2 + 0.6 × 6 = 5.8. For the underlying method, see the
 [NIST/SEMATECH e-Handbook on linear least squares regression](https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm).
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="Another helpful calculator is" />
 
 ## Frequently asked questions
 

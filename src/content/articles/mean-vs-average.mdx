@@ -19,6 +19,7 @@ calculator: mean
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -57,6 +58,8 @@ x̄ = (72 + 85 + 90 + 68 + 95) / 5
 ```
 
 Every student contributed one-fifth of the total, so the mean captures the equal-share center of the group. If someone asked "what was the average score?" you would answer 82 — and that is exactly the mean.
+
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="Worth reading next" />
 
 ## What Does "Average" Mean in Statistics?
 
@@ -100,6 +103,8 @@ Enter your own numbers below to find their arithmetic mean instantly.
 <StatCalc slug="mean" variant="embed" />
 
 You can also visit the full <Link to={routes.calculatorsHub()}>statistics calculators hub</Link> for related tools.
+
+<RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="On a related note" />
 
 ## When "Average" and "Mean" Can Differ
 
@@ -206,6 +211,8 @@ The answer to **is the mean the same as the average** depends on context. Here i
 | Values with different importances or weights | Weighted mean |
 
 For symmetric, well-behaved data — the kind students typically encounter first — the arithmetic mean is the right choice, and "mean" and "average" are completely interchangeable. As noted in the [Penn State STAT 200 course on measures of central tendency](https://online.stat.psu.edu/stat200/lesson/2/2.2), the mean is the most common measure of center and is the basis for many other statistical calculations, but the median is preferred when data are clearly skewed or contain influential outliers.
+
+<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="Another helpful calculator is" />
 
 ## Common Mistakes When Calculating or Interpreting the Mean
 

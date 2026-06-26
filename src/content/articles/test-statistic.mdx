@@ -20,6 +20,7 @@ calculator: t-table
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -69,6 +70,8 @@ For large samples (n > 30 or so), the t-distribution closely approximates the st
 
 Other tests use different formulas for the test statistic. A two-sample t-test uses a pooled or Welch version that accounts for two sample sizes and two standard deviations. A z-test uses the known population standard deviation σ instead of the estimated s. A chi-square test computes `(observed − expected)² / expected` summed over categories. Despite these differences, all of them measure the same underlying idea: how many standard errors away from the null hypothesis is my result?
 
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="For a related calculation" />
+
 ---
 
 ## Degrees of Freedom: What They Are and How to Find Them
@@ -92,6 +95,8 @@ Understanding how to find degrees of freedom for other tests follows the same "o
 - **Simple linear regression (F-test):** df = n − 2
 
 The pattern is always the same: start with the number of data points or observations, then subtract one for each parameter you estimated before computing the statistic.
+
+<RelatedLink to={routes.calculator('t-table')} label="t-table calculator" intro="Another helpful calculator is" />
 
 ---
 
@@ -199,6 +204,8 @@ Every hypothesis test needs a critical value — the boundary between "fail to r
 5. **Compare.** Reject H₀ if |t| ≥ t* (two-tailed) or t ≥ t* in the specified direction (one-tailed). Otherwise, fail to reject.
 
 The [NIST/SEMATECH e-Handbook of Statistical Methods, Comparing One Process Mean to a Standard](https://www.itl.nist.gov/div898/handbook/prc/section2/prc231.htm) provides a comprehensive reference for the one-sample t-test procedure, including the decision rule and examples from industrial quality control.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="On a related note" />
 
 ---
 

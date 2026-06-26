@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The mean absolute deviation (MAD) measures how spread out a data set is by averaging how far each value sits from the mean. Unlike variance and standard deviation, it uses absolute values instead of squaring, so the result stays in the same units as your data and is easy to read. This mean absolute deviation calculator returns the MAD for any list of numbers you enter.
 
@@ -16,6 +18,8 @@ The mean absolute deviation (MAD) measures how spread out a data set is by avera
 1. Type your numbers into the values box, separated by commas, spaces, or new lines (for example, `2, 4, 6, 8`).
 2. Click calculate. The tool finds the mean, measures each value's distance from it, and averages those distances.
 3. Read the result labeled **Mean Absolute Deviation** — the typical distance of a value from the mean.
+
+<RelatedLink to={routes.article('mean-absolute-deviation')} label="Mean Absolute Deviation Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -42,6 +46,8 @@ MAD = 8 / 4 = 2
 ```
 
 So on average, each value sits 2 units away from the mean of 5. For more on how absolute and squared spread measures compare, see the [NIST/SEMATECH e-Handbook on measures of spread](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A weighted average calculator gives each value a different level of importance
 before combining them into a single mean. Unlike a simple average — where every
@@ -27,6 +29,8 @@ weighted mean instantly.
 
 The number of values and weights must match; the calculator flags a mismatch
 before it runs.
+
+<RelatedLink to={routes.article('weighted-average')} label="Weighted Average Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -62,6 +66,8 @@ division changes nothing here — but the formula still handles any set of
 weights automatically. For a full treatment of weighted means and other
 measures of location, see the
 [NIST/SEMATECH e-Handbook — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm).
+
+<RelatedLink to={routes.calculator('average')} label="average calculator" intro="Another helpful calculator is" />
 
 ## Frequently asked questions
 

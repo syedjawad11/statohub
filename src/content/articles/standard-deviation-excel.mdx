@@ -16,6 +16,7 @@ calculator: standard-deviation
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -36,6 +37,8 @@ Excel is also a natural environment for communicating variability. Charts suppor
 The [NIST/SEMATECH e-Handbook of Statistical Methods, Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) defines the standard deviation as the square root of the average squared deviation from the mean — also called the root-mean-square deviation — and notes that it is the most widely reported measure of spread because it is expressed in the same units as the original data, making it directly interpretable. A standard deviation of 5 kilograms means that a typical observation is about 5 kilograms away from the mean; a variance of 25 kilograms-squared conveys the same information but in squared units that are harder to picture.
 
 Understanding this definition is what lets you evaluate whether Excel's number makes sense for your dataset.
+
+<RelatedLink to={routes.article('standard-deviation-symbol')} label="The Standard Deviation Symbol" intro="Worth reading next" />
 
 ---
 
@@ -173,6 +176,8 @@ The calculator below applies the same formula as Excel's `STDEV.S`. Enter the va
 
 For more options, open the full <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>, or explore every available tool on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
 
+<RelatedLink to={routes.calculator('variance')} label="variance calculator" intro="For a related calculation" />
+
 ---
 
 ## Understanding Sample vs. Population Standard Deviation in Excel
@@ -192,6 +197,8 @@ The choice between STDEV.S and STDEV.P is the single most important decision whe
 The OpenStax [*Introductory Statistics*, §2.7 — Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) covers the mathematical relationship between the sample standard deviation `s` and the population standard deviation `σ`, explaining why the Bessel correction exists and when each formula is appropriate — the same logic that separates STDEV.S from STDEV.P.
 
 A practical rule of thumb: if your dataset came from a measurement process where you could, in principle, collect more data from the same population, use STDEV.S. If the dataset is definitionally complete, use STDEV.P.
+
+<RelatedLink to={routes.article('mean-absolute-deviation')} label="Mean Absolute Deviation Explained" intro="On a related note" />
 
 ---
 

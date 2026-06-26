@@ -16,6 +16,7 @@ phase: 1
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
@@ -91,6 +92,8 @@ Inferential statistics **go beyond the data you have** to make predictions or dr
 **Example:** A drug company gives a new medication to a random sample of 400 patients and a placebo to another 400. Descriptive statistics summarise what happened in each group (average improvement scores). Inferential statistics then determine whether the difference between the groups is large enough — compared with the random variability you would expect — to conclude the drug actually works.
 
 The leap from "what I observed in this sample" to "what is probably true in the population" is the heart of inferential statistics, and it always rests on a foundation of solid descriptive work first.
+
+<RelatedLink to={routes.article('parameter-vs-statistic')} label="Parameter vs Statistic" intro="Worth reading next" />
 
 ---
 
@@ -217,6 +220,8 @@ The 25 °C reading is 1.60 standard deviations above the mean — noticeably war
 
 This single worked example touches every core measure you need to know: centre (mean, median), spread (range, variance, standard deviation), and relative position (z-score). Every more advanced statistical method builds on these same foundations.
 
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="On a related note" />
+
 ---
 
 ## Why Statistics Matter in Everyday Life
@@ -230,6 +235,8 @@ Understanding what statistics means in practice changes how you evaluate informa
 **Science and research.** The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/index.htm) documents the statistical procedures used in metrology and engineering research, illustrating how fundamental statistics underpins scientific measurement quality.
 
 **Policy and government.** National statistics agencies collect census data, unemployment figures, and inflation indices — all products of carefully designed sampling and estimation procedures. Their reliability depends entirely on sound statistical methodology.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
 
 ---
 

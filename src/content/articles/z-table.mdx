@@ -20,6 +20,7 @@ calculator: z-table
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -64,6 +65,8 @@ The z-score tells you how many standard deviations x sits above (positive) or be
 Once you have the z-score, the **normal dist z table** — which always describes N(0, 1) — converts that score into a probability. This is why a single z-score table can handle any normal distribution: the standardization step in the formula above absorbs whatever mean and standard deviation the original variable has.
 
 The standard normal curve is symmetric about 0. Its total area equals 1.00. The tails extend infinitely in both directions, but the area beyond z = ±4 is smaller than 0.01 %, so most normal distribution tables list z-values from −3.49 to +3.49, covering more than 99.9 % of possible outcomes.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="Worth reading next" />
 
 ---
 
@@ -162,6 +165,8 @@ Enter any z-score below. The calculator returns the cumulative left-tail probabi
 
 For a larger display with full options, open the <Link to={routes.calculator('z-table')}>z-table calculator</Link>. To explore other statistics tools, visit the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="For a related calculation" />
+
 ---
 
 ## Right-Tail and Two-Tail Probabilities
@@ -238,6 +243,8 @@ P(Z ≤ −1.64) = 1 − 0.9495 = 0.0505
 The symmetry property holds because the standard normal curve is perfectly symmetric about zero: any left-tail area below −z equals the right-tail area above +z, which equals 1 minus the left-tail area below +z.
 
 This symmetry also explains an important fact: for a symmetric two-tailed test, you only ever need to look up the positive z critical value, then use symmetry to find the negative counterpart.
+
+<RelatedLink to={routes.article('probability-distribution')} label="Probability Distributions Explained" intro="On a related note" />
 
 ---
 

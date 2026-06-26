@@ -11,6 +11,7 @@ phase: 3
 calculator: standard-deviation
 draft: true
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -36,6 +37,8 @@ Use the calculator while reading the steps below. The same calculator config pow
 the standalone tool and this embedded article version.
 
 <StatCalc slug="standard-deviation" variant="embed" />
+
+<RelatedLink to={routes.article('standard-deviation-symbol')} label="The Standard Deviation Symbol" intro="Worth reading next" />
 
 ## How to read the result
 

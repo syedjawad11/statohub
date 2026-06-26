@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A z table maps a z-score to the area under the standard normal curve — the
 probability of landing at or below that point. Instead of hunting across rows and
@@ -26,6 +28,8 @@ between 0 and your z.
 4. Read the **between 0 and z** value — the area from the center of the curve out
    to your z-score, which is the figure a printed table body usually lists.
 
+<RelatedLink to={routes.article('z-table')} label="Z Score Table Explained" intro="Worth reading next" />
+
 ## Worked example
 
 Take a z-score of `1.96`, the value behind 95% confidence intervals.
@@ -40,6 +44,8 @@ So 97.5% of the standard normal curve lies to the left of 1.96, leaving just 2.5
 in the right tail. That 2.5% in each tail is exactly why 1.96 marks the cutoff for
 a 95% confidence interval. For the underlying formulas and conventions, see the
 [NIST/SEMATECH e-Handbook on the normal distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm).
+
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

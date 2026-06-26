@@ -155,6 +155,14 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   `npm run build` with 0 link violations, built HTML checks for the policy page,
   all calculator sidebars, footer link, callout render, and local preview HTTP
   checks.
+- **TASK-018 -- woven RelatedLink callouts:** inserted the exact Claude-authored
+  `<RelatedLink>` map across 21 article MDX files and 19 calculator-content
+  MDX files: 63 article callouts plus 38 calculator teaching-block callouts.
+  Removed the old trailing standard-deviation variance demo and kept all links
+  routed through `routes.article(...)` / `routes.calculator(...)`. Verification
+  used structural callout/import audits, an independent subagent audit,
+  `npx astro check`, `npm test` after expected spawn approval,
+  `npm run build` with 0 link violations, and built HTML spot checks.
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

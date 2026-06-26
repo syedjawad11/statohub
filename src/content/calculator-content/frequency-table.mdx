@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A frequency table organizes a list of numbers by showing how often each distinct
 value appears, along with its share of the whole and a running total. This
@@ -26,6 +28,8 @@ Frequency — plus a total count of all the values you entered.
    running total of counts down to that row).
 4. Check the **Total Values** figure to confirm the calculator read every number
    you entered.
+
+<RelatedLink to={routes.article('frequency-table')} label="Frequency Tables Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -53,6 +57,8 @@ you can read as the proportion 0.4 or 40%. The cumulative frequency column adds
 the counts row by row — 1, then 1 + 2 = 3, then 3 + 4 = 7, and so on — ending at
 10, the total count. For the conventions behind grouping data this way, see the
 [NIST/SEMATECH e-Handbook on histograms and frequency distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm).
+
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

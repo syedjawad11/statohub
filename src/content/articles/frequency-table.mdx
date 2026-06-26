@@ -15,6 +15,7 @@ calculator: frequency-table
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -143,6 +144,8 @@ Relative frequency matters most when:
 - **Estimating probability** — under repeated sampling, the relative frequency of an outcome converges to its probability. If 30% of students scored an 8 this year, and you randomly select one student from a similar population, the estimated probability of picking someone who scored 8 is about 0.30.
 - **Scaling histograms** — a relative frequency histogram (y-axis shows proportions, not counts) is directly comparable to another dataset's histogram regardless of sample size.
 
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
+
 ---
 
 ## Cumulative Frequency: Tracking Running Totals
@@ -186,6 +189,8 @@ The shape of a frequency distribution carries analytical meaning:
 - **Bimodal** — two peaks, suggesting two distinct subgroups in the data.
 
 Reading the shape from a frequency table — before plotting anything — is a skill worth developing. In the quiz example, the highest frequency is at 8 and counts drop in both directions, suggesting a roughly symmetric distribution for this small sample.
+
+<RelatedLink to={routes.article('skewed-distribution')} label="Skewed Distributions Explained" intro="On a related note" />
 
 ---
 
@@ -236,6 +241,8 @@ Reading a finished frequency table is about asking the right questions of each c
 **Is the distribution symmetric?** Look at whether frequencies increase then decrease in a roughly balanced way around the modal class, or whether they are bunched at one end with a long tail at the other. The shape guides which summary statistics to use: symmetric distributions report the mean; strongly skewed ones often report the median instead.
 
 **Do the relative frequencies sum to 1.00?** If they do not (ignoring minor rounding), you have a calculation error to find and fix.
+
+<RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="You may also find this useful" />
 
 ---
 

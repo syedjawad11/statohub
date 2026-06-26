@@ -17,6 +17,7 @@ phase: 1
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
@@ -48,6 +49,8 @@ The mathematical form of a probability distribution depends on whether the rando
 - **Continuous distributions** use a **probability density function (PDF)**. Because the probability of any single exact value is zero for a continuous variable, the PDF gives density. You integrate over an interval to find the probability that X falls there: `P(a ≤ X ≤ b) = ∫ f(x) dx` from a to b.
 
 This discrete-versus-continuous split is the most important dividing line when working with probability distributions.
+
+<RelatedLink to={routes.calculator('binomial-distribution')} label="binomial distribution calculator" intro="For a related calculation" />
 
 ---
 
@@ -97,6 +100,8 @@ P(X = k) = (1 − p)ᵏ⁻¹ · p
 ```
 
 It answers questions like: "How many rolls until I get a six?" With p = 1/6, the distribution mean (expected number of rolls) is 1/p = 6.
+
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="Another helpful calculator is" />
 
 ---
 
@@ -260,6 +265,8 @@ Where:
 
 Bayesian statistics is widely used in medical diagnosis, spam filtering, A/B testing, and machine learning. What distinguishes it from frequentist statistics is that both the unknowns (parameters) and the knowns (data) are treated as probability distributions. The prior, the likelihood, and the posterior are all fully specified probability distributions.
 
+<RelatedLink to={routes.article('skewed-distribution')} label="Skewed Distributions Explained" intro="On a related note" />
+
 ---
 
 ## Shape Characteristics of a Probability Distribution
@@ -283,6 +290,8 @@ Var(X) = E( (X − μ)² )
 ### Kurtosis
 
 **Kurtosis** measures the heaviness of the tails relative to the normal distribution. High kurtosis (leptokurtic) distributions have heavier tails and more extreme values than the normal predicts — financial returns often show this pattern. Low kurtosis (platykurtic) distributions have lighter tails and a flatter centre.
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability Formula Explained" intro="Worth reading next" />
 
 ---
 

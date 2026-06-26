@@ -16,6 +16,7 @@ calculator: median
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -68,6 +69,8 @@ Mean (x̄) = Σxᵢ / n
 where Σxᵢ is the sum of every value and n is the number of values.
 
 The mean uses every number in the dataset equally. That is its greatest strength for symmetric data: it captures all the information and feeds into further statistical calculations like standard deviation, t-tests, and confidence intervals. It is also its greatest weakness when a dataset has extreme values: every large number drags the mean upward; every small number drags it down.
+
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="Worth reading next" />
 
 ---
 
@@ -133,6 +136,8 @@ The value 9.5 never appeared in the data. That is correct: the median is 9.5 bec
 
 The mean for the same dataset = (3 + 7 + 12 + 20) / 4 = 42 / 4 = 10.5. Because this dataset is roughly symmetric and outlier-free, the median (9.5) and mean (10.5) are close.
 
+<RelatedLink to={routes.article('skewed-distribution')} label="Skewed Distributions Explained" intro="On a related note" />
+
 ---
 
 ## What the Gap Between Mean and Median Tells You
@@ -172,6 +177,8 @@ Use the arithmetic mean whenever:
 **Further statistical analysis requires it.** Standard deviation, variance, z-scores, t-tests, ANOVA, and linear regression are all defined in terms of the mean. If you plan to run these tests, the mean is the right measure of center to report.
 
 For more on how the arithmetic mean works and when it is the right choice, see <Link to={routes.article('what-is-an-average')}>What Is an Average? A Plain-English Guide to the Mean</Link>.
+
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
 
 ---
 

@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The normal distribution is the familiar bell-shaped curve where most values cluster
 near the average and fewer fall far from it. This normal distribution calculator
@@ -24,6 +26,8 @@ area under the standard normal curve.
 4. Pick a **mode**: `P(X < x)` for the area to the left, `P(X > x)` for the area to
    the right, or `P(x < X < upper)` for the area between two points.
 5. Read off the **probability** and the **z-score(s)** the calculator returns.
+
+<RelatedLink to={routes.article('z-table')} label="Z Score Table Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -49,6 +53,8 @@ So about **97.72%** of scores fall below 130. If you switched the mode to `P(X >
 the calculator would return the area to the right instead: `1 - 0.9772 = 0.0228`, or
 about 2.28%. For the exact formula and reference tables, see the
 [NIST/SEMATECH e-Handbook on the normal distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm).
+
+<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

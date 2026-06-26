@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A z-score, also called a standard score, tells you how many standard deviations a
 value sits above or below the mean. A positive z-score is above the mean, a
@@ -26,6 +28,8 @@ The calculator subtracts the mean from your value, divides by the standard
 deviation, and shows the z-score. A result near 0 means the value is typical; a
 large positive or negative result means it is unusually high or low.
 
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="Worth reading next" />
+
 ## Worked example
 
 Suppose a value of 72 comes from a data set with a mean of 68 and a standard
@@ -42,6 +46,8 @@ So 72 sits 0.8 standard deviations above the mean of 68 — a little above avera
 but well within the normal range. For the conventions behind standard scores and
 the standard normal curve, see the
 [NIST/SEMATECH e-Handbook on the standard normal distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm).
+
+<RelatedLink to={routes.calculator('z-table')} label="z-table calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

@@ -15,6 +15,7 @@ calculator: weighted-average
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -59,6 +60,8 @@ x̄_w = (w₁ × x₁ + w₂ × x₂ + w₃ × x₃) / (w₁ + w₂ + w₃)
 The weights can be any positive numbers. They do not have to sum to 1 or to 100. When the weights are percentages that sum to 100%, the denominator is 100 and the arithmetic simplifies slightly. When the weights represent counts or group sizes, the denominator is the total count across all groups. The formula produces the correct result in both cases.
 
 The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the weighted mean among the core measures of location, noting that it is particularly useful when measurements are taken with varying precision or when data points represent groups of different sizes.
+
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="Worth reading next" />
 
 ---
 
@@ -140,6 +143,8 @@ Enter your scores and their corresponding weights below. The calculator applies 
 
 For a larger, standalone interface, open the full <Link to={routes.calculator('weighted-average')}>weighted average calculator</Link>. All statistics tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="For a related calculation" />
+
 ---
 
 ## Mean and Weighted Mean: Key Differences
@@ -163,6 +168,8 @@ The mathematical relationship is clean: the arithmetic mean is the special case 
 This is the plain arithmetic mean. The weighted mean contains the ordinary mean as a special case and generalises it.
 
 The open-access textbook [OpenStax *Introductory Statistics*, 2.5 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) presents both formulas and illustrates when each applies with worked examples from education and survey data.
+
+<RelatedLink to={routes.article('mean-vs-average')} label="Mean vs Average" intro="On a related note" />
 
 ---
 

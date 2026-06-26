@@ -18,6 +18,7 @@ calculator: probability
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -91,6 +92,8 @@ Enter any number of favorable outcomes and total outcomes below to compute proba
 <StatCalc slug="probability" variant="embed" />
 
 For a full-page view, open the <Link to={routes.calculator('probability')}>probability calculator</Link>. You can also browse every available tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.article('probability-distribution')} label="Probability Distributions Explained" intro="Worth reading next" />
 
 ---
 
@@ -203,6 +206,8 @@ P(A | B) = [ P(B | A) × P(A) ] / P(B)
 
 Bayes' theorem is used throughout probability and statistics — from medical test interpretation to machine learning classifiers. It is a formal statement that new evidence should update prior beliefs in proportion to how likely that evidence is under each hypothesis.
 
+<RelatedLink to={routes.calculator('binomial-distribution')} label="binomial distribution calculator" intro="For a related calculation" />
+
 ---
 
 ## The Binomial Probability Formula
@@ -307,6 +312,8 @@ E(X) = n × p
 ```
 
 For the bulb example: E(defective bulbs) = 5 × 0.10 = **0.5**. On average, you expect half a defective bulb in every batch of five — meaning in the long run, roughly one in two batches will have exactly one defect and the rest will have none.
+
+<RelatedLink to={routes.calculator('combination')} label="combination calculator" intro="Another helpful calculator is" />
 
 ---
 

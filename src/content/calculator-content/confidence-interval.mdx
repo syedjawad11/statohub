@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-26
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A confidence interval is a range of values that is likely to contain the true
 population mean, given a sample. Instead of a single best guess, it reports a
@@ -25,6 +27,8 @@ and returns the margin of error along with the interval bounds.
 
 A higher confidence level widens the interval, and a larger sample size narrows
 it, because more data sharpens the estimate of the mean.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -48,6 +52,8 @@ Add and subtract the margin from the mean to get the interval:
 So you can be 95% confident the true population mean lies between about 97.06 and
 102.94. For the formula and assumptions behind the interval for a mean, see the
 [NIST/SEMATECH e-Handbook on confidence limits for the mean](https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm).
+
+<RelatedLink to={routes.calculator('sample-size')} label="sample size calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

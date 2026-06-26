@@ -20,6 +20,7 @@ calculator: mean
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -52,6 +53,8 @@ There are several average definitions you will encounter in statistical work, bu
 3. **Mode** — the value that appears most frequently. A dataset can have one mode, multiple modes, or no mode if all values appear equally often.
 
 These average definitions share the same goal — to represent many numbers with one — but they behave very differently when the data contains extreme values (outliers) or is not symmetrically distributed. Choosing among them is one of the core judgment calls in descriptive statistics. The open-access textbook [OpenStax, *Introductory Statistics* — 2.5 Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) compares the mean, median, and mode with worked examples if you want a second walkthrough.
+
+<RelatedLink to={routes.article('mean-vs-average')} label="Mean vs Average" intro="Worth reading next" />
 
 ---
 
@@ -124,6 +127,8 @@ Enter any list of numbers below and the calculator returns the mean instantly, a
 
 For a larger, dedicated interface, open the <Link to={routes.calculator('mean')}>mean calculator</Link> page. All our statistics tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
+<RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="On a related note" />
+
 ---
 
 ## Median: The Middle-Value Average
@@ -177,6 +182,8 @@ A dataset can be:
 The mode is the only measure of average that applies to **categorical (non-numeric) data**. You cannot add political party affiliations or product colour preferences together, so a mean is impossible. But you can identify which option appeared most often — that is the mode.
 
 In numeric datasets, the mode is especially useful in quality control (which defect type recurs most?), retail (which product sells most?), and any domain where "most common" is the operationally important question.
+
+<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="For a related calculation" />
 
 ---
 
@@ -260,6 +267,8 @@ The weighted grand average (50.33) is pulled slightly toward Factory B's value (
 **Rule of thumb:** Use the weighted grand average whenever the groups differ in size. Use the simple grand average only when every group has exactly the same number of observations, because in that case both calculations give the same result.
 
 Grand averages appear throughout experimental design, analysis of variance (ANOVA), industrial quality control, and educational assessment — anywhere multiple groups contribute data to a single overall conclusion.
+
+<RelatedLink to={routes.calculator('average')} label="average calculator" intro="Another helpful calculator is" />
 
 ---
 

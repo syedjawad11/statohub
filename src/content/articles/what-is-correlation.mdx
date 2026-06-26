@@ -15,6 +15,7 @@ phase: 1
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
@@ -58,6 +59,8 @@ r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / [(n − 1) × sₓ × sᵧ]
 ```
 
 Multiplying every x value by a constant leaves r unchanged, because that constant cancels in both the numerator and the denominator. Pearson's r is therefore dimensionless — it carries no units and can be compared across variables measured in completely different scales. The [NIST/SEMATECH e-Handbook of Statistical Methods, section on the Linear Correlation Coefficient](https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm) provides a rigorous derivation and examples of how r is used in quality-control analysis.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
 
 ## A Fully Worked Example
 
@@ -132,6 +135,8 @@ A scatter plot of negatively correlated variables shows a cloud sloping downward
 When r is close to 0, the two variables have **no linear correlation**: knowing one variable's value gives you no useful information about the other. A scatter plot looks like a roughly circular or randomly scattered cloud with no discernible slope.
 
 Zero correlation does **not** mean the variables are completely unrelated. Two variables can follow a strong curved (non-linear) relationship — a U-shape or a step function, for instance — and still produce r ≈ 0, because Pearson's formula measures only straight-line association. This is one reason why always plotting your data before computing r is good practice. Correlation is a summary, not a substitute for visualization.
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="Correlation vs Causation" intro="Worth reading next" />
 
 ## Correlation Meaning: Interpreting the Number
 
@@ -222,6 +227,8 @@ Understanding **correlation basics** means grasping both the power and the limit
 5. **Sample size affects reliability.** An r of 0.80 from n = 8 observations is far less trustworthy than the same r from n = 200. Statistical significance testing (a t-test for r, or a confidence interval) quantifies this uncertainty.
 
 For related computations, the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> fits the least-squares line through your paired data and reports r, r², slope, and intercept together.
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression Explained" intro="On a related note" />
 
 ## How to Read a Correlation Table
 

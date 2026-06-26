@@ -15,6 +15,7 @@ phase: 1
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
@@ -42,6 +43,8 @@ A value of r = 0.80, for example, indicates a strong positive association: as on
 In adults, height and weight show a positive correlation of roughly r = 0.65 to 0.75 in most large samples. Taller people tend to weigh more, though individual variation is considerable. Studying hours and exam scores typically correlate positively. Temperature and hot-drink sales correlate negatively (more cold days, more hot drinks sold).
 
 Correlation is a purely descriptive, observational quantity. Computing r tells you the direction and strength of a linear association in your data. It says nothing at all about why that association exists or whether one variable is producing changes in the other.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation" intro="Worth reading next" />
 
 ---
 
@@ -92,6 +95,8 @@ A **spurious correlation** is a correlation that appears in data but reflects no
 **Shared time trends** — Many economic, demographic, and social variables share long-run upward or downward trends simply because they are all growing (or shrinking) over the same historical period. Per-capita internet usage and global average temperature have both risen sharply since 1990. Their correlation across years is high, but this reflects a shared time trend, not a causal link between internet use and climate change.
 
 The [Australian Bureau of Statistics — Correlation and causation](https://www.abs.gov.au/statistics/understanding-statistics/statistical-terms-and-concepts/correlation-and-causation) explains why a correlation alone never establishes cause and effect, and walks through the confounder and coincidence cases that produce spurious correlations.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
 
 ---
 
@@ -181,6 +186,8 @@ The answer is **false**, without qualification. A correlation is a statistical d
 The complementary statement — "correlation does not imply causation" — is **true**. It serves as a constant reminder that the leap from observed association to causal claim requires additional evidence and additional work. The correlation itself is just the beginning of the investigation.
 
 This distinction matters in practice. Public health decisions, business strategy, scientific conclusions, and policy recommendations all depend on getting the causal question right. Confusing correlation with causation has historically led to harmful interventions (treating a risk marker rather than its cause), missed opportunities (ignoring a real causal lever because the evidence came from observational data), and wasted resources (acting on a spurious pattern that disappears when conditions change).
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression Explained" intro="On a related note" />
 
 ---
 

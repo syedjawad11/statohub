@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-24
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 A percentile tells you what share of a data set falls at or below a given value. If
 your score is at the 90th percentile, then 90% of the other values in the set are
@@ -23,6 +25,8 @@ range (IQR), so you can describe the full spread of your data in one step.
    for the 90th percentile).
 3. Click **Calculate**. The tool shows the requested percentile value, then Q1, the
    median (Q2), Q3, and the IQR below it.
+
+<RelatedLink to={routes.article('frequency-table')} label="Frequency Tables Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -53,6 +57,8 @@ IQR       = Q3 - Q1 = 6.5 - 4.0 = 2.5
 The NIST/SEMATECH e-Handbook covers percentiles in its
 [discussion of measures of location and order statistics](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm),
 including how percentiles relate to the rank of each observation.
+
+<RelatedLink to={routes.calculator('range')} label="range calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-20
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The mean is the most common way to summarize a set of numbers — it is the sum of
 all values divided by how many values there are. This mean calculator finds the
@@ -23,6 +25,8 @@ on what the result actually tells you.
 There is no sample/population distinction for the mean itself. Unlike standard
 deviation, the average formula is the same whether your numbers represent a sample
 or the entire population.
+
+<RelatedLink to={routes.article('mean-vs-average')} label="Mean vs Average" intro="Worth reading next" />
 
 ## Worked example
 
@@ -44,6 +48,8 @@ The arithmetic mean is **5.2**. As the
 [NIST/SEMATECH e-Handbook on measures of location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm)
 explains, the mean is the most common measure of central tendency because it
 accounts for every value in the dataset.
+
+<RelatedLink to={routes.calculator('average')} label="average calculator" intro="Another helpful calculator is" />
 
 ## Frequently asked questions
 

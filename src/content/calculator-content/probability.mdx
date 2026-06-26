@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-25
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 Probability measures how likely an event is to happen, on a scale from 0
 (impossible) to 1 (certain). When every outcome is equally likely, you find it by
@@ -31,6 +33,8 @@ probability = favorable outcomes / total outcomes
 complement  = 1 - probability
 ```
 
+<RelatedLink to={routes.article('probability-formula')} label="Probability Formula Explained" intro="Worth reading next" />
+
 ## Worked example
 
 Suppose a bag holds 10 equally likely balls and 3 of them are red. You draw one
@@ -48,6 +52,8 @@ So the chance of drawing red is 0.3, and the chance of *not* drawing red is 0.7.
 The two always add up to 1, because the ball is either red or it isn't. For a
 fuller treatment of how probabilities behave, see the
 [NIST/SEMATECH e-Handbook on probability distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/eda36.htm).
+
+<RelatedLink to={routes.calculator('binomial-distribution')} label="binomial distribution calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

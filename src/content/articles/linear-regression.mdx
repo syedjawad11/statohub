@@ -18,6 +18,7 @@ calculator: linear-regression
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -59,6 +60,8 @@ Some textbooks write regression equations as *ŷ = a + bx* (intercept first) or 
 One important detail about notation: the hat on *ŷ* signals that this is a *predicted* or *fitted* value, not an observed one. Actual observed values are written as *y*; predicted values from the line are *ŷ*. The difference *y − ŷ* for each data point is the **residual**, a measure of how far the model's prediction misses the actual observation at that point.
 
 You will also encounter the plural form: the **regression equations** for a dataset are the collection of prediction formulas at different *x* values. When a statistics problem asks you to compare two or more candidate regression equations to see which one fits best, each candidate is a different line with different slope and intercept values.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation" intro="Worth reading next" />
 
 ---
 
@@ -164,6 +167,8 @@ Enter any pair of number lists below to find the slope, intercept, correlation c
 
 For a larger workspace and more input options, open the full <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> page. You can also find every statistical tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
+
 ---
 
 ## Interpreting a Regression Analysis
@@ -243,6 +248,8 @@ The question "which regression equation best fits the data?" — or equivalently
 The core distinction: **linear regression** predicts a number on a continuous scale; **logistic regression** predicts the probability that a binary outcome occurs. Both fit a model to data with the goal of making predictions, and both can include multiple predictor variables. However, fitting a linear regression equation to a binary 0/1 outcome produces predicted values outside the [0, 1] interval — meaningless as probabilities — so logistic regression exists specifically to handle categorical response variables correctly.
 
 When you see a problem that asks you to predict whether something will or will not happen (a patient recovers or does not, a loan defaults or does not, an email is spam or is not), logistic regression is the appropriate tool. When the response is a numeric measurement, a linear regression equation is the natural starting point.
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="Correlation vs Causation" intro="On a related note" />
 
 ---
 

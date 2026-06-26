@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-26
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The correlation coefficient measures how strongly two variables move together,
 on a scale from −1 to +1. A value near +1 means they rise together, near −1
@@ -29,6 +31,8 @@ between your paired x and y values.
 Both lists must have the same length and at least two paired values, and each
 variable needs some spread — a column of identical numbers has no variation to
 correlate.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation" intro="Worth reading next" />
 
 ## Worked example
 
@@ -53,6 +57,8 @@ So r ≈ 0.77 is a fairly strong positive correlation, and the linear fit explai
 about 60% of the variation in y. For the formal definition of Pearson's product-
 moment coefficient, see the
 [NIST/SEMATECH e-Handbook on linear correlation](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35d.htm).
+
+<RelatedLink to={routes.calculator('linear-regression')} label="linear regression calculator" intro="Another helpful calculator is" />
 
 ## Frequently asked questions
 

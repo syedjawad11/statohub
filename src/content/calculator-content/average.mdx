@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-21
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The **average** (arithmetic mean) tells you the center of a data set — it is the value
 you would get if you spread the total equally across every item. Enter any list of numbers
@@ -21,6 +23,8 @@ required.
 2. The calculator adds all the values and divides by the count, then displays the
    **Average** result.
 3. To start over, clear the box and enter a new set of numbers.
+
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="Worth reading next" />
 
 ## Worked example
 
@@ -42,6 +46,8 @@ The average score is **18**. If every student had scored the same, each score wo
 exactly 18 — that is what "center of the data" means in practice. For the formal
 definition and related measures, see the
 [NIST/SEMATECH e-Handbook section on measures of location and the mean](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm).
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="Another helpful calculator is" />
 
 ## Frequently asked questions
 

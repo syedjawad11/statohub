@@ -21,6 +21,7 @@ calculator: range
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -56,6 +57,8 @@ Where:
 - `x_min` is the smallest value in the dataset
 
 Nothing more is required. You do not need the mean, the median, or any sum over all the data points — only the two extreme values.
+
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
 
 ---
 
@@ -192,6 +195,8 @@ Range ≈ 50 − 10 = 40
 
 This is an approximation — the true extreme values inside the first and last intervals are unknown. In practice, researchers often note that the range for grouped data is "at most 40" rather than stating it as an exact figure.
 
+<RelatedLink to={routes.article('mean-absolute-deviation')} label="Mean Absolute Deviation Explained" intro="On a related note" />
+
 ---
 
 ## Range vs. Other Measures of Spread
@@ -241,6 +246,8 @@ The range is less useful when:
 - You want a summary of **typical** variability, not just the extremes.
 
 In these situations, prefer the IQR (for outlier resistance) or the standard deviation (for a measure that reflects every data point).
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="Another helpful calculator is" />
 
 ---
 

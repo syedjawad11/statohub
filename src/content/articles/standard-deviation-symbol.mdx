@@ -18,6 +18,7 @@ calculator: standard-deviation
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -97,6 +98,8 @@ Variance is simply the standard deviation squared, so the symbols follow the sam
 
 When a textbook writes σ² = 4, it means the population variance is 4, and therefore σ = 2. When it writes s² = 4.57, the sample standard deviation is s ≈ 2.14.
 
+<RelatedLink to={routes.calculator('variance')} label="variance calculator" intro="For a related calculation" />
+
 ---
 
 ## Additional Symbols for Standard Deviation You May Encounter
@@ -112,6 +115,8 @@ The pair σ / s covers the vast majority of statistics work, but a few specialis
 **RSD** — relative standard deviation, also called the coefficient of variation (CV). Expressed as a percentage: RSD = (s / x̄) × 100 %. Used to compare variability across datasets with different units or scales.
 
 Recognising these additional standard deviation signs prevents confusion when you move between introductory statistics and more advanced or applied work.
+
+<RelatedLink to={routes.article('standard-deviation-excel')} label="Standard Deviation in Excel" intro="On a related note" />
 
 ---
 
@@ -197,6 +202,8 @@ Enter the dataset 2, 4, 4, 4, 5, 5, 7, 9 below and confirm you get the same resu
 <StatCalc slug="standard-deviation" variant="embed" />
 
 For a wider display with more options, open the full <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>. You can also browse all tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="Worth reading next" />
 
 ---
 

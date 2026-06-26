@@ -8,6 +8,8 @@ keywords:
 draft: false
 updatedDate: 2026-06-26
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
 
 The binomial distribution describes the chance of getting a certain number of
 "successes" in a fixed number of independent yes/no trials, where each trial has
@@ -25,6 +27,8 @@ getting at most or at least that many.
 4. Pick a **mode**: *exactly* `P(X = k)`, *at most* `P(X ≤ k)`, or *at least*
    `P(X ≥ k)`. "At most" and "at least" add up several individual probabilities
    for you.
+
+<RelatedLink to={routes.article('probability-distribution')} label="Probability Distributions Explained" intro="Worth reading next" />
 
 ## Worked example
 
@@ -48,6 +52,8 @@ P(X = 5) = 252 × 0.5^5 × 0.5^5
 So there is about a 24.6% chance of exactly 5 heads in 10 flips. For the formal
 definition and properties, see the
 [NIST/SEMATECH e-Handbook on the binomial distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm).
+
+<RelatedLink to={routes.calculator('probability')} label="probability calculator" intro="For a related calculation" />
 
 ## Frequently asked questions
 

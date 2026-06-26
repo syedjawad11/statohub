@@ -31,6 +31,33 @@ Cloudflare Pages. Built from the completed SEO study + content-architecture in
   at a time. This `CLAUDE.md` log has one writer: Claude. See
   `../Claude_OS/CODEX-WORKFLOW.md`.
 
+## Internal linking & related-link standard (every page, now + future)
+
+Established 2026-06-26; implemented via `handoff/TASK-017`. All future calculator
+pages and articles MUST follow this:
+
+- **Related-calculators sidebar.** Every standalone `/calculators/{slug}/` page
+  carries an auto-derived "Related calculators" sidebar (same-category calculators
+  first, then filled to N) built from the `calculators` collection via
+  `src/lib/related-calculators.ts`. It is data-driven, so existing pages get it
+  automatically and **future calculators inherit it with no per-page work** — never
+  hand-maintain related lists.
+- **Contextual internal links in prose.** Teaching blocks and articles should weave
+  contextual internal links where naturally relevant — always through the typed
+  `routes` / `url()` / `<Link>` registry (`src/lib/links.ts`), never a raw `<a>` to
+  an internal page (the `check-links` gate fails those).
+- **Related-link callout (`<RelatedLink>`).** Use `src/components/RelatedLink.astro`
+  for the inline "related link" line (the blue accent-bar callout). The intro phrase
+  **must vary** — pull from the approved pool: "Worth reading next", "On a related
+  note", "You may also find this useful", "For a related calculation", "Another
+  helpful calculator is", "See also". Never repeat the same phrase twice on one page.
+- **Retrofit ownership.** Codex builds the components + sidebar + one demo usage.
+  **Claude** retrofits the contextual links + varied `<RelatedLink>` callouts into the
+  existing teaching-block MDX during content sessions (editorial: right target +
+  natural phrasing).
+- **Combined legal page** lives at `/privacy-cookie-policy/` (Cookie + Privacy in one
+  page), linked from the footer "Site" column.
+
 ## ✅ LIVE — build pipeline complete (2026-06-14)
 
 The full build plan (TASK-001 → TASK-007) is **done** and the skeleton site is
@@ -68,6 +95,89 @@ the workflow (not a credential). First fully-green run verified live.
 At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
+
+- **2026-06-26 (TASK-018 woven callouts + AUTOMATION decided + ROUTINES PAUSED)** —
+  **Authored the editorial link-map brief that fixes the "one link dumped at the end"
+  problem, decided to make callouts automatic for all FUTURE content, and PAUSED the two
+  statohub cloud routines until that automation lands.** Context: the user disliked that
+  the earlier internal-linking pass (TASK-017) put a single `<RelatedLink>` at the END of
+  each page (e.g. `/frequency-table/`); they want **3-4 callouts woven through articles
+  (after every 2-3 paragraphs) and 1-2 per calc block**, styled like the blue callout in
+  their reference images. **(1) ONE-TIME RETROFIT — `handoff/TASK-018-weave-related-link-callouts.md`
+  (status TODO, Codex executing now):** a pure-INSERTION brief — Claude authored the exact
+  deterministic link-map (every target a real built page, intros varied per page via the
+  approved pool, anchors confirmed pure-ASCII + unique so Codex's apply_patch can't break),
+  Codex only inserts the `<RelatedLink>` JSX + idempotent imports; ~70 callouts across 40
+  files (21 articles x 3-4, 19 calc blocks x 2 above `## Worked example` + `## Frequently
+  asked questions`; standard-deviation calc block: remove the trailing demo first). DoD =
+  astro check 0/0/0 + npm test + build `check-links` "0 violations" + spot-checks; no
+  commit/push; don't edit CLAUDE.md. **(2) FUTURE = AUTOMATED (the real decision this
+  session):** manual insertion does NOT scale, so going forward callouts become a **layout
+  behavior fed by data**, exactly like the existing data-driven "Related calculators"
+  sidebar (`related-calculators.ts`) — NOT hand-inserted per page, and NOT a human review
+  gate (nothing waits on the user; articles still auto-publish). Two viable shapes, decided
+  to implement next session: **(A) hybrid (preferred)** — the `stats-article-writer` agent
+  fills a `related:` slug list in frontmatter at draft time (judgment it already does for
+  inline links), and `ArticleLayout` auto-distributes `<RelatedLink>` callouts across the
+  H2 section boundaries with rotating intros; **(B) fully automatic** — layout derives
+  targets purely from `category`/`related` data with zero authoring (drops hand-pick
+  ability). **>> NEXT SESSION (do this BEFORE re-enabling routines) <<** wire the automation:
+  add a layout/remark-level callout distributor that reads `related:`/`category` and renders
+  woven `<RelatedLink>`s (reuse the approved intro pool + typed `routes`/`url()` so the
+  `check-links` gate still bites); update the WRITE step so new content ships callouts as
+  part of authoring — `content-ops/cloud-routine/publish-next-article.md`,
+  `.claude/agents/stats-article-writer.md`, `.claude/seo-playbook.md` (article tier), and
+  the calc `content-ops/calc-prose/SESSION-PLAN.md`; optionally extend the QA gate to
+  WARN when a page has < N internal callouts. Then add the one-line CLAUDE.md "Internal
+  linking & related-link standard" update (callouts woven 3-4/article, 1-2/calc block,
+  never dumped at the end, generated from data not hand-inserted). **(3) ROUTINES PAUSED
+  (reversible) so no new page publishes WITHOUT the woven callouts in the interim:** set
+  `enabled:false` on BOTH statohub article routines via RemoteTrigger — `trig_01DhQoEV3sRaKynzFC88xTzh`
+  ("statohub publish 03:00 Malta", `0 1 * * *`) and `trig_011bnYzdcX76mXawduUgnHnP`
+  ("statohub publish 23:45 Malta", `45 21 * * *`). The calc-prose routine
+  (`trig_01M1XqCSGchNEjJsKjJG3hix`) was already disabled. **Re-enable all of these only
+  AFTER the callout automation ships** (flip the two article triggers back to
+  `enabled:true`; calc-prose stays manual per the existing SESSION-PLAN). The devnook
+  routines are SEPARATE and were left untouched. **Codex is meanwhile executing TASK-018.**
+
+- **2026-06-26 (TASK-017 brief — internal linking + legal page)** — **Planned +
+  delegated the internal-linking layer and a combined legal page to Codex; documented
+  the new standard in CLAUDE.md. Did NOT write any calculator pages this session (that
+  is the NEXT session).** The user wants three implementation features built before the
+  next calc-prose writing session: (1) a single combined **Cookie + Privacy Policy**
+  page (one page, not two); (2) **internal linking on calculator pages** — a "Related
+  calculators" sidebar on every `/calculators/{slug}/` page that existing pages get and
+  future pages inherit automatically; (3) a reusable **related-link callout** (the blue
+  "Worth reading next: ..." box from the user's reference images) whose intro phrase
+  **varies naturally** (no repeated wording). Reviewed the repo to ground the brief:
+  calculator route `src/pages/calculators/[slug]/index.astro` (BaseLayout + max-w-3xl, no
+  sidebar today), the typed link registry `src/lib/links.ts` (all internal hrefs via
+  `routes`/`url()`/`<Link>`; new page = new `RouteRef` kind), the `check-links.mjs` gate,
+  the `.article-shell`/`.article-rail`/`.related-card` pattern in `ArticleLayout.astro`
+  (reuse for the sidebar), the per-calc `category:` field (29 calcs across 6 categories),
+  and the footer "Site" column in `BaseLayout.astro`. **Wrote
+  [`handoff/TASK-017-internal-linking-legal-page.md`](handoff/TASK-017-internal-linking-legal-page.md)
+  (status TODO)** — one brief, three scoped parts: **A** combined legal page
+  (`src/pages/privacy-cookie-policy/index.astro` modeled on About + new
+  `privacyCookiePolicy` route + footer link; Codex drafts the copy from a supplied
+  outline; contact left as a greppable placeholder for Claude); **B** auto-derived
+  "Related calculators" sidebar via a pure `src/lib/related-calculators.ts`
+  (same-category-first, N=5, never self) + a 2-col restructure of the calc page reusing
+  the article-rail CSS; **C** a `<RelatedLink>` callout component + deterministic
+  varied-intro picker (approved phrase pool) + ONE demo usage on standard-deviation,
+  Claude retrofits the rest. **Three decisions locked with the user:** Codex drafts the
+  legal copy itself; sidebar auto-derives from `category`; Claude (not Codex) retrofits
+  contextual links + callouts into existing teaching MDX in content sessions. **Updated
+  CLAUDE.md:** added the standing "Internal linking & related-link standard" section
+  (above) so all future pages comply. **Wrote the Codex kickoff prompt** (handed to the
+  user; points Codex at `handoff/TASK-017-...md`). **Follow-up owed by Claude:** mirror
+  the related-link standard into the calc-prose `SESSION-PLAN.md` /
+  `publish-next-calc-prose.md` so the writing procedure enforces it. **>> NEXT SESSION
+  <<** Codex executes TASK-017 in parallel; Claude writes calc-prose **SESSION 4**
+  (`correlation-coefficient`, `linear-regression`, `confidence-interval`, QUEUE rows
+  17–19) per [`content-ops/calc-prose/SESSION-PLAN.md`](content-ops/calc-prose/SESSION-PLAN.md),
+  then reviews TASK-017 against its DoD (re-run the three gates; confirm legal page +
+  sidebar + callout) and CLOSEs it.
 
 - **2026-06-26 (calc-prose SESSION 3)** — **Published 3 more calculator teaching
   blocks — `binomial-distribution`, `combination`, `factorial` — via the SESSION-PLAN

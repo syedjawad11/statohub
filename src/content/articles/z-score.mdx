@@ -15,6 +15,7 @@ calculator: z-score
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
@@ -76,6 +77,8 @@ The sign of the z score carries direction:
 - **z = 0**: the value equals the mean exactly.
 
 The magnitude carries distance: a z score of 2.5 is further from the mean than a z score of 1.0. Because the standard normal distribution is symmetric, a z score of +2.0 and a z score of −2.0 represent equally unusual values — just on opposite sides of the centre.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
 
 ---
 
@@ -175,6 +178,8 @@ Values with |z| greater than 3 are rare — less than 0.3% of a normal distribut
 
 These percentile values assume a normal distribution. In skewed or heavy-tailed data the mapping between z scores and percentiles differs, so always check whether the normality assumption is reasonable for your data before reading z scores as exact probabilities.
 
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="Another helpful calculator is" />
+
 ---
 
 ## The Standard Normal Distribution
@@ -188,6 +193,8 @@ When you apply the z score formula `z = (x − μ) / σ` to any normally distrib
 The standard normal distribution is written as N(0, 1), following the compact notation `X ~ N(μ, σ²)`. A variable X that follows N(0, 1) has mean 0 and variance 1. Its probability density peaks at x = 0 and falls off symmetrically on both sides, becoming negligible beyond about ±4.
 
 The [NIST/SEMATECH e-Handbook of Statistical Methods — Normal Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm) documents the probability density function, the cumulative distribution function, and the full set of quantile values for the standard normal distribution — including the critical values that appear throughout hypothesis testing.
+
+<RelatedLink to={routes.article('z-table')} label="Z Score Table Explained" intro="Worth reading next" />
 
 ---
 

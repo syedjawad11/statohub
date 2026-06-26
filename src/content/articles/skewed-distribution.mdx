@@ -14,6 +14,7 @@ phase: 1
 related: []
 draft: false
 ---
+import RelatedLink from '../../components/RelatedLink.astro';
 
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
@@ -34,6 +35,8 @@ A **skewed distribution** breaks that symmetry. Values cluster more heavily on o
 - **Right-skewed** (positive skew): tail stretches to the right.
 
 Skewness is not about where most values sit — it is about where the tail goes. This distinction trips up many students. If you see most of the data bunched on the right and a thin tail pulling left, the distribution is **left-skewed**, even though the peak is on the right.
+
+<RelatedLink to={routes.article('probability-distribution')} label="Probability Distributions Explained" intro="Worth reading next" />
 
 ---
 
@@ -117,6 +120,8 @@ Consider a group where half the members are beginners and half are experts. Thei
 In a true bimodal distribution, the usual rules about mean, median, and mode do not apply cleanly. The mean often falls between the two peaks — in a valley — representing no actual cluster of data. This is why analysts always look at a histogram before relying on summary statistics. A bimodal shape in your data usually signals that two distinct subpopulations have been mixed together, and analysing them separately is often more informative.
 
 To detect bimodality, plot a histogram with enough bins that two humps would be visible if present. A box plot will not reveal bimodality, because it compresses the shape into five summary values.
+
+<RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="On a related note" />
 
 ---
 
@@ -223,6 +228,8 @@ skewness ≈ 3 × (mean − median) / s
 The coefficient is **−1.21** — clearly negative, confirming this is a **left-skewed distribution**. A value of −1.21 represents moderate-to-strong negative skew; anything below −1 is generally considered highly skewed.
 
 The [OpenStax Introductory Statistics, 2.6 — Skewness and the Mean, Median, and Mode](https://openstax.org/books/introductory-statistics/pages/2-6-skewness-and-the-mean-median-and-mode) provides additional worked examples of skewed distributions alongside their histograms, which is a helpful companion to this numerical approach.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
 
 ---
 
