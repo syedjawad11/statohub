@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { routes } from '../../lib/links';
+import type { BreadcrumbItem } from '../../lib/schema';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Privacy & Cookies', route: routes.privacyCookiePolicy() },
+];
+---
+
+<BaseLayout
+  title="Privacy & Cookies | Statohub"
+  description="Privacy and cookie policy for Statohub, a static statistics education and calculator site."
+  canonicalPath={routes.privacyCookiePolicy()}
+  breadcrumbs={breadcrumbs}
+>
+  <article class="max-w-3xl">
+    <p class="page-kicker">Policy</p>
+    <h1 class="page-title">Privacy & Cookies</h1>
+    <div class="article-prose">
+      <p>
+        This page explains how Statohub handles privacy, cookies, and browser
+        storage. Statohub is a static statistics education and calculator site.
+        We do not provide user accounts, sign-in areas, comments, or user
+        profiles.
+      </p>
+      <p><strong>Last updated:</strong> June 26, 2026</p>
+
+      <h2>Privacy Policy</h2>
+
+      <h3>What we collect and do not collect</h3>
+      <p>
+        Statohub does not ask you to create an account, sign in, or submit
+        personal profile information. Calculator inputs are processed in your
+        browser by client-side code and are not intentionally sent to Statohub as
+        calculator submissions. We do not sell personal data.
+      </p>
+
+      <h3>Hosting and server logs</h3>
+      <p>
+        Statohub is served through Cloudflare Pages. Like most web hosts and
+        content delivery networks, Cloudflare may process standard request data
+        such as IP address, requested URL, user agent, timestamp, and basic
+        security or performance signals in edge logs. These logs are used for
+        operating, securing, and delivering the site.
+      </p>
+
+      <h3>Analytics</h3>
+      <p>
+        Statohub does not currently include an analytics script in this repo. If
+        we use privacy-respecting analytics in the future, we will use it to
+        understand aggregate site usage, not to build advertising profiles or
+        sell personal data.
+      </p>
+
+      <h3>Third-party links</h3>
+      <p>
+        Some pages link to external educational or reference sites. Those sites
+        are controlled by their own operators and are covered by their own
+        privacy notices. Statohub is not responsible for the content or privacy
+        practices of third-party sites.
+      </p>
+
+      <h3>Children's privacy</h3>
+      <p>
+        Statohub is an educational website for general audiences. It is not
+        designed to collect personal information from children, and we do not
+        knowingly collect personal information from children.
+      </p>
+
+      <h3>Changes to this policy</h3>
+      <p>
+        We may update this page when the site changes, when we add or remove
+        services, or when legal requirements change. The updated date above will
+        reflect the latest revision.
+      </p>
+
+      <h3>How to contact us</h3>
+      <p>
+        For privacy questions, contact: [CONTACT EMAIL -- to be filled by
+        Claude].
+      </p>
+
+      <h2>Cookie Policy</h2>
+
+      <h3>What cookies are</h3>
+      <p>
+        Cookies are small text files that websites can store in your browser.
+        They are commonly used for sign-in sessions, preferences, security,
+        analytics, and advertising.
+      </p>
+
+      <h3>Cookies set by Statohub</h3>
+      <p>
+        Statohub itself does not set tracking or advertising cookies. The site's
+        dark-mode preference is stored with browser localStorage under the key
+        <code>theme</code>. localStorage is not a cookie, and this preference
+        stays on your device unless you clear it in your browser.
+      </p>
+
+      <h3>Cookies from hosting and security services</h3>
+      <p>
+        Our CDN or host may set cookies or use similar browser storage when
+        needed for security, performance, abuse prevention, or network delivery.
+        These controls help keep a static site available and protected.
+      </p>
+
+      <h3>How to view and control cookies</h3>
+      <p>
+        You can view, block, delete, or limit cookies in your browser settings.
+        Most browsers also let you clear localStorage and other site data for a
+        specific domain. Blocking some host or security cookies may affect how a
+        site loads or whether protective checks work correctly.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

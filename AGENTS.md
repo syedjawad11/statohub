@@ -146,6 +146,15 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   full `npm test`, `npm run build`, route existence checks, select DOM checks,
   and a clean calc purity grep.
 
+- **TASK-017 -- internal linking + legal page:** added typed
+  `privacyCookiePolicy` route support, a combined `/privacy-cookie-policy/` page,
+  footer link, collection-driven related-calculator sidebar on standalone
+  calculator pages, deterministic `<RelatedLink>` callout with one
+  standard-deviation demo, and focused CSS reuse of article rail/card patterns.
+  Verification used `npx astro check`, `npm test` after expected spawn approval,
+  `npm run build` with 0 link violations, built HTML checks for the policy page,
+  all calculator sidebars, footer link, callout render, and local preview HTTP
+  checks.
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

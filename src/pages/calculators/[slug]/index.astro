@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import Link from '../../../components/Link.astro';
 import StatCalc from '../../../components/StatCalc.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { routes } from '../../../lib/links';
+import { getRelatedCalculators } from '../../../lib/related-calculators';
 import { softwareApplicationSchema, type BreadcrumbItem } from '../../../lib/schema';
 
 type CalculatorEntry = CollectionEntry<'calculators'>;
@@ -27,6 +29,7 @@ interface Props {
 }
 
 const { calc, slug } = Astro.props as Props;
+const relatedCalculators = await getRelatedCalculators(slug);
 
 // Optional short teaching block (intro + how-to + worked example + FAQ) rendered
 // below the tool. Source: src/content/calculator-content/{slug}.mdx, draft:false.
@@ -64,17 +67,34 @@ const calculatorSchema = softwareApplicationSchema(
   breadcrumbs={breadcrumbs}
   jsonLd={[calculatorSchema]}
 >
-  <article class="max-w-3xl">
-    <p class="page-kicker">Calculator</p>
-    <h1 class="page-title">{calc.title}</h1>
-    <p class="page-lede">{calc.description}</p>
-    <div class="mt-8">
-      <StatCalc slug={slug} variant="page" />
-    </div>
-    {Teaching && (
-      <div class="article-prose calc-teaching">
-        <Teaching />
+  <div class="article-shell calc-shell">
+    <article class="article-column">
+      <p class="page-kicker">Calculator</p>
+      <h1 class="page-title">{calc.title}</h1>
+      <p class="page-lede">{calc.description}</p>
+      <div class="mt-8">
+        <StatCalc slug={slug} variant="page" />
       </div>
-    )}
-  </article>
+      {Teaching && (
+        <div class="article-prose calc-teaching">
+          <Teaching />
+        </div>
+      )}
+    </article>
+
+    <aside class="article-rail article-rail-right calc-related-rail" aria-labelledby="related-calculators-heading">
+      <div class="toc-label" id="related-calculators-heading">Related calculators</div>
+      <div class="calc-related-list">
+        {
+          relatedCalculators.map((item) => (
+            <Link class="related-card calc-related-card" to={routes.calculator(item.id)}>
+              <div class="related-tag">Calculator</div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </Link>
+          ))
+        }
+      </div>
+    </aside>
+  </div>
 </BaseLayout>

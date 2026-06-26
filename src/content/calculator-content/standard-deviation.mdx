@@ -9,6 +9,9 @@ draft: false
 updatedDate: 2026-06-20
 ---
 
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
 Standard deviation measures how spread out a set of numbers is — the typical
 distance between each value and the mean. A small standard deviation means the
 data clusters tightly around the average; a large one means the values are
@@ -74,3 +77,5 @@ adjustment, called Bessel's correction, makes the estimate unbiased.
 Variance is the average of the squared distances from the mean; standard
 deviation is the square root of the variance. Standard deviation is easier to
 interpret because it is expressed in the same units as your original data.
+
+<RelatedLink to={routes.calculator('variance')} label="Try the variance calculator" intro="For a related calculation" />

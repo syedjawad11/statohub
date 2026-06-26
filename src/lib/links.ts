@@ -19,6 +19,7 @@ export type CategoryId = CategoryContentId;
 export type RouteRef =
   | { kind: 'home' }
   | { kind: 'about' }
+  | { kind: 'privacyCookiePolicy' }
   | { kind: 'categoryHub'; id: CategoryId }
   | { kind: 'article'; id: ArticleId }
   | { kind: 'calculatorsHub' }
@@ -32,6 +33,8 @@ export function url(ref: RouteRef): string {
       return '/';
     case 'about':
       return '/about/';
+    case 'privacyCookiePolicy':
+      return '/privacy-cookie-policy/';
     case 'categoryHub':
       return `/${ref.id}/`;
     case 'article':
@@ -46,6 +49,7 @@ export function url(ref: RouteRef): string {
 export const routes = {
   home: (): RouteRef => ({ kind: 'home' }),
   about: (): RouteRef => ({ kind: 'about' }),
+  privacyCookiePolicy: (): RouteRef => ({ kind: 'privacyCookiePolicy' }),
   categoryHub: (id: CategoryId): RouteRef => ({ kind: 'categoryHub', id }),
   article: (id: ArticleId): RouteRef => ({ kind: 'article', id }),
   calculatorsHub: (): RouteRef => ({ kind: 'calculatorsHub' }),
