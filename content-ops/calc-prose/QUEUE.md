@@ -31,9 +31,9 @@ which terms to weave in naturally.
 | 14 | binomial-distribution   | binomial distribution calculator | binomial probability; n choose k; binomial formula | done |
 | 15 | combination             | combination calculator           | n choose r; how to calculate combinations; nCr | done |
 | 16 | factorial               | factorial calculator             | how to calculate factorial; n factorial; factorial formula | done |
-| 17 | correlation-coefficient | correlation coefficient calculator | pearson correlation; r value; how to calculate correlation | pending |
-| 18 | linear-regression       | linear regression calculator     | line of best fit; least squares; slope and intercept | pending |
-| 19 | confidence-interval     | confidence interval calculator   | margin of error; 95 percent confidence interval; how to calculate confidence interval | pending |
+| 17 | correlation-coefficient | correlation coefficient calculator | pearson correlation; r value; how to calculate correlation | done |
+| 18 | linear-regression       | linear regression calculator     | line of best fit; least squares; slope and intercept | done |
+| 19 | confidence-interval     | confidence interval calculator   | margin of error; 95 percent confidence interval; how to calculate confidence interval | done |
 | 20 | sample-size             | sample size calculator           | how to calculate sample size; margin of error; survey sample size | pending |
 | 21 | t-test                  | t-test calculator                | one sample t test; t statistic; how to calculate t test | pending |
 | 22 | t-table                 | t table                          | t distribution table; critical t value; degrees of freedom | pending |

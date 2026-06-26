@@ -1,0 +1,70 @@
+---
+calculator: confidence-interval
+keywords:
+  - confidence interval calculator
+  - margin of error
+  - 95 percent confidence interval
+  - how to calculate confidence interval
+draft: false
+updatedDate: 2026-06-26
+---
+
+A confidence interval is a range of values that is likely to contain the true
+population mean, given a sample. Instead of a single best guess, it reports a
+lower and upper bound at a chosen confidence level — usually 95%. This confidence
+interval calculator takes your sample mean, standard deviation, and sample size
+and returns the margin of error along with the interval bounds.
+
+## How to use this calculator
+
+1. Enter the **sample mean** — the average of your data.
+2. Enter the **standard deviation** of the data.
+3. Enter the **sample size** (the number of observations).
+4. Pick a **confidence level** (90%, 95%, or 99%) and read the margin of error
+   plus the lower and upper bounds.
+
+A higher confidence level widens the interval, and a larger sample size narrows
+it, because more data sharpens the estimate of the mean.
+
+## Worked example
+
+Suppose a sample has a mean of 100, a standard deviation of 15, and a sample
+size of 100, at the 95% confidence level.
+
+First find the standard error, then multiply by the critical z value (1.96 for
+95% confidence):
+
+```
+standard error = sd / √n = 15 / √100 = 15 / 10 = 1.5
+margin of error = z × SE = 1.96 × 1.5 ≈ 2.94
+```
+
+Add and subtract the margin from the mean to get the interval:
+
+```
+95% CI = 100 ± 2.94 = (97.06, 102.94)
+```
+
+So you can be 95% confident the true population mean lies between about 97.06 and
+102.94. For the formula and assumptions behind the interval for a mean, see the
+[NIST/SEMATECH e-Handbook on confidence limits for the mean](https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm).
+
+## Frequently asked questions
+
+### What does the margin of error represent?
+
+The margin of error is the half-width of the interval — how far above and below
+the sample mean the bounds reach. It combines the critical z value for your
+confidence level with the standard error of the mean.
+
+### What does a 95 percent confidence interval actually mean?
+
+It means that if you repeated the sampling many times and built an interval each
+time, about 95% of those intervals would contain the true population mean. It is
+a statement about the long-run procedure, not the probability for one interval.
+
+### How do I get a narrower confidence interval?
+
+Collect a larger sample, since the standard error shrinks with the square root of
+the sample size. Lowering the confidence level (say from 99% to 90%) also narrows
+the interval, but at the cost of being less certain.

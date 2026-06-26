@@ -1,0 +1,76 @@
+---
+calculator: correlation-coefficient
+keywords:
+  - correlation coefficient calculator
+  - pearson correlation
+  - r value
+  - how to calculate correlation
+draft: false
+updatedDate: 2026-06-26
+---
+
+The correlation coefficient measures how strongly two variables move together,
+on a scale from −1 to +1. A value near +1 means they rise together, near −1
+means one falls as the other rises, and near 0 means there is little linear
+relationship. This correlation coefficient calculator returns Pearson's r along
+with R-squared so you can judge both the direction and the strength of the link
+between your paired x and y values.
+
+## How to use this calculator
+
+1. Enter your **x values** in the first box, separated by commas, spaces, or new
+   lines (for example, `1, 2, 3, 4, 5`).
+2. Enter the matching **y values** in the second box, in the same order, so each
+   x pairs with its own y.
+3. Read the **correlation coefficient (r)** for the strength and direction of the
+   relationship, and **R-squared** for the share of variation in y that the
+   straight-line fit explains.
+
+Both lists must have the same length and at least two paired values, and each
+variable needs some spread — a column of identical numbers has no variation to
+correlate.
+
+## Worked example
+
+Take five paired values: x = `1, 2, 3, 4, 5` and y = `2, 4, 5, 4, 5`.
+
+First find the sums of squares around each mean (x̄ = 3, ȳ = 4):
+
+```
+Sxx = Σ(xi − x̄)² = 10
+Syy = Σ(yi − ȳ)² = 6
+Sxy = Σ(xi − x̄)(yi − ȳ) = 6
+```
+
+Then divide the cross-product term by the square root of the other two:
+
+```
+r = Sxy / √(Sxx × Syy) = 6 / √(10 × 6) = 6 / √60 ≈ 0.7746
+R² = r² ≈ 0.60
+```
+
+So r ≈ 0.77 is a fairly strong positive correlation, and the linear fit explains
+about 60% of the variation in y. For the formal definition of Pearson's product-
+moment coefficient, see the
+[NIST/SEMATECH e-Handbook on linear correlation](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35d.htm).
+
+## Frequently asked questions
+
+### What does the r value actually tell you?
+
+The r value reports the direction and strength of a **linear** relationship.
+The sign shows direction (+ together, − opposite) and the size shows strength:
+roughly 0.1–0.3 is weak, 0.3–0.5 moderate, and above 0.5 strong, though the
+thresholds depend on your field.
+
+### How is the Pearson correlation different from R-squared?
+
+Pearson correlation (r) ranges from −1 to +1 and keeps the sign. R-squared is
+simply r multiplied by itself, so it ranges from 0 to 1 and tells you the
+proportion of variance in y explained by x — but it drops the direction.
+
+### Does a high correlation mean one variable causes the other?
+
+No. A strong correlation only shows that two variables move together; it cannot
+prove that one causes the other, because a hidden third factor or coincidence
+can produce the same pattern.

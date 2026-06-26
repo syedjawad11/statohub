@@ -93,3 +93,12 @@ at publish time too (human visibility).
   (binomial) + OpenStax College Algebra 9.5 counting principles (combination, factorial),
   both curl-verified 200. **16 of 25 done, 9 remaining.** Next = Session 4:
   `correlation-coefficient`, `linear-regression`, `confidence-interval` (queue rows 17–19).
+- **Session 4 (2026-06-26):** `correlation-coefficient`, `linear-regression`,
+  `confidence-interval` — ✅ published (build green 56 pages / 0 link violations). Worked
+  examples computed from the engines on the default data x=`1,2,3,4,5`, y=`2,4,5,4,5`:
+  correlation r ≈ 0.7746, R² = 0.60 (Sxx=10, Syy=6, Sxy=6); regression slope 0.6,
+  intercept 2.2 → y = 2.2 + 0.6x; confidence-interval mean=100/sd=15/n=100/95% →
+  SE=1.5, z=1.96, margin ≈ 2.94 → CI (97.06, 102.94). Links: NIST eda35d (correlation),
+  pmd141 (linear least squares), eda352 (confidence limits for the mean), all curl-verified
+  200. **19 of 25 done, 6 remaining.** Next = Session 5: `sample-size`, `t-test`, `t-table`
+  (queue rows 20–22).

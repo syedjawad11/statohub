@@ -1,0 +1,72 @@
+---
+calculator: linear-regression
+keywords:
+  - linear regression calculator
+  - line of best fit
+  - least squares
+  - slope and intercept
+draft: false
+updatedDate: 2026-06-26
+---
+
+Linear regression finds the straight line that best predicts one variable from
+another — the line of best fit through a scatter of paired points. This linear
+regression calculator uses the least squares method to return the slope, the
+intercept, and the full equation of the line, so you can describe the trend in
+your data and predict new y values from any x.
+
+## How to use this calculator
+
+1. Enter your **x values** (the predictor) in the first box, separated by commas,
+   spaces, or new lines.
+2. Enter the matching **y values** (the response) in the second box, in the same
+   order, so each point pairs an x with its y.
+3. Read the **slope** (how much y changes per one-unit rise in x), the
+   **intercept** (the predicted y when x is 0), and the **correlation
+   coefficient** for how well the line fits.
+
+You need at least two paired points and some spread in the x values — a vertical
+column of identical x's has no slope to estimate.
+
+## Worked example
+
+Take five points: x = `1, 2, 3, 4, 5` and y = `2, 4, 5, 4, 5`.
+
+The least squares slope is the cross-product sum divided by the spread in x
+(means x̄ = 3, ȳ = 4):
+
+```
+slope = Sxy / Sxx = 6 / 10 = 0.6
+intercept = ȳ − slope × x̄ = 4 − 0.6 × 3 = 2.2
+```
+
+That gives the line of best fit:
+
+```
+y = 2.2 + 0.6x
+```
+
+So each one-unit increase in x raises the predicted y by 0.6, and the line
+crosses the y-axis at 2.2. Predicting at x = 6, for instance, gives
+y = 2.2 + 0.6 × 6 = 5.8. For the underlying method, see the
+[NIST/SEMATECH e-Handbook on linear least squares regression](https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm).
+
+## Frequently asked questions
+
+### What do the slope and intercept mean?
+
+The slope is the rate of change: how many units y moves for each one-unit
+increase in x. The intercept is the model's prediction for y when x equals 0,
+which is meaningful only when x = 0 is realistic for your data.
+
+### How does least squares choose the line of best fit?
+
+Least squares picks the single line that makes the sum of the squared vertical
+gaps between the points and the line as small as possible. Squaring the gaps
+keeps positive and negative errors from cancelling and penalizes large misses.
+
+### How is linear regression related to correlation?
+
+They are built from the same sums. Correlation measures the strength of the
+linear link as a number from −1 to +1, while regression turns that link into a
+predictive equation with a slope and intercept.
