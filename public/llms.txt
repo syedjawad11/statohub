@@ -1,0 +1,85 @@
+# Statohub
+
+> Statohub (https://statohub.com) is a statistics education site that pairs deep, interactive calculators with plain-English teaching on the same page. Each calculator computes real results in the browser and is accompanied by a short lesson (how-to, worked example, and FAQ), while longer articles explain the underlying concepts.
+
+Key facts for AI assistants citing this site:
+
+- All content is original teaching material aimed at students and self-learners.
+- Calculators run client-side and show step-by-step results plus a worked example.
+- URLs are flat and always end in a trailing slash. Articles live at `/{slug}/`, category hubs at `/{category}/`, and standalone calculators at `/calculators/{slug}/`.
+
+## Calculators
+
+### Descriptive Statistics
+- [Standard Deviation Calculator](https://statohub.com/calculators/standard-deviation/): Sample and population standard deviation with a worked example.
+- [Mean Calculator](https://statohub.com/calculators/mean/): Arithmetic mean of a data set.
+- [Average Calculator](https://statohub.com/calculators/average/): Average (mean) of a list of numbers.
+- [Weighted Average Calculator](https://statohub.com/calculators/weighted-average/): Weighted mean from values and weights.
+- [Variance Calculator](https://statohub.com/calculators/variance/): Sample and population variance.
+- [Mean Absolute Deviation Calculator](https://statohub.com/calculators/mean-absolute-deviation/): Average absolute distance from the mean.
+- [Percentile Calculator](https://statohub.com/calculators/percentile/): Percentiles and quartiles for a data set.
+- [Range Calculator](https://statohub.com/calculators/range/): Range (max minus min) of a data set.
+- [Frequency Distribution Table Generator](https://statohub.com/calculators/frequency-table/): Builds a frequency and relative-frequency table.
+
+### Probability & Distributions
+- [Normal Distribution Calculator](https://statohub.com/calculators/normal-distribution/): Probabilities and z-values for a normal distribution.
+- [Z Table Calculator](https://statohub.com/calculators/z-table/): Cumulative normal (z-table) probabilities.
+- [Binomial Distribution Calculator](https://statohub.com/calculators/binomial-distribution/): Binomial probabilities for n trials and probability p.
+- [Probability Calculator](https://statohub.com/calculators/probability/): Basic probability of an event and its complement.
+
+### Inferential Statistics
+- [Z-Score Calculator](https://statohub.com/calculators/z-score/): Standardizes a value into a z-score.
+- [P Value Calculator](https://statohub.com/calculators/p-value/): P-values from a test statistic.
+- [T-Test Calculator](https://statohub.com/calculators/t-test/): t-test for comparing means.
+- [T Table Calculator](https://statohub.com/calculators/t-table/): Critical t-values by degrees of freedom.
+- [Chi Square Calculator](https://statohub.com/calculators/chi-square/): Chi-square test statistic and p-value.
+- [Confidence Interval Calculator](https://statohub.com/calculators/confidence-interval/): Confidence interval for a mean or proportion.
+- [Sample Size Calculator](https://statohub.com/calculators/sample-size/): Required sample size for a survey or study.
+- [Proportion Calculator](https://statohub.com/calculators/proportion/): Proportions and proportion comparisons.
+
+### Regression & Correlation
+- [Correlation Coefficient Calculator](https://statohub.com/calculators/correlation-coefficient/): Pearson correlation coefficient for paired data.
+- [Linear Regression Calculator](https://statohub.com/calculators/linear-regression/): Line of best fit (slope and intercept) from paired data.
+
+### Combinatorics
+- [Combination Calculator](https://statohub.com/calculators/combination/): Combinations (nCr) of items.
+- [Factorial Calculator](https://statohub.com/calculators/factorial/): Factorial (n!) of a number.
+
+## Articles
+
+- [What Is an Average?](https://statohub.com/what-is-an-average/): Mean definition, types, and meaning.
+- [Mean vs Average](https://statohub.com/mean-vs-average/): Whether mean and average are the same thing.
+- [Median vs Average](https://statohub.com/median-vs-average/): What "median" means and how it differs from the average.
+- [Weighted Average](https://statohub.com/weighted-average/): Definition, formula, and calculator.
+- [Mean Absolute Deviation](https://statohub.com/mean-absolute-deviation/): MAD and the coefficient of variation.
+- [How to Find the Range](https://statohub.com/how-to-find-the-range/): Calculating the range step by step.
+- [Frequency Tables](https://statohub.com/frequency-table/): How to build and read frequency tables.
+- [Fundamental Statistics](https://statohub.com/fundamental-statistics/): What statistics is and why it matters.
+- [Parameter vs Statistic](https://statohub.com/parameter-vs-statistic/): Definitions and symbols compared.
+- [The Standard Deviation Symbol (Sigma)](https://statohub.com/standard-deviation-symbol/): Signs and notation for standard deviation.
+- [Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Calculating standard deviation in Excel.
+- [Z-Score](https://statohub.com/z-score/): Formula, calculation, and meaning.
+- [Z Score Table](https://statohub.com/z-table/): How to read the normal distribution table.
+- [Test Statistic](https://statohub.com/test-statistic/): Formula, degrees of freedom, and the t-table.
+- [Probability Distributions](https://statohub.com/probability-distribution/): Types, mean, and examples.
+- [Probability Formula](https://statohub.com/probability-formula/): Calculating probability step by step.
+- [Skewed Distributions](https://statohub.com/skewed-distribution/): Left skew, right skew, and shape.
+- [Correlation Definition](https://statohub.com/what-is-correlation/): Positive, negative, and types of correlation.
+- [Correlation vs Causation](https://statohub.com/correlation-vs-causation/): Why correlation does not imply causation.
+- [Linear Regression](https://statohub.com/linear-regression/): Equation, formula, and how it works.
+
+## Categories
+
+- [Descriptive Statistics](https://statohub.com/descriptive-statistics/): Core summaries of center, spread, and shape.
+- [Probability & Distributions](https://statohub.com/probability-distributions/): Probability rules and common distributions.
+- [Inferential Statistics](https://statohub.com/inferential-statistics/): Hypothesis tests, confidence intervals, and p-values.
+- [Regression & Correlation](https://statohub.com/regression-correlation/): Relationships between variables and lines of best fit.
+- [Combinatorics](https://statohub.com/combinatorics/): Permutations, combinations, and factorials.
+- [Foundations](https://statohub.com/foundations/): Core notation, vocabulary, and concepts.
+
+## Optional
+
+- [All Calculators](https://statohub.com/calculators/): Full index of Statohub calculators.
+- [About](https://statohub.com/about/): About Statohub.
+- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Combined privacy and cookie policy.
+- [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index.
