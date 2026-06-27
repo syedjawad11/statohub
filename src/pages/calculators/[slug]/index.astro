@@ -67,34 +67,41 @@ const calculatorSchema = softwareApplicationSchema(
   breadcrumbs={breadcrumbs}
   jsonLd={[calculatorSchema]}
 >
-  <div class="article-shell calc-shell">
-    <article class="article-column">
-      <p class="page-kicker">Calculator</p>
-      <h1 class="page-title">{calc.title}</h1>
-      <p class="page-lede">{calc.description}</p>
-      <div class="mt-8">
-        <StatCalc slug={slug} variant="page" />
-      </div>
-      {Teaching && (
-        <div class="article-prose calc-teaching">
-          <Teaching />
-        </div>
-      )}
-    </article>
+  <section class="calc-hero">
+    <span class="pill">Calculator</span>
+    <h1>{calc.title}</h1>
+    <p class="desc">{calc.description}</p>
+  </section>
 
-    <aside class="article-rail article-rail-right calc-related-rail" aria-labelledby="related-calculators-heading">
-      <div class="toc-label" id="related-calculators-heading">Related calculators</div>
+  <StatCalc slug={slug} variant="page" />
+
+  <section class="howto">
+    <div class="article-prose calc-teaching">
+      {Teaching ? (
+        <Teaching />
+      ) : (
+        <>
+          <h2>How to use this calculator</h2>
+          <p>Enter the values requested above, then compute the result. The calculator updates from the same pure engine used across Statohub examples.</p>
+        </>
+      )}
+    </div>
+
+    <aside class="side-card" aria-labelledby="related-calculators-heading">
+      <h3 id="related-calculators-heading">Related calculators</h3>
       <div class="calc-related-list">
         {
           relatedCalculators.map((item) => (
-            <Link class="related-card calc-related-card" to={routes.calculator(item.id)}>
-              <div class="related-tag">Calculator</div>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+            <Link class="tool calc-related-card" to={routes.calculator(item.id)}>
+              <span class="t-ico" aria-hidden="true">fx</span>
+              <span>
+                <span class="t-name">{item.title}</span><br />
+                <span class="t-sub">{item.description}</span>
+              </span>
             </Link>
           ))
         }
       </div>
     </aside>
-  </div>
+  </section>
 </BaseLayout>

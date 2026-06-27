@@ -2,9 +2,8 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
-import StatCalc from '../components/StatCalc.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { routes, type CategoryId } from '../lib/links';
+import { routes, type ArticleId, type CategoryId } from '../lib/links';
 import { organizationSchema, webSiteSchema } from '../lib/schema';
 
 type CategoryEntry = CollectionEntry<'categories'>;
@@ -26,50 +25,42 @@ const categoryById = new Map<CategoryId, CategoryEntry>(
 const categoryCards = [
   {
     id: 'descriptive-statistics',
-    fallbackTitle: 'Descriptive Statistics',
-    fallbackDescription: 'Mean, median, range, variance, percentiles - how to summarise a dataset in a single number.',
+    fallbackTitle: 'Descriptive',
+    fallbackDescription: 'Summarise and describe data: averages, spread, frequency, and shape.',
     guides: 24,
-    calculators: 6,
+    calculators: 11,
     glyph: 'bars',
   },
   {
     id: 'probability-distributions',
-    fallbackTitle: 'Probability & Distributions',
-    fallbackDescription: 'From basic probability to the normal, binomial and Poisson - the shapes randomness takes.',
+    fallbackTitle: 'Probability',
+    fallbackDescription: 'Distributions, expected value, and the rules of chance from the ground up.',
     guides: 19,
-    calculators: 5,
+    calculators: 9,
     glyph: 'curve',
   },
   {
-    id: 'combinatorics',
-    fallbackTitle: 'Combinatorics',
-    fallbackDescription: 'Permutations, combinations and factorials - counting the ways things can happen.',
-    guides: 11,
-    calculators: 4,
-    glyph: 'blocks',
-  },
-  {
     id: 'regression-correlation',
-    fallbackTitle: 'Regression & Correlation',
-    fallbackDescription: 'Lines of best fit, r and r-squared, and what it really means for two things to move together.',
+    fallbackTitle: 'Regression',
+    fallbackDescription: 'Correlation, lines of best fit, and reading relationships between variables.',
     guides: 14,
-    calculators: 4,
+    calculators: 6,
     glyph: 'scatter',
   },
   {
     id: 'inferential-statistics',
-    fallbackTitle: 'Inferential Statistics',
-    fallbackDescription: 'Hypothesis tests, p-values, confidence intervals - drawing conclusions from samples.',
+    fallbackTitle: 'Inferential',
+    fallbackDescription: 'Confidence intervals, hypothesis tests, and reasoning from sample to population.',
     guides: 21,
-    calculators: 7,
+    calculators: 10,
     glyph: 'inference',
   },
   {
     id: 'foundations',
     fallbackTitle: 'Foundations',
-    fallbackDescription: 'Notation, key terms and the big-picture map - the groundwork before everything else.',
-    guides: 9,
-    calculators: 2,
+    fallbackDescription: 'Notation, variables, and the vocabulary every other topic builds on.',
+    guides: 12,
+    calculators: 4,
     glyph: 'document',
   },
 ] satisfies Array<{
@@ -78,81 +69,74 @@ const categoryCards = [
   fallbackDescription: string;
   guides: number;
   calculators: number;
-  glyph: 'bars' | 'curve' | 'blocks' | 'scatter' | 'inference' | 'document';
+  glyph: 'bars' | 'curve' | 'scatter' | 'inference' | 'document';
 }>;
 
-const calculatorChips = [
-  {
-    label: 'Descriptive',
-    title: 'Standard Deviation',
-    detail: 'Population & sample',
-    route: routes.calculator('standard-deviation'),
-  },
-  {
-    label: 'Descriptive',
-    title: 'Mean',
-    detail: 'Average of a dataset',
-    route: routes.calculator('mean'),
-  },
-  {
-    label: 'Descriptive',
-    title: 'Range',
-    detail: 'Minimum to maximum',
-    route: routes.calculator('range'),
-  },
-];
+const calculatorTools = [
+  { mark: 'xbar', title: 'Mean', detail: 'average of a dataset', route: routes.calculator('mean') },
+  { mark: 'SD', title: 'Standard deviation', detail: 'spread around the mean', route: routes.calculator('standard-deviation') },
+  { mark: 'f', title: 'Frequency table', detail: 'counts and proportions', route: routes.calculator('frequency-table') },
+  { mark: '%', title: 'Percentile', detail: 'rank within data', route: routes.calculator('percentile') },
+] satisfies Array<{ mark: string; title: string; detail: string; route: ReturnType<typeof routes.calculator> }>;
+
+const recentGuides = [
+  { id: 'frequency-table', category: 'Descriptive', title: 'Frequency Tables: How to Build & Read Them', meta: '15 min - Beginner - includes calculator' },
+  { id: 'z-score', category: 'Inferential', title: 'What Is a Z-Score?', meta: '12 min - Beginner - includes calculator' },
+  { id: 'probability-distribution', category: 'Probability', title: 'Probability Distribution, Plainly Explained', meta: '12 min - Beginner - includes calculator' },
+  { id: 'correlation-vs-causation', category: 'Regression', title: 'Correlation vs Causation, Made Concrete', meta: '10 min - Beginner' },
+] satisfies Array<{ id: ArticleId; category: string; title: string; meta: string }>;
 ---
 
 <BaseLayout
-  title="Statohub — Statistics Calculators & Plain-English Lessons"
+  title="Statohub - Statistics Calculators & Plain-English Lessons"
   description="Every Statohub page pairs a plain-English explanation with a working calculator. Learn the method and get the number in the same place."
   canonicalPath={routes.home()}
   jsonLd={homeJsonLd}
 >
-  <section class="home-hero">
-    <p class="eyebrow">Statistics, taught and computed</p>
-    <h1>Statistics you can read <em>and</em> run.</h1>
-    <p class="home-lede">
-      Every Statohub page does two jobs: a clear, example-led explanation of the concept,
-      and a calculator that works the moment you need it.
-    </p>
-    <div class="home-cta-row">
-      <Link to={routes.categoryHub('descriptive-statistics')} class="btn btn-primary">Start learning</Link>
-      <Link to={routes.calculatorsHub()} class="btn">Jump to a calculator</Link>
-    </div>
-
-    <div class="fused-card">
-      <div class="fused-side fused-teach">
-        <span class="side-tag side-tag-teach"><span class="pip" aria-hidden="true"></span>The explanation</span>
-        <h2>Standard deviation</h2>
-        <p>
-          It measures how spread out a set of numbers is around their mean. A small value
-          means the data clusters tightly; a large value means it's scattered widely.
-        </p>
-        <p>For a full population you divide by <em>n</em>; for a sample, by <em>n-1</em>.</p>
-        <span class="formula-chip">σ = √( Σ(xᵢ − μ)² / n )</span>
+  <section class="hero">
+    <div>
+      <div class="kicker"><span class="pill">Statistics, clearly</span><span class="eyebrow">Foundations -> Inference</span></div>
+      <h1>Learn the concept.<br /><em>Compute</em> the answer.<br />On the same page.</h1>
+      <p class="sub">
+        Statohub is a study companion for statistics: plain-spoken guides paired with a working calculator on every topic, so understanding and answer never live apart.
+      </p>
+      <div class="hero-cta">
+        <Link to={routes.categoryHub('descriptive-statistics')} class="btn btn-pine">Browse the guides</Link>
+        <Link to={routes.calculatorsHub()} class="btn btn-ghost">Open the calculators</Link>
       </div>
-      <div class="fused-side fused-compute">
-        <span class="side-tag side-tag-compute"><span class="pip" aria-hidden="true"></span>The calculator</span>
-        <div class="fused-calc-frame">
-          <StatCalc slug="standard-deviation" variant="embed" />
-        </div>
+      <div class="wedge-chips">
+        <span class="wchip teach"><span class="b" aria-hidden="true"></span>Every page explains</span>
+        <span class="wchip compute"><span class="b" aria-hidden="true"></span>Every page computes</span>
+      </div>
+    </div>
+    <div class="hero-fig">
+      <div class="cap"><span>Normal distribution</span><span>mu = 0 - sigma = 1</span></div>
+      <svg viewBox="0 0 380 200" fill="none" aria-hidden="true">
+        <line x1="20" y1="170" x2="360" y2="170" stroke="var(--line-2)" stroke-width="1"></line>
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="20" y1="40" x2="360" y2="40"></line><line x1="20" y1="90" x2="360" y2="90"></line><line x1="20" y1="130" x2="360" y2="130"></line>
+        </g>
+        <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168" stroke="var(--pine)" stroke-width="2.5"></path>
+        <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168 L360 170 L20 170 Z" fill="var(--pine)" opacity=".10"></path>
+        <line x1="190" y1="30" x2="190" y2="170" stroke="var(--clay)" stroke-width="1.5" stroke-dasharray="4 4"></line>
+        <circle cx="190" cy="30" r="3.5" fill="var(--clay)"></circle>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--pine)"></i>density</span>
+        <span><i style="background:var(--clay)"></i>mean</span>
       </div>
     </div>
   </section>
 
-  <section class="home-section">
+  <section class="home-section handbook-section">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Explore by topic</p>
-        <h2>Six paths through statistics</h2>
+        <h2>The handbook</h2>
+        <p class="lead">Six areas of statistics, each a growing shelf of guides with the tools to apply them.</p>
       </div>
-      <p>
-        Each topic is a hub of guides and tools - start at the pillar and follow the links
-        wherever your question leads.
-      </p>
+      <Link to={routes.categoryHub('descriptive-statistics')} class="section-link">All topics -></Link>
     </div>
-    <div class="category-grid">
+    <div class="catalog">
       {
         categoryCards.map((card) => {
           const entry = categoryById.get(card.id);
@@ -160,123 +144,56 @@ const calculatorChips = [
           const description = entry?.data.description ?? card.fallbackDescription;
 
           return (
-            <Link class="topic-card" to={routes.categoryHub(card.id)}>
-              <div class="topic-glyph" aria-hidden="true">
-                {card.glyph === 'bars' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                    <path d="M3 21h18" />
-                    <rect x="4" y="11" width="3" height="7" />
-                    <rect x="10.5" y="6" width="3" height="12" />
-                    <rect x="17" y="14" width="3" height="4" />
-                  </svg>
-                )}
-                {card.glyph === 'curve' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                    <path d="M3 19c4 0 4-12 9-12s5 12 9 12" />
-                    <path d="M3 19h18" />
-                  </svg>
-                )}
-                {card.glyph === 'blocks' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect x="3" y="3" width="8" height="8" rx="2" />
-                    <rect x="13" y="13" width="8" height="8" rx="2" />
-                    <circle cx="7" cy="7" r="1.3" fill="currentColor" stroke="none" />
-                    <circle cx="17" cy="17" r="1.3" fill="currentColor" stroke="none" />
-                    <path d="M11 7h3a2 2 0 0 1 2 2v2" stroke-linecap="round" />
-                  </svg>
-                )}
-                {card.glyph === 'scatter' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                    <path d="M3 21h18M3 21V3" />
-                    <path d="M4 18l16-11" />
-                    <circle cx="7" cy="15" r="1.2" fill="currentColor" stroke="none" />
-                    <circle cx="11" cy="13" r="1.2" fill="currentColor" stroke="none" />
-                    <circle cx="14" cy="10" r="1.2" fill="currentColor" stroke="none" />
-                    <circle cx="18" cy="8" r="1.2" fill="currentColor" stroke="none" />
-                  </svg>
-                )}
-                {card.glyph === 'inference' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                    <path d="M3 18c4 0 4-11 9-11s5 11 9 11" />
-                    <path d="M3 18h18" />
-                    <path d="M16 18c0-3 .8-6 2-7.5" opacity=".4" />
-                    <path d="M16.5 18l1.6-5.5" />
-                  </svg>
-                )}
-                {card.glyph === 'document' && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
-                    <path d="M14 4v5h5" />
-                    <path d="M8 13h6M8 16h4" opacity=".6" />
-                  </svg>
-                )}
-              </div>
+            <Link class="cat" to={routes.categoryHub(card.id)}>
+              <span class="ico" aria-hidden="true">
+                {card.glyph === 'bars' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-10" /></svg>}
+                {card.glyph === 'curve' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c4-9 14-9 18 0" /><circle cx="12" cy="6" r="2" /></svg>}
+                {card.glyph === 'scatter' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 20 4" /><circle cx="7" cy="17" r="1.6" /><circle cx="12" cy="13" r="1.6" /><circle cx="16" cy="8" r="1.6" /></svg>}
+                {card.glyph === 'inference' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 12l7-4 7 4" /><circle cx="12" cy="3" r="1.5" /></svg>}
+                {card.glyph === 'document' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z" /><path d="M9 9h6M9 13h6M9 17h3" /></svg>}
+              </span>
               <h3>{title}</h3>
               <p>{description}</p>
-              <div class="topic-meta">
-                <span><b>{card.guides}</b> guides</span>
-                <span><b>{card.calculators}</b> calculators</span>
-              </div>
+              <div class="meta"><span><b>{card.guides}</b> guides</span><span><b>{card.calculators}</b> tools</span></div>
             </Link>
           );
         })
       }
+      <Link class="cat" to={routes.calculatorsHub()}>
+        <span class="ico calc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2" /></svg></span>
+        <h3>Calculators</h3>
+        <p>Every tool on the site in one hub: fast, free, and explained.</p>
+        <div class="meta"><span><b>40+</b> tools</span><span><b>all</b> free</span></div>
+      </Link>
     </div>
   </section>
 
-  <section class="home-section home-section-alt">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">Tools</p>
-        <h2>Popular calculators</h2>
-      </div>
-      <p>Standalone tools for when you already know the concept and just need the answer.</p>
-    </div>
-    <div class="calculator-strip">
-      {
-        calculatorChips.map((chip) => (
-          <Link class="calculator-chip" to={chip.route}>
-            <div class="chip-tag"><span class="pip" aria-hidden="true"></span>{chip.label}</div>
-            <h3>{chip.title}</h3>
-            <span>{chip.detail}</span>
-          </Link>
-        ))
-      }
-    </div>
-  </section>
-
-  <section class="home-section how-section">
+  <section class="band">
     <div>
-      <p class="eyebrow">The Statohub idea</p>
-      <h2>Most sites teach <em>or</em> compute. We do both, on the same page.</h2>
-      <p>
-        Calculator sites give you a number with no understanding. Textbook sites explain
-        without a tool in sight. Statohub puts the explanation and the calculator side by
-        side - so the method makes sense and the answer is one click away.
-      </p>
+      <span class="eyebrow">The Statohub difference</span>
+      <h2>Tools that show their working</h2>
+      <p>Most calculators give you a number and nothing else. Ours sit beside the explanation, so you can check the method as you go.</p>
+      <Link to={routes.calculatorsHub()} class="btn btn-pine">Browse calculators</Link>
     </div>
-    <div class="steps-list">
-      <div class="home-step">
-        <span>1</span>
-        <div>
-          <h3>Read the concept</h3>
-          <p>A plain-English explanation with a worked example - no wall of notation.</p>
-        </div>
-      </div>
-      <div class="home-step">
-        <span>2</span>
-        <div>
-          <h3>Run your own numbers</h3>
-          <p>The matching calculator is embedded right there. Swap in your data and see it work.</p>
-        </div>
-      </div>
-      <div class="home-step">
-        <span>3</span>
-        <div>
-          <h3>Follow the thread</h3>
-          <p>Every page links to the next idea, so one question naturally leads to the next.</p>
-        </div>
-      </div>
+    <div class="tool-grid">
+      {calculatorTools.map((tool) => (
+        <Link class="tool" to={tool.route}>
+          <span class="t-ico" aria-hidden="true">{tool.mark}</span>
+          <span><span class="t-name">{tool.title}</span><br /><span class="t-sub">{tool.detail}</span></span>
+        </Link>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-section recent-section">
+    <div class="section-head"><div><h2>Recently published</h2></div><Link class="section-link" to={routes.article('frequency-table')}>All guides -></Link></div>
+    <div class="pub-list">
+      {recentGuides.map((guide, index) => (
+        <Link class="pub" to={routes.article(guide.id)}>
+          <span class="idx">{String(index + 1).padStart(2, '0')}</span>
+          <div><span class="p-cat">{guide.category}</span><h4>{guide.title}</h4><span class="p-meta">{guide.meta}</span></div>
+        </Link>
+      ))}
     </div>
   </section>
 </BaseLayout>

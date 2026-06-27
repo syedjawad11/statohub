@@ -98,8 +98,8 @@ const footerCalculators = [
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <div class="site-wrap site-nav">
+    <header class="topbar">
+      <div class="site-wrap topbar-inner">
         <Link to={routes.home()} class="brand" aria-label="Statohub home">
           <span class="brand-dot" aria-hidden="true"></span>
           Statohub
@@ -111,20 +111,20 @@ const footerCalculators = [
         <button
           id="theme-toggle"
           type="button"
-          class="btn icon-btn"
+          class="toggle icon-btn"
           aria-label="Toggle dark mode"
           aria-pressed="false"
           title="Toggle theme"
         >
-          <svg class="dark:hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <circle cx="12" cy="12" r="4"></circle>
             <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path>
           </svg>
-          <svg class="hidden dark:block" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"></path>
           </svg>
         </button>
-        <Link to={routes.calculatorsHub()} class="btn btn-primary nav-cta">Browse calculators</Link>
+        <Link to={routes.calculatorsHub()} class="btn btn-pine nav-cta">Browse calculators</Link>
         <button
           id="menu-toggle"
           type="button"
@@ -151,9 +151,9 @@ const footerCalculators = [
         <slot />
       </div>
     </main>
-    <footer class="site-footer">
+    <footer class="foot">
       <div class="site-wrap">
-        <div class="foot-grid">
+        <div class="foot-grid foot-inner">
           <div class="foot-brand">
             <Link to={routes.home()} class="brand">
               <span class="brand-dot" aria-hidden="true"></span>

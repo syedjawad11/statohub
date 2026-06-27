@@ -38,9 +38,9 @@ const breadcrumbs: BreadcrumbItem[] = [
         calculators.map((entry: CalculatorEntry) => (
           <li>
             <Link class="card-link" to={calculatorRoute(entry.id)}>
-              <span class="eyebrow text-teal">Tool</span>
+              <span class="eyebrow text-pine">Tool</span>
               <span class="mt-2 block font-serif text-xl font-semibold text-ink">{entry.data.title}</span>
-              <span class="mt-1 block text-sm text-ink-soft">{entry.data.description}</span>
+              <span class="mt-1 block text-sm text-ink-2">{entry.data.description}</span>
             </Link>
           </li>
         ))

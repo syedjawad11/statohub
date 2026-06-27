@@ -96,6 +96,105 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-27 (THEME REFRESH reviewed -> all 3 tasks CLOSED + shipped live)** —
+  **Codex returned TASK-019/020/021 all `DONE`; reviewed each against the real
+  artifacts (not just Work Logs), set all three `CLOSED` with Reviews, then committed
+  the whole redesign as one commit and pushed to `main` -> Actions gate suite ->
+  Cloudflare deploy.** Independent verification re-ran the three gates from a clean
+  tree: **astro check 0/0/0, npm test 89/89, npm run build 56 pages / 0 link
+  violations.** **TASK-019 (foundation):** `package.json` shows `@fontsource/newsreader`
+  + no `@fontsource/fraunces`; `global.css` imports Newsreader 400/500/600/400i/500i and
+  sets `--serif`; the **token-rename grep gate returns NOTHING** under `src/` (no orphaned
+  `--verm`/`--teal`/`--ink-soft`/`--muted` or old Tailwind utilities); dark mode still
+  `html.dark` + localStorage `'theme'` + no-flash inline script (no `data-theme` leakage in
+  built HTML). **TASK-020 (home+article):** built `dist/index.html` has the new
+  hero/catalog/band/recent layout and -- per the locked decision -- **NO live StatCalc**
+  (data-statcalc count 0; static `.hero-fig` SVG instead); the article `.fuse` card embeds
+  the **REAL** StatCalc (`dist/frequency-table/index.html` carries data-statcalc /
+  data-config-id / data-statcalc-results / the application/json config block, not the
+  mockup demo JS); no `data-go` router anchors; all links typed. **TASK-021 (calculator,
+  highest-care):** every byte-stable StatCalc hook survives in `StatCalc.astro` (root
+  id/data-statcalc/data-config-id/aria-labelledby, data-statcalc-form,
+  data-statcalc-results w/ aria-live="polite", data-statcalc-chart, the
+  `<script type="application/json" id={configId}>` block, `import './statcalc/client.ts'`)
+  with the `.panel`/`.panel-top`/`.panel-grid` chrome wrapping AROUND them; **`git diff` over
+  `client.ts`, `format.ts`, and `src/calc/` is EMPTY** -- pure restyle. Accepted the
+  Codex `AGENTS.md` work-history append (its standing convention). **Archived the mockup**
+  `statohub-theme-preview.html` (untracked root) -> `doc/statohub-theme-preview.html` per
+  the plan. **Committed + pushed the full redesign (TASK-019->021 together).** Routines
+  remain PAUSED (unchanged from TASK-018). **>> NEXT SESSION <<** verify the Actions run
+  went green + Cloudflare deploy live, then spot-check `/`, an article, and a calculator
+  page on production for the new theme (Newsreader serif, clay/pine palette, dark toggle
+  no-flash, StatCalc still computes); then resume the paused work (callout automation /
+  re-enabling article routines per the TASK-018 plan).
+
+- **2026-06-27 (THEME REFRESH planned + 3 Codex briefs queued; Codex executing)** —
+  **Reviewed the user's new theme mockup, then planned + wrote three sequenced Codex
+  briefs (TASK-019/020/021) to re-skin the whole site to it. Did NOT touch any source
+  files this session -- this was review + brief authoring only. Codex is now executing
+  TASK-019; the user is ending this session and will return in a NEW chat once Codex
+  confirms DONE, for Claude to review + commit.** Input: the user saved a new full-page
+  design mockup at repo root `statohub-theme-preview.html` (628 lines; `:root` light
+  tokens + `html[data-theme="dark"]` dark tokens; three views -- `#view-home`,
+  `#view-article`, `#view-calc` -- plus `.topbar` + `.foot`). New palette renames the
+  brand colors: verm->**clay** `#A6492F`, teal->**pine** `#0E6E64`, ink-soft->**ink-2**,
+  muted->**ink-3**, adds **brass** `#9C7C3A` + **focus**; serif font Fraunces ->
+  **Newsreader**; maxw 1140->1240; flourishes = hero `.hero-fig` SVG normal-distribution
+  figure, `h2::before` "section-marker", drop cap `.drop`, `.note` callout, `table.dt`,
+  `.fuse` fused teach->compute card, sticky `.toc` scroll-spy, calc `.panel` two-col
+  in/out + `.scard` stat cards. **Established this is a RESTYLE, not a rebuild** --
+  routes, content collections, the typed-link gate, the StatCalc byte-stable DOM hooks,
+  and the dark-mode mechanism all SURVIVE; only tokens/fonts/component CSS + markup
+  enrichments change. **3 product decisions locked with the user (all via
+  AskUserQuestion, all "Recommended"):** (1) full faithful port across all 3 page types;
+  (2) adopt Newsreader (visible brand change, accepted); (3) keep the proven internals --
+  **`.dark` class** (NOT the mockup's `data-theme`), self-hosted **@fontsource** (NOT the
+  Google Fonts CDN link), and **rename tokens to the mockup's semantic names** in code so
+  spec + code stay aligned. **(4) Homepage live calculator REMOVED (user-confirmed):** the
+  current home embeds a real StandardDeviation `<StatCalc>`; the mockup home uses a static
+  `.hero-fig` SVG figure with NO live calculator -- user explicitly confirmed "keep static
+  SVG distribution figure, does not embed a live calculator." The live wedge is still shown
+  in the ARTICLE `.fuse` card + on calculator pages, so it is not lost. **Split into 3
+  tasks (mirroring the proven TASK-009/010 split), one foundation first:**
+  **`handoff/TASK-019-theme-refresh-foundation-chrome.md`** (FOUNDATION: swap font dep
+  add `@fontsource/newsreader` 400/500/600 + 400i/500i, remove `@fontsource/fraunces`,
+  `npm install`; replace the `global.css` token block per a full rename table; translate
+  mockup `html[data-theme="dark"]` -> `html.dark`; drive sun/moon swap from `.dark`;
+  update `tailwind.config.cjs` color keys; **repo-wide mechanical rename of every old-token
+  Tailwind utility** with an exhaustive grep gate -- because a Tailwind class referencing a
+  removed color silently produces NO style, not a build error; restyle top bar [OMIT the
+  decorative search box -- no search endpoint] + footer + `.btn-pine`/`.btn-ghost` +
+  `.eyebrow`/`.pill`/`.divider`; KEEP all existing page-component classes intact so the
+  site stays coherent between tasks. Grep DoD must return nothing:
+  `grep -rEn "(--verm|--teal|--ink-soft|--muted|\b(text|bg|border|fill|stroke|ring|from|to|via)-(verm|teal|ink-soft|muted)\b)" src/`).
+  **`handoff/TASK-020-theme-home-article-views.md`** (HOME + ARTICLE restyle: home hero =
+  static `.hero-fig` SVG + `.wedge-chips` [NO live calc]; catalog/band/pub link only to
+  real existing pages via typed links; ARTICLE drop cap + section markers + note + `table.dt`
+  + the `.fuse` card embedding the **REAL** `<StatCalc variant="embed">` [NOT the mockup's
+  demo `compute()` JS]; TOC driven by the real `entry.render().headings` depth===2 [NOT the
+  mockup's static list]; breadcrumb stays a typed `categoryHub()` link; do NOT port the
+  mockup's `data-go` view-router anchors). **`handoff/TASK-021-theme-calculator-view.md`**
+  (highest-care: restyle `StatCalc.astro` `variant="page"` into the `.panel` two-col in/out
+  + `.scard` look + `.calc-hero`/`.howto`/`.side-card` related sidebar, WITHOUT changing the
+  **byte-stable hooks** [`data-statcalc`, `data-config-id`, instance `id`/`aria-labelledby`,
+  `data-statcalc-form`, `data-statcalc-results` w/ `aria-live="polite"`, `data-statcalc-chart`,
+  the `<script type="application/json" id={configId}>` block, `import './statcalc/client.ts'`];
+  do NOT edit `client.ts`/`format.ts` or any engine/config; map the generic config-driven
+  outputs onto stat cards/table -- do NOT hardcode the mockup's frequency-table layout; keep
+  `getRelatedCalculators` logic, restyle only). All three are plain-ASCII from the template,
+  status TODO except **TASK-019 now IN_PROGRESS (Codex picked it up)**. DoD on each = `astro
+  check` 0/0/0 + `npm test` green + `npm run build` `check-links` 0 violations + manual
+  preview + (019) the grep gate + (020/021) confirm the real StatCalc hooks survive.
+  **>> NEXT SESSION (new chat, after Codex confirms) <<** Review each DONE task against its
+  DoD on the REAL artifacts (re-run the three gates; for 019 run the grep gate; for 020/021
+  inspect the rendered StatCalc DOM for the byte-stable hooks + JSON config block + confirm
+  `client.ts` untouched; confirm dark-mode no-flash still works + Newsreader renders), set
+  each `CLOSED` + write its Review, then **commit the whole redesign (TASK-019->021 together)
+  and push to `main`** -> Actions gate suite -> Cloudflare deploy. Leave
+  `statohub-theme-preview.html` (untracked at root) in place until the redesign is closed;
+  archive it to `doc/` afterward. (Routines remain PAUSED from TASK-018 -- unrelated to this;
+  do not re-enable here.)
+
 - **2026-06-26 (TASK-018 woven callouts + AUTOMATION decided + ROUTINES PAUSED)** —
   **Authored the editorial link-map brief that fixes the "one link dumped at the end"
   problem, decided to make callouts automatic for all FUTURE content, and PAUSED the two

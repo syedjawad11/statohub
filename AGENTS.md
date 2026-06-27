@@ -163,6 +163,30 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   used structural callout/import audits, an independent subagent audit,
   `npx astro check`, `npm test` after expected spawn approval,
   `npm run build` with 0 link violations, and built HTML spot checks.
+- **TASK-019 -- theme foundation/chrome:** swapped Fraunces for self-hosted
+  Newsreader, ported the preview token palette/dark overrides into `html.dark`,
+  renamed Tailwind color aliases to `pine`/`clay`/`ink-2`/`ink-3`, restyled the
+  global top bar/footer/buttons/utilities, and mechanically removed old token
+  references. Verification used `npx astro check`, `npm test`, `npm run build`
+  with 0 link violations, old-token grep, built HTML spot checks, and local
+  preview HTTP checks.
+- **TASK-020 -- theme home/article views:** rebuilt the homepage to the preview
+  hero, distribution figure, catalog, calculator band, and recent list using
+  typed links only; restyled `ArticleLayout` to the preview breadcrumb, header,
+  divider, dynamic TOC, article body, related grid, and real MDX StatCalc embed
+  styling. Verification used `npx astro check`, `npm test`, `npm run build`
+  with 0 link violations, built HTML checks for `/` and `/frequency-table/`,
+  and local preview HTTP checks.
+- **TASK-021 -- theme calculator view/panel:** rewrapped `StatCalc` page variant
+  in the preview instrument panel (`panel-top`, two-column `panel-grid`, input
+  and output panes) while preserving all client hooks and leaving `client.ts`,
+  `format.ts`, and `src/calc` untouched; restyled standalone calculator pages
+  with `calc-hero`, `howto`, and related `side-card`. Verification used
+  `npx astro check`, `npm test`, `npm run build` with 0 link violations,
+  unchanged client/engine diffs, built DOM hook checks on standard-deviation,
+  frequency-table, and mean calculators, and local preview HTTP checks. Browser
+  screenshots/click tests could not run because no in-app browser backend was
+  available.
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

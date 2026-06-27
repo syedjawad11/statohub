@@ -51,10 +51,10 @@ const guides: CategoryGuide[] = (await getCollection('articles'))
         {guides.map((guide) => (
           <Link
             to={routes.article(guide.id)}
-            class="block rounded-[14px] border border-line bg-card p-6 no-underline shadow-[var(--shadow)] transition-colors hover:border-verm"
+            class="block rounded-[14px] border border-line bg-card p-6 no-underline shadow-[var(--shadow)] transition-colors hover:border-clay"
           >
             <h2 class="m-0 text-xl font-semibold text-ink">{guide.title}</h2>
-            <p class="mt-2 mb-0 text-ink-soft">{guide.description}</p>
+            <p class="mt-2 mb-0 text-ink-2">{guide.description}</p>
           </Link>
         ))}
         <div class="mt-2 flex flex-wrap gap-3">
@@ -63,7 +63,7 @@ const guides: CategoryGuide[] = (await getCollection('articles'))
       </div>
     ) : (
       <div class="mt-8 rounded-[14px] border border-line bg-card p-6 shadow-[var(--shadow)]">
-        <p class="m-0 text-ink-soft">
+        <p class="m-0 text-ink-2">
           Guides and tools for this topic are being added. For now, browse the
           calculator library or keep exploring the seeded statistics guides.
         </p>

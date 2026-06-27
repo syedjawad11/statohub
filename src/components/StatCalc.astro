@@ -37,87 +37,162 @@ const config = {
 
 <section
   id={instanceId}
-  class:list={['statcalc-card', isPage ? 'statcalc-page' : 'statcalc-embed']}
+  class:list={['statcalc-card', isPage ? 'statcalc-page panel' : 'statcalc-embed']}
   data-statcalc
   data-config-id={configId}
   aria-labelledby={titleId}
 >
-  <div class="statcalc-head">
-    <span class="pip" aria-hidden="true"></span>
-    <span class="statcalc-label">Calculator</span>
-    <h2 id={titleId} class="statcalc-title">{calc.title}</h2>
-  </div>
+  {isPage ? (
+    <>
+      <div class="panel-top">
+        <span class="live" aria-hidden="true"></span>
+        <span>Live calculator</span>
+        <h2 id={titleId} class="statcalc-title">{calc.title}</h2>
+      </div>
+      <div class="panel-grid">
+        <div class="panel-in">
+          <p class="statcalc-description">{calc.description}</p>
+          <form class="statcalc-form space-y-4" data-statcalc-form>
+            {
+              calc.inputs.map((input: CalculatorInput) => {
+                const fieldId = `${instanceId}-${input.name}`;
 
-  <div class="statcalc-body">
-    {isPage && <p class="mb-5 mt-0 text-ink-soft">{calc.description}</p>}
-    <form class="space-y-4" data-statcalc-form>
-      {
-        calc.inputs.map((input: CalculatorInput) => {
-          const fieldId = `${instanceId}-${input.name}`;
+                return (
+                  <div class="statcalc-field">
+                    <label for={fieldId}>{input.label}</label>
+                    {input.type === 'numberList' ? (
+                      <textarea
+                        id={fieldId}
+                        name={input.name}
+                        rows="5"
+                        placeholder={input.placeholder ?? '2, 4, 4, 4, 5, 5, 7, 9'}
+                        data-input-type={input.type}
+                        class="statcalc-input"
+                      >
+                        {input.default ?? ''}
+                      </textarea>
+                    ) : input.type === 'select' ? (
+                      <select
+                        id={fieldId}
+                        name={input.name}
+                        data-input-type={input.type}
+                        class="statcalc-input"
+                      >
+                        {(input.options ?? []).map((option: CalculatorOption) => (
+                          <option value={option.value} selected={input.default === option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        id={fieldId}
+                        name={input.name}
+                        type="number"
+                        inputmode="decimal"
+                        value={input.default ?? ''}
+                        placeholder={input.placeholder}
+                        data-input-type={input.type}
+                        class="statcalc-input"
+                      />
+                    )}
+                  </div>
+                );
+              })
+            }
 
-          return (
-            <div>
-              <label for={fieldId}>
-                {input.label}
-              </label>
-              {input.type === 'numberList' ? (
-                <textarea
-                  id={fieldId}
-                  name={input.name}
-                  rows="5"
-                  placeholder={input.placeholder ?? '2, 4, 4, 4, 5, 5, 7, 9'}
-                  data-input-type={input.type}
-                  class="statcalc-input"
-                >
-                  {input.default ?? ''}
-                </textarea>
-              ) : input.type === 'select' ? (
-                <select
-                  id={fieldId}
-                  name={input.name}
-                  data-input-type={input.type}
-                  class="statcalc-input"
-                >
-                  {(input.options ?? []).map((option: CalculatorOption) => (
-                    <option value={option.value} selected={input.default === option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id={fieldId}
-                  name={input.name}
-                  type="number"
-                  inputmode="decimal"
-                  value={input.default ?? ''}
-                  placeholder={input.placeholder}
-                  data-input-type={input.type}
-                  class="statcalc-input"
-                />
-              )}
-            </div>
-          );
-        })
-      }
+            <button type="submit" class="statcalc-run btn btn-pine">Compute</button>
+          </form>
+        </div>
+        <div class="panel-out">
+          <div
+            id={resultId}
+            class="statcalc-results calc-out"
+            data-statcalc-results
+            aria-live="polite"
+          >
+            <p>Enter values and compute the result.</p>
+          </div>
+          <!-- Chart seam: when a future config sets chart:true, the client can lazy-import uPlot here. -->
+          <div class="mt-4 hidden" data-statcalc-chart></div>
+        </div>
+      </div>
+    </>
+  ) : (
+    <>
+      <div class="statcalc-head">
+        <span class="pip" aria-hidden="true"></span>
+        <span class="statcalc-label">Calculator</span>
+        <h2 id={titleId} class="statcalc-title">{calc.title}</h2>
+      </div>
 
-      <button type="submit" class="statcalc-run">
-        Compute
-      </button>
-    </form>
+      <div class="statcalc-body">
+        <form class="statcalc-form space-y-4" data-statcalc-form>
+          {
+            calc.inputs.map((input: CalculatorInput) => {
+              const fieldId = `${instanceId}-${input.name}`;
 
-    <div
-      id={resultId}
-      class="statcalc-results"
-      data-statcalc-results
-      aria-live="polite"
-    >
-      <p>Enter values and compute the result.</p>
-    </div>
+              return (
+                <div class="statcalc-field">
+                  <label for={fieldId}>{input.label}</label>
+                  {input.type === 'numberList' ? (
+                    <textarea
+                      id={fieldId}
+                      name={input.name}
+                      rows="5"
+                      placeholder={input.placeholder ?? '2, 4, 4, 4, 5, 5, 7, 9'}
+                      data-input-type={input.type}
+                      class="statcalc-input"
+                    >
+                      {input.default ?? ''}
+                    </textarea>
+                  ) : input.type === 'select' ? (
+                    <select
+                      id={fieldId}
+                      name={input.name}
+                      data-input-type={input.type}
+                      class="statcalc-input"
+                    >
+                      {(input.options ?? []).map((option: CalculatorOption) => (
+                        <option value={option.value} selected={input.default === option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      id={fieldId}
+                      name={input.name}
+                      type="number"
+                      inputmode="decimal"
+                      value={input.default ?? ''}
+                      placeholder={input.placeholder}
+                      data-input-type={input.type}
+                      class="statcalc-input"
+                    />
+                  )}
+                </div>
+              );
+            })
+          }
 
-    <!-- Chart seam: when a future config sets chart:true, the client can lazy-import uPlot here. -->
-    <div class="mt-4 hidden" data-statcalc-chart></div>
-  </div>
+          <button type="submit" class="statcalc-run btn btn-pine">Compute</button>
+        </form>
+
+        <div
+          id={resultId}
+          class="statcalc-results"
+          data-statcalc-results
+          aria-live="polite"
+        >
+          <p>Enter values and compute the result.</p>
+        </div>
+
+        <!-- Chart seam: when a future config sets chart:true, the client can lazy-import uPlot here. -->
+        <div class="mt-4 hidden" data-statcalc-chart></div>
+      </div>
+    </>
+  )}
 
   <script is:inline id={configId} type="application/json" set:html={JSON.stringify(config)} />
 </section>

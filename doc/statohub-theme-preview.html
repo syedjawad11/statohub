@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statohub — theme preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7; --paper-2:#F4F2EC; --card:#FFFFFF;
+  --ink:#1A1C1F; --ink-2:#52565C; --ink-3:#878C93;
+  --line:#E7E4DB; --line-2:#D8D4C8;
+  --pine:#0E6E64; --pine-soft:#E4F0ED;
+  --clay:#A6492F; --clay-soft:#F4E8E2;
+  --brass:#9C7C3A;
+  --focus:#0E6E64;
+  --shadow:0 1px 2px rgba(26,28,31,.04),0 8px 24px rgba(26,28,31,.06);
+  --shadow-lift:0 2px 6px rgba(26,28,31,.08),0 18px 44px rgba(26,28,31,.1);
+  --r:14px; --maxw:1240px;
+}
+html[data-theme="dark"]{
+  --paper:#14161A; --paper-2:#191C21; --card:#1C2026;
+  --ink:#EDEAE2; --ink-2:#A9ADB4; --ink-3:#767B83;
+  --line:#2A2E35; --line-2:#363B43;
+  --pine:#4FB7AB; --pine-soft:#143230;
+  --clay:#D98062; --clay-soft:#33211B;
+  --brass:#C7A35E; --focus:#4FB7AB;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+  --shadow-lift:0 2px 8px rgba(0,0,0,.4),0 22px 50px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+a{color:inherit}
+::selection{background:var(--pine-soft);color:var(--ink)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+img{max-width:100%}
+
+/* ---------- Top bar ---------- */
+.topbar{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:26px;padding:14px 26px}
+.brand{font-family:"Newsreader",serif;font-weight:600;font-size:22px;letter-spacing:-.01em;text-decoration:none;display:flex;align-items:center;gap:9px;cursor:pointer}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--clay);box-shadow:0 0 0 4px var(--clay-soft)}
+.nav{display:flex;gap:2px;margin-left:4px}
+.nav a{text-decoration:none;color:var(--ink-2);font-size:14.5px;font-weight:500;padding:7px 12px;border-radius:8px;transition:background .2s,color .2s;cursor:pointer}
+.nav a:hover{background:var(--paper-2);color:var(--ink)}
+.nav a.active{color:var(--pine)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--card);border-radius:9px;padding:7px 11px;color:var(--ink-3);font-size:13.5px;min-width:160px;cursor:text;transition:border-color .2s}
+.search:hover{border-color:var(--brass)}
+.search kbd{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11px;border:1px solid var(--line-2);border-radius:5px;padding:1px 5px;color:var(--ink-3)}
+.toggle{width:38px;height:38px;border:1px solid var(--line-2);background:var(--card);border-radius:9px;cursor:pointer;display:grid;place-items:center;color:var(--ink-2);transition:transform .2s,border-color .2s,color .2s}
+.toggle:hover{transform:translateY(-1px);border-color:var(--brass);color:var(--ink)}
+.toggle svg{width:18px;height:18px}
+html[data-theme="dark"] .sun{display:none}
+html[data-theme="light"] .moon{display:none}
+
+/* ---------- views ---------- */
+.view{display:none}
+.view.show{display:block;animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+
+/* shared bits */
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.pill{display:inline-block;padding:4px 11px;border-radius:99px;background:var(--clay-soft);color:var(--clay);border:1px solid color-mix(in srgb,var(--clay) 22%,transparent);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.divider{display:block;width:100%;height:24px;color:var(--line-2)}
+.btn{font-family:inherit;font-weight:600;font-size:14.5px;border:none;cursor:pointer;padding:12px 22px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .2s,background .2s,border-color .2s;text-decoration:none}
+.btn-pine{background:var(--pine);color:#fff}
+.btn-pine:hover{transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in srgb,var(--pine) 38%,transparent)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line-2)}
+.btn-ghost:hover{border-color:var(--brass);transform:translatey(-1px)}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:64px 0 50px}
+.hero .kicker{margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hero h1{font-family:"Newsreader",serif;font-weight:500;font-size:clamp(38px,5vw,60px);line-height:1.04;letter-spacing:-.018em;margin:0 0 20px}
+.hero h1 em{font-style:italic;color:var(--clay)}
+.hero p.sub{font-size:19px;color:var(--ink-2);margin:0 0 28px;max-width:46ch}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.wedge-chips{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+.wchip{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink-2);border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px}
+.wchip .b{width:9px;height:9px;border-radius:50%}
+.wchip.teach .b{background:var(--clay);box-shadow:0 0 0 4px var(--clay-soft)}
+.wchip.compute .b{background:var(--pine);box-shadow:0 0 0 4px var(--pine-soft)}
+
+/* hero figure — on-topic distribution motif */
+.hero-fig{background:var(--card);border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:var(--shadow-lift);position:relative;overflow:hidden}
+.hero-fig .cap{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;margin-bottom:8px}
+.hero-fig svg{display:block;width:100%;height:auto}
+.hero-fig .legend{display:flex;gap:18px;margin-top:14px;font-size:12.5px;color:var(--ink-2)}
+.hero-fig .legend span{display:flex;align-items:center;gap:7px}
+.hero-fig .legend i{width:12px;height:3px;border-radius:2px;display:inline-block}
+
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:18px 0 22px}
+.section-head h2{font-family:"Newsreader",serif;font-weight:600;font-size:30px;letter-spacing:-.01em;margin:0}
+.section-head .lead{color:var(--ink-2);font-size:15px;max-width:42ch}
+.section-link{font-size:14px;font-weight:600;color:var(--pine);text-decoration:none;white-space:nowrap}
+.section-link:hover{text-decoration:underline}
+
+.catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:6px 0 12px}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;text-decoration:none;display:block;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer}
+.cat:hover{border-color:var(--pine);transform:translateY(-3px);box-shadow:var(--shadow)}
+.cat .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--pine-soft);color:var(--pine);margin-bottom:14px}
+.cat .ico svg{width:19px;height:19px}
+.cat h3{font-family:"Newsreader",serif;font-weight:600;font-size:20px;margin:0 0 6px;color:var(--ink)}
+.cat p{font-size:14px;color:var(--ink-2);margin:0 0 14px;line-height:1.55}
+.cat .meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-3);display:flex;gap:14px}
+.cat .meta b{color:var(--brass);font-weight:600}
+
+/* calculators feature band */
+.band{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:34px;margin:38px 0;display:grid;grid-template-columns:1fr 1.2fr;gap:36px;align-items:center}
+.band h2{font-family:"Newsreader",serif;font-weight:600;font-size:28px;margin:0 0 10px}
+.band p{color:var(--ink-2);margin:0 0 20px}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 15px;text-decoration:none;display:flex;align-items:center;gap:11px;transition:border-color .2s,transform .2s;cursor:pointer}
+.tool:hover{border-color:var(--pine);transform:translateY(-2px)}
+.tool .t-ico{width:30px;height:30px;border-radius:8px;background:var(--pine-soft);color:var(--pine);display:grid;place-items:center;flex-shrink:0;font-family:"JetBrains Mono",monospace;font-weight:600;font-size:13px}
+.tool .t-name{font-size:14px;font-weight:600;color:var(--ink)}
+.tool .t-sub{font-size:12px;color:var(--ink-3)}
+
+/* recently published */
+.pub-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-bottom:30px}
+.pub{display:flex;gap:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-decoration:none;transition:border-color .2s,transform .2s;cursor:pointer}
+.pub:hover{border-color:var(--brass);transform:translateY(-2px)}
+.pub .idx{font-family:"Newsreader",serif;font-size:30px;color:var(--line-2);line-height:1;width:42px;flex-shrink:0}
+.pub .p-cat{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay)}
+.pub h4{font-family:"Newsreader",serif;font-weight:600;font-size:18px;margin:5px 0 4px;color:var(--ink)}
+.pub .p-meta{font-size:12.5px;color:var(--ink-3)}
+
+/* =========================================================
+   ARTICLE
+   ========================================================= */
+.crumb{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-3);padding:24px 0 0}
+.crumb a{text-decoration:none;cursor:pointer}.crumb a:hover{color:var(--pine)}
+.crumb .s{color:var(--line-2)}
+.article-grid{display:grid;grid-template-columns:minmax(0,1fr) 224px;gap:54px;padding:8px 0 60px}
+.article-head .eyebrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 16px}
+.article-head .sep{width:4px;height:4px;border-radius:50%;background:var(--line-2)}
+h1.article-title{font-family:"Newsreader",serif;font-weight:500;font-size:clamp(32px,4vw,50px);line-height:1.08;letter-spacing:-.015em;margin:0 0 16px}
+.am+ .meta-row{margin-top:0}
+.meta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;color:var(--ink-2);font-size:14px}
+.meta-row .m{display:flex;align-items:center;gap:7px}
+.meta-row svg{width:15px;height:15px;color:var(--ink-3)}
+.lead{font-family:"Newsreader",serif;font-size:22px;line-height:1.55;color:var(--ink);font-weight:400;margin:30px 0}
+.lead .drop{float:left;font-family:"Newsreader",serif;font-weight:600;font-size:62px;line-height:.82;padding:6px 12px 0 0;color:var(--clay)}
+.article-body p{margin:0 0 22px;color:var(--ink-2)}
+.article-body h2{font-family:"Newsreader",serif;font-weight:600;font-size:27px;letter-spacing:-.01em;margin:46px 0 14px;line-height:1.25;color:var(--ink);scroll-margin-top:84px;display:flex;align-items:baseline;gap:14px}
+.article-body h2::before{content:"§";color:var(--brass);font-size:18px;font-family:"JetBrains Mono",monospace}
+.article-body strong{color:var(--ink);font-weight:600}
+.note{border-left:3px solid var(--clay);background:var(--clay-soft);border-radius:0 10px 10px 0;padding:16px 20px;margin:26px 0;font-size:15.5px;color:var(--ink)}
+.note .tag{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:600;display:block;margin-bottom:5px}
+table.dt{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+table.dt th,table.dt td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+table.dt th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+table.dt td.num,table.dt th.num{font-family:"JetBrains Mono",monospace;text-align:right}
+table.dt tr.total td{font-weight:700;color:var(--ink);border-top:2px solid var(--line-2);border-bottom:none}
+
+/* fused teach->compute card (an in-post calculator, NOT a lesson) */
+.fuse{margin:40px 0;border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.fuse-teach{padding:20px 24px;border-left:4px solid var(--clay);background:linear-gradient(180deg,var(--clay-soft),transparent 130%)}
+.fuse-teach .tag{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:600}
+.fuse-teach h3{font-family:"Newsreader",serif;font-weight:600;font-size:20px;margin:6px 0 4px}
+.fuse-teach p{margin:0;font-size:15px;color:var(--ink-2)}
+.fuse-compute{padding:22px 24px 26px;border-top:1px solid var(--line)}
+.fuse-compute .tag{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pine);font-weight:600;display:flex;align-items:center;gap:7px}
+.fuse-compute .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--pine);box-shadow:0 0 0 4px var(--pine-soft)}
+.calc-label{font-size:13px;color:var(--ink-2);margin:14px 0 6px;display:block;font-weight:500}
+.calc-in{width:100%;font-family:"JetBrains Mono",monospace;font-size:14px;border:1px solid var(--line-2);background:var(--paper);color:var(--ink);border-radius:9px;padding:11px 13px;resize:vertical;min-height:46px;transition:border-color .2s,box-shadow .2s}
+.calc-in:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px var(--pine-soft)}
+.calc-actions{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.calc-out{margin-top:18px}
+.calc-empty{color:var(--ink-3);font-size:14px;font-style:italic}
+.full-link{font-size:13.5px;color:var(--pine);text-decoration:none;font-weight:600;cursor:pointer}
+.full-link:hover{text-decoration:underline}
+
+.related{border-top:1px solid var(--line);margin-top:50px;padding-top:26px}
+.related h3{font-family:"Newsreader",serif;font-size:20px;margin:0 0 16px}
+.rel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.rel{border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;background:var(--card);transition:border-color .2s,transform .2s;cursor:pointer}
+.rel:hover{border-color:var(--pine);transform:translateY(-2px)}
+.rel .p-cat{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay)}
+.rel h4{font-family:"Newsreader",serif;font-weight:600;font-size:16px;margin:6px 0 0;color:var(--ink)}
+
+/* TOC aside */
+.aside-label{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+.toc{list-style:none;margin:0;padding:0;position:sticky;top:84px}
+.toc li{margin:0 0 3px}
+.toc a{display:block;text-decoration:none;font-size:13.5px;color:var(--ink-2);padding:6px 12px;border-left:2px solid var(--line);transition:color .2s,border-color .2s;cursor:pointer}
+.toc a:hover,.toc a.active{color:var(--pine);border-left-color:var(--pine)}
+.aside-tool{margin-top:26px;border:1px solid var(--line-2);border-radius:12px;padding:16px;background:var(--card)}
+.aside-tool .t{font-family:"Newsreader",serif;font-weight:600;font-size:15px;margin:0 0 4px}
+.aside-tool p{font-size:12.5px;color:var(--ink-2);margin:0 0 12px}
+
+/* =========================================================
+   CALCULATOR PAGE (the "instrument")
+   ========================================================= */
+.calc-hero{padding:14px 0 6px}
+.calc-hero h1{font-family:"Newsreader",serif;font-weight:500;font-size:clamp(30px,3.6vw,44px);letter-spacing:-.015em;margin:14px 0 10px}
+.calc-hero p.desc{font-size:18px;color:var(--ink-2);max-width:60ch;margin:0}
+.panel{background:var(--card);border:1px solid var(--line-2);border-radius:18px;box-shadow:var(--shadow-lift);overflow:hidden;margin:28px 0 30px}
+.panel-top{padding:14px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pine)}
+.panel-top .live{width:8px;height:8px;border-radius:50%;background:var(--pine);box-shadow:0 0 0 4px var(--pine-soft)}
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.panel-in{padding:24px;border-right:1px solid var(--line)}
+.panel-out{padding:24px;background:var(--paper-2)}
+.opt-row{display:flex;gap:18px;margin:16px 0 4px;flex-wrap:wrap}
+.opt{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2);cursor:pointer}
+.opt input{accent-color:var(--pine);width:16px;height:16px}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.scard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.scard .l{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-family:"JetBrains Mono",monospace}
+.scard .v{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:22px;color:var(--ink);margin-top:3px}
+.howto{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;padding:10px 0 60px;align-items:start}
+.howto h2{font-family:"Newsreader",serif;font-weight:600;font-size:26px;margin:0 0 14px}
+.howto p{color:var(--ink-2);margin:0 0 16px}
+.howto .read-cta{margin-top:6px}
+.side-card{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--card)}
+.side-card h3{font-family:"Newsreader",serif;font-size:18px;margin:0 0 12px}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line);margin-top:20px;background:var(--paper-2)}
+.foot-inner{max-width:var(--maxw);margin:0 auto;padding:40px 26px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
+.foot h5{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+.foot a{display:block;text-decoration:none;color:var(--ink-2);font-size:14px;margin-bottom:8px;cursor:pointer}
+.foot a:hover{color:var(--pine)}
+.foot .brand{font-size:19px;margin-bottom:10px}
+.foot .tag-line{font-size:13.5px;color:var(--ink-3);max-width:30ch}
+.foot-bottom{border-top:1px solid var(--line);padding:16px 26px;text-align:center;font-size:12.5px;color:var(--ink-3)}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;gap:32px;padding:44px 0 36px}
+  .catalog{grid-template-columns:1fr 1fr}
+  .band{grid-template-columns:1fr;gap:24px}
+  .pub-list,.rel-grid{grid-template-columns:1fr}
+  .article-grid{grid-template-columns:1fr}
+  .article-grid .aside{display:none}
+  .panel-grid,.howto{grid-template-columns:1fr}
+  .panel-in{border-right:none;border-bottom:1px solid var(--line)}
+  .foot-inner{grid-template-columns:1fr 1fr}
+}
+@media (max-width:620px){
+  .nav,.search{display:none}
+  .catalog,.tool-grid,.rel-grid,.foot-inner{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" data-go="home"><span class="dot"></span>Statohub</a>
+    <nav class="nav">
+      <a data-go="home">Home</a>
+      <a data-go="article">Descriptive</a>
+      <a>Probability</a>
+      <a>Regression</a>
+      <a>Inferential</a>
+      <a data-go="calc" class="">Calculators</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="search" role="search">
+        <svg viewBox="0 0 24 24" fill="none" width="15" height="15" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Search
+        <kbd>⌘K</kbd>
+      </div>
+      <button class="toggle" id="themeBtn" aria-label="Toggle dark mode">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ HOME ============================ -->
+<section class="view show" id="view-home">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <div class="kicker"><span class="pill">Statistics, clearly</span><span class="eyebrow">Foundations → Inference</span></div>
+        <h1>Learn the concept.<br><em>Compute</em> the answer.<br>On the same page.</h1>
+        <p class="sub">Statohub is a study companion for statistics — plain-spoken guides paired with a working calculator on every topic, so understanding and answer never live apart.</p>
+        <div class="hero-cta">
+          <a class="btn btn-pine" data-go="article">Browse the guides</a>
+          <a class="btn btn-ghost" data-go="calc">Open the calculators</a>
+        </div>
+        <div class="wedge-chips">
+          <span class="wchip teach"><span class="b"></span>Every page explains</span>
+          <span class="wchip compute"><span class="b"></span>Every page computes</span>
+        </div>
+      </div>
+      <div class="hero-fig">
+        <div class="cap"><span>Normal distribution</span><span>μ = 0 · σ = 1</span></div>
+        <svg viewBox="0 0 380 200" fill="none" aria-hidden="true">
+          <line x1="20" y1="170" x2="360" y2="170" stroke="var(--line-2)" stroke-width="1"/>
+          <g stroke="var(--line)" stroke-width="1">
+            <line x1="20" y1="40" x2="360" y2="40"/><line x1="20" y1="90" x2="360" y2="90"/><line x1="20" y1="130" x2="360" y2="130"/>
+          </g>
+          <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168" stroke="var(--pine)" stroke-width="2.5"/>
+          <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168 L360 170 L20 170 Z" fill="var(--pine)" opacity=".10"/>
+          <line x1="190" y1="30" x2="190" y2="170" stroke="var(--clay)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <circle cx="190" cy="30" r="3.5" fill="var(--clay)"/>
+        </svg>
+        <div class="legend">
+          <span><i style="background:var(--pine)"></i>density</span>
+          <span><i style="background:var(--clay)"></i>mean</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- catalog -->
+    <div class="section-head">
+      <div>
+        <h2>The handbook</h2>
+        <p class="lead">Six areas of statistics, each a growing shelf of guides — with the tools to apply them.</p>
+      </div>
+      <a class="section-link" data-go="article">All topics →</a>
+    </div>
+    <div class="catalog">
+      <a class="cat" data-go="article">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-10"/></svg></span>
+        <h3>Descriptive</h3>
+        <p>Summarise and describe data: averages, spread, frequency, and shape.</p>
+        <div class="meta"><span><b>24</b> guides</span><span><b>11</b> tools</span></div>
+      </a>
+      <a class="cat">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c4-9 14-9 18 0" /><circle cx="12" cy="6" r="2"/></svg></span>
+        <h3>Probability</h3>
+        <p>Distributions, expected value, and the rules of chance from the ground up.</p>
+        <div class="meta"><span><b>19</b> guides</span><span><b>9</b> tools</span></div>
+      </a>
+      <a class="cat">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 20 4"/><circle cx="7" cy="17" r="1.6"/><circle cx="12" cy="13" r="1.6"/><circle cx="16" cy="8" r="1.6"/></svg></span>
+        <h3>Regression</h3>
+        <p>Correlation, lines of best fit, and reading relationships between variables.</p>
+        <div class="meta"><span><b>14</b> guides</span><span><b>6</b> tools</span></div>
+      </a>
+      <a class="cat">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 12l7-4 7 4"/><circle cx="12" cy="3" r="1.5"/></svg></span>
+        <h3>Inferential</h3>
+        <p>Confidence intervals, hypothesis tests, and reasoning from sample to population.</p>
+        <div class="meta"><span><b>21</b> guides</span><span><b>10</b> tools</span></div>
+      </a>
+      <a class="cat">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
+        <h3>Foundations</h3>
+        <p>Notation, variables, and the vocabulary every other topic builds on.</p>
+        <div class="meta"><span><b>12</b> guides</span><span><b>4</b> tools</span></div>
+      </a>
+      <a class="cat" data-go="calc">
+        <span class="ico" style="background:var(--clay-soft);color:var(--clay)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2"/></svg></span>
+        <h3>Calculators</h3>
+        <p>Every tool on the site in one hub — fast, free, and explained.</p>
+        <div class="meta"><span><b>40+</b> tools</span><span><b>all</b> free</span></div>
+      </a>
+    </div>
+
+    <!-- calculators band -->
+    <div class="band">
+      <div>
+        <span class="eyebrow">The Statohub difference</span>
+        <h2 style="margin-top:10px">Tools that show their working</h2>
+        <p>Most calculators give you a number and nothing else. Ours sit beside the explanation, so you can check the method as you go.</p>
+        <a class="btn btn-pine" data-go="calc">Browse calculators</a>
+      </div>
+      <div class="tool-grid">
+        <a class="tool" data-go="calc"><span class="t-ico">x̄</span><span><span class="t-name">Mean</span><br><span class="t-sub">average of a dataset</span></span></a>
+        <a class="tool" data-go="calc"><span class="t-ico">σ</span><span><span class="t-name">Standard deviation</span><br><span class="t-sub">spread around the mean</span></span></a>
+        <a class="tool" data-go="calc"><span class="t-ico">ƒ</span><span><span class="t-name">Frequency table</span><br><span class="t-sub">counts &amp; proportions</span></span></a>
+        <a class="tool" data-go="calc"><span class="t-ico">%</span><span><span class="t-name">Percentile</span><br><span class="t-sub">rank within data</span></span></a>
+      </div>
+    </div>
+
+    <!-- recently published -->
+    <div class="section-head"><div><h2>Recently published</h2></div><a class="section-link" data-go="article">All guides →</a></div>
+    <div class="pub-list">
+      <a class="pub" data-go="article"><span class="idx">01</span><div><span class="p-cat">Descriptive</span><h4>Frequency Tables: How to Build &amp; Read Them</h4><span class="p-meta">15 min · Beginner · includes calculator</span></div></a>
+      <a class="pub"><span class="idx">02</span><div><span class="p-cat">Inferential</span><h4>Confidence Intervals, Without the Jargon</h4><span class="p-meta">18 min · Intermediate · includes calculator</span></div></a>
+      <a class="pub"><span class="idx">03</span><div><span class="p-cat">Probability</span><h4>Reading the Normal Distribution</h4><span class="p-meta">12 min · Beginner · includes calculator</span></div></a>
+      <a class="pub"><span class="idx">04</span><div><span class="p-cat">Regression</span><h4>Correlation vs Causation, Made Concrete</h4><span class="p-meta">10 min · Beginner</span></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ARTICLE ============================ -->
+<section class="view" id="view-article">
+  <div class="wrap">
+    <div class="crumb"><a data-go="home">Home</a><span class="s">/</span><a data-go="home">Descriptive Statistics</a><span class="s">/</span>Frequency Tables</div>
+    <div class="article-grid">
+      <article>
+        <header class="article-head">
+          <div class="eyebrow"><span class="pill">Descriptive</span><span class="sep"></span>Beginner<span class="sep"></span>Includes calculator</div>
+          <h1 class="article-title">Frequency Tables: How to Build &amp; Read Them</h1>
+          <div class="meta-row">
+            <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>15 min read</span>
+            <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9"/></svg>1 calculator</span>
+            <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20a8 8 0 1 0-8-8"/><path d="M12 8v4l3 2"/></svg>Updated Jun 2026</span>
+          </div>
+        </header>
+
+        <svg class="divider" style="margin:28px 0 30px" viewBox="0 0 1000 24" preserveAspectRatio="none" fill="none">
+          <path d="M0 22 C 180 22, 240 4, 420 4 S 640 22, 1000 22" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M0 22 C 180 22, 240 4, 420 4 S 640 22, 1000 22 L1000 24 L0 24 Z" fill="currentColor" opacity=".18"/>
+        </svg>
+
+        <div class="article-body">
+          <p class="lead"><span class="drop">A</span> frequency table turns a raw list of numbers into an organised summary showing exactly how often each value appears — the simplest, most foundational move in descriptive statistics.</p>
+
+          <p>Frequency tables are among the first tools you reach for when exploring a new dataset. They underpin the frequency distribution, the relative frequency table, and visual displays like the histogram and frequency polygon. Learning to build and read one well is a foundational skill.</p>
+
+          <h2 id="a1">What is a frequency table?</h2>
+          <p>A frequency table lists every distinct value in a dataset alongside the count of how many times that value occurs. The <strong>frequency</strong> is simply the count — a whole number telling you how many observations fell at that value or in that category.</p>
+          <div class="note"><span class="tag">Definition</span>A frequency is the number of times a value of the data occurs. A frequency table collects all those counts into one structure so you can compare them side by side.</div>
+
+          <h2 id="a2">Build one, step by step</h2>
+          <p>Take the quiz scores of 20 students. Identify each distinct value, tally the occurrences, then record the counts. Always close with a totals row — the sum must equal <strong>n = 20</strong>, which is your built-in check.</p>
+          <table class="dt">
+            <thead><tr><th>Score</th><th class="num">Frequency (f)</th><th class="num">Relative</th></tr></thead>
+            <tbody>
+              <tr><td>6</td><td class="num">4</td><td class="num">0.20</td></tr>
+              <tr><td>7</td><td class="num">5</td><td class="num">0.25</td></tr>
+              <tr><td>8</td><td class="num">6</td><td class="num">0.30</td></tr>
+              <tr><td>9</td><td class="num">3</td><td class="num">0.15</td></tr>
+              <tr><td>10</td><td class="num">2</td><td class="num">0.10</td></tr>
+              <tr class="total"><td>Total</td><td class="num">20</td><td class="num">1.00</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="a3">Try it on your own data</h2>
+          <p>The guide and the tool live in the same place — read the idea, then compute it without leaving the page.</p>
+          <section class="fuse">
+            <div class="fuse-teach">
+              <span class="tag">Explain</span>
+              <h3>From a raw list to a sorted table</h3>
+              <p>Paste any list of numbers. The generator sorts the distinct values and counts each one — exactly the manual process above, instantly.</p>
+            </div>
+            <div class="fuse-compute">
+              <span class="tag">Compute</span>
+              <label class="calc-label" for="aIn">Your values (comma or space separated)</label>
+              <textarea class="calc-in" id="aIn">6 7 8 6 9 7 8 8 6 10 7 8 9 6 7 8 9 7 8 10</textarea>
+              <div class="calc-actions">
+                <button class="btn btn-pine" data-calc="a">Build table</button>
+                <button class="btn btn-ghost" data-clear="a">Clear</button>
+                <a class="full-link" data-go="calc" style="margin-left:auto">Open full calculator →</a>
+              </div>
+              <div class="calc-out" id="aOut"></div>
+            </div>
+          </section>
+
+          <h2 id="a4">How to read it</h2>
+          <p>The value with the highest frequency is the <strong>mode</strong>. The point where cumulative relative frequency crosses 0.50 marks the <strong>median</strong>. The shape — symmetric, skewed, bimodal — tells you which summary statistics to trust. A finished table is a small map of the whole dataset.</p>
+        </div>
+
+        <div class="related">
+          <h3>Related in Descriptive Statistics</h3>
+          <div class="rel-grid">
+            <a class="rel"><span class="p-cat">Descriptive</span><h4>Relative &amp; Cumulative Frequency</h4></a>
+            <a class="rel"><span class="p-cat">Descriptive</span><h4>Histograms &amp; Frequency Polygons</h4></a>
+            <a class="rel"><span class="p-cat">Descriptive</span><h4>Skewed Distributions Explained</h4></a>
+          </div>
+        </div>
+      </article>
+
+      <aside class="aside">
+        <p class="aside-label">On this page</p>
+        <ul class="toc" id="toc">
+          <li><a href="#a1" class="active">What is a frequency table?</a></li>
+          <li><a href="#a2">Build one, step by step</a></li>
+          <li><a href="#a3">Try it on your own data</a></li>
+          <li><a href="#a4">How to read it</a></li>
+        </ul>
+        <div class="aside-tool">
+          <p class="t">Frequency table calculator</p>
+          <p>The full-screen version with relative &amp; cumulative columns.</p>
+          <a class="btn btn-ghost" style="width:100%;justify-content:center;padding:10px" data-go="calc">Open tool</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CALCULATOR ============================ -->
+<section class="view" id="view-calc">
+  <div class="wrap">
+    <div class="crumb"><a data-go="home">Home</a><span class="s">/</span><a data-go="calc">Calculators</a><span class="s">/</span>Frequency Table</div>
+    <div class="calc-hero">
+      <span class="pill">Descriptive · Calculator</span>
+      <h1>Frequency Table Calculator</h1>
+      <p class="desc">Paste a list of values and get a sorted table with frequency, relative frequency, and cumulative columns — plus the quick summary stats.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-top"><span class="live"></span>Live calculator</div>
+      <div class="panel-grid">
+        <div class="panel-in">
+          <label class="calc-label" for="cIn">Values</label>
+          <textarea class="calc-in" id="cIn" style="min-height:120px">6 7 8 6 9 7 8 8 6 10 7 8 9 6 7 8 9 7 8 10</textarea>
+          <div class="opt-row">
+            <label class="opt"><input type="checkbox" id="cRel" checked> Relative frequency</label>
+            <label class="opt"><input type="checkbox" id="cCum" checked> Cumulative</label>
+          </div>
+          <div class="calc-actions">
+            <button class="btn btn-pine" data-calc="c">Build table</button>
+            <button class="btn btn-ghost" data-clear="c">Clear</button>
+          </div>
+        </div>
+        <div class="panel-out">
+          <div class="stat-cards" id="cStats"></div>
+          <div class="calc-out" id="cOut"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="howto">
+      <div>
+        <h2>How this calculator works</h2>
+        <p>It scans your list, collects every distinct value, and counts how many times each appears. The <strong>relative frequency</strong> divides each count by the total <em>n</em>; the <strong>cumulative</strong> column adds the counts from smallest to largest. The totals must come to <em>n</em> and 1.00 — the calculator's own built-in check.</p>
+        <p>This is the same procedure you'd do by hand, which is exactly why the full method sits in the guide beside it.</p>
+        <a class="btn btn-pine read-cta" data-go="article">Read the full guide →</a>
+      </div>
+      <div class="side-card">
+        <h3>Related calculators</h3>
+        <a class="tool" style="margin-bottom:8px"><span class="t-ico">x̄</span><span><span class="t-name">Mean</span></span></a>
+        <a class="tool" style="margin-bottom:8px"><span class="t-ico">M</span><span><span class="t-name">Median</span></span></a>
+        <a class="tool"><span class="t-ico">%</span><span><span class="t-name">Percentile</span></span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="foot">
+  <div class="foot-inner">
+    <div>
+      <a class="brand" data-go="home"><span class="dot"></span>Statohub</a>
+      <p class="tag-line">Statistics, taught and computed in the same place.</p>
+    </div>
+    <div><h5>Topics</h5><a data-go="article">Descriptive</a><a>Probability</a><a>Regression</a><a>Inferential</a><a>Foundations</a></div>
+    <div><h5>Calculators</h5><a data-go="calc">Standard deviation</a><a data-go="calc">Mean</a><a data-go="calc">Frequency table</a><a data-go="calc">All tools</a></div>
+    <div><h5>Site</h5><a>About</a><a>Privacy &amp; Cookies</a><a>Sitemap</a></div>
+  </div>
+  <div class="foot-bottom">© 2026 Statohub · Built static, fast, flat URLs</div>
+</footer>
+
+<script>
+const root=document.documentElement;
+document.getElementById('themeBtn').addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';});
+
+// simple view router
+const views={home:'view-home',article:'view-article',calc:'view-calc'};
+function go(name){
+  Object.values(views).forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById(views[name]||'view-home').classList.add('show');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',a.dataset.go===name));
+  window.scrollTo({top:0,behavior:'instant' in window?'instant':'auto'});
+}
+document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();go(el.dataset.go);}));
+
+// frequency table engine (shared)
+function compute(raw){
+  const nums=raw.trim().split(/[\s,]+/).map(Number).filter(v=>!Number.isNaN(v));
+  if(!nums.length)return null;
+  const n=nums.length,counts={};
+  nums.forEach(v=>counts[v]=(counts[v]||0)+1);
+  const keys=Object.keys(counts).map(Number).sort((a,b)=>a-b);
+  const sorted=[...nums].sort((a,b)=>a-b);
+  const sum=nums.reduce((s,v)=>s+v,0);
+  const mean=sum/n;
+  const mid=Math.floor(n/2);
+  const median=n%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;
+  let mode=keys[0];keys.forEach(k=>{if(counts[k]>counts[mode])mode=k;});
+  return {n,counts,keys,mean,median,mode};
+}
+function tableHTML(r,{rel=true,cum=true}={}){
+  let cumc=0,rows='';
+  r.keys.forEach(k=>{
+    const f=r.counts[k];cumc+=f;
+    rows+=`<tr><td>${k}</td><td class="num">${f}</td>`+
+      (rel?`<td class="num">${(f/r.n).toFixed(2)}</td>`:'')+
+      (cum?`<td class="num">${cumc}</td>`:'')+`</tr>`;
+  });
+  return `<table class="dt"><thead><tr><th>Value</th><th class="num">f</th>`+
+    (rel?'<th class="num">Rel.</th>':'')+(cum?'<th class="num">Cum.</th>':'')+`</tr></thead>`+
+    `<tbody>${rows}<tr class="total"><td>Total</td><td class="num">${r.n}</td>`+
+    (rel?'<td class="num">1.00</td>':'')+(cum?`<td class="num">${r.n}</td>`:'')+`</tbody></table>`;
+}
+
+// article calculator
+function runA(){
+  const r=compute(document.getElementById('aIn').value);
+  document.getElementById('aOut').innerHTML=r?tableHTML(r):'<span class="calc-empty">Enter a list like 6, 7, 8 to build the table.</span>';
+}
+// full calculator
+function runC(){
+  const r=compute(document.getElementById('cIn').value);
+  const out=document.getElementById('cOut'),stats=document.getElementById('cStats');
+  if(!r){out.innerHTML='<span class="calc-empty">Enter a list like 6, 7, 8.</span>';stats.innerHTML='';return;}
+  const rel=document.getElementById('cRel').checked,cum=document.getElementById('cCum').checked;
+  out.innerHTML=tableHTML(r,{rel,cum});
+  stats.innerHTML=`
+    <div class="scard"><div class="l">n</div><div class="v">${r.n}</div></div>
+    <div class="scard"><div class="l">Mode</div><div class="v">${r.mode}</div></div>
+    <div class="scard"><div class="l">Mean</div><div class="v">${r.mean.toFixed(2)}</div></div>
+    <div class="scard"><div class="l">Median</div><div class="v">${r.median}</div></div>`;
+}
+document.querySelectorAll('[data-calc]').forEach(b=>b.addEventListener('click',()=>b.dataset.calc==='a'?runA():runC()));
+document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.clear;document.getElementById(k+'In').value='';
+  k==='a'?runA():runC();
+}));
+['cRel','cCum'].forEach(id=>document.getElementById(id).addEventListener('change',runC));
+runA();runC();
+
+// TOC scroll-spy (article)
+const links=[...document.querySelectorAll('#toc a')];
+const secs=links.map(l=>document.querySelector(l.getAttribute('href')));
+links.forEach(l=>l.addEventListener('click',e=>{e.preventDefault();document.querySelector(l.getAttribute('href')).scrollIntoView({behavior:'smooth'});}));
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const i=secs.indexOf(e.target);if(i>-1)links[i].classList.add('active');}});},{rootMargin:'-20% 0px -70% 0px'});
+secs.forEach(s=>s&&io.observe(s));
+</script>
+</body>
+</html>

@@ -110,75 +110,82 @@ const schema = articleSchema(
 >
   <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
 
-  <div class="article-shell">
-    <article class="article-column">
-      <nav class="article-crumb" aria-label="Breadcrumb">
-        <Link to={routes.home()}>Home</Link>
-        <span aria-hidden="true">/</span>
-        <Link to={routes.categoryHub(category.id)}>{category.title}</Link>
-        <span aria-hidden="true">/</span>
-        <span class="article-crumb-current">{article.title}</span>
-      </nav>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <Link to={routes.home()}>Home</Link>
+    <span class="s" aria-hidden="true">/</span>
+    <Link to={routes.categoryHub(category.id)}>{category.title}</Link>
+    <span class="s" aria-hidden="true">/</span>
+    <span>{article.title}</span>
+  </nav>
 
+  <div class="article-grid article-shell">
+    <article class="article-column">
       <header class="article-head">
-        <p class="page-kicker">{category.title}</p>
+        <div class="eyebrow">
+          <span class="pill">{category.title}</span>
+          {level && <><span class="sep" aria-hidden="true"></span>{level}</>}
+          {hasCalculator && <><span class="sep" aria-hidden="true"></span>Includes calculator</>}
+        </div>
         <h1 class="article-title">{article.h1 ?? article.title}</h1>
         <p class="article-standfirst">{article.description}</p>
-        <div class="article-meta">
-          {level && <span class="article-level"><span class="pip" aria-hidden="true"></span>{level}</span>}
-          {readingTime && <span>{readingTime}</span>}
-          {formattedDate && <span>Updated {formattedDate}</span>}
+        <div class="meta-row article-meta">
+          {readingTime && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>{readingTime}</span>}
+          {hasCalculator && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9" /></svg>1 calculator</span>}
+          {formattedDate && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20a8 8 0 1 0-8-8" /><path d="M12 8v4l3 2" /></svg>Updated {formattedDate}</span>}
         </div>
       </header>
 
-      <div class="article-prose">
+      <svg class="divider article-divider" viewBox="0 0 1000 24" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <path d="M0 22 C 180 22, 240 4, 420 4 S 640 22, 1000 22" stroke="currentColor" stroke-width="1.5"></path>
+        <path d="M0 22 C 180 22, 240 4, 420 4 S 640 22, 1000 22 L1000 24 L0 24 Z" fill="currentColor" opacity=".18"></path>
+      </svg>
+
+      <div class="article-body article-prose">
         <slot />
       </div>
-    </article>
 
-    <aside class="article-rail article-rail-right">
-      {tocItems.length > 0 && (
-        <>
-          <div class="toc-label">On this page</div>
-          <nav class="article-toc" id="article-toc" aria-label="On this page">
+      {keepGoingItems.length > 0 && (
+        <section class="related related-section">
+          <h3>Keep going</h3>
+          <div class="rel-grid related-grid">
             {
-              tocItems.map((heading, index) => (
-                <a href={`#${heading.slug}`} class:list={[index === 0 && 'active']}>{heading.text}</a>
+              keepGoingItems.map((item) => (
+                <Link class="rel related-card" to={item.route}>
+                  <span class="p-cat related-tag">{item.kind}</span>
+                  <h4>{item.title}</h4>
+                  <p>{item.description}</p>
+                </Link>
               ))
             }
+          </div>
+        </section>
+      )}
+    </article>
+
+    <aside class="aside article-rail article-rail-right">
+      {tocItems.length > 0 && (
+        <>
+          <p class="aside-label toc-label">On this page</p>
+          <nav class="article-toc" id="article-toc" aria-label="On this page">
+            <ul class="toc">
+              {
+                tocItems.map((heading, index) => (
+                  <li><a href={`#${heading.slug}`} class:list={[index === 0 && 'active']}>{heading.text}</a></li>
+                ))
+              }
+            </ul>
           </nav>
         </>
       )}
       {hasCalculator && calculatorAnchor && (
-        <a href={`#${calculatorAnchor}`} class="btn toc-jump">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-            <path d="M8 6h8M8 10h2M14 10h2M8 14h2M14 14h2M8 18h2M14 18h2"></path>
-          </svg>
-          Jump to calculator
-        </a>
+        <div class="aside-tool">
+          <p class="t">Article calculator</p>
+          <p>Jump to the embedded calculator and run the example with your own numbers.</p>
+          <a href={`#${calculatorAnchor}`} class="btn btn-ghost toc-jump">Jump to calculator</a>
+        </div>
       )}
     </aside>
   </div>
-
-  {keepGoingItems.length > 0 && (
-    <section class="related-section">
-      <div class="related-inner">
-        <h2>Keep going</h2>
-        <div class="related-grid">
-          {
-            keepGoingItems.map((item) => (
-              <Link class="related-card" to={item.route}>
-                <div class:list={['related-tag', item.kind === 'Guide' && 'related-tag-guide']}>{item.kind}</div>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </Link>
-            ))
-          }
-        </div>
-      </div>
-    </section>
-  )}
 
   <script is:inline>
     (() => {
