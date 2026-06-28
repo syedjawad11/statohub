@@ -1,0 +1,283 @@
+---
+title: "How to Find Outliers: The 1.5×IQR Rule & Formula"
+description: "Learn how to find outliers using the 1.5×IQR rule. Covers the outlier formula, step-by-step calculation, and a fully worked example with real numbers."
+category: descriptive-statistics
+primaryKeyword: how to find outliers
+keywords:
+  - how to find outliers
+  - formula for outlier
+  - how to calculate outlier
+  - how to find an outlier in statistics
+  - outlier formula
+  - outliers formula
+phase: 1
+calculator: outlier
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+An **outlier** is a data point that sits far outside the typical range of your dataset — so far that it stands apart from the rest of the values. Knowing how to find outliers lets you catch data-entry errors, identify rare events, and decide whether extreme values deserve closer investigation before they distort your analysis. The most widely used method is the **1.5×IQR rule**, which sets mathematical fences around your data and flags any value that lands outside them.
+
+This guide covers the outlier formula end to end: what it is, why it works, and how to apply it step by step. You will also learn a second approach — the Z-score method — so that you can choose the right tool depending on your dataset. By the end, you will know exactly how to find an outlier in statistics without guesswork.
+
+---
+
+## What Is an Outlier?
+
+An outlier is any observation that is unusually high or unusually low relative to the bulk of the data. There is no single universal numerical definition that applies to every dataset, which is why statisticians rely on standardised rules rather than subjective eyeballing.
+
+Outliers arise for two quite different reasons. The first is error: a patient's weight entered as 1 900 kg instead of 90 kg, a temperature logged in Fahrenheit when the rest of the column uses Celsius, or a duplicate row that doubled one measurement. These data-quality errors should be corrected or removed before analysis.
+
+The second reason is genuine rarity. In a dataset of household incomes, a billionaire is a real outlier — not a mistake. In manufacturing quality control, the single defective unit that slips through is exactly the observation the process engineer needs to study. In clinical trials, the patient who responds dramatically differently from all others may point to a biological subgroup that a future study should target.
+
+Treating both kinds of outlier the same way leads to poor decisions. The outlier formula you learn here is a detection tool; what you do after detection depends on understanding why the extreme value exists.
+
+---
+
+## The 1.5×IQR Rule: The Standard Outlier Formula
+
+The **interquartile range (IQR)** is the spread of the middle 50 % of your data. It is built from two quartiles:
+
+- **Q1** — the 25th percentile, or the median of the lower half of your sorted data
+- **Q3** — the 75th percentile, or the median of the upper half
+
+```
+IQR = Q3 − Q1
+```
+
+The IQR is a robust measure of spread because it ignores the top and bottom 25 % of values entirely. A single extreme value cannot pull Q1 or Q3 the way it can drag the mean or standard deviation.
+
+The 1.5×IQR outlier formula defines two boundary fences:
+
+```
+Lower fence = Q1 − 1.5 × IQR
+Upper fence = Q3 + 1.5 × IQR
+```
+
+Any value **below** the lower fence or **above** the upper fence is an outlier. The multiplier 1.5 was established by statistician John Tukey in his landmark 1977 text *Exploratory Data Analysis* and has been the default in statistical software — from R's `boxplot.stats()` to Python's seaborn — ever since. The [NIST/SEMATECH e-Handbook of Statistical Methods, "Are There Outliers in My Data?"](https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm) recognises this fence approach as the standard initial screen for outliers in a dataset.
+
+A stricter variant uses 3 × IQR instead of 1.5 × IQR to define **extreme outliers** — values so far from center that they are almost certainly errors or once-in-a-generation events. Mild outliers lie between the 1.5× and 3× fences; extreme outliers lie beyond the 3× fence.
+
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
+
+---
+
+## How to Calculate Outlier Fences: A Worked Example
+
+The following five steps show how to apply the outliers formula from scratch.
+
+**Dataset:** 5, 7, 8, 9, 10, 11, 12, 90
+
+The value 90 looks suspicious compared to the rest. The steps below confirm whether it crosses a fence.
+
+### Step 1: Sort the Data
+
+Arrange all values from smallest to largest:
+
+5, 7, 8, 9, 10, 11, 12, 90
+
+The dataset has **n = 8** values.
+
+### Step 2: Find Q1 and Q3
+
+With n = 8 (an even number), the median falls between positions 4 and 5. The lower and upper halves are therefore:
+
+- **Lower half:** 5, 7, 8, 9
+- **Upper half:** 10, 11, 12, 90
+
+The first quartile Q1 is the median of the lower half:
+
+```
+Q1 = (7 + 8) / 2 = 7.5
+```
+
+The third quartile Q3 is the median of the upper half:
+
+```
+Q3 = (11 + 12) / 2 = 11.5
+```
+
+### Step 3: Calculate the IQR
+
+```
+IQR = Q3 − Q1 = 11.5 − 7.5 = 4
+```
+
+### Step 4: Apply the Outlier Formula
+
+```
+Lower fence = Q1 − 1.5 × IQR = 7.5 − (1.5 × 4) = 7.5 − 6 = 1.5
+Upper fence = Q3 + 1.5 × IQR = 11.5 + (1.5 × 4) = 11.5 + 6 = 17.5
+```
+
+### Step 5: Identify Outliers
+
+Compare every data value against the two fences:
+
+| Value | Below 1.5? | Above 17.5? | Outlier? |
+|-------|------------|-------------|----------|
+| 5     | No         | No          | No       |
+| 7     | No         | No          | No       |
+| 8     | No         | No          | No       |
+| 9     | No         | No          | No       |
+| 10    | No         | No          | No       |
+| 11    | No         | No          | No       |
+| 12    | No         | No          | No       |
+| 90    | No         | **Yes**     | **Yes**  |
+
+The value **90** is an outlier because it exceeds the upper fence of 17.5. All other values fall within the fences and are not flagged.
+
+<RelatedLink to={routes.calculator('z-score')} label="Z-score calculator" intro="On a related note" />
+
+---
+
+## Try the Outlier Calculator
+
+Enter any set of comma-separated numbers below and the calculator applies the 1.5×IQR rule automatically. It returns Q1, Q3, IQR, the lower and upper fences, and the count of outliers.
+
+<StatCalc slug="outlier" variant="embed" />
+
+Enter the worked example — 5, 7, 8, 9, 10, 11, 12, 90 — to verify lower fence = 1.5, upper fence = 17.5, and one outlier (90). You can also browse every available statistical tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## The Z-Score Method: A Second Way to Find Outliers
+
+The IQR rule is not the only formula for outlier detection. The Z-score method is an alternative that works from the mean and standard deviation rather than from quartiles.
+
+### How the Z-Score Outlier Formula Works
+
+The Z-score converts each value into a number that expresses how many standard deviations away it sits from the mean:
+
+```
+Z = (x − x̄) / s
+```
+
+where x is the individual value, x̄ is the sample mean, and s is the sample standard deviation. A common rule of thumb labels any value with |Z| greater than 3 an outlier — meaning it sits more than three standard deviations from the mean in either direction.
+
+### Worked Comparison Using the Same Dataset
+
+Using the dataset 5, 7, 8, 9, 10, 11, 12, 90:
+
+Sum = 5 + 7 + 8 + 9 + 10 + 11 + 12 + 90 = 152
+
+```
+x̄ = 152 / 8 = 19
+```
+
+Squared deviations from the mean of 19:
+
+| Value (x) | x − x̄ | (x − x̄)² |
+|-----------|--------|-----------|
+| 5         | −14    | 196       |
+| 7         | −12    | 144       |
+| 8         | −11    | 121       |
+| 9         | −10    | 100       |
+| 10        | −9     | 81        |
+| 11        | −8     | 64        |
+| 12        | −7     | 49        |
+| 90        | +71    | 5041      |
+| **Sum**   |        | **5796**  |
+
+```
+s² = 5796 / (8 − 1) = 5796 / 7 ≈ 828
+s  = √828 ≈ 28.77
+```
+
+Z-score for the value 90:
+
+```
+Z = (90 − 19) / 28.77 = 71 / 28.77 ≈ 2.47
+```
+
+With the |Z| > 3 threshold, the value 90 gives Z ≈ 2.47 — below the cutoff. The Z-score method does not flag 90 as an outlier here, even though it is visually extreme and the IQR rule did flag it.
+
+This illustrates the key limitation of the Z-score approach: a single large outlier pulls the mean and inflates the standard deviation, making it harder for the test to identify its own cause. The IQR method avoids this because Q1 and Q3 are not influenced by values at the extremes. The Z-score method works best when the data is roughly normal and no single point dominates the scale.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="Another helpful calculator is" />
+
+---
+
+## When Should You Remove Outliers?
+
+Detecting an outlier is the easy part. Deciding what to do with it requires judgment.
+
+**Remove the value** when you can confirm it is a measurement error, a data-entry mistake, or an observation from the wrong population. If a dataset tracks adult heights in centimetres and one entry reads 18 cm, that is a recording error, not a genuine short person. Remove it and note the correction.
+
+**Keep the value** when it represents a legitimate, if rare, observation. In financial returns, a 40 % single-day gain is unusual but real. In earthquake data, the largest event may be the most important to model. Removing valid extreme values produces overconfident statistics and misleading conclusions.
+
+**Never remove outliers simply to make statistics look cleaner.** Deleting real data narrows confidence intervals inappropriately, inflates apparent precision, and can reverse a result's direction entirely. Peer-reviewed journals expect any removed value to be justified and reported.
+
+A sound practice is to run the analysis twice — once with the outlier included and once with it removed — and report both. If the conclusions change substantially, the outlier is influential and readers should know that.
+
+<RelatedLink to={routes.article('how-to-find-the-range')} label="how to find the range in statistics" intro="Worth reading next" />
+
+---
+
+## Common Mistakes When Finding Outliers
+
+### Using the Wrong Quartile Definition
+
+Different software packages compute Q1 and Q3 using slightly different interpolation rules (statisticians have catalogued at least nine methods). The differences are small for large datasets but can shift the fence values noticeably when n < 20. Specify which quartile method you used — most analysts default to the Excel or R inclusive quartile — and stay consistent throughout a project.
+
+### Reporting the Fence as the Outlier
+
+A common confusion: the fence value is the boundary, not the outlier itself. In the worked example, 17.5 is the upper fence and 90 is the outlier. The formula for outlier tells you where the edge is; you then compare each observation against that edge.
+
+### Applying the IQR Rule to Non-Numeric Data
+
+The 1.5×IQR outliers formula requires numeric data that can be ranked and divided. It has no meaning applied to categories, names, or binary variables. For categorical data, different anomaly-detection methods apply.
+
+### Forgetting to Re-check After Removing a Value
+
+Removing one extreme value changes the mean, standard deviation, Q1, Q3, and IQR. After removing an outlier, recalculate the fences from scratch. A second outlier that was hidden behind the first may now cross a fence — a phenomenon called *masking*. Repeat the calculation until no new outliers appear.
+
+### Treating the Rule as a Final Decision
+
+The 1.5×IQR rule is a heuristic, not a verdict. A perfectly normal dataset with 200 observations will produce roughly 1 % of values beyond the 1.5×IQR fences by chance — about two flagged values that are not errors. Always pair the formula with domain knowledge before acting.
+
+---
+
+## Frequently Asked Questions
+
+### How do you find outliers in a dataset?
+
+Sort the data, find Q1 (25th percentile) and Q3 (75th percentile), calculate IQR = Q3 − Q1, then compute the lower fence (Q1 − 1.5×IQR) and upper fence (Q3 + 1.5×IQR). Any value below the lower fence or above the upper fence is an outlier. The worked example in this article uses the dataset 5, 7, 8, 9, 10, 11, 12, 90 and finds one outlier: 90, which exceeds the upper fence of 17.5.
+
+### What is the formula for an outlier?
+
+The outlier formula uses two fences: **Lower fence = Q1 − 1.5 × IQR** and **Upper fence = Q3 + 1.5 × IQR**. Values outside those boundaries are outliers. For extreme outliers, replace 1.5 with 3. IQR is the interquartile range (Q3 minus Q1).
+
+### How do I calculate an outlier step by step?
+
+1. Sort the data from smallest to largest. 2. Find Q1 and Q3. 3. Compute IQR = Q3 − Q1. 4. Apply the lower fence = Q1 − 1.5×IQR and upper fence = Q3 + 1.5×IQR. 5. Flag any value that falls outside the fences as an outlier.
+
+### How do you find an outlier in statistics using the Z-score method?
+
+Compute the mean (x̄) and sample standard deviation (s), then calculate Z = (x − x̄) / s for each value. Any observation with |Z| > 3 is typically labelled an outlier. The IQR method is preferred when data is skewed or when one extreme value could distort the mean and standard deviation, as demonstrated in the worked comparison above.
+
+### Should you always remove outliers from your data?
+
+No. Remove an outlier only when you can confirm it is an error or belongs to the wrong population. Real but rare observations should stay in the dataset. When you do remove a value, document what was removed, why, and the effect on the key statistics. Running the analysis with and without the outlier and comparing the results is good practice.
+
+### What is the difference between the 1.5×IQR and 3×IQR outlier formula?
+
+The 1.5×IQR fence flags *mild outliers* — values that are unusual but not necessarily extreme. The 3×IQR fence flags *extreme outliers* — values so far from the center that they almost always warrant investigation or removal. Both formulas start from the same Q1, Q3, and IQR; only the multiplier changes.
+
+### How does the outlier formula work with very small datasets?
+
+With fewer than about 10 observations, Q1 and Q3 are estimated from very few data points, making the IQR fences unreliable. Visual inspection and domain knowledge carry more weight with small samples. For a formal statistical test on a small, normally distributed sample, Grubbs' test provides a hypothesis-testing framework with appropriate critical values.
+
+---
+
+## Summary
+
+The 1.5×IQR rule is the standard method to find outliers in statistics. Find Q1, Q3, and the IQR, then compute the lower fence (Q1 − 1.5×IQR) and upper fence (Q3 + 1.5×IQR). Any value outside those fences is an outlier. The approach is robust to skewed distributions and requires no normality assumption. For approximately normal data, the Z-score method (|Z| > 3) is a practical alternative, though it is less reliable when a single extreme value dominates the scale.
+
+Use the outlier formula to detect; use your judgment to decide. Combine the statistical result with knowledge of how the data was collected and what each observation represents before you draw conclusions or remove any value.
+
+For additional coverage of the IQR method and box-plot construction, see [OpenStax *Introductory Statistics* 2e, Section 2.4 — Box Plots](https://openstax.org/books/introductory-statistics-2e/pages/2-4-box-plots), which works through Tukey's fence approach with further examples in a freely accessible format.
