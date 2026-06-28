@@ -102,3 +102,11 @@ at publish time too (human visibility).
   pmd141 (linear least squares), eda352 (confidence limits for the mean), all curl-verified
   200. **19 of 25 done, 6 remaining.** Next = Session 5: `sample-size`, `t-test`, `t-table`
   (queue rows 20–22).
+- **Session 5 (2026-06-28):** `sample-size`, `t-test`, `t-table` — ✅ published (astro
+  check 0/0/0, build green 56 pages / 0 link violations). Worked examples computed from
+  the real engines: sample-size 95%/margin 0.05/p 0.5 → z ≈ 1.96, nRaw ≈ 384.15 → n = 385;
+  t-test mean=105/μ0=100/sd=15/n=25 → SE=3, t ≈ 1.667, df=24, two-tailed p ≈ 0.109;
+  t-table df=10/95%/two-tailed → critical t ≈ 2.228, alpha = 0.05. Links: NIST prc222
+  (sample sizes required), OpenStax Intro Stats 2e §8.2 (single mean, Student t), NIST
+  eda3672 (critical values of Student's t), all curl-verified 200. **22 of 25 done, 3
+  remaining.** Next = Session 6: `p-value`, `chi-square`, `proportion` (queue rows 23–25).

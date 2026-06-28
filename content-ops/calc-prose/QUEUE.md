@@ -34,9 +34,9 @@ which terms to weave in naturally.
 | 17 | correlation-coefficient | correlation coefficient calculator | pearson correlation; r value; how to calculate correlation | done |
 | 18 | linear-regression       | linear regression calculator     | line of best fit; least squares; slope and intercept | done |
 | 19 | confidence-interval     | confidence interval calculator   | margin of error; 95 percent confidence interval; how to calculate confidence interval | done |
-| 20 | sample-size             | sample size calculator           | how to calculate sample size; margin of error; survey sample size | pending |
-| 21 | t-test                  | t-test calculator                | one sample t test; t statistic; how to calculate t test | pending |
-| 22 | t-table                 | t table                          | t distribution table; critical t value; degrees of freedom | pending |
+| 20 | sample-size             | sample size calculator           | how to calculate sample size; margin of error; survey sample size | done |
+| 21 | t-test                  | t-test calculator                | one sample t test; t statistic; how to calculate t test | done |
+| 22 | t-table                 | t table                          | t distribution table; critical t value; degrees of freedom | done |
 | 23 | p-value                 | p value calculator               | how to find p value; p value from test statistic; significance level | pending |
 | 24 | chi-square              | chi square calculator            | chi square test; chi square statistic; goodness of fit | pending |
 | 25 | proportion              | proportion calculator            | how to calculate proportion; sample proportion; ratio and proportion | pending |

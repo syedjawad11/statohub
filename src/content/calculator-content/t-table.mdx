@@ -1,0 +1,74 @@
+---
+calculator: t-table
+keywords:
+  - t table
+  - t distribution table
+  - critical t value
+  - degrees of freedom
+draft: false
+updatedDate: 2026-06-28
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+A t table gives the critical value from the Student's t distribution for a chosen
+confidence level, degrees of freedom, and number of tails. That critical value is
+the cutoff your t statistic must beat to be significant. This t table calculator
+replaces flipping through a printed table — enter the degrees of freedom, pick a
+confidence level and tail count, and it returns the exact critical t value.
+
+## How to use this calculator
+
+1. Enter the **degrees of freedom** — for a one-sample test this is the sample
+   size minus one (`n − 1`).
+2. Pick a **confidence level** (90%, 95%, or 99%).
+3. Choose **one-tailed** or **two-tailed**, depending on whether your test looks
+   for a difference in one direction or either direction.
+4. Read the **critical t value**. Compare your test's t statistic against it: if
+   your value is larger in magnitude, the result is significant at that level.
+
+Fewer degrees of freedom push the critical value higher, because small samples
+carry more uncertainty.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="For a related calculation" />
+
+## Worked example
+
+Suppose you ran a test with 10 degrees of freedom and want the two-tailed critical
+value at 95% confidence. A two-tailed 95% level splits the remaining 5% into two
+tails of 2.5% each:
+
+```
+confidence level = 0.95
+alpha = 1 − 0.95 = 0.05
+tail area each side = 0.025
+degrees of freedom = 10
+critical t ≈ 2.228
+```
+
+So any t statistic above 2.228 or below −2.228 is significant at the 5% level with
+10 degrees of freedom. For the full reference grid of these cutoffs, see the
+NIST/SEMATECH e-Handbook table of
+[critical values of the Student's t distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm).
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="You may also find this useful" />
+
+## Frequently asked questions
+
+### What are degrees of freedom in a t distribution table?
+
+Degrees of freedom reflect how much independent information your sample carries.
+For a one-sample t-test it equals `n − 1`. As degrees of freedom rise, the t
+distribution narrows toward the standard normal, so the critical t value shrinks.
+
+### What is the difference between a one-tailed and two-tailed critical t value?
+
+A one-tailed value puts the whole alpha in a single tail, so it is smaller and
+easier to exceed. A two-tailed value splits alpha across both tails, raising the
+cutoff because you are testing for a difference in either direction.
+
+### Why does my critical t value differ slightly from a printed table?
+
+Printed tables round to two or three decimals and list only common degrees of
+freedom. This calculator computes the exact value, so it may differ in the last
+digit from a rounded textbook entry.

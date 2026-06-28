@@ -1,0 +1,78 @@
+---
+calculator: sample-size
+keywords:
+  - sample size calculator
+  - how to calculate sample size
+  - margin of error
+  - survey sample size
+draft: false
+updatedDate: 2026-06-28
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+A sample size calculator tells you how many people or observations you need to
+survey so that your estimate of a population proportion is precise enough. Instead
+of guessing, it works backwards from the margin of error and confidence level you
+want and returns the smallest sample that meets them. Enter a confidence level, a
+target margin of error, and an estimated proportion, and the tool returns the
+required sample size.
+
+## How to use this calculator
+
+1. Pick a **confidence level** (90%, 95%, or 99%) — how sure you want to be that
+   the true proportion falls within your margin.
+2. Enter the **margin of error** as a decimal — for example `0.05` for ±5%.
+3. Enter an **estimated proportion** (`p`). If you have no prior estimate, use
+   `0.5`, which is the most conservative choice and gives the largest sample.
+4. Read the **required sample size**, always rounded up to a whole person.
+
+A smaller margin of error or a higher confidence level both push the required
+sample size up, because tighter, more certain estimates need more data.
+
+<RelatedLink to={routes.calculator('confidence-interval')} label="confidence interval calculator" intro="For a related calculation" />
+
+## Worked example
+
+Suppose you want 95% confidence, a margin of error of 0.05, and you use the
+conservative proportion `p = 0.5`. The critical z value for 95% confidence is
+about 1.96.
+
+```
+n = z² × p × (1 − p) / margin²
+n = 1.96² × 0.5 × 0.5 / 0.05²
+n = 3.8415 × 0.25 / 0.0025
+n = 0.9604 / 0.0025 ≈ 384.15
+```
+
+Because you can't survey a fraction of a person, always round **up**:
+
+```
+required sample size = 385
+```
+
+So you need 385 respondents to estimate the proportion within ±5% at 95%
+confidence. For the formula and the assumptions behind it, see the NIST/SEMATECH
+e-Handbook section on
+[sample sizes required for a proportion](https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm).
+
+<RelatedLink to={routes.calculator('proportion')} label="proportion calculator" intro="Another helpful calculator is" />
+
+## Frequently asked questions
+
+### Why does the survey sample size use a proportion of 0.5?
+
+The product `p × (1 − p)` is largest when `p = 0.5`, so using 0.5 yields the most
+conservative (largest) sample size. If you have a credible prior estimate — say a
+proportion near 0.2 — plugging it in lowers the required sample.
+
+### How does the margin of error change the sample size?
+
+Halving the margin of error roughly quadruples the required sample, because the
+margin appears squared in the denominator. Tighter precision is expensive in data.
+
+### Does this account for a finite population?
+
+No — this formula assumes a large population. For a small, finite population you can
+apply a finite population correction, which reduces the required sample when your
+group is only a few times larger than the sample itself.

@@ -1,0 +1,74 @@
+---
+calculator: t-test
+keywords:
+  - t-test calculator
+  - one sample t test
+  - t statistic
+  - how to calculate t test
+draft: false
+updatedDate: 2026-06-28
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+A t-test calculator checks whether a sample mean differs significantly from a
+hypothesized value. This one-sample t-test takes your sample mean, the
+hypothesized mean, the sample standard deviation, and the sample size, then
+returns the t statistic, its degrees of freedom, and a two-tailed p-value. It is
+the right tool when the population standard deviation is unknown and your sample
+is small.
+
+## How to use this calculator
+
+1. Enter the **sample mean** — the average of your observed data.
+2. Enter the **hypothesized mean** — the value you are testing against (often a
+   target or historical figure).
+3. Enter the **sample standard deviation** of your data.
+4. Enter the **sample size** (`n`), then read the t statistic, the degrees of
+   freedom (`n − 1`), and the two-tailed p-value.
+
+A p-value below your significance level (commonly 0.05) is evidence that the
+sample mean differs from the hypothesized mean.
+
+<RelatedLink to={routes.calculator('t-table')} label="t table calculator" intro="For a related calculation" />
+
+## Worked example
+
+Suppose a sample of 25 values has a mean of 105 and a standard deviation of 15,
+and you are testing against a hypothesized mean of 100.
+
+First find the standard error, then the t statistic:
+
+```
+standard error = sd / √n = 15 / √25 = 15 / 5 = 3
+t = (sample mean − hypothesized mean) / SE = (105 − 100) / 3 ≈ 1.667
+degrees of freedom = n − 1 = 24
+```
+
+With t ≈ 1.667 on 24 degrees of freedom, the two-tailed p-value is about
+**0.109**. Because 0.109 is greater than 0.05, you would not reject the
+hypothesis that the true mean is 100 — the difference could plausibly be chance.
+For the method and assumptions behind the one-sample t procedure, see the OpenStax
+[single population mean using the Student t distribution](https://openstax.org/books/introductory-statistics-2e/pages/8-2-a-single-population-mean-using-the-student-t-distribution).
+
+<RelatedLink to={routes.calculator('confidence-interval')} label="confidence interval calculator" intro="On a related note" />
+
+## Frequently asked questions
+
+### When should I use a t-test instead of a z-test?
+
+Use a t-test when the population standard deviation is unknown and you estimate it
+from the sample, especially with small samples. As the sample size grows, the t
+distribution approaches the normal, and the two tests give similar answers.
+
+### What does the t statistic mean?
+
+The t statistic measures how many standard errors the sample mean sits from the
+hypothesized mean. Larger absolute values indicate a bigger, less likely-by-chance
+gap between the sample and the hypothesized value.
+
+### Why is this a two-tailed p-value?
+
+A two-tailed test asks whether the mean differs in either direction. The
+calculator doubles the one-tailed tail area so that a difference above or below the
+hypothesized mean both count toward significance.
