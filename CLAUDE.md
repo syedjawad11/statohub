@@ -96,6 +96,35 @@ At the end of each session, append a dated entry to the Session log below.
 
 ## Session log
 
+- **2026-06-28 (calc-prose SESSION 5)** — **Published 3 more calculator teaching
+  blocks — `sample-size`, `t-test`, `t-table` — via the SESSION-PLAN manual procedure.
+  22 of 25 done, 3 remaining.** First reconciled state: `git fetch` then counted against
+  `origin/main` (local == origin, 0/0) — confirmed **Session 4 (correlation-coefficient/
+  linear-regression/confidence-interval) was already published** (19 MDX files on origin,
+  QUEUE rows 17–19 `done`), even though the CLAUDE.md main log only recorded through S3;
+  the SESSION-PLAN progress log carried the S4 detail. So the true next batch was **Session
+  5 = rows 20–22**. Wrote each block **inline** (short ~430-word teaching blocks), each from
+  a worked example **computed from the real engine** via a throwaway vitest harness (deleted
+  after): **sample-size** level 0.95 / margin 0.05 / p 0.5 → z ≈ 1.95996, nRaw ≈ 384.15 →
+  required n = **385** (`sample-size.ts` + `zCritical`); **t-test** mean 105 / μ0 100 / sd 15
+  / n 25 → SE 3, t ≈ **1.667**, df 24, two-tailed p ≈ **0.109** (`t-test.ts` + `studentTCdf`);
+  **t-table** df 10 / 95% / two-tailed → critical t ≈ **2.228**, alpha 0.05 (`t-table.ts` +
+  `tCritical`). External links curl-verified 200: NIST prc222 (*sample sizes required*) for
+  sample-size; OpenStax Intro Stats 2e §8.2 (*single mean, Student t*) for t-test; NIST
+  eda3672 (*critical values of the Student's t distribution*) for t-table. Each `<RelatedLink>`
+  callout uses a distinct intro from the approved pool (no repeats on a page) and links only
+  through typed `routes.calculator(...)`. Build gate green: **astro check 0/0/0, 56 pages,
+  0 link violations** (page count unchanged — these render on existing `/calculators/<slug>/`
+  pages; the link gate checked 2062 internal links). Flipped all 3 to `draft:false`, marked
+  QUEUE rows 20–22 `done`, logged S5 in SESSION-PLAN. Staged ONLY the 3 new MDX + QUEUE.md +
+  SESSION-PLAN.md (left the untracked root `statohub_27-jun-2026_…broken…csv` untouched),
+  committed `20b8c7f`, pushed → Actions run `28332811351` **success** incl. Cloudflare deploy
+  → all 3 pages verified live (HTTP 200, teaching block rendered). **STATE: 22 of 25 calc
+  teaching blocks done, 3 remaining.** **>> NEXT = SESSION 6 (final calc-prose batch) <<**
+  `p-value`, `chi-square`, `proportion` (QUEUE rows 23–25); same procedure in
+  [`content-ops/calc-prose/SESSION-PLAN.md`](content-ops/calc-prose/SESSION-PLAN.md). (Article
+  routines remain PAUSED from TASK-018; the theme refresh TASK-019→021 is shipped live.)
+
 - **2026-06-27 (THEME REFRESH reviewed -> all 3 tasks CLOSED + shipped live)** —
   **Codex returned TASK-019/020/021 all `DONE`; reviewed each against the real
   artifacts (not just Work Logs), set all three `CLOSED` with Reviews, then committed
