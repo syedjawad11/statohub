@@ -64,6 +64,15 @@ Produce `src/content/articles/<slug>.mdx`:
   your statement matches it. Never fabricate figures, study results, or citations.
 - **Internal links only via the typed `Link` / `url(id)` registry** — never
   hand-type an internal href. Match how existing pages do it.
+- **Weave 3–4 `<RelatedLink>` callouts through the body (REQUIRED).** Import
+  `RelatedLink` and place one roughly after every 2–3 H2 sections — never dump them
+  at the end, never zero. Each `to=` must be a typed route to a page that exists now
+  (standalone calculator, calculators hub, or a **published** sibling article — not a
+  draft). Vary the `intro` across the page from the approved pool only ("Worth reading
+  next", "On a related note", "You may also find this useful", "For a related
+  calculation", "Another helpful calculator is", "See also"), never repeating it; or
+  omit `intro` and let the component auto-rotate. Copy the pattern from a published
+  article such as `src/content/articles/frequency-table.mdx`.
 - **Formulas must be MDX-safe — NO raw LaTeX.** There is no math renderer, and
   MDX reads `{` as a JS expression, so `$$...$$` / `\dfrac{}` / any `\cmd{}` will
   **break the build**. Write every formula as a **fenced code block** with plain

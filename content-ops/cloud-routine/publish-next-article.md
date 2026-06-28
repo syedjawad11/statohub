@@ -119,8 +119,11 @@ Start `draft: true`. You flip it to `false` only after BOTH gates pass (Step 5).
 ```
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
 import { routes } from '../../lib/links';
 ```
+(`RelatedLink` is required -- every article weaves related-link callouts; see the
+woven-callouts rule below.)
 
 **Body** -- follow the playbook. Hard rules that BREAK THE BUILD if ignored:
 
@@ -154,6 +157,26 @@ import { routes } from '../../lib/links';
   (`routes.calculator("<calc>")`, only if standalone), the calculators hub
   (`routes.calculatorsHub()`), and home (`routes.home()`). When unsure, link the
   calculator or hub -- never an unpublished article. Keep `related: []`.
+- **Woven related-link callouts (REQUIRED -- this is the site standard).** Beyond
+  the inline prose links above, weave **3-4 `<RelatedLink>` callouts** through the
+  body of every article -- and **never dump them at the end**. Place one roughly
+  after every 2-3 H2 sections (between a `---` divider and the next `##`), so they
+  are distributed across the article, not clustered. Each callout is:
+  ```
+  <RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
+  ```
+  Rules: the `to=` target MUST be a typed route that EXISTS NOW (a standalone
+  calculator via `routes.calculator('<slug>')`, the calculators hub via
+  `routes.calculatorsHub()`, or a PUBLISHED sibling article via
+  `routes.article('<slug>')` -- never a draft/planned article, or the link gate
+  fails). The `intro` phrase MUST vary across the page -- pull from the approved
+  pool ONLY: "Worth reading next", "On a related note", "You may also find this
+  useful", "For a related calculation", "Another helpful calculator is", "See also"
+  -- and never repeat the same phrase twice on one page. (You MAY omit `intro`
+  entirely; the component then auto-picks a varied phrase deterministically from
+  that same pool per route.) Pick targets that are genuinely related to the section
+  they sit under -- the paired calculator, a sibling concept, the hub. This is
+  separate from the auto-generated "related calculators" sidebar; do not skip it.
 - **External links: aim for >= 2 authoritative sources** (.gov/.edu/NIST/SEMATECH/
   peer-reviewed/official docs; the NIST/SEMATECH e-Handbook is a safe default). One
   is the hard floor the build tolerates, but **two is the target** for a teaching
@@ -255,8 +278,25 @@ if not re.search(r'^draft:\s*true\s*$', fm, re.MULTILINE):
     hard.append("frontmatter draft must be 'true' until both gates pass")
 if re.search(r'\]\((/[^)]*)\)', body) or re.search(r'href="/', body):
     hard.append("hand-typed internal link found (use <Link to={routes.X()}>)")
+# woven related-link callouts: at least one is REQUIRED (the site standard) -- never publish with zero
+callouts = re.findall(r'<RelatedLink\b[^>]*>', body)
+if not callouts:
+    hard.append("no <RelatedLink> woven callout found (the site standard requires 3-4 woven through the body)")
 
 # ---------------- WARNINGS (log, do not block) ----------------
+# woven callouts: target is 3-4 distributed; intros must vary and come from the approved pool
+APPROVED_INTROS = {"worth reading next","on a related note","you may also find this useful",
+                   "for a related calculation","another helpful calculator is","see also"}
+if 0 < len(callouts) < 3:
+    warn.append(f"only {len(callouts)} woven <RelatedLink> callout(s); target is 3-4 distributed through the body")
+_intros = [s.strip().lower() for s in re.findall(r'<RelatedLink\b[^>]*\bintro="([^"]*)"', body)]
+_seen = set()
+for _it in _intros:
+    if _it and _it not in APPROVED_INTROS:
+        warn.append(f"RelatedLink intro '{_it}' is not in the approved phrase pool")
+    if _it in _seen:
+        warn.append(f"RelatedLink intro '{_it}' is repeated on the page (intros must vary)")
+    _seen.add(_it)
 # external links + anchor quality
 links = re.findall(r'\[([^\]]*)\]\((https?://[^)]+)\)', body)
 ext = [(a, u) for (a, u) in links]
@@ -479,4 +519,6 @@ or `PUBLISH_FAILED [<step>]: <reason>` (pushed nothing; safe to re-run)
 - `draft: true` until BOTH the mechanical QA gate and the build gate pass.
 - Internal links only to pages that exist now, only via `Link`/`url()`/`routes`.
 - No LaTeX; formulas are fenced Unicode. No H1 in the body. >= 2000 words.
+- Weave 3-4 `<RelatedLink>` callouts through the body (varied approved intros,
+  typed routes to existing pages) -- never dump them at the end, never zero.
 - Don't touch sibling concerns (calculator engines, CI config, CLAUDE.md).

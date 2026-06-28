@@ -122,6 +122,21 @@ SEO check into one of three tiers. Each rule below is tagged with its tier.
 - **All internal links go through the typed registry** — use the `Link`
   component / `url(id)` helper. **Never hand-type an internal href.** This is a
   build contract (§7).
+- **Woven related-link callouts (REQUIRED, the site standard).** In addition to
+  inline prose links, every article carries **3–4 `<RelatedLink>` callouts woven
+  through the body — never dumped at the end.** Place roughly one after every 2–3
+  H2 sections so they distribute across the page. Import
+  `import RelatedLink from '../../components/RelatedLink.astro';` and write each as
+  `<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />`.
+  The `to=` target must be a typed route to a page that **exists now** (standalone
+  calculator, calculators hub, or a **published** sibling article — never a draft).
+  The `intro` must **vary across the page** and come only from the approved pool —
+  "Worth reading next", "On a related note", "You may also find this useful", "For
+  a related calculation", "Another helpful calculator is", "See also" — and never
+  repeat on one page. You may omit `intro`; the component then auto-rotates a varied
+  phrase from that same pool per route. This is separate from the auto-generated
+  "related calculators" sidebar — do not skip it. (HARD: at least one woven callout;
+  WARN: fewer than 3, or an off-pool / repeated intro.)
 
 ## 7. statohub build contracts (HARD — a violation breaks the build)
 - **Frontmatter must satisfy `src/content/config.ts`:** `title`, `description`
