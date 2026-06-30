@@ -1,0 +1,336 @@
+---
+title: "How to Find the Mean: Average Formula and Examples"
+description: "Learn how to find the mean with the step-by-step average formula. Covers the mean formula, worked examples, and how to calculate average in math."
+category: descriptive-statistics
+primaryKeyword: how to find the mean
+keywords:
+  - how to find the mean
+  - average formula
+  - equation for average
+  - formula for an average
+  - formula for average
+  - how do i find an average
+  - how do i find average
+  - how to calculate average
+  - how to find average
+  - how to find the average of numbers
+  - how to find the mean in math
+  - mean formula
+phase: 1
+calculator: mean
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+To find the mean, add all the values in a dataset and divide by how many values there are. That single operation — the core of what statisticians call the average formula — is one of the most used calculations in mathematics, science, business, and everyday life. Once you know how to find the mean, you can summarize any collection of numbers in a single value that represents the whole group.
+
+This article explains the mean formula in plain terms, walks through the calculation step by step, works through a complete numeric example, and covers the common variations you will encounter in math class and beyond.
+
+---
+
+## What Is the Mean?
+
+The mean is the arithmetic average of a set of numbers. It measures the center of a dataset by spreading the total equally across every value. If a teacher wanted every student to receive the same score and then added up all the scores, the score each student would get is the mean.
+
+More precisely, the mean is the value such that the sum of the dataset is preserved. Replace every value in a list with the mean, and the total stays the same. That property — sum preservation — is why the mean formula is defined as sum divided by count.
+
+Statisticians write the mean in two ways:
+
+- **x̄** (x-bar) — the sample mean, used when the data is a subset drawn from a larger population.
+- **μ** (mu) — the population mean, used when the data covers an entire population.
+
+Both are calculated with the same basic equation for average. The symbol changes to indicate which type of data you have, but the arithmetic is identical.
+
+---
+
+## The Mean Formula
+
+The mean formula is:
+
+```
+Mean = Sum of all values / Number of values
+```
+
+In formal mathematical notation, the equation for average is written:
+
+```
+x̄ = (x₁ + x₂ + x₃ + ... + xₙ) / n
+```
+
+Using the summation operator Σ, the same formula for average becomes:
+
+```
+x̄ = Σxᵢ / n
+```
+
+where:
+- **Σxᵢ** is the sum of every individual value in the dataset
+- **n** is the total count of values
+
+This formula for an average applies the same way whether you have 5 numbers or 5 000. Sum everything, then divide by the count. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the arithmetic mean as the primary measure of central tendency and confirms this formula applies to both sample and population data.
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="For a related calculation" />
+
+---
+
+## How to Find the Mean: Step-by-Step
+
+Learning how to find the mean in math requires four repeatable steps. The same four steps work for any list of numbers, large or small.
+
+### Step 1: List All the Values
+
+Write out every value in the dataset. Count repeated values separately — if the number 7 appears three times, it contributes to the sum three times and to the count three times.
+
+### Step 2: Add All the Values Together
+
+Sum every value in the list to get the total. In the mean formula, this is the Σxᵢ term. Include every data point without skipping any.
+
+### Step 3: Count How Many Values Are in the Dataset
+
+Count the total number of individual values. This is `n` in the average formula. Do not count the sum itself — count the separate data points that make up the sum.
+
+### Step 4: Divide the Sum by the Count
+
+Divide the result from Step 2 by the result from Step 3. The quotient is the mean.
+
+```
+Mean = Sum ÷ Count
+```
+
+That is the complete process for how to find the average of numbers: sum then divide. The mean formula never changes; only the input data does.
+
+---
+
+## Worked Example: Finding the Mean of Five Test Scores
+
+A student received the following scores on five math tests: **72, 85, 91, 68, 88**.
+
+The goal is to find the mean score.
+
+### Step 1: List the Values
+
+The five scores are: 72, 85, 91, 68, 88.
+
+### Step 2: Add Them Together
+
+```
+72 + 85 + 91 + 68 + 88 = 404
+```
+
+### Step 3: Count the Values
+
+There are **5** test scores.
+
+### Step 4: Divide
+
+```
+Mean = 404 / 5 = 80.8
+```
+
+The mean test score is **80.8**.
+
+This tells you that, on average, the student scored 80.8 points per test. No single test produced exactly that score, but 80.8 is the central value that balances the highest result (91) and the lowest (68) across all five tests.
+
+### Sense-Check Your Answer
+
+A quick way to verify any mean: the result must lie between the minimum and maximum values in the dataset. Here the scores range from 68 to 91, so a mean of 80.8 falls squarely in that range. If your calculated mean falls outside the range of your original data, an arithmetic error occurred — retrace the addition step first.
+
+### The Mean Versus Individual Values
+
+The mean is not necessarily a value that appears in the original list. In this example, no test score was exactly 80.8. That is normal — the mean represents the distribution of the total, not one specific observation. Think of it as the score each test would have if the total points were shared equally across all five tests: 5 × 80.8 = 404, which is exactly the original sum.
+
+<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average? Types and Meaning" intro="Worth reading next" />
+
+---
+
+## Population Mean vs. Sample Mean
+
+When statisticians talk about how to find the mean, they draw a distinction between the **population mean** (μ) and the **sample mean** (x̄). The arithmetic is identical — sum divided by count — but the notation and interpretation differ based on the scope of the data.
+
+### Population Mean (μ)
+
+If you measure every member of a defined group, you have a population, and the mean is written μ.
+
+```
+μ = Σxᵢ / N
+```
+
+`N` (capital) is the total size of the entire population.
+
+Example: you record the height of every student in one specific classroom of 30. Those 30 heights are the full population, so you compute μ.
+
+### Sample Mean (x̄)
+
+Most of the time in statistics, you work with a sample — a subset drawn from a larger population — and the mean is written x̄.
+
+```
+x̄ = Σxᵢ / n
+```
+
+`n` (lowercase) is the number of values in your sample.
+
+Example: you survey 200 of the 10 000 customers in a database. Your 200 responses form a sample, and x̄ estimates what μ would be if you surveyed everyone.
+
+Both calculations satisfy the average formula: sum divided by count. The symbol is all that changes. The key practical point: if your data is a sample (almost always the case in research), write x̄ and acknowledge it is an estimate, not a definitive population figure.
+
+---
+
+## How to Calculate Average in Special Cases
+
+The standard mean formula handles most datasets cleanly. A few situations call for an adjusted approach.
+
+### Weighted Mean
+
+When some values should carry more influence than others, a weighted mean assigns a weight (wᵢ) to each value before summing.
+
+```
+Weighted Mean = Σ(wᵢ × xᵢ) / Σwᵢ
+```
+
+A common example: a course where a final exam counts 60% of the grade and homework counts 40%. If a student scores 82 on the exam and 90 on homework, the weighted mean is:
+
+```
+(0.60 × 82 + 0.40 × 90) / (0.60 + 0.40) = (49.2 + 36.0) / 1 = 85.2
+```
+
+A simple average of 82 and 90 would give 86, overstating the effect of the lower-weighted homework. The weighted mean correctly reflects the exam's greater importance.
+
+### How to Find the Average of Numbers with Outliers
+
+A single extreme value (outlier) can pull the mean far from the center of most data. If nine factory workers earn $42 000 per year and the CEO earns $900 000, the mean salary is:
+
+```
+(9 × 42 000 + 900 000) / 10 = 1 278 000 / 10 = $127 800
+```
+
+That mean of $127 800 misrepresents what a typical worker earns. When outliers are present, the **median** (the middle value of sorted data) is often a more informative measure of center. The mean formula is still valid — it just tells a different story than the median does.
+
+### Finding the Mean of a Frequency Table
+
+When data appears as a frequency table — each value listed with how many times it occurs — multiply each value by its frequency, sum those products, then divide by the total count:
+
+```
+Mean = Σ(xᵢ × fᵢ) / Σfᵢ
+```
+
+This is mathematically equivalent to listing every individual value and applying the standard average formula. The frequency table form simply compresses repeated entries.
+
+<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="Another helpful calculator is" />
+
+---
+
+## Try the Mean Calculator
+
+Use the calculator below to find the mean of any dataset. Enter your values and it applies the average formula instantly — no arithmetic required.
+
+<StatCalc slug="mean" variant="embed" />
+
+To open the full calculator with additional options, visit the <Link to={routes.calculator('mean')}>mean calculator page</Link>. You can also explore every available tool on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+
+---
+
+## The Average Formula in Different Notations
+
+The mean formula appears in several notations across textbooks, software, and research. Each version expresses the same equation for average using different typographic conventions.
+
+### Sigma Notation
+
+```
+x̄ = (1/n) × Σᵢ₌₁ⁿ xᵢ
+```
+
+The `Σᵢ₌₁ⁿ` makes explicit that the summation runs from the first value (i = 1) to the last (i = n). The `(1/n)` factor is division by n written as multiplication — identical to the standard division form.
+
+### Plain-Language Formula for Average
+
+```
+Average = Sum of all values / Number of values
+```
+
+This is the everyday version of the same rule. When a question asks you to "find the average," this is the formula it is testing.
+
+### Mean Formula in Spreadsheets
+
+In Microsoft Excel and Google Sheets, `=AVERAGE(range)` computes the mean automatically — it sums the selected cells and divides by the count of non-empty ones. Understanding the underlying mean formula helps you audit the output and adapt it when cells contain zeros that should be excluded, or when you need a weighted result.
+
+### Research Notation
+
+Published research papers may write the sample mean as M (in APA style), x̄ (mathematical notation), or simply "the mean" in prose. All three refer to the same quantity: Σxᵢ / n. The formula for an average does not change; only the typographic style does.
+
+<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="On a related note" />
+
+---
+
+## Common Mistakes When Finding the Mean
+
+Even with a simple four-step process, certain errors come up repeatedly.
+
+### Counting the Sum Instead of the Values
+
+When you reach Step 3 (count the values), count the number of data points you summed — not the total itself. If a dataset has 8 values that add to 48, you divide 48 by 8, not by 48 or 1. A quick habit: write down `n = ` before you add anything, so you have the count ready before you compute the sum.
+
+### Accidentally Including Outliers or Errors
+
+A typo in a dataset — entering 880 instead of 88 — can radically distort the mean. Always scan the list for obviously wrong values before calculating. If a data point seems implausibly large or small, verify it against the original source.
+
+### Dividing by the Wrong Count When Values Are Missing
+
+If a dataset has 10 slots but one value was never recorded, dividing by 10 (the number of slots) instead of 9 (the number of actual values) gives a mean that is too low. Count only the values you actually summed.
+
+### Rounding Intermediate Results
+
+Rounding the sum before dividing introduces rounding error that compounds in the final answer. Carry full precision until the last step, then round the mean to the appropriate number of decimal places for your context.
+
+### Treating the Mean as the Only Measure of Center
+
+The mean is the most common summary statistic, but it is not always the most representative. For skewed distributions or datasets with outliers, the median or mode may communicate the center better. Knowing how to find the mean is essential; knowing when to use it instead of the median is equally important.
+
+---
+
+## Frequently Asked Questions
+
+### How do I find an average?
+
+Add all the numbers together, then divide by how many numbers there are. For example, the average of 10, 20, and 30 is (10 + 20 + 30) / 3 = 60 / 3 = 20. That is the complete average formula: Sum ÷ Count.
+
+### What is the formula for average?
+
+The formula for average (or mean formula) is: Average = Sum of all values / Number of values. In shorthand: x̄ = Σxᵢ / n, where Σxᵢ is the total of all values and n is the count of values.
+
+### How do I find average in a list of numbers?
+
+Follow four steps: (1) list every number, (2) add them all together to get the sum, (3) count how many numbers are in the list, (4) divide the sum by the count. The result is the mean — the average of those numbers.
+
+### How to find the mean in math class?
+
+In a math class, finding the mean uses the same four steps as in real-world statistics: list, sum, count, divide. If your list is 5, 8, 3, 9, and 5, the sum is 30, the count is 5, and the mean is 30 / 5 = 6. The mean formula always works the same way regardless of the specific numbers.
+
+### How to calculate average when one value is unknown?
+
+Rearrange the mean formula to solve for the missing value. If you need a mean of 80 across 4 tests and your first three scores are 75, 82, and 79, the required fourth score is: (80 × 4) − (75 + 82 + 79) = 320 − 236 = 84. This works because the mean formula requires the sum to equal Mean × Count.
+
+### What is the equation for average, and why does it work?
+
+The equation for average is x̄ = Σxᵢ / n. It works because dividing the total by the count distributes the sum evenly across every value — exactly what an average represents. The mean is the unique value you can substitute for every data point without changing the total. That property (sum preservation) is the mathematical definition of the arithmetic mean.
+
+### Does the mean formula change for large datasets?
+
+No. Sum divided by count applies regardless of how many values you have. For large datasets you will use software — Excel, Python, or a calculator — to handle the arithmetic, but the underlying calculation is identical to what you do by hand with five values. The formula for average never changes; only the tools you use to execute it differ.
+
+### How to find the mean of grouped data?
+
+When data is organized into class intervals (e.g., "10–19", "20–29"), use the midpoint of each interval as xᵢ and the frequency of that interval as fᵢ. Then apply the frequency-weighted mean formula: Mean = Σ(xᵢ × fᵢ) / Σfᵢ. This gives an estimate of the true mean because the original individual values are no longer available.
+
+---
+
+## Summary
+
+Finding the mean always comes down to one rule: **Mean = Sum ÷ Count**. In formal notation that is x̄ = Σxᵢ / n for a sample mean or μ = Σxᵢ / N for a population mean. The four steps — list, sum, count, divide — produce the result every time.
+
+The mean formula is the foundation of descriptive statistics. Once you can compute it reliably, you have the basis for understanding variance, standard deviation, z-scores, and every inferential test that follows. The [OpenStax *Introductory Statistics* (2e), Section 2.3 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-3-measures-of-the-center-of-the-data) provides worked examples and explains how the mean, median, and mode compare when data is symmetric versus skewed — a natural next step after mastering the average formula.
+
+To put the formula into practice immediately, enter your values into the <Link to={routes.calculator('mean')}>mean calculator</Link> and verify your results.
