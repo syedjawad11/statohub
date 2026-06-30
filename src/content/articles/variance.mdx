@@ -1,0 +1,311 @@
+---
+title: "Variance: Definition, Formula & vs Standard Deviation"
+description: "Variance measures how spread out data values are from the mean. Learn the variance definition, formula for variance, and how variance vs standard deviation differ."
+category: descriptive-statistics
+primaryKeyword: variance
+keywords:
+  - variance
+  - formula for variance
+  - how to calculate variance
+  - how to find variance
+  - standard deviation versus variance
+  - standard deviation vs variance
+  - variance definition
+  - variance equation
+  - variance vs standard deviation
+phase: 1
+calculator: variance
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Variance is a measure of how spread out the values in a dataset are around their mean. A high variance means values are widely scattered; a low variance means they cluster tightly near the average. Knowing how to calculate variance is a foundational step in statistics, because variance also underlies standard deviation, t-tests, ANOVA, regression models, and almost every other analytical technique you will encounter.
+
+This article covers the variance definition in plain terms, shows the variance equation for both population and sample data, walks through a complete step-by-step worked example with real numbers, and explains the practical difference between variance vs standard deviation so you know when to use each.
+
+---
+
+## What Is Variance?
+
+**Variance definition:** Variance measures the average of the squared differences between each data value and the mean of the dataset. It quantifies the degree of spread in a single number.
+
+If every value in a dataset were identical to the mean, the variance would be zero — no spread at all. The more the values scatter away from the mean, the larger the variance grows. Squaring the differences serves two purposes: it removes negative signs so that values below the mean do not cancel out values above it, and it gives extra weight to values that are far from the mean.
+
+Variance appears in two forms depending on whether your data represents an entire population or a sample drawn from a larger population:
+
+- **Population variance (σ²)** — used when you have measured every member of the group you care about.
+- **Sample variance (s²)** — used when you have measured only a subset and want to draw conclusions about the whole population.
+
+The distinction matters because the two formulas use different denominators, and getting this right affects every downstream calculation that depends on the variance.
+
+---
+
+## The Variance Formula
+
+The population variance formula and the sample variance formula differ only in their denominator.
+
+**Population variance (σ²):**
+
+```
+σ² = Σ(xᵢ − μ)² / N
+```
+
+where:
+- `Σ` is the summation operator (add up all the values that follow)
+- `xᵢ` is each individual data value
+- `μ` (mu) is the population mean
+- `N` is the total number of values in the population
+
+**Sample variance (s²):**
+
+```
+s² = Σ(xᵢ − x̄)² / (n − 1)
+```
+
+where:
+- `x̄` (x-bar) is the sample mean
+- `n` is the number of values in the sample
+- the denominator is `n − 1` rather than `n` — this is known as Bessel's correction
+
+### Why n − 1 in the Sample Variance Equation?
+
+The sample variance equation uses `n − 1` because a sample tends to underestimate the spread of the full population. When you compute the sample mean x̄ from the same data you are measuring, you have already used one piece of information to estimate the center. Dividing by `n − 1` rather than `n` adjusts for this, producing an unbiased estimator of the true population variance σ².
+
+Dividing by `n` instead would systematically underestimate the spread — a bias that compounds in hypothesis tests and confidence intervals downstream. For a sample of 5 values, dividing by 5 rather than 4 understates the variance by 20%. The correction matters most in small samples and becomes negligible only as `n` grows very large. This adjustment is covered in detail in the [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.6 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="On a related note" />
+
+---
+
+## How to Calculate Variance Step by Step
+
+The process for how to find variance is the same whether you are computing population or sample variance. The only difference comes in the final division step.
+
+**Step 1: Find the mean.**
+Add all the values together and divide by the count. For a population this is μ; for a sample it is x̄.
+
+**Step 2: Subtract the mean from each value.**
+For each data point xᵢ, compute the deviation `xᵢ − mean`. Some deviations will be negative (for values below the mean) and some will be positive (for values above it).
+
+**Step 3: Square each deviation.**
+Compute `(xᵢ − mean)²` for every value. Squaring eliminates the negative signs and amplifies larger deviations, giving more weight to extreme values.
+
+**Step 4: Sum all the squared deviations.**
+Add together every squared deviation: `Σ(xᵢ − mean)²`.
+
+**Step 5: Divide by N (population) or n − 1 (sample).**
+- Population variance: divide the sum by N.
+- Sample variance: divide the sum by n − 1.
+
+This five-step procedure is the formula for variance in practice. Every statistics software function and online calculator uses this exact algorithm, so understanding the steps lets you verify results and diagnose mistakes.
+
+---
+
+## Worked Example: How to Calculate Variance
+
+Using the dataset **2, 4, 4, 4, 5, 5, 7, 9** (n = 8 values):
+
+### Step 1: Find the Mean
+
+Sum: 2 + 4 + 4 + 4 + 5 + 5 + 7 + 9 = 40
+
+Mean = 40 / 8 = **5** (this is both μ and x̄ for this dataset)
+
+### Step 2: Find Each Deviation
+
+| Value (xᵢ) | Deviation (xᵢ − 5) |
+|------------|---------------------|
+| 2          | −3                  |
+| 4          | −1                  |
+| 4          | −1                  |
+| 4          | −1                  |
+| 5          |  0                  |
+| 5          |  0                  |
+| 7          | +2                  |
+| 9          | +4                  |
+
+### Step 3: Square Each Deviation
+
+| Value (xᵢ) | Deviation | Squared deviation |
+|------------|-----------|-------------------|
+| 2          | −3        | 9                 |
+| 4          | −1        | 1                 |
+| 4          | −1        | 1                 |
+| 4          | −1        | 1                 |
+| 5          |  0        | 0                 |
+| 5          |  0        | 0                 |
+| 7          | +2        | 4                 |
+| 9          | +4        | 16                |
+| **Sum**    |           | **32**            |
+
+### Step 4: Sum the Squared Deviations
+
+9 + 1 + 1 + 1 + 0 + 0 + 4 + 16 = **32**
+
+### Step 5a: Population Variance
+
+Treat all 8 values as the complete population and divide by N = 8:
+
+```
+σ² = 32 / 8 = 4
+```
+
+The population variance is **4**. If the values are in some unit (say, exam points), the variance is in those units squared (points²).
+
+### Step 5b: Sample Variance
+
+Treat the 8 values as a sample and divide by n − 1 = 7:
+
+```
+s² = 32 / 7 ≈ 4.5714
+```
+
+The sample variance is approximately **4.57**. Using n − 1 = 7 rather than 8 gives a slightly higher result, which is Bessel's correction working as designed — compensating for the underestimation that would otherwise occur.
+
+### Interpreting the Results
+
+A variance of 4 (population) or 4.57 (sample) tells you the average squared deviation from the mean. To return to the original scale, take the square root: σ = √4 = **2** (population standard deviation) and s ≈ √4.5714 ≈ **2.14** (sample standard deviation). These are the values you would report in plain language: "values typically deviate from the mean by about 2 units."
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="For a related calculation" />
+
+---
+
+## Try the Variance Calculator
+
+Enter the dataset 2, 4, 4, 4, 5, 5, 7, 9 below to confirm these results. The calculator reports both sample variance (s²) and population variance (σ²).
+
+<StatCalc slug="variance" variant="embed" />
+
+To open the tool on its own page, use the full <Link to={routes.calculator('variance')}>variance calculator</Link>. You can also find a <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> and dozens of other tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## Variance vs Standard Deviation
+
+Variance and standard deviation both measure spread in a dataset and are closely related: standard deviation is the square root of variance. Despite this connection, they serve different purposes and have an important practical difference.
+
+### Units: The Key Distinction
+
+The most important distinction in the variance vs standard deviation comparison is the unit of measurement:
+
+- **Variance** is expressed in **squared units**. If your data is in kilograms, the variance is in kilograms squared (kg²). If the data represents exam scores in points, the variance is in points squared.
+- **Standard deviation** is in the **same units as the original data**. The standard deviation of a weight dataset is in kilograms; the standard deviation of exam scores is in points.
+
+Squared units are harder to interpret intuitively. Saying "the variance is 4 points²" communicates less than saying "the standard deviation is 2 points, meaning values typically fall within 2 points of the mean." This is why standard deviation is almost always the quantity reported in summaries, graphs, and journal articles.
+
+### When Each Measure Is the Right Tool
+
+Despite being less intuitive, variance has mathematical advantages that make it the preferred quantity in theoretical and analytical work.
+
+**Variances are additive; standard deviations are not.** If X and Y are independent random variables, then `Var(X + Y) = Var(X) + Var(Y)`. This additive property has no counterpart for standard deviation. It is the reason variance appears naturally in regression (where total variance is decomposed into explained and residual variance), in ANOVA (where test statistics are literally ratios of variance estimates), and in portfolio theory (where the variance of a combined portfolio adds the variances of individual assets).
+
+**Standard deviation** wins whenever you need a spread measure on the original scale: confidence intervals use `x̄ ± 1.96s`, z-scores use `(x − μ) / σ`, and most descriptive summaries pair the mean with the standard deviation. Use the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> when you need the result in the same units as your data.
+
+### Standard Deviation Versus Variance in Practice
+
+In applied work, the practical rule is:
+- Report **standard deviation** to readers — it is interpretable and on the original scale.
+- Compute or use **variance** when a formula requires it (ANOVA tables, regression outputs, error propagation).
+
+Understanding the symbols also helps: σ and σ² use the Greek letter for population parameters; s and s² use the Latin letter for sample statistics. The <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link> covers the full notation system if you need it.
+
+<RelatedLink to={routes.article('standard-deviation-symbol')} label="Standard Deviation Symbol Guide" intro="Worth reading next" />
+
+---
+
+## Population Variance vs Sample Variance: Which Do You Need?
+
+The choice between σ² and s² depends on what your dataset represents, not on its size.
+
+**Use population variance (σ²) when your dataset contains every member of the group you are describing.** Examples: the final exam scores of every student in one class (the class is the complete population of interest); the total annual sales figures for every outlet in a chain; the measurements of all items produced in a single manufacturing batch.
+
+**Use sample variance (s²) when your dataset is a subset drawn from a larger group and you want to generalize.** Examples: a survey of 200 households from a city of 500,000 where you want to describe all households; a clinical trial measuring outcomes in 50 patients drawn from a population of millions; a quality-control check of 30 items from a production run of thousands.
+
+A common point of confusion arises in statistics courses: a problem says "here are 8 data values — find the variance" without specifying the context. The answer depends on whether those 8 values represent the whole group (use σ², divide by 8) or a sample from a larger group (use s², divide by 7). Look for clue words: "population," "entire group," "census" signals σ²; "sample," "survey," "randomly selected" signals s².
+
+### Variance in Software
+
+Most statistics software defaults to **sample variance**:
+
+- **Excel:** `VAR.S` uses `n − 1` (sample); `VAR.P` uses `N` (population).
+- **Python:** `statistics.variance()` uses `n − 1` (sample); `statistics.pvariance()` uses `N` (population).
+- **NumPy:** `np.var()` defaults to `N` (population) unless you specify `ddof=1` to get the sample version.
+- **R:** `var()` uses `n − 1` (sample) by default.
+
+Knowing which formula a function applies prevents silent errors, especially when working with small datasets where the difference between dividing by `n` and `n − 1` is significant.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Calculating Variance
+
+### Forgetting to Square the Deviations
+
+The most frequent arithmetic error in how to find variance: computing the deviations correctly in step 2, then averaging them directly without squaring. Without squaring, the positive and negative deviations cancel each other out and the sum is zero — which would imply every dataset has zero spread, which is clearly wrong. Always square each deviation before summing.
+
+### Using N Instead of n − 1 for Sample Data
+
+Applying the population formula (dividing by N) to a sample produces a biased estimate of the population variance — one that is systematically too small. In small samples the error is significant: for n = 5, dividing by 5 rather than 4 understates the variance by 20%. Use the sample formula (s², divide by n − 1) whenever your data is a subset drawn from a larger group.
+
+### Confusing Variance with Standard Deviation
+
+After computing the variance, double-check what the question asked for. If it asks for the **standard deviation**, take the square root of the variance. If it asks for the **variance**, stop before taking the square root. Reporting s when you mean s², or vice versa, carries a different mathematical claim and gives a different number.
+
+### Mixing Population and Sample Formulas Mid-Calculation
+
+It is not valid to compute the mean using N population notation and then apply n − 1 in the denominator, or vice versa. Decide upfront whether your data is a population or a sample and apply the matching formula throughout.
+
+### Treating Variance as Though It Were in the Original Units
+
+Variance is in squared units. If someone says "the variance of these measurements is 36 cm²," do not read that as "measurements vary by 36 cm from the mean." The standard deviation — √36 = 6 cm — is the measure in centimeters. Interpreting variance as though it were a linear distance overstates the spread by a factor of √variance.
+
+---
+
+## Frequently Asked Questions
+
+### What is the variance definition in statistics?
+
+Variance is the average of the squared differences between each data value and the dataset's mean. It measures the degree of spread or dispersion in a dataset. A variance of zero means every value equals the mean; a large variance means values are widely scattered around the mean.
+
+### What is the formula for variance?
+
+There are two variance formulas. Population variance: `σ² = Σ(xᵢ − μ)² / N`. Sample variance: `s² = Σ(xᵢ − x̄)² / (n − 1)`. The sample formula uses `n − 1` in the denominator (Bessel's correction) to produce an unbiased estimate of the population variance. Use population variance when you have all the data; use sample variance when your data is a subset of a larger group.
+
+### How do you find variance step by step?
+
+To find variance: (1) calculate the mean; (2) subtract the mean from each value to get the deviations; (3) square each deviation; (4) sum all the squared deviations; (5) divide by N for population variance or by n − 1 for sample variance. The worked example above applies this process to the dataset 2, 4, 4, 4, 5, 5, 7, 9, giving a population variance of 4 and a sample variance of approximately 4.57.
+
+### What is the difference between variance and standard deviation?
+
+Variance is expressed in squared units and has the useful property that the variances of independent variables add together. Standard deviation is the square root of variance and is expressed in the same units as the original data, making it easier to interpret. Standard deviation is the measure reported in summaries, graphs, and confidence intervals; variance is more commonly used inside formulas, ANOVA tables, and theoretical derivations.
+
+### Is variance always positive?
+
+Yes, variance is always zero or positive. Because each deviation is squared before summing, there are no negative terms in the variance formula. Variance equals zero only when every data value is exactly equal to the mean. In any other dataset, at least one squared deviation is positive, so the variance is strictly greater than zero.
+
+### When should I use population variance versus sample variance?
+
+Use population variance (σ²) when your dataset contains every element of the group you are studying. Use sample variance (s²) when your dataset is a random subset drawn from a larger group and you want to make inferences about that whole group. In most real-world data collection, your data is a sample, so s² is the appropriate choice.
+
+### Why is variance in squared units?
+
+Squaring the deviations removes negative signs so values below and above the mean do not cancel each other out. The side effect is that the result is in squared units. Taking the square root of the variance gives the standard deviation, which brings the spread measure back to the original units of the data.
+
+### How is variance used in hypothesis testing?
+
+Many hypothesis tests use variance directly. The t-test divides a difference by the standard error (which involves the sample variance). ANOVA compares the ratio of between-group variance to within-group variance — its test statistic (the F-ratio) is literally a ratio of two variance estimates. Regression decomposes the total variance in the outcome into variance explained by the model (R²) and residual variance. Understanding variance is therefore essential for interpreting the output of these tests.
+
+---
+
+## Summary
+
+Variance measures how far data values deviate from their mean, expressed as the average of the squared deviations. The variance equation is σ² = Σ(xᵢ − μ)² / N for a population and s² = Σ(xᵢ − x̄)² / (n − 1) for a sample. For the dataset 2, 4, 4, 4, 5, 5, 7, 9, the population variance is exactly 4 and the sample variance is approximately 4.57.
+
+Variance vs standard deviation comes down to units and purpose: standard deviation is the square root of variance, returns the spread to the original scale, and is the measure you report in plain language; variance is the right quantity when combining, decomposing, or partitioning spread across groups. Both are covered in depth in the [OpenStax *Introductory Statistics*, Section 2.7 — Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data), an open-access reference that works through the sample and population formulas with additional examples.
+
+Use the <Link to={routes.calculator('variance')}>variance calculator</Link> above to apply the formula to your own dataset and confirm both the sample and population results.
