@@ -1,0 +1,297 @@
+---
+title: "Correlation Coefficient (r): Formula & How to Interpret r Values"
+h1: "Correlation Coefficient (r): Formula and Interpretation"
+description: "Learn what a correlation coefficient is, how to use the formula, and how to interpret r values — from the strongest to the weakest correlation."
+category: regression-correlation
+primaryKeyword: correlation coefficient
+keywords:
+  - correlation coefficient
+  - coefficient and correlation formula
+  - coefficient of correlation formula
+  - correlation coefficient formula
+  - correlation coefficients
+  - how to find correlation coefficient
+  - what is a correlation coefficient
+  - which of the following r values represents the strongest correlation
+  - which of the following r-values represents the strongest correlation
+  - which of these r values represents the weakest correlation
+  - which of these r-values represents the weakest correlation
+  - which value of r indicates a stronger correlation
+phase: 2
+calculator: correlation-coefficient
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **correlation coefficient** is a number between −1 and +1 that measures both the strength and direction of the linear relationship between two numeric variables. The closer the value of r is to +1 or −1, the stronger the relationship; r = 0 means no linear association at all. Knowing how to read and compute correlation coefficients is one of the most transferable skills in statistics — it appears in research papers, business dashboards, medical studies, and machine learning pipelines alike.
+
+The most widely used measure is the **Pearson correlation coefficient**, written as r after Karl Pearson who formalised it in the 1890s. It is symmetric (the correlation of x with y equals the correlation of y with x), dimensionless (changing the units of measurement leaves r unchanged), and straightforward to compute with a standard formula. This article explains what a correlation coefficient means, walks through the coefficient of correlation formula step by step with a worked numeric example, and shows you exactly how to interpret any r value you encounter — including which values represent the strongest or weakest correlations.
+
+---
+
+## What Is a Correlation Coefficient?
+
+A correlation coefficient summarises how consistently two variables move together. When every increase in x accompanies an increase in y, the correlation is positive. When an increase in x accompanies a systematic decrease in y, the correlation is negative. When the two variables show no consistent linear pattern, r stays near zero.
+
+The Pearson r is calculated for pairs of continuous measurements and assumes the relationship is approximately linear. Other correlation coefficients — Spearman's ρ (rho) and Kendall's τ (tau) — extend the concept to ranked data or non-linear monotone relationships, but Pearson's r is the standard in most quantitative work and the one you will meet first in any statistics course.
+
+Correlation coefficients appear in virtually every quantitative field. Economists look at whether income and educational attainment move together. Public-health researchers ask whether smoking rates correlate with lung-cancer incidence. Engineers test whether temperature correlates with product failure rates. The correlation coefficient puts a single, comparable number on what a scatter plot shows visually.
+
+For a conceptual overview of correlation — what it means, what its different types are, and when to use it — see the article on <Link to={routes.article('what-is-correlation')}>what correlation means in statistics</Link>.
+
+---
+
+## The Correlation Coefficient Formula
+
+The **Pearson correlation coefficient formula** — sometimes written as the coefficient of correlation formula — expresses r as the ratio of the covariance of x and y to the product of their standard deviations:
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / √[ Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)² ]
+```
+
+where:
+- `xᵢ` and `yᵢ` are the individual paired data values
+- `x̄` and `ȳ` are the sample means of x and y
+- `Σ` denotes summation over all n pairs
+
+An algebraically equivalent raw-score form avoids computing the means first and works well for mental arithmetic or a handheld calculator:
+
+```
+r = [ nΣxᵢyᵢ − (Σxᵢ)(Σyᵢ) ] / √{ [ nΣxᵢ² − (Σxᵢ)² ] · [ nΣyᵢ² − (Σyᵢ)² ] }
+```
+
+Both versions produce identical results. The deviation form (first formula) is conceptually transparent — the numerator is the sum of cross-products of deviations, and the denominator normalises it by the total spread of each variable. The raw-score form is faster when you are working from summary sums. The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.11 — Bivariate Data and Scatter Plots](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm) presents these relationships and explains why dividing by the product of the two standard deviations forces r to stay inside the [−1, +1] interval.
+
+The key insight in the coefficient and correlation formula is that the numerator captures the average *co-movement* of the two variables, while the denominator acts as a scale factor. When x and y both deviate from their means in the same direction (both above or both below), the cross-products are positive, pushing r toward +1. When they deviate in opposite directions, the cross-products are negative, pushing r toward −1. When the deviations are uncorrelated, the positive and negative terms cancel and r converges on 0.
+
+<RelatedLink to={routes.calculator('linear-regression')} label="linear regression calculator" intro="On a related note" />
+
+---
+
+## How to Find the Correlation Coefficient: Step-by-Step Example
+
+To see exactly how to find the correlation coefficient by hand, work through the following five-pair dataset:
+
+| Pair i | xᵢ | yᵢ |
+|--------|----|-----|
+| 1      | 1  | 2   |
+| 2      | 2  | 4   |
+| 3      | 3  | 5   |
+| 4      | 4  | 4   |
+| 5      | 5  | 5   |
+
+### Step 1: Compute the sample means
+
+Sum the x values: 1 + 2 + 3 + 4 + 5 = 15, so x̄ = 15 / 5 = **3**.
+
+Sum the y values: 2 + 4 + 5 + 4 + 5 = 20, so ȳ = 20 / 5 = **4**.
+
+### Step 2: Compute deviations, squared deviations, and cross-products
+
+| xᵢ | yᵢ | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)² | (yᵢ − ȳ)² | (xᵢ − x̄)(yᵢ − ȳ) |
+|----|----|---------|---------|-----------|-----------|-------------------|
+| 1  | 2  | −2      | −2      | 4         | 4         | 4                 |
+| 2  | 4  | −1      | 0       | 1         | 0         | 0                 |
+| 3  | 5  | 0       | +1      | 0         | 1         | 0                 |
+| 4  | 4  | +1      | 0       | 1         | 0         | 0                 |
+| 5  | 5  | +2      | +1      | 4         | 1         | 2                 |
+| **Σ** |  |         |         | **10**    | **6**     | **6**             |
+
+### Step 3: Apply the correlation coefficient formula
+
+Plug the column sums into the deviation form of the formula:
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / √[ Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)² ]
+  = 6 / √(10 × 6)
+  = 6 / √60
+  = 6 / 7.746
+  ≈ 0.775
+```
+
+### What r ≈ 0.775 tells you
+
+A correlation coefficient of approximately **0.775** indicates a strong positive linear relationship between x and y. As x increases, y tends to increase too, and the two variables track each other fairly closely. The coefficient of determination r² = 0.775² ≈ **0.600**, meaning that x accounts for about 60 % of the variance in y.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
+
+---
+
+## Try the Calculator
+
+Enter the same five pairs above — or substitute your own x and y values — to confirm the result instantly. The calculator computes r, r², and the number of paired values.
+
+<StatCalc slug="correlation-coefficient" variant="embed" />
+
+To work with larger datasets or explore the output labels in more detail, open the dedicated <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> page. You can also browse all available tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## How to Interpret Correlation Coefficient r Values
+
+Once you have r, interpreting it requires attending to two independent properties: **direction** and **strength**.
+
+### Direction
+
+- **Positive r (r > 0):** Both variables tend to move in the same direction. Higher x values pair with higher y values more often than not. The scatter plot tilts upward from left to right.
+- **Negative r (r < 0):** The variables move in opposite directions. Higher x values pair with lower y values. The scatter plot tilts downward from left to right.
+- **r = 0:** No linear relationship. The scatter plot has no discernible slope, though a non-linear relationship (such as a U-curve) might still exist.
+
+### Strength
+
+Statisticians use these conventional benchmarks, drawn from the treatment in [Penn State STAT 501 — Regression Methods, Lesson 1](https://online.stat.psu.edu/stat501/lesson/1):
+
+| |r| value | Commonly described as |
+|------------|----------------------|
+| 0.9 – 1.0  | Very strong          |
+| 0.7 – 0.9  | Strong               |
+| 0.5 – 0.7  | Moderate             |
+| 0.3 – 0.5  | Weak to moderate     |
+| 0.0 – 0.3  | Weak or negligible   |
+
+These are conventions, not physical laws. In psychology, r = 0.40 can represent a meaningful effect; in precision engineering, r below 0.95 might be unacceptably noisy. Always interpret r relative to your field's norms and your study's sample size.
+
+### Which value of r indicates a stronger correlation?
+
+When comparing two or more correlation coefficients, the one with the larger **absolute value** is always the stronger one. The sign indicates direction, not strength.
+
+- r = −0.85 is **stronger** than r = +0.60, because |−0.85| = 0.85 > |+0.60| = 0.60.
+- r = +0.92 is **stronger** than r = −0.45, because |+0.92| = 0.92 > |−0.45| = 0.45.
+
+Determining which value of r indicates a stronger correlation always reduces to comparing absolute values.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation?" intro="Worth reading next" />
+
+---
+
+## Which r Value Represents the Strongest (or Weakest) Correlation?
+
+This question appears frequently in statistics courses and standardised tests. The rule is the same every time:
+
+- **Strongest correlation** = r value with the largest absolute value (closest to +1 or −1)
+- **Weakest correlation** = r value with the smallest absolute value (closest to 0)
+
+**Example.** Suppose you are given: r₁ = −0.90, r₂ = +0.75, r₃ = −0.30, r₄ = +0.10.
+
+Absolute values: |r₁| = 0.90, |r₂| = 0.75, |r₃| = 0.30, |r₄| = 0.10.
+
+- Which of the following r values represents the strongest correlation? **r₁ = −0.90**, because its absolute value (0.90) is the largest.
+- Which of the following r-values represents the strongest correlation? Same answer: **r₁ = −0.90**.
+- Which of these r values represents the weakest correlation? **r₄ = +0.10**, because its absolute value (0.10) is the smallest.
+- Which of these r-values represents the weakest correlation? Same answer: **r₄ = +0.10**.
+
+The most common mistake on exam questions is selecting the largest *positive* r as the strongest. A large negative r can be just as strong — or stronger. r = −0.95 is a near-perfect correlation; it simply runs in the opposite direction from r = +0.95.
+
+---
+
+## Positive vs Negative Correlation Coefficients
+
+### Positive correlation coefficients
+
+A positive r means that higher values of x tend to accompany higher values of y. Positive correlation coefficients arise when two variables are driven by a common underlying factor or when one genuinely influences the other in the same direction.
+
+Common real-world examples:
+- Study hours and exam scores (more hours → higher scores)
+- Height and arm span (taller people tend to have longer arm spans)
+- Monthly advertising spend and revenue (within a range)
+
+When r = +1, every point in the scatter plot falls exactly on an upward-sloping straight line — a perfect positive relationship that rarely occurs in messy, real data.
+
+### Negative correlation coefficients
+
+A negative r means that higher values of x tend to accompany lower values of y. Negative correlation coefficients are just as informative as positive ones; they simply describe an inverse relationship.
+
+Common real-world examples:
+- Altitude and air temperature (higher elevation → lower temperature)
+- Exercise frequency and resting heart rate (more exercise → lower resting heart rate)
+- Number of absences and final grade (more absences → lower grade)
+
+When r = −1, every point falls exactly on a downward-sloping straight line — a perfect negative relationship. Again, real data rarely achieves this.
+
+The key takeaway: both strong positive and strong negative correlation coefficients indicate that the two variables have a tight, predictable linear relationship. Only the direction differs.
+
+---
+
+## Correlation Does Not Imply Causation
+
+A high r value frequently tempts readers to conclude that one variable *causes* the other. It does not. Two variables can be strongly correlated for several reasons:
+
+1. **Direct causation:** A causes B (or B causes A).
+2. **A common cause:** A third variable C drives both A and B independently, creating the appearance of a link between A and B even though neither affects the other.
+3. **Coincidence:** Spurious correlations arising from chance, especially in small samples or when many pairs are tested simultaneously.
+
+A frequently cited example: ice-cream sales and drowning incidents correlate positively across months of the year. Neither causes the other — hot weather drives both, creating a spurious association.
+
+Establishing causation requires controlled experiments, careful study design, or formal causal inference methods. A correlation coefficient on its own, however large, cannot distinguish between these scenarios. Read the dedicated article on <Link to={routes.article('correlation-vs-causation')}>correlation vs causation</Link> for a fuller discussion.
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="Correlation vs Causation" intro="You may also find this useful" />
+
+---
+
+## Limitations of the Pearson Correlation Coefficient
+
+Understanding what r does *not* measure is as important as knowing what it does.
+
+**Pearson r only captures linear relationships.** If x and y have a strong U-shaped or any other non-linear relationship, r can sit near zero even though the variables are clearly associated. Always inspect a scatter plot before reporting or interpreting r in isolation.
+
+**Outliers can distort r substantially.** A single extreme data point can inflate or deflate the correlation coefficient. If your dataset contains outliers, consider computing Spearman's rank correlation (ρ) as a more robust alternative — it is based on the ranks of the data rather than raw values.
+
+**r is not a proportion of relationship.** r = 0.60 does not mean the relationship is "60 % complete." What is meaningful as a proportion is r² = 0.36, which tells you that 36 % of the variance in y is statistically accounted for by x. Squaring r to get the coefficient of determination is the correct step when you want a proportion.
+
+**Range restriction reduces r.** If you measure correlation within a narrow slice of one variable (students at a single high school, products in a single price range), the observed r will underestimate the true relationship in the full population. This is a common source of bias in applied research.
+
+**Sample size matters.** A correlation of r = 0.50 in a sample of n = 10 is not statistically significant at conventional levels, while the same r in a sample of n = 50 would be. The interpretation of r should always be accompanied by a significance test or confidence interval, especially in small samples.
+
+---
+
+## Frequently Asked Questions
+
+### What is a correlation coefficient?
+
+A correlation coefficient is a standardised measure — always between −1 and +1 — of the strength and direction of the linear relationship between two numeric variables. The most common form is Pearson's r. A value near +1 indicates a strong positive linear relationship, near −1 indicates a strong negative linear relationship, and near 0 indicates no linear association.
+
+### What is the difference between a correlation coefficient and covariance?
+
+Covariance is the unstandardised version of r. It measures the same co-movement of two variables but is expressed in the original units (e.g., kg · cm), which makes it hard to compare across datasets. Dividing the covariance by the product of the two standard deviations produces r, which is dimensionless and always within [−1, +1]. In other words, the correlation coefficient formula is a scaled version of the covariance formula.
+
+### How do I find the correlation coefficient by hand?
+
+To find the correlation coefficient for n paired values: (1) compute the sample means x̄ and ȳ; (2) subtract each mean from its column of values to get deviations; (3) multiply each x-deviation by the corresponding y-deviation (cross-product); (4) sum all cross-products — this is the numerator; (5) sum the squared x-deviations and squared y-deviations separately; (6) multiply those two sums and take the square root — this is the denominator; (7) divide numerator by denominator to obtain r. The five-pair example earlier in this article walks through all seven steps with a full table.
+
+### Which of the following r values represents the strongest correlation?
+
+Whichever r value has the largest absolute value represents the strongest correlation. For candidates such as −0.90, +0.75, −0.30, and +0.10, the answer is −0.90 because |−0.90| = 0.90 is the largest. This rule answers "which of the following r-values represents the strongest correlation" equally — the sign is irrelevant to strength; only the absolute value matters.
+
+### Which of these r values represents the weakest correlation?
+
+Whichever r value has the smallest absolute value (closest to 0) represents the weakest correlation. In the example above, +0.10 is the weakest because |+0.10| = 0.10 is the smallest. The same rule applies when the question is phrased as "which of these r-values represents the weakest correlation."
+
+### What r value indicates a stronger correlation: −0.80 or +0.65?
+
+−0.80 indicates a stronger correlation, because |−0.80| = 0.80 is greater than |+0.65| = 0.65. When comparing which value of r indicates a stronger correlation, always compare the absolute values; the direction (positive or negative) is not part of the strength comparison.
+
+### Can two variables have r = 0 yet still be related?
+
+Yes. Pearson r measures only *linear* association. If two variables have a perfect U-shaped or quadratic relationship — say, y = x² — their Pearson r can be exactly 0 because the upward and downward halves cancel out symmetrically. This is one reason why inspecting a scatter plot before computing and interpreting r is always recommended.
+
+### What counts as a good correlation coefficient?
+
+There is no universal threshold. In psychology and social science, r > 0.50 is typically described as a strong effect. In epidemiology, r = 0.30 can be highly meaningful at a population level. In physical chemistry or precision engineering, r below 0.95 may be unacceptably imprecise. The appropriate standard depends on your discipline, the purpose of the analysis, and the practical consequences of errors. Always interpret r in context.
+
+---
+
+## Summary
+
+The **correlation coefficient r** is a compact, interpretable measure of linear association. The **correlation coefficient formula** standardises the covariance of two variables by their standard deviations, producing a dimensionless value between −1 and +1. A positive r indicates that the variables rise together; a negative r indicates that one rises as the other falls; the absolute value of r indicates the strength of the relationship.
+
+Key interpretation rules:
+- **Strongest correlation** among a set of r values = the one with the largest |r| (closest to 1 in absolute value)
+- **Weakest correlation** = the one with the smallest |r| (closest to 0)
+- **r²** (the coefficient of determination) = the proportion of variance in y explained by x
+- **Sign** tells you direction only, never strength
+
+Always view a scatter plot alongside r, check for outliers that could distort the value, and never mistake correlation for causation. The step-by-step example above (r ≈ 0.775 for five paired values) illustrates the full computation; the calculator widget lets you apply the same logic instantly to any dataset you have.
