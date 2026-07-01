@@ -1,0 +1,331 @@
+---
+title: "Mean, Median, Mode & Range: The Complete Guide"
+description: "Learn how to find mean, median, mode, and range with step-by-step examples. Covers what mode means in math, how to calculate each measure, and when to use them."
+category: descriptive-statistics
+primaryKeyword: mean median mode range
+keywords:
+  - mean median mode range
+  - how to calculate mean median and mode
+  - how to find mean median and mode
+  - how to find mode in math
+  - what does mode mean in math
+  - what is mode in math
+phase: 2
+calculator: mean-median-mode-range
+related: []
+draft: false
+---
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+The four measures you meet in every introductory statistics course — **mean, median, mode, and range** — each tell you something different about a set of numbers. The mean is the arithmetic average. The median is the value sitting in the exact middle when the data is sorted. The mode is the value that appears most often. The range is the gap between the largest and smallest values. Together, knowing mean median mode range gives you a complete first picture of any dataset: where its centre sits, how typical the central value really is, which value turns up most often, and how spread out the numbers are.
+
+This guide explains what each measure means, shows the formula, and works through a full example so you can calculate all four from the same dataset. It also covers the question-phrased keywords that come up in statistics coursework — what does mode mean in math, how to find mode, how to calculate mean median and mode — so you leave with both the concepts and the procedures.
+
+---
+
+## What Are Mean, Median, Mode and Range?
+
+Before diving into the calculations, it helps to see all four measures side by side.
+
+| Measure | What it tells you | Type |
+|---------|-------------------|------|
+| Mean | Arithmetic average of all values | Centre |
+| Median | Middle value when sorted | Centre |
+| Mode | Most frequently occurring value | Centre |
+| Range | Spread from lowest to highest | Spread |
+
+Mean, median, and mode are all **measures of central tendency** — they each try to describe the "typical" value in a dataset, though they do it in different ways. Range is a **measure of spread** — it tells you how far apart the extremes are.
+
+No single measure is always the best choice. A dataset with one extreme outlier can make the mean misleading while the median remains informative. When data has no clear numerical centre — for example, a list of favourite colours — mode is the only one of the four that applies. Understanding all four lets you choose the right tool for each situation.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) provides authoritative definitions and worked examples of the mean, median, and mode as location statistics, alongside discussion of when each measure is appropriate.
+
+---
+
+## How to Calculate the Mean
+
+The **mean** (also called the arithmetic mean or average) is calculated by adding up every value in the dataset and then dividing by how many values there are.
+
+**Formula:**
+
+```
+Mean = (x₁ + x₂ + ... + xₙ) / n
+
+or equivalently:
+
+Mean = Σxᵢ / n
+```
+
+where `Σxᵢ` means "sum all values" and `n` is the count of values.
+
+### Step-by-Step Method
+
+1. List every value in the dataset.
+2. Add them all together to get the sum.
+3. Count the number of values.
+4. Divide the sum by the count.
+
+### Quick Example
+
+Dataset: **4, 8, 6, 10, 12**
+
+1. Sum: 4 + 8 + 6 + 10 + 12 = 40
+2. Count: 5 values
+3. Mean: 40 / 5 = **8**
+
+The mean for this set of numbers is 8.
+
+**When does the mean work well?** The mean is most reliable when the data has no extreme outliers and is roughly symmetric. If you add one very large or very small value to the dataset above — say, 100 — the mean jumps to (40 + 100) / 6 = 23.3, which no longer represents any typical value. That's when the median becomes more informative.
+
+<RelatedLink to={routes.article('how-to-find-the-mean')} label="How to Find the Mean" intro="Worth reading next" />
+
+---
+
+## How to Find the Median
+
+The **median** is the middle value in an ordered dataset. If you line up all the values from smallest to largest, the median is the one sitting in the exact centre.
+
+**Finding the median depends on whether you have an odd or even number of values.**
+
+### Odd Number of Values
+
+Sort the values in ascending order. The median is the value at position `(n + 1) / 2`.
+
+Dataset: **3, 7, 9, 12, 15** (5 values)
+
+- Sorted: 3, 7, **9**, 12, 15
+- Position: (5 + 1) / 2 = 3rd value
+- Median: **9**
+
+### Even Number of Values
+
+When there is an even number of values, no single middle value exists. Take the two values closest to the centre, add them, and divide by 2.
+
+Dataset: **2, 6, 10, 14** (4 values)
+
+- Sorted: 2, 6, **10, 14** — middle pair is the 2nd and 3rd values
+- Median: (6 + 10) / 2 = **8**
+
+### Why the Median Handles Outliers Better
+
+Because the median depends only on position, not on the actual size of each value, extreme outliers have almost no effect on it. If the last value in the dataset above were 1000 instead of 14, the median would still be 8. The mean, however, would jump from 8 to (2 + 6 + 10 + 1000) / 4 = 254.5. For data on incomes, house prices, and any other measure that occasionally produces very large values, the median is usually the more honest measure of the "typical" value.
+
+---
+
+## How to Find Mode in Math
+
+**What is mode in math?** The mode is the value (or values) that appears most often in a dataset. It is the only measure of central tendency that works on non-numerical, categorical data — for instance, if you asked 20 people to name their favourite statistical measure, the most popular answer would be the mode.
+
+**What does mode mean in math, more precisely?** Mode comes from the French word for "fashion" — the value currently in fashion, the one most people picked. In a dataset of numbers, you find the mode by counting how often each value appears and identifying which count is highest.
+
+### Three Outcomes When You Look for the Mode
+
+**One mode (unimodal):** One value appears more often than all others.
+Dataset: 2, 3, 3, 5, 7 → mode = **3**
+
+**No mode:** Every value appears exactly once. A dataset with all distinct values has no mode.
+Dataset: 1, 2, 3, 4, 5 → mode = **none** (or "no mode")
+
+**Multiple modes (bimodal or multimodal):** Two or more values tie for the highest frequency.
+Dataset: 2, 2, 3, 5, 5, 7 → modes = **2 and 5** (bimodal)
+
+### Step-by-Step Method to Find the Mode
+
+1. List every distinct value in the dataset.
+2. Count how many times each value appears (this is called the frequency).
+3. Identify the value or values with the highest frequency.
+4. If all values appear the same number of times, there is no mode.
+
+**Practical note:** In a long dataset, a frequency table makes finding the mode straightforward — list each value once and tally its appearances. The value with the tallest tally is the mode.
+
+<RelatedLink to={routes.calculator('frequency-table')} label="frequency table calculator" intro="For a related calculation" />
+
+---
+
+## How to Find the Range
+
+The **range** measures the spread of a dataset by calculating the gap between its largest and smallest values.
+
+**Formula:**
+
+```
+Range = Maximum value − Minimum value
+```
+
+### Step-by-Step Method
+
+1. Identify the largest value in the dataset.
+2. Identify the smallest value in the dataset.
+3. Subtract the smallest from the largest.
+
+### Quick Example
+
+Dataset: **5, 12, 3, 19, 8**
+
+1. Maximum: 19
+2. Minimum: 3
+3. Range: 19 − 3 = **16**
+
+### Limitations of the Range
+
+The range is simple to calculate, but it has one important weakness: it depends entirely on the two most extreme values. A single outlier can make the range appear much larger than the typical spread of the data. More robust measures of spread — such as the interquartile range, which trims the extremes before measuring spread, or the standard deviation, which accounts for every value — are often preferred in formal analysis. The range is most useful as a quick first check of how wide a dataset is, before you calculate those more detailed statistics.
+
+<RelatedLink to={routes.article('how-to-find-the-range')} label="How to Find the Range in Statistics" intro="On a related note" />
+
+---
+
+## Fully Worked Example: Calculating All Four Measures
+
+Let's apply all four methods to a single dataset.
+
+**Dataset:** 3, 5, 5, 7, 9, 11, 11, 11, 13, 15
+
+This is a set of 10 values. We will calculate the mean, median, mode, and range step by step.
+
+### Step 1 — Sort the Values
+
+The values are already in ascending order:
+
+3, 5, 5, 7, 9, 11, 11, 11, 13, 15
+
+### Step 2 — Calculate the Mean
+
+Add all values:
+
+3 + 5 + 5 + 7 + 9 + 11 + 11 + 11 + 13 + 15 = **90**
+
+Divide by the count (n = 10):
+
+Mean = 90 / 10 = **9**
+
+### Step 3 — Find the Median
+
+With 10 values (an even count), take the average of the 5th and 6th values.
+
+Sorted list: 3, 5, 5, 7, **9, 11**, 11, 11, 13, 15
+
+5th value = 9, 6th value = 11
+
+Median = (9 + 11) / 2 = 20 / 2 = **10**
+
+### Step 4 — Identify the Mode
+
+Tally the frequency of each value:
+
+| Value | Frequency |
+|-------|-----------|
+| 3 | 1 |
+| 5 | 2 |
+| 7 | 1 |
+| 9 | 1 |
+| 11 | 3 |
+| 13 | 1 |
+| 15 | 1 |
+
+The value **11** appears 3 times — more than any other value.
+
+Mode = **11**
+
+### Step 5 — Calculate the Range
+
+Maximum value = 15, Minimum value = 3
+
+Range = 15 − 3 = **12**
+
+### Summary of Results
+
+| Measure | Value |
+|---------|-------|
+| Mean | 9 |
+| Median | 10 |
+| Mode | 11 |
+| Range | 12 |
+
+Notice that the mean, median, and mode are all slightly different from each other. The mode (11) is pulled above the mean (9) because several values cluster in the 11 neighbourhood. The median (10) sits between them, buffered from the extreme of 15. This spread between the three central measures hints that the dataset is mildly skewed toward the higher values — a real pattern that the range of 12 also reflects.
+
+The open-access textbook [OpenStax, *Introductory Statistics* — 2.5 Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) walks through similar worked examples comparing mean and median, and explains why choosing between them depends on the shape of the data's distribution.
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="Another helpful calculator is" />
+
+---
+
+## When to Use Mean, Median, or Mode
+
+Each measure of central tendency is most useful in a specific situation. Knowing which to use — and why — is as important as knowing how to calculate each one.
+
+### Use the Mean When
+
+- The data is roughly symmetric with no extreme outliers.
+- You need to use the result in further calculations (the mean is mathematically convenient: you can add means from two groups to find a combined mean, for instance).
+- The data is continuous and numeric (temperature readings, test scores, measurements).
+
+### Use the Median When
+
+- The data has outliers or a skewed distribution (think income, house prices, response times).
+- You want to find the "typical" value that half the observations fall below and half fall above.
+- The data is ordinal (ranked categories such as "strongly agree" through "strongly disagree") where an arithmetic average doesn't make conceptual sense.
+
+### Use the Mode When
+
+- The data is categorical (colour, favourite subject, political party affiliation).
+- You want to know the most popular or most common value.
+- You are working with discrete data where repetition is meaningful (the most common shoe size, the most frequently occurring blood type in a sample).
+
+### A Note on the Range
+
+The range adds context to whichever central measure you use. Knowing that two datasets both have a mean of 50 tells you nothing about how different those datasets might be. If one has a range of 5 and the other a range of 80, they are very different distributions even though their averages match. Always pair a measure of centre with at least one measure of spread.
+
+---
+
+## Frequently Asked Questions
+
+### What is mode in math?
+
+In mathematics and statistics, the **mode** is the value that appears most often in a dataset. A dataset can have one mode, more than one mode (if two values tie for the highest frequency), or no mode at all (if every value appears exactly once). Unlike the mean or median, the mode can apply to non-numerical, categorical data.
+
+### What does mode mean in math?
+
+**Mode** means the most frequently occurring value in a set of data. The word comes from the French term for "fashion" or "style" — the modal value is the one most in fashion in that dataset. Formally, if you list all the values and count how many times each appears, the mode is the value with the highest count.
+
+### How to find mean, median, and mode?
+
+To find all three measures for any dataset:
+
+1. **Mean:** Add all values together and divide by the count. `Mean = Σxᵢ / n`
+2. **Median:** Sort the values from smallest to largest. If the count is odd, the median is the middle value. If the count is even, average the two middle values.
+3. **Mode:** Count how often each value appears. The value with the highest frequency is the mode. If two or more values tie, all of them are modes. If no value repeats, there is no mode.
+
+### How to calculate mean, median, and mode?
+
+The calculation steps are:
+- **Mean:** Sum ÷ count.
+- **Median:** Sort first, then pick the middle (or average the two middle values for an even-count dataset).
+- **Mode:** Frequency table — list each distinct value, tally its count, pick the tallest tally.
+
+The range is the easiest: largest value minus smallest value, with no sorting required.
+
+### How to find mode in math when there are repeated values?
+
+List each distinct value and count how many times it appears. The value with the highest count is the mode. If two values both have the same highest count, the dataset is **bimodal** — both values are modes. If three or more values share the highest count, the dataset is **multimodal**. Most introductory statistics courses treat the mode as a single value, but mathematically, a dataset can have as many modes as there are values that share the peak frequency.
+
+### Does every dataset have a mean, median, and mode?
+
+Every numeric dataset has a mean and a median. Not every dataset has a mode — if all values appear exactly once, there is no most-frequent value. In that case, statisticians say the dataset has no mode (or sometimes "mode undefined"). A dataset of all distinct values is common with continuous measurements like precise weights or times.
+
+### Why are mean and median sometimes different?
+
+The mean and median differ because the mean is sensitive to every individual value (especially extreme ones), while the median is sensitive only to order. When a dataset is perfectly symmetric, the mean and median are equal. When it is skewed — pulled in one direction by a cluster of high or low values — the mean is pulled toward the tail more strongly than the median. The bigger the skew, the larger the gap between mean and median. Comparing them is a quick, informal check for asymmetry.
+
+---
+
+## Summary
+
+Mean, median, mode, and range together form the foundation of descriptive statistics. The **mean** gives the arithmetic average, calculated by dividing the total by the count. The **median** gives the middle value after sorting, resistant to the pull of outliers. The **mode** identifies the most frequent value, the only central measure that applies to categorical data. The **range** captures the full span from lowest to highest value in a single number.
+
+For the worked dataset (3, 5, 5, 7, 9, 11, 11, 11, 13, 15), the results are: mean = 9, median = 10, mode = 11, range = 12. Each number tells a different part of the story, and together they sketch the shape and character of the data.
+
+Knowing how to find mean median and mode — and when each one is the better choice — is one of the most transferable skills in statistics, appearing in school exams, workplace data analysis, and scientific reporting alike.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="You may also find this useful" />
