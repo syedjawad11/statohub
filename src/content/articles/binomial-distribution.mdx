@@ -1,0 +1,358 @@
+---
+title: "Binomial Distribution: Formula, Examples & How to Use It"
+description: "Understand the binomial distribution formula with worked examples. Calculate exact and cumulative binomial probabilities step by step."
+category: probability-distributions
+primaryKeyword: binomial distribution
+keywords:
+  - binomial distribution
+  - bernoulli's distribution
+  - binomial distribution formula
+  - binomial distribution formulas
+  - geometric distribution
+phase: 2
+calculator: binomial-distribution
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+The **binomial distribution** describes how many successes to expect from a fixed number of independent trials when each trial has the same probability of success. You see it whenever you flip a coin ten times and count the heads, test whether a drug works for each of thirty patients who either respond or do not, or inspect a batch of products where each item either passes or fails. The distribution gives you the exact probability for every possible count of successes — not just an average.
+
+This article walks through the conditions that define a binomial random variable, the binomial distribution formula and its components, the mean and variance, two fully worked numeric examples, the cumulative binomial distribution formulas, how the binomial relates to Bernoulli's distribution and the geometric distribution, and a FAQ that covers the most common questions.
+
+---
+
+## Conditions for a Binomial Random Variable
+
+A random variable X follows a binomial distribution when four conditions hold simultaneously:
+
+1. **Fixed number of trials.** The experiment runs for a predetermined number of trials *n*. You do not stop early based on results — you always complete all n trials.
+2. **Two outcomes per trial.** Each trial produces exactly one of two mutually exclusive results, conventionally labeled "success" and "failure."
+3. **Constant probability.** The probability of success *p* is the same on every trial. Flipping a fair coin gives p = 0.5 on every flip, regardless of previous outcomes.
+4. **Independence.** The outcome of any one trial does not affect any other trial.
+
+When these four conditions hold, you write X ~ B(n, p) — read as "X follows a binomial distribution with parameters n and p." The random variable X counts the total number of successes across all n trials, and it can take any integer value from 0 to n.
+
+### The Bernoulli Trial: Building Block of the Binomial
+
+A single trial that results in success with probability *p* and failure with probability `1 − p` is called a **Bernoulli trial**, named after the Swiss mathematician Jacob Bernoulli. **Bernoulli's distribution** is the special case of the binomial distribution where n = 1:
+
+```
+P(X = 1) = p          (success)
+P(X = 0) = 1 − p      (failure)
+```
+
+The binomial distribution with general n is the sum of n independent Bernoulli(p) random variables. When you think of ten coin flips as ten separate Bernoulli trials stacked together, the total number of heads follows B(10, 0.5). The single-trial case Bernoulli(p) is simply B(1, p).
+
+---
+
+## The Binomial Distribution Formula
+
+The **binomial distribution formula** calculates the probability of observing exactly *k* successes in *n* independent trials, each with success probability *p*:
+
+```
+P(X = k) = C(n, k) × p^k × (1 − p)^(n − k)
+```
+
+where:
+
+- `n` = total number of trials
+- `k` = number of successes (an integer from 0 to n)
+- `p` = probability of success on a single trial
+- `1 − p` = probability of failure on a single trial
+- `C(n, k)` = the binomial coefficient, "n choose k"
+
+The **binomial coefficient** C(n, k) counts the distinct ways to choose which k of the n trials will be the successes:
+
+```
+C(n, k) = n! / (k! × (n − k)!)
+```
+
+where `!` denotes the factorial (n! = n × (n−1) × ... × 2 × 1). For example, C(10, 5) = 10! / (5! × 5!) = 3,628,800 / 14,400 = 252.
+
+<RelatedLink to={routes.calculator('combination')} label="combination calculator" intro="For a related calculation" />
+
+The formula multiplies three parts:
+- **C(n, k)** — how many arrangements of k successes exist among n trials
+- **p^k** — the probability that each of the k success trials is indeed a success
+- **(1 − p)^(n − k)** — the probability that each of the remaining `n − k` trials is a failure
+
+Because trials are independent, you multiply individual probabilities. The binomial coefficient ensures you count every valid arrangement without double-counting.
+
+---
+
+## Mean, Variance, and Standard Deviation
+
+The expected number of successes and the spread of a binomial distribution follow directly from n and p.
+
+**Mean (expected value):**
+
+```
+μ = n × p
+```
+
+**Variance:**
+
+```
+σ² = n × p × (1 − p)
+```
+
+**Standard deviation:**
+
+```
+σ = √(n × p × (1 − p))
+```
+
+These formulas are derived by noting that each Bernoulli(p) trial contributes mean p and variance `p(1 − p)`. Because the n trials are independent, you sum the means and sum the variances across trials.
+
+For n = 10 and p = 0.5:
+- μ = 10 × 0.5 = **5** expected successes
+- σ² = 10 × 0.5 × 0.5 = **2.5**
+- σ = √2.5 ≈ **1.581**
+
+So on average you expect 5 heads in 10 fair coin flips, with a standard deviation of about 1.58 heads.
+
+---
+
+## Worked Example 1: Flipping a Coin Ten Times
+
+A fair coin has p = 0.5. You flip it n = 10 times. What is the probability of getting exactly 5 heads?
+
+**Step 1 — Compute the binomial coefficient C(10, 5):**
+
+```
+C(10, 5) = 10! / (5! × 5!) = 3,628,800 / (120 × 120) = 252
+```
+
+**Step 2 — Apply the binomial distribution formula:**
+
+```
+P(X = 5) = C(10, 5) × 0.5^5 × 0.5^5
+         = 252 × (0.5)^10
+         = 252 / 1024
+         ≈ 0.2461
+```
+
+There is approximately a **24.61% probability** of getting exactly 5 heads in 10 fair coin flips. This is the most likely single outcome — the mode — yet it still occurs less than 1 time in 4 on average.
+
+### Cumulative Probability: At Most 3 Heads
+
+"What is the probability of 3 or fewer heads?" requires summing P(X = 0) through P(X = 3). All four terms share the factor `(0.5)^10 = 1/1024`:
+
+```
+P(X = 0) = C(10, 0) × (0.5)^10 =   1 / 1024
+P(X = 1) = C(10, 1) × (0.5)^10 =  10 / 1024
+P(X = 2) = C(10, 2) × (0.5)^10 =  45 / 1024
+P(X = 3) = C(10, 3) × (0.5)^10 = 120 / 1024
+```
+
+```
+P(X ≤ 3) = (1 + 10 + 45 + 120) / 1024 = 176 / 1024 ≈ 0.1719
+```
+
+There is roughly a **17.19% probability** of seeing 3 or fewer heads in 10 flips of a fair coin.
+
+---
+
+## Worked Example 2: Defects in a Manufacturing Batch
+
+A factory produces light bulbs with a 10% defect rate (p = 0.10). An inspector randomly selects n = 20 bulbs. What is the probability that exactly 2 are defective?
+
+**Step 1 — Compute C(20, 2):**
+
+```
+C(20, 2) = 20! / (2! × 18!) = (20 × 19) / 2 = 190
+```
+
+**Step 2 — Apply the binomial distribution formula:**
+
+```
+P(X = 2) = 190 × (0.10)^2 × (0.90)^18
+```
+
+Compute each factor:
+- `(0.10)^2 = 0.01`
+- `(0.90)^18`: 0.9^8 ≈ 0.4305, 0.9^16 ≈ 0.1853, 0.9^18 = 0.9^16 × 0.9^2 ≈ 0.1853 × 0.81 ≈ **0.1501**
+
+```
+P(X = 2) = 190 × 0.01 × 0.1501 = 190 × 0.001501 ≈ 0.2852
+```
+
+There is approximately a **28.52% probability** of finding exactly 2 defective bulbs in a sample of 20, the single most likely outcome for this scenario.
+
+**Mean and standard deviation for this batch:**
+
+```
+μ = 20 × 0.10 = 2 expected defectives
+σ = √(20 × 0.10 × 0.90) = √1.8 ≈ 1.342
+```
+
+On average you expect 2 defective items per batch of 20, with a standard deviation of about 1.34.
+
+---
+
+## Try the Calculator
+
+The binomial distribution calculator below handles all three modes — exactly k successes, at most k, and at least k — so you can verify the examples above and explore any scenario you choose.
+
+<StatCalc slug="binomial-distribution" variant="embed" />
+
+For a larger view with additional settings, open the full <Link to={routes.calculator('binomial-distribution')}>binomial distribution calculator</Link>. To explore related probability tools, visit the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.calculator('probability')} label="probability calculator" intro="On a related note" />
+
+---
+
+## Cumulative Binomial Distribution Formulas
+
+Real questions often ask for "at most" or "at least" — not a single exact count. The binomial distribution formulas for these cumulative cases sum individual probabilities.
+
+**At most k (cumulative distribution function):**
+
+```
+P(X ≤ k) = Σ C(n, i) × p^i × (1 − p)^(n − i)   for i = 0, 1, ..., k
+```
+
+**At least k (survival function):**
+
+```
+P(X ≥ k) = 1 − P(X ≤ k − 1)
+```
+
+**Exactly k (probability mass function):**
+
+```
+P(X = k) = C(n, k) × p^k × (1 − p)^(n − k)
+```
+
+For large n, computing these sums by hand is tedious. The calculator above applies the appropriate cumulative binomial distribution formula automatically based on the mode you select.
+
+A practical shortcut: when both `n × p ≥ 5` and `n × (1 − p) ≥ 5`, the binomial distribution is well approximated by a normal distribution with the same mean and variance. Apply a continuity correction — treat P(X = k) as P(k − 0.5 ≤ X ≤ k + 0.5) under the normal — to improve accuracy. For moderate n or extreme p values, the exact binomial formula is more reliable.
+
+---
+
+## Bernoulli's Distribution and the Geometric Distribution: How They Differ
+
+The binomial distribution is one member of a family of models built on Bernoulli trials. Two closely related distributions are often introduced alongside it.
+
+### Bernoulli's Distribution
+
+As noted earlier, **Bernoulli's distribution** is the n = 1 case of the binomial. Each Bernoulli trial produces 1 (success) with probability p or 0 (failure) with probability `1 − p`. Mean = p, variance = `p(1 − p)`. When instructors treat Bernoulli's distribution separately from the binomial, the only difference is n; the underlying math is identical.
+
+### The Geometric Distribution
+
+The **geometric distribution** answers a different question from the binomial: instead of counting successes in a fixed number of trials, it counts how many trials are needed to reach the **first** success. Its probability mass function is:
+
+```
+P(X = k) = (1 − p)^(k − 1) × p     for k = 1, 2, 3, ...
+```
+
+where k is the trial number on which the first success occurs. There is no fixed n; the number of trials itself is the random variable.
+
+| Feature | Binomial | Geometric |
+|---------|----------|-----------|
+| Question | How many successes in n trials? | How many trials until the first success? |
+| Trials | Fixed (n is known in advance) | Random (stops at first success) |
+| Random variable | Count of successes | Trial index of first success |
+| Mean | n × p | 1 / p |
+
+Both distributions require independent Bernoulli trials with constant p. The distinction is purely in what is being counted. A common error in introductory statistics is to apply the binomial distribution formula to a geometric setting or vice versa; always check which question the problem is asking.
+
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="You may also find this useful" />
+
+---
+
+## Real-World Applications of the Binomial Distribution
+
+The binomial model appears across science, industry, medicine, and everyday decision-making:
+
+**Clinical trials.** If a new drug has a 60% success rate (p = 0.60) and is given to 30 patients, the binomial distribution gives the probability that at least 20 respond — useful for powering a study and interpreting results.
+
+**Quality control.** Each manufactured component is either conforming or defective. Acceptance sampling plans use cumulative binomial probabilities to decide whether to accept or reject a production lot based on a sample count.
+
+**Genetics.** Under Mendel's laws, offspring inherit dominant or recessive alleles with fixed probabilities. A cross between two heterozygous parents gives each offspring a 3/4 probability of showing the dominant phenotype — a textbook binomial scenario.
+
+**Polling.** Survey respondents answer yes or no (agree or disagree) on a binary question. When the population is large relative to the sample size, their responses follow a binomial model.
+
+**Finance.** Simple binomial tree models for option pricing assume a stock price moves up with probability p or down with probability `1 − p` at each step — a direct application of the binomial distribution.
+
+Any situation involving independent trials, two possible outcomes, and a constant success probability is a candidate for the binomial distribution. The [NIST/SEMATECH e-Handbook of Statistical Methods, Binomial Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm) provides formal definitions and additional properties, including the relationship between binomial probabilities and the incomplete beta function used for exact interval estimation.
+
+---
+
+## Common Mistakes When Using the Binomial Distribution
+
+### Using the Exact Formula When a Cumulative Formula Is Needed
+
+P(X = 5) and P(X ≤ 5) are entirely different quantities. "Exactly 5" uses the single-term formula; "at most 5" requires summing from P(X = 0) through P(X = 5). Read the problem phrasing carefully: "exactly," "at most," "fewer than," and "at least" each map to a specific version of the binomial distribution formula.
+
+### Assuming Independence When Sampling Without Replacement
+
+Drawing items from a finite population without replacing them violates the independence condition — the probability of success changes after each draw. For sampling without replacement, the hypergeometric distribution is the correct model. The binomial applies when sampling with replacement or when the population is large enough that removal has negligible effect on p (a common rule of thumb: the sample is less than 10% of the population).
+
+### Confusing Bernoulli's Distribution with the Binomial
+
+Some textbooks introduce Bernoulli's distribution and the binomial as separate topics, which creates the impression they are unrelated. In fact, Bernoulli's distribution is simply B(1, p). The only distinction is that the Bernoulli model describes a single trial, while the binomial counts successes across n trials. Once you see that the binomial sums n Bernoulli trials, the formulas for the two models become trivially consistent.
+
+### Conflating the Geometric and Binomial Distributions
+
+Both distributions use Bernoulli trials with constant p. The binomial has a fixed n and counts successes. The geometric has no fixed n and counts the trial index of the first success. These are different experiments: "flip 10 times and count heads" is binomial; "flip until the first head and count flips" is geometric. The formulas, means, and variances are all different.
+
+### Misapplying the Normal Approximation
+
+The normal approximation to the binomial requires both `n × p ≥ 5` and `n × (1 − p) ≥ 5`. For small n or when p is close to 0 or 1, the binomial distribution is noticeably skewed and the normal approximation can be poor. Use the exact binomial formula or calculator for those cases.
+
+---
+
+## Frequently Asked Questions
+
+### What is the binomial distribution?
+
+The binomial distribution gives the probability of observing exactly k successes in n independent trials, each with a constant success probability p. It is one of the most widely used discrete probability distributions, applying whenever you count yes/no outcomes across a fixed number of trials.
+
+### What is the binomial distribution formula?
+
+The probability of exactly k successes is: P(X = k) = C(n, k) × p^k × (1 − p)^(n − k), where C(n, k) = n! / (k! × (n − k)!). This is the **binomial distribution formula** — it multiplies the number of ways to arrange k successes (the binomial coefficient) by the probability of each specific arrangement.
+
+### What are the four conditions for the binomial distribution?
+
+(1) A fixed number of trials n. (2) Exactly two outcomes per trial — success or failure. (3) A constant probability p of success on each trial. (4) Independence between trials: the outcome of one trial does not influence any other.
+
+### What is the mean and standard deviation of a binomial distribution?
+
+The mean is μ = n × p. The variance is σ² = n × p × (1 − p). The standard deviation is σ = √(n × p × (1 − p)). For n = 20 and p = 0.30, that gives μ = 6 and σ = √(20 × 0.30 × 0.70) = √4.2 ≈ 2.05.
+
+### How is Bernoulli's distribution related to the binomial distribution?
+
+Bernoulli's distribution is the n = 1 special case of the binomial distribution. A single Bernoulli trial produces 1 (success) with probability p and 0 (failure) with probability `1 − p`. Summing n independent Bernoulli(p) trials gives a B(n, p) random variable. Every binomial experiment is a sequence of Bernoulli trials.
+
+### How does the geometric distribution differ from the binomial distribution?
+
+The geometric distribution counts how many trials are needed to achieve the **first** success, making the trial count itself the random variable. The binomial distribution counts how many successes occur in a **fixed** number of trials n. Both rely on independent Bernoulli trials with constant p, but they answer fundamentally different questions. Do not use the geometric distribution formula when n is fixed, or the binomial formula when you are counting until the first success.
+
+### When can I use the normal approximation to the binomial?
+
+The normal approximation is reliable when both `n × p ≥ 5` and `n × (1 − p) ≥ 5`. Under these conditions, B(n, p) is approximately N(np, np(1 − p)) and cumulative binomial probabilities can be computed quickly. Apply a continuity correction (shift each integer boundary by ±0.5) for better accuracy. For small n or extreme p (near 0 or 1), use the exact binomial formula or the calculator instead.
+
+### What are the binomial distribution formulas for cumulative probability?
+
+There are three: P(X = k) for the exact count, P(X ≤ k) = sum of P(X = i) for i from 0 to k for "at most k," and P(X ≥ k) = 1 − P(X ≤ k − 1) for "at least k." The **binomial distribution formulas** for cumulative probabilities are just sums of the individual probability mass function values. The calculator handles all three modes automatically.
+
+---
+
+## Summary
+
+The binomial distribution models the number of successes in n independent Bernoulli trials with constant success probability p. The core **binomial distribution formula** is:
+
+```
+P(X = k) = C(n, k) × p^k × (1 − p)^(n − k)
+```
+
+The mean is `μ = np`, the variance is `σ² = np(1 − p)`, and the standard deviation is `σ = √(np(1 − p))`. **Bernoulli's distribution** is the n = 1 special case; a B(n, p) variable is the sum of n independent Bernoulli(p) trials. The **geometric distribution** answers a related but distinct question — it counts how many trials are needed for the first success, with no fixed n. The cumulative **binomial distribution formulas** for "at most k" and "at least k" sum the individual probabilities and are handled automatically by the calculator above.
+
+For additional examples and practice problems covering all three cumulative modes, the open-access textbook [OpenStax, *Introductory Statistics*, §4.3 — Binomial Distribution](https://openstax.org/books/introductory-statistics/pages/4-3-binomial-distribution) is a reliable reference that works through the binomial distribution formula with multiple scenarios.
+
+<RelatedLink to={routes.calculatorsHub()} label="all statistics calculators" intro="See also" />
