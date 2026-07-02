@@ -1,0 +1,356 @@
+---
+title: "T-Test: Formula, Paired & Two-Sample T-Tests Explained"
+description: "Learn the paired t-test and two-sample t-test formulas. Covers the student t-test equation, worked examples, assumptions, and how to interpret results."
+category: inferential-statistics
+primaryKeyword: paired t-test
+keywords:
+  - paired t-test
+  - 2 sample t-test
+  - paired difference t-test
+  - student t-test formula
+  - t test and paired t test
+  - t test equation
+  - t test for 2 samples
+  - t test for two sample
+  - t test with two samples
+  - t-test and paired t-test
+  - t-test equation
+  - two sample t-test
+phase: 2
+calculator: t-test
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+The **paired t-test** compares the means of two related measurements recorded on the same subjects — a before-and-after score for each person, or readings from matched pairs — and tests whether the average difference departs from zero by more than chance can explain. It is one of the most common hypothesis tests in experimental research because pairing removes between-subject variability that would otherwise inflate error and reduce power. This article explains the t test and paired t test side by side, derives the student t-test formula for each design, and works through fully numeric examples so every computation is transparent.
+
+---
+
+## What Is a T-Test?
+
+A t-test is a parametric hypothesis test that asks whether an observed sample mean — or the difference between two sample means — differs from a reference value by more than sampling error can plausibly produce. It was introduced by William Sealy Gosset in 1908, writing under the pen name "Student" while working at the Guinness Brewery. Gosset needed a test that remained valid for the small sample sizes available in brewing quality control — hence the name *Student's t-test*.
+
+The test uses the **Student's t-distribution** rather than the standard normal distribution because the true population standard deviation σ is almost always unknown and must be estimated from the sample standard deviation s. The t-distribution has heavier tails than the normal curve, especially for small degrees of freedom, correctly reflecting the extra uncertainty introduced by estimating σ.
+
+For a thorough walkthrough of how the t-distribution is applied in practice, the open-access textbook [OpenStax Introductory Statistics 2e, §8.2 — A Single Population Mean Using the Student t-Distribution](https://openstax.org/books/introductory-statistics/pages/8-2-a-single-population-mean-using-the-student-t-distribution) is an excellent companion.
+
+Every form of the t-test equation shares the same structural idea:
+
+```
+t = (observed difference) / (standard error of that difference)
+```
+
+A large absolute t value means the observed difference is many standard errors away from zero — unlikely if H₀ is true. A small absolute t value is consistent with chance variation under H₀.
+
+---
+
+## The Three Types of T-Tests
+
+Three variants of the t-test exist, each suited to a different research design. Choosing the right one comes before any calculation.
+
+### One-Sample T-Test
+
+Compare a single sample mean against a fixed hypothesised population value (μ₀). Example: does this class of students score differently from the national average of 100?
+
+```
+t = (x̄ − μ₀) / (s / √n)
+```
+
+Degrees of freedom = n − 1.
+
+### Paired T-Test (Paired Difference T-Test)
+
+The **paired t-test** — also called the **paired difference t-test** — applies when each subject provides two observations that belong together: the same person measured before and after a treatment, or two participants matched on key characteristics (one assigned to each condition). You compute the difference score dᵢ for every pair, then test whether the mean of those differences differs from zero. Because pairing removes between-subject variability from the error term, the **t test and paired t test** design typically yields greater statistical power than an independent-samples test.
+
+### Independent Two-Sample T-Test
+
+The **two-sample t-test** compares the means of two entirely separate groups where each participant belongs to exactly one group. This test is also called the *t test for two samples*, *t test with two samples*, *t test for 2 samples*, or simply the *2 sample t-test* — all names describe the same procedure.
+
+<RelatedLink to={routes.calculator('t-table')} label="t-table calculator" intro="For a related calculation" />
+
+---
+
+## The Student T-Test Formula for Each Design
+
+The **student t-test formula** takes a slightly different form for each design, but the structure is always the same: an effect estimate divided by its standard error.
+
+### Paired T-Test Formula
+
+Compute the difference score dᵢ = (post measurement) − (pre measurement) for each of the n pairs, then:
+
+```
+t = d̄ / (s_d / √n)
+```
+
+- d̄ = mean of the n difference scores
+- s_d = sample standard deviation of the difference scores
+- n = number of pairs
+- Degrees of freedom = n − 1
+
+This is structurally identical to the one-sample t-test equation applied to the differences. The null hypothesis is simply H₀: d̄ = 0 (the treatment has no average effect).
+
+### Two-Sample T-Test Formula (Equal Variances — Pooled)
+
+```
+t = (x̄₁ − x̄₂) / (s_p × √(1/n₁ + 1/n₂))
+```
+
+The **pooled standard deviation** s_p weights the two sample variances by their degrees of freedom:
+
+```
+s_p = √( ((n₁ − 1) × s₁² + (n₂ − 1) × s₂²) / (n₁ + n₂ − 2) )
+```
+
+- x̄₁, x̄₂ = sample means for the two groups
+- s₁, s₂ = sample standard deviations
+- n₁, n₂ = sample sizes
+- Degrees of freedom = n₁ + n₂ − 2
+
+When you cannot assume equal variances, **Welch's t-test** adjusts both the denominator and the degrees of freedom, and is the safer default in most statistical software.
+
+To find the critical t value that corresponds to your significance level and degrees of freedom, the [NIST/SEMATECH e-Handbook of Statistical Methods, Critical Values of the Student's t-Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm) provides the authoritative reference table used across statistics courses and research labs.
+
+---
+
+## Paired T-Test: Fully Worked Example
+
+A nutritionist tests whether a six-week diet programme reduces body weight. Six participants are weighed before and after (in kilograms). Using a paired design controls for the fact that starting weight differs widely from person to person.
+
+### Data and Difference Scores
+
+| Participant | Before (kg) | After (kg) | d = Before − After |
+|-------------|-------------|------------|---------------------|
+| 1 | 185 | 180 | 5 |
+| 2 | 192 | 185 | 7 |
+| 3 | 170 | 169 | 1 |
+| 4 | 178 | 172 | 6 |
+| 5 | 203 | 196 | 7 |
+| 6 | 190 | 183 | 7 |
+
+A positive d means the participant lost weight.
+
+### Step 1 — Mean Difference
+
+```
+d̄ = (5 + 7 + 1 + 6 + 7 + 7) / 6 = 33 / 6 = 5.5 kg
+```
+
+### Step 2 — Standard Deviation of the Differences
+
+| dᵢ | dᵢ − 5.5 | (dᵢ − 5.5)² |
+|----|----------|-------------|
+| 5 | −0.5 | 0.25 |
+| 7 | +1.5 | 2.25 |
+| 1 | −4.5 | 20.25 |
+| 6 | +0.5 | 0.25 |
+| 7 | +1.5 | 2.25 |
+| 7 | +1.5 | 2.25 |
+| **Sum** | | **27.50** |
+
+```
+s_d² = 27.50 / (6 − 1) = 5.50
+s_d = √5.50 ≈ 2.345 kg
+```
+
+### Step 3 — Standard Error and T Statistic
+
+```
+SE = s_d / √n = 2.345 / √6 = 2.345 / 2.449 ≈ 0.957 kg
+
+t = d̄ / SE = 5.5 / 0.957 ≈ 5.74
+```
+
+Degrees of freedom = 6 − 1 = **5**
+
+### Step 4 — Decision
+
+At α = 0.05, df = 5, the two-tailed critical value from the t-distribution is approximately **2.571**. Since |t| = 5.74 > 2.571, we reject H₀ and conclude the programme produced a statistically significant weight reduction (p < 0.05).
+
+The paired design was decisive here. Individual starting weights ranged from 170 kg to 203 kg — a 33 kg spread that would swamp the 5.5 kg average reduction in an independent-samples analysis. Pairing each person with themselves eliminated that between-subject noise entirely.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="On a related note" />
+
+---
+
+## Two-Sample T-Test: Fully Worked Example
+
+An educational researcher compares exam scores for two independent groups of eight students each, taught by different methods.
+
+- **Group A (Method 1):** n₁ = 8, x̄₁ = 74 points, s₁ = 6 points
+- **Group B (Method 2):** n₂ = 8, x̄₂ = 68 points, s₂ = 8 points
+
+H₀: μ₁ = μ₂ (no difference in mean exam scores between the two methods)
+
+### Step 1 — Pooled Standard Deviation
+
+The standard deviations are reasonably similar, so the equal-variance t test for 2 samples is appropriate.
+
+```
+s_p² = ((8 − 1) × 6² + (8 − 1) × 8²) / (8 + 8 − 2)
+     = (7 × 36 + 7 × 64) / 14
+     = (252 + 448) / 14
+     = 700 / 14 = 50
+
+s_p = √50 ≈ 7.071
+```
+
+### Step 2 — T-Test Equation
+
+```
+t = (x̄₁ − x̄₂) / (s_p × √(1/n₁ + 1/n₂))
+  = (74 − 68) / (7.071 × √(1/8 + 1/8))
+  = 6 / (7.071 × √0.25)
+  = 6 / (7.071 × 0.500)
+  = 6 / 3.536 ≈ 1.70
+```
+
+df = 8 + 8 − 2 = **14**
+
+### Step 3 — Decision
+
+At α = 0.05, df = 14, the two-tailed critical value is approximately **2.145**. Since |t| = 1.70 < 2.145, we fail to reject H₀. The 6-point difference in exam scores is not statistically significant at the 5% level with eight students per group.
+
+This result illustrates a common practical problem: small samples (n = 8 per group) often lack the statistical power to detect moderate differences. A formal power analysis before the study — using an estimated effect size and α = 0.05 — would have recommended a considerably larger sample.
+
+<RelatedLink to={routes.calculator('confidence-interval')} label="confidence interval calculator" intro="You may also find this useful" />
+
+---
+
+## Try the T-Test Calculator
+
+The calculator below applies the one-sample (and, by extension, **paired**) student t-test formula. For a **paired t-test**, enter the mean of your difference scores as the sample mean, the standard deviation of those differences as the sample standard deviation, the number of pairs as n, and 0 as the hypothesised mean (H₀: d̄ = 0).
+
+<StatCalc slug="t-test" variant="embed" />
+
+Using the default values (sample mean 105, hypothesised mean 100, standard deviation 15, n = 25):
+
+- SE = 15 / √25 = **3.0**
+- t = (105 − 100) / 3 = **1.667**
+- df = 24
+- Two-tailed p ≈ **0.109**
+
+A p-value of 0.109 exceeds 0.05, so H₀ is not rejected at the 5% level with these defaults. Try increasing n to 50 or raising the mean to 110 to see how each change drives the p-value downward.
+
+Open the <Link to={routes.calculator('t-test')}>t-test calculator</Link> for a full-page view, or explore the <Link to={routes.calculatorsHub()}>calculators hub</Link> for related inferential tools including the p-value and chi-square calculators.
+
+<RelatedLink to={routes.article('test-statistic')} label="Test Statistic: What It Is and How to Calculate It" intro="Worth reading next" />
+
+---
+
+## When to Use a Paired T-Test vs. a Two-Sample T-Test
+
+The design of your study determines which test is correct — the formulas cannot substitute for this decision.
+
+**Use the paired t-test (paired difference t-test) when:**
+- Each participant is measured twice (pre/post or repeated-measures design)
+- Observations are matched in pairs by the researcher (matched-pairs design)
+- Two measurements on the same subject are being compared (e.g. left vs. right hand)
+
+**Use the two-sample t-test (t test for two samples) when:**
+- Two completely independent groups are compared
+- Each participant belongs to exactly one group with no connection to the other
+- The groups were assembled separately with no matching
+
+Applying the independent-samples test to genuinely paired data is a common mistake that inflates the error term and reduces power. Failing to pair data that has a natural paired structure wastes the precision advantage pairing would have provided.
+
+---
+
+## Assumptions of the T-Test
+
+All variants of the student t-test formula rest on several assumptions. The t-test is robust to mild departures from these conditions, especially for larger samples, but it is worth verifying each assumption before reporting results.
+
+**Independence.** Observations must be independent within each group. In the paired t-test, the pairs must be independent of each other even though the two readings within a pair are deliberately correlated.
+
+**Approximate normality.** The variable being analysed — or the difference scores in a paired design — should follow an approximately normal distribution. For sample sizes above roughly 25 per group, the central limit theorem makes the t-test robust to non-normality. For small samples, inspect a histogram or normal Q-Q plot before proceeding.
+
+**Interval or ratio scale.** The outcome must be measured on a continuous scale. For ordinal data, consider the Wilcoxon signed-rank test (paired design) or the Mann-Whitney U test (independent groups) as non-parametric alternatives.
+
+**Equal variances (pooled two-sample only).** The equal-variance form of the two-sample t-test assumes both populations share the same variance. When in doubt, use Welch's t-test, which is valid regardless of whether the variances are equal or not and is the default in many software packages including R and Python's SciPy.
+
+---
+
+## Common Mistakes When Using T-Tests
+
+### Using the Independent-Samples Test on Paired Data
+
+This is the single most consequential design error. When you treat paired observations as independent groups, you ignore the within-subject correlation that makes pairing valuable. The error term inflates, degrees of freedom increase, and the t statistic shrinks — reducing your chance of detecting a real effect. Before every analysis, ask: *did each subject provide both measurements, or did one group of subjects provide one measurement each?*
+
+### Reporting Only the P-Value
+
+The **t-test equation** result — the t statistic — and the degrees of freedom should be reported alongside the p-value. A complete report looks like: t(5) = 5.74, p = 0.002. The t statistic conveys how many standard errors the effect is from zero; the degrees of freedom clarify which t-distribution was used; the p-value gives the probability under H₀. Together they allow a reader to evaluate and replicate your analysis.
+
+### Choosing the Wrong Tail Direction
+
+A two-tailed p-value tests whether the effect differs from zero in either direction. A one-tailed p-value tests only one direction (e.g. that the treatment increases the outcome) and is numerically half of the two-tailed value. Use two-tailed tests by default. Reserve one-tailed tests for situations where a directional hypothesis was clearly specified before data collection.
+
+### Skipping Assumption Checks
+
+Running the t test with two samples or the paired t-test on a very small, heavily skewed sample can produce unreliable p-values. Check your data with a simple plot when n < 20, and consider a non-parametric alternative if a strong skew or extreme outliers are present.
+
+---
+
+## Frequently Asked Questions
+
+### What is a paired t-test?
+
+A **paired t-test** is a hypothesis test that compares two related observations taken from the same subjects. It converts each pair into a single difference score, then tests whether the mean of those differences is significantly different from zero using the standard student t-test formula applied to the differences. It is the appropriate choice whenever participants are measured twice or matched across two conditions.
+
+### What is the difference between a t-test and a paired t-test?
+
+The *t-test* is a family of related tests that includes one-sample, paired, and two-sample variants. A **paired t-test** is the member designed for matched or repeated-measures data, where pairing removes between-subject variability from the error term. An independent two-sample t-test treats both groups as completely separate and does not exploit any within-subject correlation. The phrase *t-test and paired t-test* is sometimes used to distinguish the general label from the specific paired design.
+
+### What is the t-test equation?
+
+The **t-test equation** in its general form is observed effect divided by standard error:
+
+```
+t = (observed effect) / (standard error)
+```
+
+For a one-sample or paired design:
+
+```
+t = (x̄ − μ₀) / (s / √n)
+```
+
+For a two-sample design with pooled variance:
+
+```
+t = (x̄₁ − x̄₂) / (s_p × √(1/n₁ + 1/n₂))
+```
+
+A larger numerator (bigger effect) or smaller denominator (tighter data or larger n) produces a larger t statistic and a smaller p-value.
+
+### When should I use a two-sample t-test?
+
+Use the **2 sample t-test** — or t test for two sample groups — when two entirely independent groups are being compared and no natural pairing or matching connects observations across the groups. If the same subjects appear in both conditions, or if observations were deliberately matched before the study, the paired t-test will be more powerful and more appropriate.
+
+### How many degrees of freedom does a paired t-test have?
+
+For a **paired t-test**, df = n − 1, where n is the number of pairs (not the total number of measurements). In the worked example above, n = 6 pairs gives df = 5. For the two-sample t-test with equal variances, df = n₁ + n₂ − 2 (14 in the second example with eight per group).
+
+### What is the student t-test formula?
+
+The **student t-test formula** is named after Gosset's pen name "Student." In its simplest one-sample form:
+
+```
+t = (x̄ − μ₀) / (s / √n)
+```
+
+"Student" signals that the result is compared against the t-distribution rather than the standard normal distribution. As sample size grows, the t-distribution converges to the standard normal, so for large samples the t-test and z-test produce nearly identical results. The paired t-test uses this exact formula with d̄ in place of x̄, s_d in place of s, and μ₀ = 0.
+
+### How do I interpret the p-value from a t-test?
+
+A **p-value** is the probability of observing a t statistic at least as extreme as yours, assuming H₀ is true. If this probability falls below your chosen significance level α (typically 0.05), you reject H₀ and call the result statistically significant. A p-value above α means the observed difference is compatible with chance variation under H₀ — though this is not evidence that the null hypothesis is true, only that the data do not refute it. Report p alongside the t statistic, degrees of freedom, and, where possible, an effect size (such as Cohen's d) and a confidence interval for the mean difference.
+
+---
+
+## Summary
+
+The t-test family provides a principled framework for comparing means when the population standard deviation is unknown. The **paired t-test** — or paired difference t-test — is the most powerful choice when each subject provides two related observations, because converting the data to difference scores removes between-subject noise from the analysis. The **two-sample t-test** handles independent groups by pooling the two variance estimates into a shared standard error. Both rest on the same **student t-test formula** logic: the size of the effect relative to how much that effect would vary by chance. The **t-test and paired t-test** together cover the vast majority of mean-comparison problems encountered in research, quality control, and data analysis.
+
+Mastering the **t-test equation** means knowing when to pair, how to compute difference scores, how to read the t-distribution critical values, and how to interpret p-values in context — not in isolation.
