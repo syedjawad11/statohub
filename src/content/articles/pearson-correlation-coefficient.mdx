@@ -1,0 +1,282 @@
+---
+title: "Pearson Correlation Coefficient: Formula, Covariance & Spearman"
+description: "Learn the Pearson correlation coefficient formula, how it relates to covariance, how to interpret r values, and when to use Spearman rank correlation instead."
+category: regression-correlation
+primaryKeyword: pearson correlation
+keywords:
+  - pearson correlation
+  - covariance formula
+  - pearson coefficient correlation
+  - pearson product moment correlation
+  - pearson rank correlation
+  - pearson's correlation
+  - pearson's correlation coefficient
+  - spearman rank correlation coefficient
+phase: 2
+calculator: correlation-coefficient
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **Pearson correlation** measures the strength and direction of the linear relationship between two numerical variables. It produces a single number — Pearson's r — that ranges from −1 to +1. A value near +1 means the two variables rise and fall together in a consistent linear pattern; a value near −1 means one rises as the other falls; and a value near 0 means knowing one variable tells you almost nothing about the other, at least in a straight-line sense.
+
+Pearson's correlation coefficient is the most widely reported measure of association in applied statistics, used in psychology, economics, medicine, engineering, and virtually every other data-driven field. Understanding what it computes, how to compute it, and when it is (and is not) appropriate is one of the most valuable skills in quantitative reasoning.
+
+---
+
+## What Is Pearson's Correlation?
+
+Pearson's correlation coefficient — formally called the **Pearson product-moment correlation coefficient** — quantifies how closely two variables follow a straight-line relationship. When you plot the paired values on a scatter plot and a single straight line fits them well, r captures how tight that fit is and which direction the line slopes.
+
+Three properties define it:
+
+- **Bounded:** r always lies in the interval [−1, +1].
+- **Dimensionless:** r has no units. It does not matter whether x is measured in kilograms and y in seconds — r is a pure number, which makes it comparable across studies.
+- **Sensitive only to linear association.** Two variables can have a perfect curved (nonlinear) relationship and still produce r = 0 if that relationship is not linear.
+
+The value of Pearson's r is a **parameter** when computed for an entire population (usually written ρ, the Greek letter rho) and a **statistic** when computed from a sample (written r or Pearson's r). In practice almost every dataset is a sample, so you nearly always see r rather than ρ.
+
+---
+
+## The Pearson Correlation Formula
+
+There are two equivalent formulas. The **deviation form** is the most conceptually transparent:
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)]
+    ────────────────────────
+    √[Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)²]
+```
+
+where xᵢ and yᵢ are individual paired observations, x̄ is the mean of x, and ȳ is the mean of y.
+
+The numerator — the sum of cross-products of deviations — is large and positive when x and y both tend to be above their means at the same time, and large and negative when one is above while the other is below. The denominator normalises that raw total by the spread of each variable separately, which is what forces r into the [−1, +1] range.
+
+### The Covariance Formula
+
+Pearson's r can also be written in terms of the **covariance formula** and the individual standard deviations:
+
+```
+r = Cov(X, Y)
+    ──────────
+     sX · sY
+```
+
+where:
+
+```
+Cov(X, Y) = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / (n − 1)
+
+sX = √[Σ(xᵢ − x̄)² / (n − 1)]
+
+sY = √[Σ(yᵢ − ȳ)² / (n − 1)]
+```
+
+Covariance captures the joint variability of x and y, but its magnitude depends on the units of measurement, so it is hard to interpret on its own. Dividing by the product of the two standard deviations removes the units and standardises the result, producing a number that means the same thing regardless of scale. Pearson's r is, in this sense, a standardised covariance.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="Pearson correlation coefficient calculator" intro="Worth reading next" />
+
+---
+
+## How to Calculate Pearson's Correlation Coefficient Step by Step
+
+The clearest way to understand the Pearson correlation formula is to compute it by hand on a small dataset. Use five paired observations:
+
+**Dataset:** x = 1, 2, 3, 4, 5 and y = 2, 4, 5, 4, 5
+
+**Step 1: Find the means.**
+
+Sum of x: 1 + 2 + 3 + 4 + 5 = 15; x̄ = 15 / 5 = **3**
+
+Sum of y: 2 + 4 + 5 + 4 + 5 = 20; ȳ = 20 / 5 = **4**
+
+**Step 2: Compute deviations and cross-products.**
+
+| i | xᵢ | yᵢ | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)(yᵢ − ȳ) | (xᵢ − x̄)² | (yᵢ − ȳ)² |
+|---|----|----|---------|---------|-------------------|------------|------------|
+| 1 |  1 |  2 |   −2    |   −2    |         4         |      4     |      4     |
+| 2 |  2 |  4 |   −1    |    0    |         0         |      1     |      0     |
+| 3 |  3 |  5 |    0    |   +1    |         0         |      0     |      1     |
+| 4 |  4 |  4 |   +1    |    0    |         0         |      1     |      0     |
+| 5 |  5 |  5 |   +2    |   +1    |         2         |      4     |      1     |
+| **Sum** | | | | | **6** | **10** | **6** |
+
+**Step 3: Apply the formula.**
+
+```
+r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / √[Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)²]
+
+r = 6 / √(10 × 6)
+r = 6 / √60
+r ≈ 6 / 7.746
+r ≈ 0.775
+```
+
+**Step 4: Verify via the covariance formula (same result).**
+
+```
+Cov(X, Y) = 6 / (5 − 1) = 1.5
+sX = √(10 / 4) = √2.5 ≈ 1.581
+sY = √(6 / 4)  = √1.5 ≈ 1.225
+
+r = 1.5 / (1.581 × 1.225)
+r ≈ 1.5 / 1.937
+r ≈ 0.775
+```
+
+Both routes give **r ≈ 0.775**, confirming the calculation. The R-squared value is r² = (6/√60)² = 36/60 = **0.6 exactly**, meaning about 60% of the variance in y is explained by the linear relationship with x.
+
+---
+
+## Interpreting Pearson's r: What the Values Mean
+
+The sign and magnitude of r each carry distinct information.
+
+**Sign:** A positive r means the two variables tend to move in the same direction — as x increases, y also tends to increase. A negative r means they move in opposite directions.
+
+**Magnitude:** The closer r is to ±1, the tighter the linear relationship. A common rough guide used in many statistics courses is:
+
+| r (absolute value) | Conventional label |
+|--------------------|--------------------|
+| 0.00 – 0.19        | Negligible          |
+| 0.20 – 0.39        | Weak                |
+| 0.40 – 0.59        | Moderate            |
+| 0.60 – 0.79        | Moderately strong   |
+| 0.80 – 1.00        | Strong              |
+
+These boundaries are conventions, not laws. Whether r = 0.4 is "strong" or "weak" depends entirely on the field and the research question. In physics, r = 0.6 might indicate a poor fit; in psychology, r = 0.4 between two self-report measures might be considered substantial.
+
+The worked example above gave r ≈ 0.775, which falls in the "moderately strong positive" range — the two variables share a meaningful linear trend but are not perfectly correlated.
+
+**r = 0 does not mean independence.** Two variables can have a curved relationship (for example, y = x² over a symmetric range of x values) where the Pearson correlation is exactly zero because the relationship is not linear. Always inspect a scatter plot alongside r.
+
+---
+
+## Try the Calculator
+
+Enter any paired dataset below. The tool computes Pearson's r, R², and the sample size, matching the step-by-step formula above.
+
+<StatCalc slug="correlation-coefficient" variant="embed" />
+
+For the full standalone page with additional context, visit the <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link>. You can also explore related tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression: Equation, Formula & How It Works" intro="On a related note" />
+
+---
+
+## The Pearson Product-Moment Correlation: History and Name
+
+The term **Pearson product-moment correlation coefficient** comes from its inventor and its mathematical structure. The English mathematician **Karl Pearson** formalised and published the method in 1895, building on earlier work by **Francis Galton**, who had described regression and co-variation in the 1880s. Pearson's contribution was to give co-variation a standardised, unit-free form and to work out its statistical properties.
+
+The "product-moment" part of the name refers to the numerator of the formula. In statistics, a "moment" is a specific kind of average — the first moment is the mean, the second moment involves squared deviations, and so on. The numerator Σ[(xᵢ − x̄)(yᵢ − ȳ)] is the sum of products of the first moments of x and y about their respective means, which is why the coefficient is called the "product-moment" correlation.
+
+Today the Pearson product-moment correlation coefficient is so common that researchers often drop the qualifiers and call it simply "the correlation coefficient" or "Pearson's r." When a published study reports a correlation with no further specification, it almost always refers to this quantity.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.11 — Bivariate Data and Scatter Plots](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm) presents the Pearson product-moment correlation alongside scatter plots and explains why dividing by the product of the standard deviations keeps r within the [−1, +1] interval.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation? Definition, Positive vs Negative & Types" intro="You may also find this useful" />
+
+---
+
+## Pearson's r vs. Spearman Rank Correlation Coefficient
+
+Pearson's r is not the only correlation measure. When the assumptions of Pearson's method are not met, the **Spearman rank correlation coefficient** (often written ρ or rₛ) is the standard alternative.
+
+### How Spearman Works
+
+The Spearman rank correlation coefficient converts each variable's values into ranks — the smallest value gets rank 1, the next smallest gets rank 2, and so on — and then applies the Pearson formula to those ranks rather than to the original data. This makes it a measure of **monotonic** association: it detects whether one variable consistently increases as the other increases, even if the relationship is not a straight line.
+
+The Spearman formula for tied-free data simplifies to:
+
+```
+ρ = 1 − (6 · Σdᵢ²) / (n(n² − 1))
+```
+
+where dᵢ is the difference in the ranks of the i-th pair and n is the number of pairs. When there are ties, the standard Pearson formula applied to ranks gives the correct result.
+
+### When to Use Pearson vs. Spearman
+
+Use **Pearson's correlation** when:
+- Both variables are measured on a continuous (interval or ratio) scale.
+- The relationship you expect is linear, or you want to measure specifically linear association.
+- Both variables are approximately normally distributed, especially if the sample is small and you intend to test statistical significance.
+
+Use the **Spearman rank correlation coefficient** when:
+- One or both variables are ordinal (ranked categories, not true numeric values).
+- The data contain influential outliers that would distort Pearson's r.
+- The relationship is monotonic but clearly nonlinear (for example, a curved association that always goes in the same direction).
+- The normality assumption is implausible, particularly with small samples.
+
+In practice, Pearson and Spearman often give similar values when the data are well-behaved. A large discrepancy between the two is itself informative: it suggests outliers or a nonlinear pattern that Pearson's r is missing.
+
+It is worth noting that what some sources call "Pearson rank correlation" is simply the Spearman coefficient — the Pearson formula applied to ranked data. There is no separate coefficient called "Pearson rank correlation"; the two names describe the same calculation.
+
+The [Penn State STAT 501 Regression Methods course notes, Lesson 1.9 — Correlation](https://online.stat.psu.edu/stat501/lesson/1/1.9) provide a detailed comparison of how Pearson's r and Spearman's ρ behave under different data conditions, with illustrative examples.
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="Correlation vs Causation: Why Correlation Doesn't Imply Causation" intro="See also" />
+
+---
+
+## Assumptions and Limitations of Pearson Correlation
+
+Pearson's r is powerful, but it rests on several assumptions that matter when interpreting results.
+
+**Linearity.** The formula measures linear association. If the true relationship is U-shaped or otherwise curved, r can be near zero even when the association is strong. Always plot the data first.
+
+**No severe outliers.** A single extreme pair of values can pull r substantially toward ±1 or toward 0. Pearson's r is sensitive to outliers because squaring deviations amplifies them. When outliers are present, Spearman's ρ provides a more robust summary.
+
+**Continuous variables.** Strictly speaking, the formula applies to continuous (interval or ratio) data. Applying it to ordinal data or counts with limited values can produce misleading results.
+
+**Normality (for significance testing only).** The r statistic can be computed for any numeric data. However, to convert r into a p-value or confidence interval using the standard t-distribution method, both variables should follow an approximately normal distribution — or the sample should be large enough for the central limit theorem to apply.
+
+**Association is not causation.** A large Pearson r tells you the variables move together linearly, not that one causes the other. Two variables can correlate because of a common cause, a confounding variable, or sheer coincidence (spurious correlation). Never interpret correlation as evidence of cause and effect without additional reasoning and study design.
+
+---
+
+## Frequently Asked Questions
+
+### What does the Pearson correlation coefficient measure?
+
+Pearson's r measures the strength and direction of the linear relationship between two continuous numerical variables. It answers the question: how closely do the paired values follow a straight-line pattern? The result ranges from −1 (perfect negative linear relationship) to +1 (perfect positive linear relationship), with 0 indicating no linear association.
+
+### What is the covariance formula connection to Pearson's r?
+
+The covariance formula gives Cov(X, Y), the average cross-product of deviations from the two means. Pearson's r is the covariance divided by the product of the two standard deviations: r = Cov(X, Y) / (sX × sY). This division standardises the covariance, removing the effect of the variables' units and scaling the result to the [−1, +1] range.
+
+### What is the difference between Pearson's r and R²?
+
+Pearson's r is the correlation coefficient. R-squared (r²) is its square and gives the proportion of the variance in one variable that is linearly explained by the other. If r = 0.775, then r² = 0.6, meaning 60% of the variance in y is accounted for by the linear relationship with x. R² is always non-negative and ranges from 0 to 1.
+
+### What is the Pearson product-moment correlation?
+
+The Pearson product-moment correlation coefficient is the full formal name for Pearson's r. "Product-moment" refers to the numerator of the formula, which sums the products of each variable's deviations from their respective means. Karl Pearson published the method in 1895, formalising earlier ideas by Francis Galton. It is the same quantity as "pearson's correlation coefficient" — the name is just more precise.
+
+### When should I use the Spearman rank correlation coefficient instead of Pearson's r?
+
+Use the Spearman rank correlation coefficient when your data are ordinal, when outliers are a concern, or when the relationship is monotonic but not linear. Spearman converts raw values to ranks before computing the correlation, making it robust to outliers and valid for ordinal scales. Both methods produce values in [−1, +1]; a large difference between the two results signals something interesting in the data — likely outliers or a nonlinear pattern.
+
+### Can Pearson's correlation be negative and still indicate a strong relationship?
+
+Yes. A negative r simply means the two variables move in opposite directions — as one increases, the other tends to decrease. A value of r = −0.85 indicates a stronger linear relationship than r = +0.4. The sign gives direction; the absolute value gives strength. Both r = +0.85 and r = −0.85 represent the same magnitude of linear association.
+
+### What is pearson's correlation used for in practice?
+
+Pearson's correlation is used to summarise the relationship between two variables before and after regression analysis, to compare the associations found in different studies, to screen variables for inclusion in predictive models, and to describe relationships in exploratory data analysis. Because it is dimensionless and always in the same [−1, +1] range, it is directly comparable across different pairs of variables and across different studies.
+
+### What is a good value for Pearson's r?
+
+There is no universally "good" value — it depends entirely on the field and research question. In precision engineering, r < 0.99 might indicate a poor fit. In social-science survey research, r = 0.30 between two self-report scales is often considered meaningful. Interpret r values in the context of what is typical for the phenomenon being studied and always pair the r value with a scatter plot and, where appropriate, a significance test.
+
+---
+
+## Summary
+
+Pearson's correlation coefficient (r) is the standard way to measure how strongly two numerical variables follow a linear pattern. Compute it by summing the cross-products of deviations from the mean and normalising by the product of the two standard deviations — or equivalently, by dividing the covariance by the product of the standard deviations. The result is always between −1 and +1.
+
+The worked example with x = [1, 2, 3, 4, 5] and y = [2, 4, 5, 4, 5] gave r ≈ 0.775, indicating a moderately strong positive linear relationship and an R² of exactly 0.6. When Pearson's assumptions are not met — ordinal data, outliers, or a nonlinear monotonic relationship — the Spearman rank correlation coefficient is the standard robust alternative.
+
+Always pair Pearson's r with a scatter plot. The number alone cannot reveal whether the association is linear, whether outliers are driving the result, or whether the relationship has any causal meaning. Correlation describes the pattern; understanding it requires context and careful reasoning.
