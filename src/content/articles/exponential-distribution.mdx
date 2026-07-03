@@ -1,0 +1,333 @@
+---
+title: "Continuous Distributions: Exponential, Uniform, Gamma & Lognormal"
+h1: "Continuous Probability Distributions Explained"
+description: "Learn the exponential distribution formula, worked examples, and how the exponential probability distribution compares to uniform, gamma, and lognormal."
+category: probability-distributions
+primaryKeyword: exponential distribution
+keywords:
+  - exponential distribution
+  - exponential probability distribution
+  - gamma distribution
+  - lognormal distribution
+  - probability distribution exponential
+  - uniform distribution
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **exponential distribution** is a continuous probability distribution that models the time or distance between successive events when those events happen at a constant average rate, independently of one another. If you have ever waited for a bus, monitored server requests, or studied radioactive decay, the exponential distribution is the mathematical model behind the waiting time. It belongs to the broader family of continuous probability distributions—alongside the uniform, gamma, and lognormal distributions—each of which describes a different pattern of continuous outcomes.
+
+This article covers how each of these four distributions works, when to use them, and how to apply their formulas to real data. Whether you are new to statistics or brushing up on probability, understanding the exponential probability distribution and its relatives gives you a versatile toolkit for modelling real-world phenomena.
+
+---
+
+## What Is the Exponential Distribution?
+
+An **exponential distribution** describes the time elapsed between events in a process where events occur continuously and independently at a constant average rate. This rate is usually denoted by the Greek letter **lambda (λ)**, called the rate parameter or intensity.
+
+A few characteristics immediately distinguish the exponential distribution from other continuous distributions:
+
+- It is defined only for non-negative values (x ≥ 0). Waiting times cannot be negative.
+- Its shape is always a decreasing curve starting at a positive value when x = 0, then declining toward zero as x grows large. Short waits are more probable than long ones.
+- It possesses the **memoryless property**: given that an event has not yet occurred, the probability of waiting an additional amount of time is the same regardless of how long you have already waited. No other continuous distribution with non-negative support shares this property.
+
+The memoryless property is why the exponential distribution is indispensable in queuing theory, reliability engineering, and telecommunications. A machine that has run for 1,000 hours without failure has the same failure probability in the next hour as a brand-new machine does.
+
+---
+
+## The Exponential Distribution Formula and Key Properties
+
+The **probability density function (PDF)** of the exponential distribution with rate parameter λ is:
+
+```
+f(x) = λ · e^(−λx),   for x ≥ 0
+```
+
+The PDF gives the relative likelihood of the random variable X taking a specific value x. For the exponential distribution, this likelihood is highest at x = 0 and falls off exponentially as x increases.
+
+The **cumulative distribution function (CDF)** gives the probability that X falls at or below some value x:
+
+```
+F(x) = P(X ≤ x) = 1 − e^(−λx),   for x ≥ 0
+```
+
+The complementary probability—the chance of waiting longer than x—is:
+
+```
+P(X > x) = e^(−λx)
+```
+
+**Key summary statistics** derived directly from λ:
+
+| Property | Formula | Interpretation |
+|----------|---------|----------------|
+| Mean | 1 / λ | Average waiting time |
+| Variance | 1 / λ² | Spread around the mean |
+| Standard deviation | 1 / λ | Same units as x |
+| Median | ln(2) / λ | The midpoint of the distribution |
+| Mode | 0 | Most likely waiting time |
+
+Notice that the mean equals the standard deviation for any exponential distribution. This makes its coefficient of variation always equal to one—a useful diagnostic when you want to check whether data might follow this distribution.
+
+---
+
+## Worked Example: Applying the Exponential Probability Distribution
+
+Suppose customers arrive at a coffee shop at a constant average rate of **0.5 customers per minute** (λ = 0.5). The time between successive arrivals follows an exponential distribution.
+
+**Step 1: Set the parameters.**
+
+- Rate parameter: λ = 0.5 per minute
+- Mean waiting time: 1 / λ = 1 / 0.5 = **2 minutes**
+- Standard deviation: 1 / λ = **2 minutes**
+
+**Step 2: Find the probability that the next customer arrives within 3 minutes.**
+
+```
+P(X ≤ 3) = 1 − e^(−0.5 × 3)
+          = 1 − e^(−1.5)
+          = 1 − 0.2231
+          ≈ 0.7769
+```
+
+There is approximately a **77.7% chance** the next customer arrives within 3 minutes.
+
+**Step 3: Find the probability the next customer takes more than 4 minutes to arrive.**
+
+```
+P(X > 4) = e^(−0.5 × 4)
+          = e^(−2)
+          ≈ 0.1353
+```
+
+There is about a **13.5% chance** of waiting more than 4 minutes between customers.
+
+**Step 4: Apply the memoryless property.**
+
+Suppose 2 minutes have already passed without a customer. The probability that you will wait an additional 3 minutes or more is still:
+
+```
+P(X > 3) = e^(−0.5 × 3) = e^(−1.5) ≈ 0.2231
+```
+
+The elapsed 2 minutes carry no information. The future waiting time has the same distribution as the original. This is the memoryless property in action: the process has no memory of the past.
+
+<RelatedLink to={routes.calculator('probability')} label="probability calculator" intro="For a related calculation" />
+
+---
+
+## The Uniform Distribution
+
+The **uniform distribution** (also called the rectangular distribution) is the simplest of the four distributions covered here. A continuous uniform random variable X is equally likely to take any value within a bounded interval [a, b].
+
+The PDF is completely flat:
+
+```
+f(x) = 1 / (b − a),   for a ≤ x ≤ b
+       0,               otherwise
+```
+
+The CDF increases linearly from 0 at x = a to 1 at x = b:
+
+```
+F(x) = (x − a) / (b − a),   for a ≤ x ≤ b
+```
+
+**Key properties of the uniform distribution:**
+
+| Property | Formula |
+|----------|---------|
+| Mean | (a + b) / 2 |
+| Variance | (b − a)² / 12 |
+| Standard deviation | (b − a) / √12 |
+
+**Worked example — uniform distribution**
+
+A bus departs every 10 minutes. You arrive at a random time and wait X minutes for the next bus. X follows a uniform distribution on [0, 10].
+
+- Mean waiting time: (0 + 10) / 2 = **5 minutes**
+- Variance: (10 − 0)² / 12 = 100 / 12 ≈ **8.33 minutes²**
+- Standard deviation: √8.33 ≈ **2.89 minutes**
+
+The probability that you wait between 2 and 6 minutes:
+
+```
+P(2 ≤ X ≤ 6) = (6 − 2) / (10 − 0) = 4 / 10 = 0.40
+```
+
+There is a **40% chance** you wait between 2 and 6 minutes. Because the distribution is perfectly flat, the probability of any sub-interval is simply the interval's length divided by the total range.
+
+**When to use the uniform distribution:** Use it when every outcome in a range is equally likely—random number generation, arrival time in an interval, or any situation where there is no reason to prefer any value over another within the bounds.
+
+<RelatedLink to={routes.article('probability-distribution')} label="guide to probability distributions" intro="On a related note" />
+
+---
+
+## The Gamma Distribution
+
+The **gamma distribution** is a flexible two-parameter continuous distribution that generalises the exponential distribution. Where the exponential distribution models the time until the first event, the gamma distribution models the time until the k-th event in a Poisson process.
+
+It is parametrised by:
+- **Shape parameter k** (also written α): a positive integer or real number that controls the shape of the curve.
+- **Rate parameter λ** (or its reciprocal, the scale parameter θ = 1/λ): controls the horizontal stretch.
+
+The PDF of the gamma distribution is:
+
+```
+f(x; k, λ) = (λ^k · x^(k−1) · e^(−λx)) / Γ(k),   for x ≥ 0
+```
+
+where Γ(k) is the gamma function—a generalisation of the factorial. For positive integers, Γ(k) = (k−1)!.
+
+**Key properties:**
+
+| Property | Formula |
+|----------|---------|
+| Mean | k / λ |
+| Variance | k / λ² |
+| Mode (k ≥ 1) | (k − 1) / λ |
+
+**Relationship to the exponential distribution:** When k = 1, the gamma distribution reduces exactly to the exponential distribution with rate λ. This connection makes the gamma distribution a natural extension when you need to model the waiting time until multiple events, not just the first.
+
+**Practical example — gamma distribution**
+
+Suppose a hospital emergency room admits patients at an average rate of λ = 3 per hour (Poisson process). The waiting time until the 4th patient arrives follows a Gamma(k = 4, λ = 3) distribution.
+
+Mean waiting time = k / λ = 4 / 3 ≈ **1.33 hours**
+
+Variance = k / λ² = 4 / 9 ≈ **0.44 hours²**
+
+Standard deviation = √(4/9) ≈ **0.67 hours**
+
+As k increases, the gamma distribution's peak shifts rightward and the curve becomes more symmetric, approaching a bell shape. For large k, the gamma distribution is well approximated by the normal distribution (via the Central Limit Theorem applied to the sum of exponential random variables).
+
+**Applications of the gamma distribution** include: insurance claim modelling, rainfall accumulation, waiting times in queuing systems, and Bayesian statistics (as the conjugate prior for the Poisson rate parameter).
+
+---
+
+## The Lognormal Distribution
+
+The **lognormal distribution** describes a random variable whose natural logarithm is normally distributed. If Y = ln(X) follows a normal distribution with mean μ and standard deviation σ, then X follows a lognormal distribution.
+
+The PDF of the lognormal distribution is:
+
+```
+f(x; μ, σ) = 1 / (x · σ · √(2π)) · e^(−(ln(x) − μ)² / (2σ²)),   for x > 0
+```
+
+This looks complex, but the key insight is that **working on the log scale converts a lognormal problem into a normal problem**. You can apply all of your normal-distribution knowledge once you take the logarithm.
+
+**Key properties:**
+
+| Property | Formula |
+|----------|---------|
+| Mean | e^(μ + σ²/2) |
+| Variance | (e^(σ²) − 1) · e^(2μ + σ²) |
+| Median | e^μ |
+| Mode | e^(μ − σ²) |
+
+**What makes data lognormal?**
+
+A distribution is approximately lognormal when the variable is the product of many independent positive factors, each contributing a small proportional change. The Central Limit Theorem applied to the logarithm of products explains why logarithms of such variables are normally distributed.
+
+**Practical example — lognormal distribution**
+
+Suppose the income of workers in a sector follows a lognormal distribution with μ = 10.5 (on the log scale) and σ = 0.6.
+
+- Median income: e^(10.5) ≈ **36,315** (in relevant currency units)
+- Mean income: e^(10.5 + 0.6²/2) = e^(10.5 + 0.18) = e^(10.68) ≈ **43,816**
+
+The mean exceeds the median because the distribution is right-skewed: most workers earn near the median, but a small number of very high earners pull the mean upward. This skewed pattern is exactly why income, stock prices, and many biological measurements follow the lognormal distribution rather than the normal distribution.
+
+**Common applications:** stock and asset prices (Black-Scholes model), income and wealth distributions, particle sizes in aerosols, response times in systems, environmental measurements such as pollutant concentrations.
+
+<RelatedLink to={routes.calculator('normal-distribution')} label="normal distribution calculator" intro="Worth reading next" />
+
+---
+
+## How the Four Distributions Relate to Each Other
+
+These four distributions are not isolated tools—they form a connected family:
+
+**Exponential → Gamma:** Sum k independent exponential(λ) random variables and you get a Gamma(k, λ) random variable. Setting k = 1 in the gamma formula recovers the exponential exactly.
+
+**Normal → Lognormal:** Take a normal random variable Y ~ N(μ, σ²) and exponentiate it: X = e^Y follows a lognormal distribution. Equivalently, take the logarithm of a lognormal random variable and you get a normal random variable.
+
+**Uniform → Building block:** The uniform distribution is mathematically foundational. Computers generate uniform(0, 1) random numbers first; other distributions (including exponential and normal) are then obtained via transformation (the inverse-CDF method or rejection sampling).
+
+**Chi-squared as special gamma:** The chi-squared distribution with ν degrees of freedom is a Gamma(k = ν/2, λ = 1/2) distribution—another member of the same family, widely used in hypothesis testing.
+
+Understanding these relationships lets you navigate between distributions as a problem changes. An exponential waiting-time model that needs to generalise to multiple events becomes a gamma model. A multiplicative-growth model in finance that seems normal on the log scale becomes lognormal in the original units.
+
+---
+
+## When to Use Each Distribution
+
+| Situation | Distribution to reach for |
+|-----------|--------------------------|
+| Time or distance between independent random events at constant rate | Exponential |
+| Time until the k-th event in a Poisson process | Gamma |
+| All outcomes in a range are equally probable | Uniform |
+| Variable is the product of many positive independent factors (income, prices, sizes) | Lognormal |
+| Variable is the sum of many independent variables (test scores, measurement errors) | Normal (not covered here, but the natural comparison) |
+
+A simple diagnostic: if the data must be positive and right-skewed, start with exponential (if the mean equals the standard deviation) or lognormal (if the log-transformed data looks roughly normal). If the spread is symmetric, the gamma or normal family is more appropriate. If data is bounded and flat, use uniform.
+
+<RelatedLink to={routes.article('binomial-distribution')} label="the binomial distribution" intro="You may also find this useful" />
+
+---
+
+## Frequently Asked Questions
+
+### What is the exponential distribution used for?
+
+The exponential distribution models the time between events in a Poisson process—situations where events occur randomly but at a constant long-run rate. Common applications include: time between customer arrivals, time between equipment failures, time between radioactive decay events, and call-centre waiting times. Any process where the exponential probability distribution applies has the key property that the future is independent of the past (memoryless property).
+
+### What is the difference between exponential and gamma distribution?
+
+The gamma distribution is a generalisation of the exponential distribution. An exponential distribution models the waiting time until the first event; a gamma distribution with shape parameter k models the waiting time until the k-th event in the same Poisson process. Setting k = 1 in the gamma distribution gives exactly the exponential distribution.
+
+### What is the uniform distribution and when does it apply?
+
+The uniform distribution (or rectangular distribution) models a situation where every value in a bounded interval [a, b] is equally likely. It applies when there is no reason to favour any outcome over any other within the range—random number selection, arrival times within a fixed window, or rounding errors. The probability of any sub-interval equals the interval's width divided by the total range.
+
+### Why is the lognormal distribution so common in finance and biology?
+
+The lognormal distribution arises naturally when a variable is the product of many independent positive factors. Stock prices change by proportional amounts each period (1% up, 0.5% down), and the product of many such returns produces a lognormally distributed final price. Similarly, biological sizes (cell diameters, organism weights in some populations) grow multiplicatively, leading to lognormal distributions. The key test is whether the logarithm of the variable looks normally distributed.
+
+### What is the memoryless property of the exponential distribution?
+
+The memoryless property states that, given an exponential random variable X, the conditional probability P(X > s + t | X > s) equals P(X > t) for any s, t ≥ 0. In plain English: no matter how long you have already waited, the probability of waiting an additional amount of time is the same as if you had just started. The exponential distribution is the only continuous distribution with this property. The geometric distribution is its discrete analogue.
+
+### How do I estimate the parameter λ from data?
+
+Given n observed values x₁, x₂, ..., xₙ from an exponential distribution, the maximum likelihood estimate of λ is:
+
+```
+λ-hat = n / (x₁ + x₂ + ... + xₙ) = 1 / x-bar
+```
+
+where x-bar is the sample mean. Because the mean of an exponential distribution is 1/λ, the natural estimator for λ is the reciprocal of the sample mean. For a sample of 50 inter-arrival times with a mean of 4 minutes, the estimated rate is λ-hat = 1/4 = 0.25 events per minute.
+
+### How does the lognormal distribution differ from the normal distribution?
+
+A normal distribution is symmetric around its mean and can take any real value (positive or negative). A lognormal distribution is strictly positive and right-skewed: most values cluster near the median but a long right tail stretches to large values. The key relationship is mathematical: the natural logarithm of a lognormal variable follows a normal distribution. When data must be positive and looks skewed in its original form but symmetric on a log scale, lognormal is the appropriate model.
+
+---
+
+## Summary
+
+Four continuous probability distributions cover an enormous range of real-world phenomena:
+
+- **Exponential distribution**: models time between independent events at a constant rate; parametrised by λ; mean = 1/λ; has the memoryless property.
+- **Uniform distribution**: models equally probable outcomes across a bounded interval [a, b]; the simplest shape, a flat PDF.
+- **Gamma distribution**: generalises the exponential to model waiting times until the k-th event; parametrised by shape k and rate λ; reduces to exponential when k = 1.
+- **Lognormal distribution**: models variables whose logarithm is normally distributed; right-skewed; applies to prices, sizes, and multiplicative-growth processes.
+
+The exponential distribution is the natural starting point when events occur at a constant rate and the process has no memory of the past. The [NIST/SEMATECH e-Handbook of Statistical Methods, 8.1.6.1 — Exponential Distribution](https://www.itl.nist.gov/div898/handbook/apr/section1/apr161.htm) provides a technical reference for the exponential distribution's properties and reliability-engineering applications. For a broader treatment of continuous distributions including worked examples with calculus, the open-access text [OpenStax *Introductory Statistics*, Chapter 5 — Continuous Random Variables](https://openstax.org/books/introductory-statistics/pages/5-introduction) covers the exponential distribution alongside the uniform distribution in an accessible format.
+
+Understanding which distribution to choose—and knowing that these four form a mathematically related family—will sharpen your ability to model, analyse, and communicate about any continuous random variable you encounter.
