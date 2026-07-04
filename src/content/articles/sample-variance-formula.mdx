@@ -1,0 +1,369 @@
+---
+title: "Sample Variance Formula: Definition, Equation & Examples"
+h1: "Sample Variance Formula Explained"
+description: "Learn the sample variance formula s² = Σ(xᵢ − x̄)² ÷ (n − 1), step by step. Covers the equation, a fully worked example, and common mistakes to avoid."
+category: descriptive-statistics
+primaryKeyword: sample variance formula
+keywords:
+  - sample variance formula
+  - formula for variance of a sample
+  - sample variance equation
+  - sample variance formulas
+  - sampling variance formula
+  - variance for sample formula
+  - variance formula example
+  - variance formula for sample
+  - variance formula sample
+phase: 2
+calculator: variance
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **sample variance formula** gives you a single number that captures how spread out a set of values is around their mean. More precisely, it measures the average squared distance of each data point from the sample mean — and it shows up in virtually every branch of applied statistics, from quality control to clinical research to machine learning evaluation.
+
+The formula for variance of a sample, in standard notation, is:
+
+```
+s² = Σ(xᵢ − x̄)² / (n − 1)
+```
+
+where `s²` is the sample variance, `xᵢ` is each individual value, `x̄` is the sample mean, and `n` is the number of values in the sample.
+
+If you have seen the population variance formula before, you will notice one difference: the denominator is `n − 1` rather than `N`. That single adjustment — called Bessel's correction — is what makes the sample formula unbiased. The rest of this article explains exactly what that means, walks through every term in the sample variance equation, and works through a concrete numeric example so you can follow the arithmetic yourself.
+
+---
+
+## What Is Sample Variance?
+
+Variance is a measure of spread. A dataset where all values cluster tightly around the mean has low variance; a dataset where values scatter widely has high variance. Variance quantifies that scatter in squared units of the original measurement.
+
+The word *sample* matters because statistics almost always deal with a subset of a larger group, not the entire group. A researcher measuring patient blood pressure, a quality engineer inspecting manufactured parts, or a pollster surveying voter intent — all of them work with samples. They want to draw conclusions about the full population, but they only have access to a slice of it.
+
+The **variance formula for sample data** is designed for exactly this situation. It produces an estimate of the true population variance that is, on average, neither too high nor too low. The key is in the denominator: dividing by `n − 1` rather than `n` corrects for the natural tendency of a sample to underestimate the spread of the full population.
+
+When you see `s²` (s-squared) in a textbook or research paper, you are looking at a sample variance. The companion symbol `σ²` (sigma-squared) denotes population variance. Keep that distinction clear and you can decode almost any statistical notation you encounter.
+
+---
+
+## The Sample Variance Formula in Full
+
+The sample variance equation is written as:
+
+```
+s² = Σ(xᵢ − x̄)² / (n − 1)
+```
+
+This is the standard form taught in every introductory statistics course and used in software packages from Excel to R to Python. Some textbooks rearrange the arithmetic to produce a computationally equivalent shortcut formula:
+
+```
+s² = [ Σxᵢ² − n·x̄² ] / (n − 1)
+```
+
+Both give the same result. The first form (definitional formula) is easier to understand and verify by hand; the second form (computational formula) was useful when calculations were done on mechanical calculators. Today, the definitional form is preferred for teaching because each step has a clear meaning.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
+
+---
+
+## Breaking Down Each Term
+
+Understanding the sample variance formula means understanding what each symbol contributes.
+
+### xᵢ — Individual Data Values
+
+The subscript `i` is an index that runs from 1 to `n`. So `x₁` is the first value in your dataset, `x₂` is the second, and so on through `xₙ`. Each value in the dataset appears once in the formula.
+
+### x̄ — The Sample Mean
+
+Pronounced "x-bar," `x̄` is the arithmetic mean of the sample:
+
+```
+x̄ = Σxᵢ / n
+```
+
+You calculate it first — before you can compute any deviation, you need to know the center around which deviations are measured.
+
+### (xᵢ − x̄) — Deviations from the Mean
+
+Subtracting the mean from each value gives you the deviation for that value. Positive deviations come from values above the mean; negative deviations come from values below. If you were to add all the raw deviations together they would sum to zero by definition — positive and negative cancel out — which is why the formula squares each one.
+
+### (xᵢ − x̄)² — Squared Deviations
+
+Squaring each deviation does two things at once: it eliminates the sign problem (all squared values are non-negative), and it gives extra weight to values that are far from the mean. A value that is twice as far from the mean contributes four times as much to the sum of squared deviations.
+
+### Σ — Summation
+
+The uppercase Greek sigma Σ (not to be confused with the lowercase σ for standard deviation) tells you to add up all the squared deviations. After squaring every `(xᵢ − x̄)`, sum the results.
+
+### n − 1 — Bessel's Correction
+
+This is the denominator that distinguishes the variance formula for sample data from the population formula. Dividing by `n − 1` instead of `n` inflates the result slightly — and deliberately so. A sample tends to be clustered more tightly around its own mean than the population is around the population mean, because extreme values are less likely to appear in a small sample. Dividing by `n − 1` corrects for this systematic underestimate, producing an unbiased estimator of the population variance. The correction is mathematically proven and universally adopted in statistics.
+
+---
+
+## Step-by-Step Procedure
+
+Follow these five steps every time you apply the sample variance formula:
+
+1. **Collect your sample values** and count them to get `n`.
+2. **Calculate the sample mean** (`x̄ = Σxᵢ / n`).
+3. **Subtract the mean from each value** to get the deviation for each data point (`xᵢ − x̄`).
+4. **Square each deviation** (`(xᵢ − x̄)²`) and add all the squared deviations together (Σ).
+5. **Divide the sum by `n − 1`** to get the sample variance `s²`.
+
+That five-step sequence is all there is to it. The variance formula example below applies exactly these steps to a real dataset.
+
+---
+
+## Worked Example: Sample Variance of Five Test Scores
+
+Suppose a teacher selects five students at random from a large class and records their exam scores:
+
+**72, 85, 90, 78, 95**
+
+The teacher wants to estimate the spread in exam performance across the whole class using just these five scores. The sampling variance formula is the right tool.
+
+### Step 1 — Count the Values
+
+There are n = 5 scores.
+
+### Step 2 — Calculate the Sample Mean
+
+```
+x̄ = (72 + 85 + 90 + 78 + 95) / 5
+x̄ = 420 / 5
+x̄ = 84
+```
+
+The average score is 84.
+
+### Step 3 — Compute Each Deviation
+
+| Score (xᵢ) | Deviation (xᵢ − x̄) |
+|-----------|---------------------|
+| 72 | 72 − 84 = −12 |
+| 85 | 85 − 84 = +1 |
+| 90 | 90 − 84 = +6 |
+| 78 | 78 − 84 = −6 |
+| 95 | 95 − 84 = +11 |
+
+Check: the deviations sum to (−12) + 1 + 6 + (−6) + 11 = 0 ✓
+
+### Step 4 — Square Each Deviation and Sum
+
+| Score (xᵢ) | Deviation | Squared Deviation |
+|-----------|-----------|-------------------|
+| 72 | −12 | 144 |
+| 85 | +1 | 1 |
+| 90 | +6 | 36 |
+| 78 | −6 | 36 |
+| 95 | +11 | 121 |
+| **Sum** | | **338** |
+
+### Step 5 — Divide by n − 1
+
+```
+s² = 338 / (5 − 1)
+s² = 338 / 4
+s² = 84.5
+```
+
+The sample variance is **84.5 (score²)**. Because the original scores are unitless numbers here, the variance is also unitless — though in practice variance carries squared units (e.g., metres squared, dollars squared), which is one reason standard deviation (the square root of variance) is often preferred for interpretation.
+
+The sample standard deviation is `s = √84.5 ≈ 9.19`, meaning individual scores typically deviate from the class average by roughly 9 points.
+
+<RelatedLink to={routes.article('variance')} label="Variance: Definition, Formula & vs Standard Deviation" intro="On a related note" />
+
+---
+
+## Try It Yourself
+
+Enter the five test scores — 72, 85, 90, 78, 95 — into the calculator below and confirm you get the same sample variance of 84.5. The calculator also reports the population variance (67.6, using n in the denominator) so you can see the difference side by side.
+
+<StatCalc slug="variance" variant="embed" />
+
+To open the full tool on its own page, visit the <Link to={routes.calculator('variance')}>variance calculator</Link>. You can also find all available tools on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+
+---
+
+## Population Variance vs. Sample Variance
+
+It is worth pausing to be precise about when each formula applies, because choosing the wrong one is a common source of confusion.
+
+**Population variance (σ²)** uses a capital `N` in the denominator and the population mean `μ`:
+
+```
+σ² = Σ(xᵢ − μ)² / N
+```
+
+Use this only when your dataset contains every single member of the population you are studying. In practice this is rare — you would need to measure every patient in a country, every part from an entire production run, or every voter in an election — and it is almost never feasible.
+
+**Sample variance (s²)** uses `n − 1` in the denominator and the sample mean `x̄`:
+
+```
+s² = Σ(xᵢ − x̄)² / (n − 1)
+```
+
+Use this whenever your data is a subset of a larger population, which is the normal situation in statistics. It is the default variance formula for sample data in every major statistics package.
+
+For the five test scores above, the two formulas give different results: s² = 84.5 (sample) vs σ² = 67.6 (population, dividing 338 by 5 instead of 4). The sample formula gives the larger value because it applies Bessel's correction.
+
+The difference between the two formulas matters most for small samples. With large samples (n in the hundreds or thousands), the difference between dividing by n and n − 1 becomes negligible, and the two formulas converge to virtually the same value.
+
+---
+
+## Why n − 1? The Intuition Behind Bessel's Correction
+
+The n − 1 denominator trips up many students, so it is worth a short explanation.
+
+When you compute the sample mean `x̄` from the data, you are using one piece of information from the dataset to define the center. That "uses up" one degree of freedom — it means the deviations `(xᵢ − x̄)` are not all free to vary independently. If you know `n − 1` of them, the last one is determined by the constraint that they must sum to zero. You therefore have only `n − 1` independent pieces of information about spread, not `n`.
+
+Dividing by `n − 1` rather than `n` reflects this reduced number of independent comparisons. Mathematically, it can be shown (using the theory of expected values) that `E[s²] = σ²` — the expected value of the sample variance equals the true population variance. This property (called unbiasedness) is why the `n − 1` formula is standard for the variance formula for sample data. The `n` denominator systematically underestimates σ², especially for small samples.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, section 1.3.5.6, Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) provides a rigorous treatment of variance formulas and their properties, including the distinction between biased and unbiased estimators.
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="Worth reading next" />
+
+---
+
+## Sample Variance and Standard Deviation
+
+Variance and standard deviation are two faces of the same measure. Standard deviation is simply the square root of variance:
+
+```
+s = √s²
+```
+
+So for the test score example, `s = √84.5 ≈ 9.19`.
+
+**Why report standard deviation instead of variance?**
+
+Variance is in squared units. If your data is in centimetres, variance is in centimetres squared (cm²) — a unit with no natural physical interpretation. Standard deviation brings the measure back into the original units (cm), making it immediately interpretable: "values typically deviate from the mean by about X centimetres."
+
+That said, variance has important mathematical advantages. Variances of independent random variables add together; standard deviations do not. This additivity property makes variance essential in probability theory, linear models, and the analysis of variance (ANOVA). When reading formulas in statistics textbooks you will often encounter variance inside derivations, even when standard deviation is what gets reported in results tables.
+
+The relationship means the two sample variance formulas are fully interchangeable once you know which you need:
+
+```
+s²  = Σ(xᵢ − x̄)² / (n − 1)     [variance]
+s   = √[ Σ(xᵢ − x̄)² / (n − 1) ] [standard deviation]
+```
+
+---
+
+## Sample Variance in Practice
+
+The **sampling variance formula** appears throughout applied work in recognisable patterns.
+
+### Confidence Intervals
+
+When constructing a 95% confidence interval for a population mean, you need an estimate of spread. Because the population standard deviation σ is almost never known, statisticians replace it with the sample standard deviation `s` (derived from the sample variance equation):
+
+```
+x̄  ±  t* · (s / √n)
+```
+
+Here `t*` is the critical value from the t-distribution. Every component of this interval depends on the sample variance formula holding for the data.
+
+### Two-Sample t-Tests
+
+Comparing the means of two groups — for example, whether a new teaching method improves exam scores — requires estimating the variance within each group. The formula for the pooled variance used in an independent-samples t-test combines the sample variance from each group, weighted by their degrees of freedom.
+
+### Regression and ANOVA
+
+Linear regression and analysis of variance (ANOVA) decompose the total variance in an outcome into parts attributable to different sources. Every decomposition rests on the variance formula for sample data as its foundation. The residual variance in regression, for example, is the sample variance of the prediction errors.
+
+### Descriptive Reporting
+
+Even when no inferential test is being run, researchers report sample variance (or standard deviation) alongside the mean to characterise their data. A mean without any measure of spread gives an incomplete picture: two datasets can have the same mean but wildly different variance. The open-access textbook [OpenStax *Introductory Statistics*, section 2.7 — Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) covers how variance and standard deviation are reported in practice, with additional worked examples.
+
+<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Using the Sample Variance Formula
+
+### Using n Instead of n − 1
+
+This is by far the most common error. Dividing by `n` gives the population variance, not the sample variance. When your data is a sample (as it usually is), always use `n − 1`. Many calculators and spreadsheet functions offer both options; be sure you are calling the correct one.
+
+In Microsoft Excel:
+- `VAR.S(range)` — sample variance (divides by n − 1) ✓
+- `VAR.P(range)` — population variance (divides by n) ✗ for samples
+
+In Python (NumPy):
+- `np.var(x, ddof=1)` — sample variance ✓
+- `np.var(x, ddof=0)` — population variance ✗ for samples
+
+### Forgetting to Square the Deviations
+
+Some students compute deviations and then sum them directly. The deviations always sum to zero by definition, so that gives variance of 0 — obviously wrong. Squaring each deviation before summing is the non-negotiable step in the variance formula for a sample.
+
+### Rounding the Mean Prematurely
+
+If you round the sample mean `x̄` to one or two decimal places before computing deviations, you introduce rounding errors that compound through the squared deviations. Carry at least four decimal places in the mean, or keep it as an exact fraction, until the final step.
+
+### Confusing s² With s
+
+It is easy to report the variance when you were asked for the standard deviation, or vice versa. Label your answer clearly: `s² = 84.5` for variance, `s ≈ 9.19` for standard deviation. They carry different units and have different magnitudes.
+
+### Interpreting Variance in Original Units
+
+Variance is in squared units. You cannot say "test scores deviate from the mean by 84.5 points" — that is the variance, not the standard deviation. The interpretable spread measure is the standard deviation: `s ≈ 9.19 points`. This is one reason standard deviation is reported more often in summaries, even though variance is what the formula computes first.
+
+---
+
+## Frequently Asked Questions
+
+### What is the sample variance formula?
+
+The sample variance formula is `s² = Σ(xᵢ − x̄)² / (n − 1)`, where `s²` is the sample variance, `xᵢ` are the individual values, `x̄` is the sample mean, and `n` is the sample size. It measures the average squared deviation of each data point from the mean, using `n − 1` in the denominator to produce an unbiased estimate of the population variance.
+
+### Why does the sample variance formula use n − 1?
+
+Dividing by `n − 1` (rather than `n`) corrects for the fact that a sample's values are measured relative to the sample mean `x̄` rather than the true population mean `μ`. Using the sample mean as an estimate introduces bias — the deviations tend to be slightly smaller than they would be if you knew the true population mean. Subtracting one from the denominator inflates the result just enough to remove this bias on average. The result is called an unbiased estimator of the population variance.
+
+### How is the sample variance equation different from the population variance formula?
+
+The only difference is the denominator. The sample variance equation divides by `n − 1`; the population variance formula divides by `N` (the full population size). Both formulas compute the sum of squared deviations from the mean — but the mean itself also differs: the sample formula uses `x̄` (the sample mean) while the population formula uses `μ` (the true population mean). Use the sample formula whenever your data is a subset of a larger group, which is the typical case in research.
+
+### What is a variance formula example with real numbers?
+
+Using scores of 72, 85, 90, 78, 95: the mean is 84, the squared deviations are 144, 1, 36, 36, and 121, which sum to 338. Dividing 338 by `n − 1 = 4` gives a sample variance of 84.5. The sample standard deviation is √84.5 ≈ 9.19.
+
+### What are the sample variance formulas for grouped data?
+
+For data presented in a frequency table, the sample variance formula adapts to use the midpoint `mᵢ` of each class interval and its frequency `fᵢ`:
+
+```
+s² = Σ fᵢ(mᵢ − x̄)² / (n − 1)
+```
+
+where `n = Σfᵢ` is the total number of observations. The midpoint substitutes for each individual value, and the frequency weight accounts for how many observations fall in each class. This grouped version of the variance formula for a sample is an approximation — the exact individual values are collapsed into intervals — but it is standard practice when only frequency-table data is available.
+
+### What does a high sample variance mean?
+
+A high sample variance means the data points are spread widely around the mean. A low sample variance means they cluster closely. The specific threshold for "high" or "low" depends entirely on context: a sample variance of 84.5 for test scores (out of 100) suggests moderate spread, while the same variance for body temperature (normally 36.6–37.2 °C) would indicate extreme and likely erroneous variability. Always interpret variance relative to the scale and units of the underlying data.
+
+### Is variance the same as standard deviation?
+
+No. Standard deviation is the square root of variance: `s = √s²`. Variance is in squared units; standard deviation is in the same units as the original data. A sample variance of 84.5 (score²) corresponds to a standard deviation of approximately 9.19 (scores). Both measure spread — variance is easier to work with algebraically, while standard deviation is easier to interpret in applied reporting.
+
+### How do I calculate the variance formula for a sample in Excel?
+
+Use the function `VAR.S(range)`, which implements the sample variance formula with `n − 1` in the denominator. For example, `=VAR.S(A1:A5)` on the five test scores 72, 85, 90, 78, 95 returns 84.5. Avoid `VAR.P`, which divides by `n` (the population formula) and would give 67.6 — the wrong result for sample data.
+
+---
+
+## Summary
+
+The **sample variance formula** is `s² = Σ(xᵢ − x̄)² / (n − 1)`. To apply it: find the sample mean, subtract it from each value to get the deviations, square each deviation, sum the squared deviations, and divide by `n − 1`. The `n − 1` denominator is Bessel's correction — it makes the sample variance an unbiased estimate of the true population variance.
+
+The sampling variance formula is the foundation for standard deviation, confidence intervals, t-tests, regression, and ANOVA. Whenever you see `s²` in a results table or formula, you know it was computed this way. Use `n − 1` for sample data; use `N` only when your dataset contains every member of the population.
+
+The five steps above and the worked example with test scores cover everything you need to apply any of the sample variance formulas by hand. For longer datasets, the <Link to={routes.calculator('variance')}>variance calculator</Link> automates the arithmetic and reports both sample and population variance side by side, so you can see Bessel's correction in action with your own numbers.
