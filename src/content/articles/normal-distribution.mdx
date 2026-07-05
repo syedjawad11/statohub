@@ -1,0 +1,306 @@
+---
+title: "Normal Distribution: The Bell Curve Explained"
+description: "Understand the normal distribution and its bell curve: the formula, the 68-95-99.7 rule, worked examples, and how to calculate probabilities."
+category: probability-distributions
+primaryKeyword: normal distribution
+keywords:
+  - normal distribution
+  - bell curve normal distribution
+  - gaussian distribution
+  - normal distribution bell curve
+  - normal distribution chart
+  - normal distribution curves
+  - standard gaussian distribution
+phase: 3
+calculator: normal-distribution
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **normal distribution** is the most important probability distribution in statistics. Its distinctive bell curve shape — symmetric, unimodal, and tapering smoothly toward both ends — describes how countless real-world measurements cluster around a central value. Heights, exam scores, blood pressure readings, manufacturing tolerances, and measurement errors all tend to follow a pattern that closely matches the normal distribution. Understanding this distribution is the gateway to hypothesis testing, confidence intervals, and most of the inferential statistics used in science, medicine, and engineering.
+
+This article explains what the normal distribution is, how to read a normal distribution bell curve, how to apply the formula, and how to calculate probabilities step by step with a fully worked example.
+
+---
+
+## What Is a Normal Distribution?
+
+A normal distribution is a continuous probability distribution that is symmetric about its mean, meaning the left and right halves of the bell curve are mirror images. The peak of the curve sits at the mean, where data is most likely to fall. Values become progressively less likely as they move farther from the mean in either direction.
+
+The distribution is also called the **Gaussian distribution** after the German mathematician Carl Friedrich Gauss, who used it to model astronomical measurement errors in the early nineteenth century. The terms "normal distribution" and "Gaussian distribution" refer to exactly the same distribution and are interchangeable in statistics.
+
+A random variable X follows a normal distribution when three conditions hold: the distribution is symmetric (equal halves on either side of the mean), the mean, median, and mode all coincide at the centre, and the curve is bell-shaped with well-defined tails that approach but never touch the horizontal axis.
+
+### When Data Is Approximately Normal
+
+No real dataset is perfectly normal, but many are close enough for the normal distribution to be a useful model. The central limit theorem makes this especially important: even when individual measurements are not normally distributed, the mean of a large enough sample will be approximately normal. This is why normal-distribution methods work across such a wide range of applications — the distribution of sample means converges to normal regardless of the shape of the underlying population.
+
+---
+
+## The Bell Curve Shape
+
+The normal distribution bell curve has a shape determined entirely by two parameters: the mean (μ) and the standard deviation (σ). Every normal distribution, regardless of its specific mean and spread, has the same fundamental bell shape.
+
+### Symmetry and the Center
+
+The curve is perfectly symmetric about its mean. The left tail and right tail are identical in shape. This symmetry means:
+
+- The mean, median, and mode are all equal and sit at the exact centre of the distribution.
+- The probability of falling above the mean exactly equals the probability of falling below it — each is 50%.
+- Deviations of equal size above and below the mean are equally probable.
+
+The mean controls where the distribution sits on the number line. Shift the mean to the right and the entire bell curve moves right, without changing its shape. Shift it left and the curve moves left.
+
+### Spread and the Standard Deviation
+
+The standard deviation controls how wide or narrow the bell is. A small standard deviation produces a tall, narrow bell: most values are tightly packed near the mean. A large standard deviation produces a wide, flat bell: values spread farther from the mean.
+
+Specifically:
+- **Narrow bell:** small σ, values cluster near μ, tails are short.
+- **Wide bell:** large σ, values spread out, tails are long.
+
+Normal distribution curves with the same mean but different standard deviations have identical centres but very different widths. This is why two exam score distributions can have the same average yet look completely different: the one with higher variability produces the wider, flatter curve.
+
+<RelatedLink to={routes.article('skewed-distribution')} label="Skewed Distributions" intro="On a related note" />
+
+---
+
+## The Normal Distribution Formula
+
+The shape of every normal distribution curve is governed by the **probability density function (PDF)**. This formula specifies how likely any particular value is, relative to the rest of the distribution.
+
+### The Probability Density Function
+
+```
+f(x) = (1 / (σ · √(2π))) · exp( −(x − μ)² / (2σ²) )
+```
+
+Where:
+- `x` is any real number (the value whose density you are computing)
+- `μ` is the mean (the centre of the distribution)
+- `σ` is the standard deviation (the spread)
+- `π ≈ 3.14159` (pi)
+- `exp(·)` is the exponential function (e raised to the power inside)
+
+The exponent `−(x − μ)² / (2σ²)` is always zero or negative. It equals zero only when `x = μ`, which is where the PDF reaches its maximum value. As `x` moves away from `μ` in either direction, the exponent becomes more negative, pulling the PDF value down toward zero — producing the characteristic bell taper.
+
+### Key Points About the PDF
+
+The PDF gives relative height (density), not direct probability. The probability that X falls in any range is the area under the curve between two points. For a continuous distribution like the normal, the probability of any single exact value is technically zero — only intervals have nonzero probability.
+
+To find the probability that X falls between `a` and `b`, you need the **cumulative distribution function (CDF)**, which measures the area under the bell curve from negative infinity up to a point. In practice, this means using a Z-table or a calculator (like the one embedded below) rather than integrating the PDF by hand.
+
+---
+
+## The Standard Gaussian Distribution
+
+The **standard Gaussian distribution** (also called the standard normal distribution) is the special case where `μ = 0` and `σ = 1`. It is written as `Z ~ N(0, 1)` — meaning a random variable Z that follows the standard normal.
+
+This reference distribution matters because any normal distribution can be converted to it through standardization.
+
+### Converting to the Standard Normal with Z-Scores
+
+Given a value `x` from a normal distribution with mean `μ` and standard deviation `σ`, its **z-score** measures how many standard deviations above or below the mean it lies:
+
+```
+z = (x − μ) / σ
+```
+
+Once you compute the z-score, you can look up the corresponding probability in any standard normal table or calculator. The z-score is what transforms a specific normal distribution problem into the universal standard Gaussian distribution, where probability tables and calculators are calibrated.
+
+For example, if test scores are normally distributed with `μ = 70` and `σ = 10`, then a score of 85 has:
+
+```
+z = (85 − 70) / 10 = 1.5
+```
+
+This means 85 is 1.5 standard deviations above the mean. You can then find `P(Z < 1.5) ≈ 0.9332`, telling you that about 93.3% of scores fall below 85.
+
+<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="For a related calculation" />
+
+---
+
+## The Empirical Rule: 68–95–99.7
+
+The **empirical rule** (also called the 68–95–99.7 rule) gives three key probability benchmarks that hold for every normal distribution, regardless of the specific values of μ and σ:
+
+| Range | Approximate probability |
+|---|---|
+| μ ± 1σ | 68.27% |
+| μ ± 2σ | 95.45% |
+| μ ± 3σ | 99.73% |
+
+In plain terms:
+- About **68%** of data falls within one standard deviation of the mean.
+- About **95%** of data falls within two standard deviations of the mean.
+- About **99.7%** of data falls within three standard deviations of the mean.
+
+This rule is why standard deviation has such practical importance. In a dataset of human heights (μ = 175 cm, σ = 7 cm), the empirical rule says roughly 68% of people are between 168 cm and 182 cm, about 95% are between 161 cm and 189 cm, and nearly everyone (99.7%) falls between 154 cm and 196 cm.
+
+The empirical rule also defines what counts as an unusual observation. A value more than 2σ from the mean occurs only about 5% of the time in a normal distribution; one more than 3σ away is extremely rare (roughly 1 in 370 observations). Many statistical tests and quality-control limits are based directly on these thresholds.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods — Normal Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm) provides detailed documentation on the normal distribution, including the exact cumulative probabilities underlying the empirical rule benchmarks.
+
+---
+
+## How to Read a Normal Distribution Chart
+
+A **normal distribution chart** (or normal distribution graph) plots probability density on the vertical axis against the value on the horizontal axis, producing the bell curve. Reading the chart correctly requires understanding that area, not height, corresponds to probability.
+
+### Probability as Area Under the Curve
+
+The total area under any normal distribution curve equals exactly 1 (or 100%), representing the certainty that a value must fall somewhere. The probability that X falls in any interval `[a, b]` is the shaded area under the curve between those two points.
+
+On the chart:
+- The tallest point of the bell is always at the mean (μ).
+- Left of the mean and right of the mean each contain exactly 50% of the total area.
+- The points where the curve changes from concave to convex (the inflection points) occur at exactly one standard deviation above and below the mean (μ + σ and μ − σ).
+
+### Locating Probabilities on Normal Distribution Curves
+
+When working with normal distribution curves, a useful visual rule of thumb is the empirical rule: if you shade the region within one bell-width on either side of the peak, you capture roughly two-thirds of the area. Shading two bell-widths captures nearly all of it.
+
+To calculate exact probabilities, convert the raw value to a z-score and consult a standard normal table or calculator. The standard normal CDF, `Φ(z)`, gives the cumulative probability from −∞ up to z. For any two points:
+
+```
+P(a < X < b) = Φ(z_b) − Φ(z_a)
+```
+
+where `z_a = (a − μ) / σ` and `z_b = (b − μ) / σ`.
+
+<RelatedLink to={routes.article('z-table')} label="Z-Table: How to Read It" intro="Worth reading next" />
+
+---
+
+## Worked Example: Finding a Probability
+
+**Setup:** A standardized test is normally distributed with mean μ = 70 and standard deviation σ = 10. Find the probability that a randomly chosen student scores between 60 and 90.
+
+**Step 1 — Identify the bounds.**
+
+Lower bound: `a = 60`
+Upper bound: `b = 90`
+
+**Step 2 — Convert to z-scores.**
+
+```
+z_a = (60 − 70) / 10 = −10 / 10 = −1.00
+z_b = (90 − 70) / 10 =  20 / 10 =  2.00
+```
+
+**Step 3 — Look up the cumulative probabilities.**
+
+From a standard normal table (or the calculator below):
+
+```
+Φ(−1.00) = 0.1587   (15.87% of scores fall below 60)
+Φ( 2.00) = 0.9772   (97.72% of scores fall below 90)
+```
+
+**Step 4 — Subtract to get the interval probability.**
+
+```
+P(60 < X < 90) = Φ(2.00) − Φ(−1.00) = 0.9772 − 0.1587 = 0.8185
+```
+
+About **81.85%** of students score between 60 and 90.
+
+**Verification using the empirical rule:** The interval [60, 90] extends from −1σ to +2σ around the mean. The empirical rule says 68% of scores lie within ±1σ (i.e., between 60 and 80), and 95% within ±2σ (60 to 90 on the lower side). Our exact answer of 81.85% is between these benchmarks, which confirms it is in the right ballpark.
+
+Try replicating this calculation using the normal distribution calculator below. Set mean = 70, standard deviation = 10, x = 60, upper bound = 90, and select `P(x < X < upper)`.
+
+<StatCalc slug="normal-distribution" variant="embed" />
+
+For more detailed calculations, open the full <Link to={routes.calculator('normal-distribution')}>normal distribution calculator</Link> or browse all probability tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.calculator('z-score')} label="Z-score calculator" />
+
+---
+
+## Normal Distribution Curves in Practice
+
+The normal distribution is not just a mathematical abstraction — it shows up across virtually every empirical discipline because of the central limit theorem and the way random variation accumulates.
+
+### Natural and Social Sciences
+
+Many biological measurements approximate normal distribution curves: adult human height, blood pressure, birth weight, IQ scores, reaction times. This happens because these traits are influenced by many independent factors (genes, environment, nutrition) that add up, and a sum of many independent random effects converges toward a normal distribution.
+
+Similarly, quality-control measurements in manufacturing — the diameter of machined parts, the fill weight of packaged goods, the tensile strength of materials — follow approximately normal patterns when a process is in control. **Statistical process control (SPC)** relies on this: control charts define warning and control limits at ±2σ and ±3σ from the process mean, using the empirical rule to define when variation is unusual.
+
+### Statistical Testing and Confidence Intervals
+
+The normal distribution is the backbone of inferential statistics. The t-test, z-test, ANOVA, and linear regression all assume that residuals (the unexplained variation) are approximately normally distributed. Confidence intervals for population means rely on the fact that sample means are normally distributed when samples are large.
+
+The [OpenStax Introductory Statistics textbook, Chapter 6: The Normal Distribution](https://openstax.org/books/introductory-statistics/pages/6-1-the-standard-normal-distribution) offers a thorough treatment of the standard Gaussian distribution and its applications in probability and inferential statistics.
+
+When the normality assumption holds, these methods produce accurate p-values and coverage probabilities. When it fails badly, the methods may still work (robustness to mild non-normality is well-established), but extreme skewness or heavy tails can distort results — which is why testing for normality and understanding your data's distribution is a standard step in applied analysis.
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability: Formulas and Methods" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes with the Normal Distribution
+
+### Assuming All Data Is Normal
+
+The normal distribution is ubiquitous but not universal. Income data, survival times, word frequencies, and stock returns are typically skewed or heavy-tailed, not normally distributed. Before applying normal-distribution methods, inspect your data with a histogram or a normal probability plot. If the distribution is heavily skewed or has extreme outliers, a transformation or a non-parametric method may be more appropriate.
+
+### Confusing the PDF with Probability
+
+The value of `f(x)` from the probability density function is not a probability — it can exceed 1. Probability comes from the area under the curve, not the height. For the standard normal, `f(0) ≈ 0.399`, which is the maximum density, not a 40% probability of falling exactly at zero. The probability of falling in any interval is found by computing area (integrating the PDF) between the interval's endpoints.
+
+### Misreading the Standard Deviation
+
+The standard deviation σ in the normal distribution formula is not the variance. The formula uses σ (standard deviation), not σ² (variance). A common error is squaring or square-rooting the parameter at the wrong step. If you know the variance, always take the square root before plugging into the formula or the z-score equation.
+
+### Applying the Empirical Rule to Non-Normal Distributions
+
+The 68–95–99.7 rule is specific to the normal distribution. For a skewed distribution, the percentages of data within one or two standard deviations of the mean will be different. Chebyshev's inequality provides a weaker but universal guarantee: at least `1 − 1/k²` of any distribution's data falls within k standard deviations of the mean — but this gives much less precise bounds than the empirical rule.
+
+### Forgetting Continuity Corrections
+
+When using the normal distribution to approximate a discrete distribution (such as the binomial), a **continuity correction** of ±0.5 improves accuracy. For example, to find the probability that a discrete count equals exactly 10, use the normal approximation for `P(9.5 < X < 10.5)`. Omitting this correction introduces systematic error, especially for small sample sizes.
+
+---
+
+## Frequently Asked Questions
+
+### What is a normal distribution?
+
+A normal distribution is a symmetric, bell-shaped probability distribution where the mean, median, and mode all coincide at the centre. It is described by two parameters — the mean (μ) and the standard deviation (σ) — and the probability of any interval is the area under the curve between those points.
+
+### Why is it called the bell curve normal distribution?
+
+The name comes from its visual shape: when you plot the probability density on the vertical axis against the value on the horizontal axis, the curve rises smoothly to a peak at the mean and falls off symmetrically on both sides, creating a shape that looks like a bell. The terms "normal distribution," "bell curve normal distribution," and "Gaussian distribution" all refer to the same mathematical object.
+
+### What is the difference between a normal distribution and a standard Gaussian distribution?
+
+Any normal distribution has two free parameters: mean μ and standard deviation σ. The standard Gaussian distribution is the specific case where μ = 0 and σ = 1. Every normal distribution can be converted to the standard Gaussian by computing z = (x − μ) / σ. All probability tables and most calculators are calibrated to the standard normal, so this standardization step is a routine part of probability calculations.
+
+### What does the 68–95–99.7 rule mean?
+
+It means that for any normal distribution, approximately 68% of values fall within one standard deviation of the mean, approximately 95% fall within two standard deviations, and approximately 99.7% fall within three standard deviations. These percentages come directly from integrating the normal PDF over those intervals and hold exactly for any normal distribution, regardless of its specific mean and standard deviation values.
+
+### How do you find the probability for a normal distribution?
+
+Convert the raw value x to a z-score using `z = (x − μ) / σ`. Then look up the cumulative probability `Φ(z)` from a standard normal table or calculator. For an interval between two values a and b, compute `P(a < X < b) = Φ(z_b) − Φ(z_a)`. The calculator embedded in this article (or the full normal distribution calculator) automates this process — enter the mean, standard deviation, and the x value(s) and select the direction.
+
+### What does the normal distribution chart tell you?
+
+A normal distribution chart shows probability density on the vertical axis and the value on the horizontal axis. The peak of the bell sits at the mean. The width of the bell reflects the standard deviation: a narrower bell means lower spread, a wider bell means higher spread. Crucially, probability corresponds to area under the curve, not height. The chart gives an immediate visual sense of where values are concentrated and how likely extreme values are.
+
+### Can any dataset be modelled as a normal distribution?
+
+No. The normal distribution is appropriate when data is symmetric, unimodal, and approximately bell-shaped. Datasets with strong skewness, heavy tails, multiple peaks (bimodal), or natural lower bounds (such as counts or times) often require different distributions — the lognormal, Poisson, exponential, or binomial, for example. Always plot your data before assuming normality.
+
+---
+
+## Summary
+
+The normal distribution is the central model in probability and statistics. Its bell curve shape — symmetric, governed entirely by the mean and standard deviation — makes it both mathematically tractable and practically powerful. The empirical rule (68–95–99.7) gives quick probability estimates; z-scores and the standard Gaussian distribution convert any normal probability problem to a standard lookup; the formula for the probability density function underlies everything from hypothesis tests to confidence intervals.
+
+To work a probability problem: identify the mean and standard deviation, convert your values to z-scores, and read the cumulative probabilities from a standard normal table or a calculator. The normal distribution calculator above handles all of this directly — enter your parameters and let the tool compute the probability for one-tailed or interval problems.
