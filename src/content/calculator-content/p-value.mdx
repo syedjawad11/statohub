@@ -1,0 +1,88 @@
+---
+calculator: p-value
+keywords:
+  - p value calculator
+  - how to find p value
+  - p value from test statistic
+  - significance level
+draft: false
+updatedDate: 2026-07-05
+---
+
+A p-value tells you how likely your data (or something more extreme) would be
+if there were no real effect — the smaller the p-value, the stronger the
+evidence against that assumption. This p value calculator converts a test
+statistic into a p-value for the z or Student-t distribution, using whichever
+tail you choose.
+
+## How to use this calculator
+
+1. Enter your **test statistic** — the z-score or t-value from your test
+   (default `1.96`).
+2. Choose the **distribution**: `z` for a known population standard
+   deviation or a large sample, `Student-t` for a small sample with an
+   estimated standard deviation.
+3. If you picked `Student-t`, enter the **degrees of freedom** (default
+   `10`) — this is not used for the `z` distribution.
+4. Choose the **tail**: `left`, `right`, or `two-sided`, matching how your
+   hypothesis test is set up.
+
+## Worked example
+
+Take the default inputs: a `z` distribution, test statistic `1.96`, and a
+two-sided tail. This is how to find p value from a test statistic step by
+step.
+
+First, find the area to the left of `1.96` under the standard normal curve:
+
+```
+Φ(1.96) ≈ 0.9750
+```
+
+The area in the upper tail is what's left over:
+
+```
+right tail p = 1 − 0.9750 = 0.0250
+```
+
+For a two-sided test, double the tail:
+
+```
+two-sided p = 2 × 0.0250 = 0.0500
+```
+
+So `z = 1.96` gives a two-sided p-value of about `0.05` — a widely used
+reference point in hypothesis testing. If you only cared about one side of
+the distribution, you'd stop at the single-tail value: `0.025`. See the
+[NIST/SEMATECH e-Handbook on hypothesis testing](https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm)
+for the general procedure this calculator follows.
+
+## Frequently asked questions
+
+### What counts as statistically significant?
+
+A result is usually called statistically significant when the p-value falls
+below a chosen significance level, commonly `0.05`. That threshold is a
+convention, not a law of nature — some fields use `0.01` for stricter
+evidence or `0.10` for exploratory work.
+
+### Should I use a one-tailed or two-tailed p-value?
+
+Use a two-sided tail when you only care whether the result differs from the
+expected value in either direction; use a one-sided (`left` or `right`) tail
+when your hypothesis specifically predicts the direction of the effect
+before you collect data.
+
+### When should I use the Student-t distribution instead of z?
+
+Use `Student-t` with the matching degrees of freedom when your sample is
+small and you estimated the standard deviation from the data itself; use
+`z` when the population standard deviation is known or your sample is
+large enough that the two distributions nearly coincide.
+
+### Does a small p-value prove my hypothesis is true?
+
+No. A p value from test statistic only measures how surprising your data
+would be under the assumption of no effect — it doesn't measure the size of
+the effect or prove any hypothesis, and it should be interpreted alongside
+effect size and study design.

@@ -110,3 +110,11 @@ at publish time too (human visibility).
   (sample sizes required), OpenStax Intro Stats 2e §8.2 (single mean, Student t), NIST
   eda3672 (critical values of Student's t), all curl-verified 200. **22 of 25 done, 3
   remaining.** Next = Session 6: `p-value`, `chi-square`, `proportion` (queue rows 23–25).
+- **Session 6 (2026-07-05):** `p-value`, `chi-square`, `proportion` — ✅ published (astro
+  check 0/0/0, build green 70 pages / 0 link violations). Worked examples computed from
+  the real engines: p-value z=1.96/two-sided → Φ(1.96) ≈ 0.9750, one-tail 0.0250,
+  two-sided p ≈ 0.0500; chi-square observed=[20,30]/expected=[25,25] → per-category
+  (20−25)²/25=1 and (30−25)²/25=1, χ² = 2.00, df=1, p ≈ 0.157; proportion a=2/b=3/c=4 →
+  d=(b×c)/a=(3×4)/2=6, so 2/3 = 4/6. Links: NIST prc13 (hypothesis testing, used for
+  both p-value and chi-square), OpenStax Prealgebra 2e §6.5 (solve proportions), both
+  curl-verified 200. **25 of 25 done, 0 remaining — queue complete.**

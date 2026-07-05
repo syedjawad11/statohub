@@ -1,0 +1,86 @@
+---
+calculator: chi-square
+keywords:
+  - chi square calculator
+  - chi square test
+  - chi square statistic
+  - goodness of fit
+draft: false
+updatedDate: 2026-07-05
+---
+
+A chi-square goodness-of-fit test checks whether observed counts across a set
+of categories match what you'd expect under some hypothesis. This chi square
+calculator takes your observed and expected counts and returns the chi-square
+statistic, the degrees of freedom, and the upper-tail p-value.
+
+## How to use this calculator
+
+1. Enter your **observed counts** as a comma- or space-separated list, one
+   number per category (for example, `20, 30`).
+2. Enter the matching **expected counts** in the same order, one per category
+   (for example, `25, 25`).
+3. Read the chi-square statistic, degrees of freedom, and p-value the
+   calculator returns.
+
+The two lists must have the same length — each position pairs an observed
+count with the expected count for that same category.
+
+## Worked example
+
+Take observed counts `20, 30` against expected counts `25, 25` (the
+calculator's defaults).
+
+For each category, find the squared difference between observed and expected,
+divided by expected:
+
+```
+category 1: (20 − 25)² / 25 = 25 / 25 = 1
+category 2: (30 − 25)² / 25 = 25 / 25 = 1
+```
+
+Sum the per-category contributions to get the chi-square statistic:
+
+```
+χ² = Σ (observed − expected)² / expected
+χ² = 1 + 1 = 2.00
+```
+
+Degrees of freedom is the number of categories minus one:
+
+```
+df = 2 − 1 = 1
+```
+
+Looking up chi-square = 2.00 with df = 1 in the chi-square distribution gives
+an upper-tail p-value of about 0.157. At a typical 0.05 significance level,
+that p-value is too large to reject the hypothesis that the observed counts
+match the expected ones. For the full method and reference tables, see the
+[NIST/SEMATECH e-Handbook section on hypothesis testing](https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm).
+
+## Frequently asked questions
+
+### What does the chi square statistic measure?
+
+The chi square statistic sums, across all categories, the squared gap between
+observed and expected counts scaled by the expected count. A larger statistic
+means the observed data deviates more from what was expected.
+
+### When should I use a chi square test?
+
+Use a chi square test when you have counts (not means) sorted into categories
+and want to check goodness of fit — whether the observed distribution matches
+a hypothesized or expected distribution.
+
+### How do I interpret the p-value?
+
+A small p-value (typically below 0.05) means the observed counts are unlikely
+under the expected distribution, so you'd reject the hypothesis that they
+match. A larger p-value, like the ≈ 0.157 in the worked example, means the
+observed counts are reasonably consistent with what was expected.
+
+### Why is degrees of freedom categories minus one?
+
+One degree of freedom is used up because the observed counts are constrained
+to sum to a fixed total, so only `k − 1` of the `k` category counts are free
+to vary once that total is fixed.

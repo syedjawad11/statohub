@@ -50,10 +50,11 @@ Review section for details.
   [[0010-woven-related-link-callouts]] -- that automation was never finished
   before the July strategy pivot took over. Re-enable only after it ships, or
   after explicit user sign-off to resume manually.
-- **Calc-prose teaching-block backlog:** 22 of 25 done (`content-ops/calc-prose/QUEUE.md`).
-  Session 6 (`p-value`, `chi-square`, `proportion`) is still `pending` in the
-  queue -- there is no evidence it ran. Procedure in
-  `content-ops/calc-prose/SESSION-PLAN.md`.
+- **Calc-prose teaching-block backlog:** CLOSED 2026-07-05. 25 of 25 done
+  (`content-ops/calc-prose/QUEUE.md`) -- Session 6 (`p-value`, `chi-square`,
+  `proportion`) published, build green (70 pages, 0 link violations). Queue
+  complete; procedure retained in `content-ops/calc-prose/SESSION-PLAN.md` for
+  reference only.
 - **Phase C (content publishing at scale) and Phase D (guided no-code
   projects, see [[0012-quizzes-dropped]])** per `docs/ideas/statohub-action-plan.md`:
   not started, blocked behind Phase A/B closing out first.

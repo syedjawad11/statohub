@@ -37,6 +37,6 @@ which terms to weave in naturally.
 | 20 | sample-size             | sample size calculator           | how to calculate sample size; margin of error; survey sample size | done |
 | 21 | t-test                  | t-test calculator                | one sample t test; t statistic; how to calculate t test | done |
 | 22 | t-table                 | t table                          | t distribution table; critical t value; degrees of freedom | done |
-| 23 | p-value                 | p value calculator               | how to find p value; p value from test statistic; significance level | pending |
-| 24 | chi-square              | chi square calculator            | chi square test; chi square statistic; goodness of fit | pending |
-| 25 | proportion              | proportion calculator            | how to calculate proportion; sample proportion; ratio and proportion | pending |
+| 23 | p-value                 | p value calculator               | how to find p value; p value from test statistic; significance level | done |
+| 24 | chi-square              | chi square calculator            | chi square test; chi square statistic; goodness of fit | done |
+| 25 | proportion              | proportion calculator            | how to calculate proportion; sample proportion; ratio and proportion | done |
