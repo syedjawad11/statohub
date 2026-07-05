@@ -1,5 +1,5 @@
 title: Combination Calculator
-description: Calculate combinations (nCr) or permutations (nPr) from n and r.
+description: Calculate combinations (nCr) or permutations (nPr) from n and r, useful for probability problems and counting arrangements.
 engine: combination
 category: combinatorics
 standalone: true

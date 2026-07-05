@@ -1,5 +1,5 @@
 title: P Value Calculator
-description: Calculate left-tail, right-tail, or two-sided p-values from a z or Student-t test statistic.
+description: Calculate left-tail, right-tail, or two-sided p-values from a z or Student-t test statistic, with support for degrees of freedom.
 engine: p-value
 category: inferential-statistics
 standalone: true

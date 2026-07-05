@@ -1,5 +1,5 @@
 title: Confidence Interval Calculator
-description: Calculate a z-based confidence interval for a population mean.
+description: Calculate a z-based confidence interval for a population mean, showing the margin of error and the lower and upper bounds.
 engine: confidence-interval
 category: inferential-statistics
 standalone: true

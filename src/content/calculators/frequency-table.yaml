@@ -1,5 +1,5 @@
 title: Frequency Distribution Table Generator
-description: Build a sorted frequency table with relative and cumulative frequency.
+description: Build a sorted frequency table from raw data, showing relative and cumulative frequency for each distinct value automatically.
 engine: frequency-table
 category: descriptive-statistics
 standalone: true

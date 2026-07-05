@@ -1,5 +1,5 @@
 title: Factorial Calculator
-description: Calculate n! for non-negative integers.
+description: Calculate n! (n factorial) for any non-negative integer, showing the multiplication steps used to reach the final result.
 engine: factorial
 category: combinatorics
 standalone: true

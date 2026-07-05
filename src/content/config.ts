@@ -1,10 +1,14 @@
 import { defineCollection, reference, z } from 'astro:content';
 
+// Meta description sweet spot: long enough that Google doesn't flag it as
+// "too short" (~110 min), short enough it doesn't truncate in the SERP (~160 max).
+const metaDescription = z.string().min(110).max(160);
+
 const categories = defineCollection({
   type: 'data', // YAML/JSON, no prose body
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    description: metaDescription,
     order: z.number().int().default(0),       // nav ordering
     pillar: reference('articles').optional(), // the hub's flagship article
   }),
@@ -15,7 +19,7 @@ const articles = defineCollection({
   schema: z.object({
     title: z.string(),
     h1: z.string().optional(),                  // optional shorter visible H1; falls back to title
-    description: z.string(),                    // meta description
+    description: metaDescription,               // meta description
     category: reference('categories'),
     primaryKeyword: z.string(),
     keywords: z.array(z.string()).min(1),       // the mapped 6-12 keywords
@@ -33,7 +37,7 @@ const calculators = defineCollection({
   type: 'data',
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    description: metaDescription,
     engine: z.string(),                         // key into src/calc/registry.ts (TASK-003)
     category: reference('categories').optional(),
     standalone: z.boolean().default(true),      // false = embed-only (no /calculators/{slug}/ route)

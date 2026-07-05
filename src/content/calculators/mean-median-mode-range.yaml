@@ -1,5 +1,5 @@
 title: Mean, Median, Mode & Range Calculator
-description: Find the mean, median, mode, and range of a data set from one shared input.
+description: Find the mean, median, mode, and range of a data set all at once from one shared list of numbers, with every result shown instantly.
 engine: mmmr
 category: descriptive-statistics
 standalone: false

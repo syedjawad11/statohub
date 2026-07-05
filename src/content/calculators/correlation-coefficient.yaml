@@ -1,5 +1,5 @@
 title: Correlation Coefficient Calculator
-description: Calculate Pearson's correlation coefficient for paired x and y values.
+description: Calculate Pearson's correlation coefficient for paired x and y values, showing r-squared and the strength of the relationship.
 engine: correlation
 category: regression-correlation
 standalone: true

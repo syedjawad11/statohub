@@ -1,5 +1,5 @@
 title: Range Calculator
-description: Find the range of a data set, plus its minimum and maximum values.
+description: Find the range of a data set along with its minimum and maximum values, calculated instantly from any list of numbers you enter.
 engine: range
 category: descriptive-statistics
 standalone: true

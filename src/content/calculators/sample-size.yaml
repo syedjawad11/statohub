@@ -1,5 +1,5 @@
 title: Sample Size Calculator
-description: Estimate the required sample size for a population proportion.
+description: Estimate the sample size needed to estimate a population proportion at a chosen confidence level and margin of error.
 engine: sample-size
 category: inferential-statistics
 standalone: true

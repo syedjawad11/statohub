@@ -1,5 +1,5 @@
 title: Linear Regression Calculator
-description: Fit a least-squares regression line for paired x and y values.
+description: Fit a least-squares regression line for paired x and y values, returning the slope, intercept, and correlation coefficient.
 engine: linear-regression
 category: regression-correlation
 standalone: true

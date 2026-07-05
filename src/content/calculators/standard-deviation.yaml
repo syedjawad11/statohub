@@ -1,5 +1,5 @@
 title: Standard Deviation Calculator
-description: Calculate standard deviation and understand how far values typically fall from the mean.
+description: Calculate sample or population standard deviation for any data set and see how far values typically spread from the mean, step by step.
 engine: standardDeviation
 category: descriptive-statistics
 standalone: true

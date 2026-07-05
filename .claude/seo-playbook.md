@@ -18,8 +18,9 @@ SEO check into one of three tiers. Each rule below is tagged with its tier.
 - **[HARD]** — objective indexing / accessibility / build breakers. **Blocks
   publish** (non-zero exit; reviewer returns CHANGES_REQUESTED). Examples: exactly
   one H1, primary keyword in `<title>`, title present and not truncated, meta
-  description present, slug contains the primary keyword, no broken external link,
-  plus the §7 build contracts.
+  description present **and 110-160 characters** (see §7 — this is now a
+  schema + build-time check, not just a review note), slug contains the primary
+  keyword, no broken external link, plus the §7 build contracts.
 - **[WARN]** — soft ranking signals. **Logged and annotated, never blocks.** Fix
   when reasonable. Examples: too few external links, primary keyword missing from
   the first 100 words, generic/bare-URL anchor text, a skipped heading level,
@@ -144,6 +145,22 @@ SEO check into one of three tiers. Each rule below is tagged with its tier.
   `keywords` (array, all from the brief), `phase` (1|2|3), `calculator` (the
   embed slug, when assigned), optional `h1` (shorter visible headline), optional
   `related`, and `draft: true`.
+- **Meta description length is 110-160 characters, sitewide, no exceptions.**
+  This is enforced two ways: (1) `description` in `src/content/config.ts` is a
+  shared `z.string().min(110).max(160)` schema across the `articles`,
+  `categories`, and `calculators` collections — `astro check` / the build fails
+  immediately on a violation; (2) `scripts/check-meta-description.mjs` scans
+  every rendered page in `dist/**/*.html` after build and fails on any
+  `<meta name="description">` outside that range, which also catches pages
+  whose description is a hand-typed literal in an `.astro` file rather than
+  content-collection data (e.g. `/about/`, `/privacy-cookie-policy/`,
+  `/calculators/`) — those aren't covered by the Zod schema, so the dist scan
+  is the only gate for them. Write new descriptions in that range from the
+  start; don't rely on the gate to catch it later. (Root cause of a July 2026
+  incident: every calculator and category description shipped 39-92 chars,
+  under Ahrefs' "too short" threshold, because no gate of any kind checked
+  length outside the article reviewer's WARN tier — which never covered these
+  page types anyway.)
 - **`draft: true`** until the reviewer passes it and a human flips it. Unfinished
   articles never ship.
 - **Flat trailing-slash URLs**, primary-keyword-only slug, no category in the
@@ -176,7 +193,7 @@ to CHANGES_REQUESTED on their own.
 1. Exactly one H1 — the frontmatter title; **no H1 in the MDX body** (body starts at H2).
 2. Primary keyword present in the `<title>` (exact phrase or all significant words).
 3. `<title>` present and not truncated (≤ ~70 chars; ~50–60 ideal).
-4. Meta `description` present.
+4. Meta `description` present and 110-160 characters (schema + build enforced, §7).
 5. Slug contains the primary keyword (a clean variant is fine).
 6. No broken external link (every outbound URL resolves; no 4xx/5xx).
 7. ≥ 1 authoritative external link present.
@@ -191,7 +208,7 @@ to CHANGES_REQUESTED on their own.
 - Primary keyword missing from the first ~100 words.
 - Generic or bare-URL anchor text.
 - Skipped heading level (e.g. H2 → H4); keyword stuffing in headings.
-- Title or meta-description length outside the ideal range.
+- Title length outside the ideal range (meta-description length is HARD — see §7).
 - Active-voice ratio, readability, tone; worked-example quality; FAQ where warranted.
 
 **ADVISORY (note only):**

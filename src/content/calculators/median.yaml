@@ -1,5 +1,5 @@
 title: Median Calculator
-description: Find the middle value of a list of numbers.
+description: Find the middle value of a sorted data set, whether it has an odd or even number of entries, with the calculation shown step by step.
 engine: median
 category: descriptive-statistics
 standalone: false

@@ -1,5 +1,5 @@
 title: Mean Absolute Deviation Calculator
-description: Calculate the mean absolute deviation of a data set.
+description: Calculate the mean absolute deviation of a data set, measuring the average distance of each value from the mean without squaring.
 engine: meanAbsoluteDeviation
 category: descriptive-statistics
 standalone: true

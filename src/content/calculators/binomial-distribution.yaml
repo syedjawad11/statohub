@@ -1,5 +1,5 @@
 title: Binomial Distribution Calculator
-description: Calculate exact and cumulative binomial probabilities.
+description: Calculate exact and cumulative binomial probabilities for a chosen number of trials, success probability, and outcome count.
 engine: binomial
 category: probability-distributions
 standalone: true

@@ -1,5 +1,5 @@
 title: Variance Calculator
-description: Calculate sample and population variance for a data set.
+description: Calculate both sample and population variance for a data set, showing the sum of squared deviations used behind each formula.
 engine: variance
 category: descriptive-statistics
 standalone: true

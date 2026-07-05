@@ -1,5 +1,5 @@
 title: Normal Distribution Calculator
-description: Calculate normal distribution probabilities for one bound or an interval.
+description: Calculate normal distribution probabilities for one bound or an interval, using the mean and standard deviation that you enter.
 engine: normal-distribution
 category: probability-distributions
 standalone: true

@@ -1,5 +1,5 @@
 title: Range / IQR Calculator
-description: Find the range, quartiles, and interquartile range of a data set.
+description: Find the range, quartiles, and interquartile range (IQR) of a data set, useful for measuring spread and spotting potential outliers.
 engine: range-iqr
 category: descriptive-statistics
 standalone: false

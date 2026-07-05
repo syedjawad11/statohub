@@ -1,5 +1,5 @@
 title: Chi Square Calculator
-description: Calculate a chi-square goodness-of-fit statistic and upper-tail p-value from observed and expected counts.
+description: Calculate a chi-square goodness-of-fit statistic and its upper-tail p-value from the observed and expected counts that you enter.
 engine: chi-square
 category: inferential-statistics
 standalone: true

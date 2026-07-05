@@ -1,5 +1,5 @@
 title: Z Table Calculator
-description: Calculate the standard normal left-tail probability for a z-score.
+description: Calculate the standard normal left-tail probability for any z-score, along with the right-tail and between-zero-and-z values.
 engine: z-table
 category: probability-distributions
 standalone: true

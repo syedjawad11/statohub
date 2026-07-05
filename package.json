@@ -7,7 +7,7 @@
     "predev": "node scripts/gen-route-ids.mjs",
     "dev": "astro dev",
     "gen:routes": "node scripts/gen-route-ids.mjs",
-    "build": "node scripts/gen-route-ids.mjs && astro build && node scripts/check-links.mjs",
+    "build": "node scripts/gen-route-ids.mjs && astro build && node scripts/check-links.mjs && node scripts/check-meta-description.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "astro check": "astro check",

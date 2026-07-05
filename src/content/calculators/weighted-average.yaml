@@ -1,5 +1,5 @@
 title: Weighted Average Calculator
-description: Calculate a weighted average from matching values and weights.
+description: Calculate a weighted average from matching lists of values and weights, useful for course grades, investment portfolios, and survey scoring.
 engine: weightedMean
 category: descriptive-statistics
 standalone: true

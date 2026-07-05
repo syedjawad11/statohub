@@ -1,5 +1,5 @@
 title: Outlier (1.5xIQR) Calculator
-description: Detect outliers using the 1.5xIQR rule and show the lower and upper fences.
+description: Detect outliers in a data set using the 1.5xIQR rule, showing the lower and upper fences plus how many values fall outside them.
 engine: outlier
 category: descriptive-statistics
 standalone: false

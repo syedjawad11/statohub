@@ -43,6 +43,19 @@ Review section for details.
   cross-references updated. Not committed yet -- shown to the user first per
   the hard gate below.
 
+**3. Meta-description length fix + build gate: CLOSED 2026-07-05.**
+Ahrefs flagged 32 URLs (calculators, category hubs, static pages) with meta
+descriptions at 39-92 chars, well under the ~110-160 char recommendation.
+Root cause: no length validation existed for this page class at all. Fixed
+all 29 calculator + 6 category + 3 static-page descriptions plus 4
+pre-existing articles that fell outside range once the schema went
+sitewide, and added a HARD build-time gate (Zod `.min(110).max(160)` in
+`src/content/config.ts` + new `scripts/check-meta-description.mjs` scanning
+`dist/**/*.html`, wired into `npm run build`). `.claude/seo-playbook.md`
+updated to reflect the new HARD tier. Full verification re-run: `npm run
+build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
+(118/118). See `docs/status/sessions/2026-07-05-meta-description-length-fix.md`.
+
 ## Parked / paused (do not silently resume)
 
 - **Article-publishing cloud routines** (2/day) have been `enabled:false`

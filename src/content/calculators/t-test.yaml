@@ -1,5 +1,5 @@
 title: T-Test Calculator
-description: Run a one-sample t-test from a sample mean, hypothesized mean, sample standard deviation, and sample size.
+description: Run a one-sample t-test from a sample mean, hypothesized mean, sample standard deviation, and sample size, with the p-value shown.
 engine: t-test
 category: inferential-statistics
 standalone: true

@@ -1,5 +1,5 @@
 title: Percentile Calculator
-description: Calculate a percentile value and quartiles for a data set.
+description: Calculate a percentile value and the quartiles (Q1, Q2, Q3) for any data set, showing the interquartile range in the same result.
 engine: percentile
 category: descriptive-statistics
 standalone: true

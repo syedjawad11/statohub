@@ -1,5 +1,5 @@
 title: Z-Score Calculator
-description: Calculate a z-score from a value, mean, and standard deviation.
+description: Calculate a z-score from a raw value, mean, and standard deviation to see how many standard deviations it falls from average.
 engine: zScore
 category: inferential-statistics
 standalone: true

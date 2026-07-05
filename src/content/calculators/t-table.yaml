@@ -1,5 +1,5 @@
 title: T Table Calculator
-description: Look up critical t values by confidence level, degrees of freedom, and tail count.
+description: Look up critical t values by confidence level, degrees of freedom, and one- or two-tailed test, replacing a printed t table.
 engine: t-table
 category: inferential-statistics
 standalone: true

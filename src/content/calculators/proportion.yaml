@@ -1,5 +1,5 @@
 title: Proportion Calculator
-description: Solve the missing fourth term in a proportion of the form a / b = c / d.
+description: Solve the missing fourth term in a proportion of the form a/b = c/d, useful for scaling recipes, rates, and ratio problems.
 engine: proportion
 category: foundations
 standalone: true

@@ -1,5 +1,5 @@
 title: Probability Calculator
-description: Calculate simple probability from favorable and total outcomes.
+description: Calculate simple probability from the number of favorable and total outcomes, and see the complement probability at the same time.
 engine: probability
 category: probability-distributions
 standalone: true
