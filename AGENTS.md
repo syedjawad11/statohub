@@ -19,8 +19,8 @@ Read the one relevant to your task, skip the rest:
   oversight.
 - **`docs/DESIGN-SYSTEM.md`** — tokens, fonts, component patterns; read before
   any styling task.
-- `doc/BUILD-PLAN.md` is the original full build spec, kept for depth; where
-  it and `docs/ARCHITECTURE.md` disagree, `docs/ARCHITECTURE.md` (newer)
+- `docs/legacy/BUILD-PLAN.md` is the original full build spec, kept for depth;
+  where it and `docs/ARCHITECTURE.md` disagree, `docs/ARCHITECTURE.md` (newer)
   wins — flag the conflict in your Work Log rather than silently picking one.
 
 ## Division of labor & handoff
@@ -33,7 +33,7 @@ Read the one relevant to your task, skip the rest:
   lowest-numbered `TODO`, set `IN_PROGRESS`, build, fill the **Work Log**, set
   `DONE`. Full protocol: `../Claude_OS/CODEX-WORKFLOW.md`.
 
-## Hard constraints (do not violate — see BUILD-PLAN.md for full detail)
+## Hard constraints (do not violate — see docs/legacy/BUILD-PLAN.md for full detail)
 
 - **Stack:** Astro SSG + Tailwind + MDX → Cloudflare Pages. Calculators are
   client-side only. **Wrangler v3** (Node 20.8.0 is incompatible with v4).

@@ -24,7 +24,7 @@ Existing calculator pages must benefit immediately; future calculator pages must
 inherit the same structure with no per-page work.
 
 **Context / inputs:**
-- Build spec: `doc/BUILD-PLAN.md`. Handoff conventions: `handoff/README.md`.
+- Build spec: `docs/legacy/BUILD-PLAN.md`. Handoff conventions: `handoff/README.md`.
 - The flat trailing-slash URL contract and the "zero internal redirects / 404s"
   rule are NON-NEGOTIABLE (see `CLAUDE.md` and BUILD-PLAN). Every internal link
   must end in `/` and resolve to a built page, enforced by

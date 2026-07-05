@@ -25,12 +25,13 @@ in your session note rather than silently picking a side.
 - **What actually happened and when** -> `docs/status/sessions/` (dated,
   historical -- not auto-loaded, open only when archaeology is needed).
 - **The full original build spec** (superseded by `docs/ARCHITECTURE.md` for
-  current facts, kept for historical depth) -> `doc/BUILD-PLAN.md`.
+  current facts, kept for historical depth) -> `docs/legacy/BUILD-PLAN.md`.
 
-Read nothing else by default. Never load `research/`, `docs/ideas/`, or
-`statohub-strategy-review.md` / `statohub-action-plan.md` raw prose unless the
-task explicitly concerns strategy planning -- their durable conclusions are
-already promoted into `docs/PROJECT.md` and the ADRs.
+Read nothing else by default. Never load `research/` or `docs/ideas/` raw
+prose (e.g. `docs/ideas/statohub-strategy-review.md`,
+`docs/ideas/statohub-action-plan.md`) unless the task explicitly concerns
+strategy planning -- their durable conclusions are already promoted into
+`docs/PROJECT.md` and the ADRs.
 
 ## What this site is
 
@@ -74,7 +75,7 @@ already promoted into `docs/PROJECT.md` and the ADRs.
 
 At the end of a session that finishes non-trivial work or makes a decision,
 write a dated handoff to `docs/status/sessions/YYYY-MM-DD-topic.md` (template
-in `statohub-memory-system.md` Section 7) and update `docs/status/NOW.md`.
+in `docs/MEMORY-SYSTEM.md` Section 7) and update `docs/status/NOW.md`.
 Promote any durable decision to a new ADR in `docs/decisions/` rather than
 only noting it in the session file. A session that only executes an existing,
 already-decided plan (e.g. publishing already-queued content) doesn't need a
@@ -82,7 +83,7 @@ handoff file -- updating the relevant queue/tracker suffices.
 
 ## Memory system
 
-This repo's documentation structure follows `statohub-memory-system.md`
+This repo's documentation structure follows `docs/MEMORY-SYSTEM.md`
 (the full rationale + migration plan). That migration is tracked as its own
 project thread -- see `docs/status/NOW.md` for its current status before
 assuming it's finished.

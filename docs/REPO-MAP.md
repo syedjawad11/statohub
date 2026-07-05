@@ -109,7 +109,7 @@ statohub/
 | The SEO/content rules | `.claude/seo-playbook.md`, `docs/standards/content.md` |
 | The typed link registry | `src/lib/links.ts` |
 | Design tokens / palette / dark mode | `src/styles/global.css`, `docs/DESIGN-SYSTEM.md` |
-| The build spec | `doc/BUILD-PLAN.md` |
+| The build spec | `docs/legacy/BUILD-PLAN.md` |
 | Codex's current task queue | `handoff/TASK-*.md` (lowest-numbered `TODO` first) |
 | What happened recently | `docs/status/NOW.md`, `docs/status/sessions/` |
 | Why a decision was made | `docs/decisions/README.md` |

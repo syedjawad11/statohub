@@ -6,7 +6,7 @@ status: rejected
 date: 2026-07-05
 ---
 
-**Context:** The 2026-07 strategy review (`statohub-strategy-review.md`)
+**Context:** The 2026-07 strategy review (`docs/ideas/statohub-strategy-review.md`)
 evaluated three product-expansion paths beyond calculators + articles:
 quizzes, guided no-code projects, and games. It recommended a static,
 no-login quiz system (question banks as versioned JSON, client-side scoring,
@@ -23,7 +23,7 @@ instead.
 (3) Build both roughly in parallel.
 
 **Decision:** Option 2. Quizzes are dropped by explicit user decision,
-recorded in `statohub-action-plan.md` ("Quizzes are dropped by decision;
+recorded in `docs/ideas/statohub-action-plan.md` ("Quizzes are dropped by decision;
 guided no-code projects are the first product expansion"). Projects move to
 the front of the roadmap (Phase D in the action plan) in place of the
 strategy review's recommended quiz-first sequencing.

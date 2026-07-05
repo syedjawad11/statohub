@@ -6,7 +6,12 @@
 
 **Last updated:** 2026-07-05.
 
-## Active: one open thread
+## Active: repo-hygiene cleanup (doc/docs consolidation), pending commit
+
+Phase A and Phase B (below) are both closed. The only thing left uncommitted
+right now is the doc/docs folder consolidation + root scratch-file moves
+described under Phase B's "Follow-up cleanup" -- awaiting the user's go-ahead
+to commit.
 
 **1. Phase A -- workspace audit fixes: CLOSED 2026-07-05.**
 `handoff/TASK-022-trivial-fix-batch.md`, `TASK-023-contrast-fix-ci-guard.md`,
@@ -18,16 +23,25 @@ TASK-024's required spot-check of 7 cited canonical values across categories
 (all reproduced by hand/known math, no discrepancies). See each task file's
 Review section for details.
 
-**2. Phase B -- memory-system migration (`statohub-memory-system.md`), in progress:**
+**2. Phase B -- memory-system migration (`docs/MEMORY-SYSTEM.md`): CLOSED 2026-07-05.**
 - Done: `docs/PROJECT.md`, `docs/ARCHITECTURE.md`, `docs/REPO-MAP.md`, all 13
   ADRs in `docs/decisions/`, full `docs/status/sessions/*.md` migration
-  (2026-06-13 through 2026-06-28).
-- Done this session: this file, `docs/DESIGN-SYSTEM.md`,
+  (2026-06-13 through 2026-06-28), this file, `docs/DESIGN-SYSTEM.md`,
   `docs/standards/content.md`, the new slim `CLAUDE.md`, `AGENTS.md` docs
   pointer, `stats-article-writer.md`/`stats-article-reviewer.md` updated to
   read the new docs paths instead of duplicating rules.
-- **Nothing in this migration is committed yet.** Hard gate: show the user the
-  new `CLAUDE.md` + full ADR list before any `git commit`.
+- Committed as `e7bf3a1` ("docs: restructure CLAUDE.md into a router +
+  docs/ knowledge base") and already pushed to `origin/main` -- this was
+  stale in a prior version of this file, which claimed it was still
+  uncommitted after the fact.
+- Follow-up cleanup done same day: merged the legacy `doc/` (singular) folder
+  into `docs/legacy/`, moved the one-off strategy artifacts
+  (`statohub-action-plan.md`, `statohub-strategy-review.md`) into
+  `docs/ideas/`, moved `statohub-memory-system.md` to `docs/MEMORY-SYSTEM.md`,
+  and deleted the now-superseded `WORKSPACE-OVERVIEW.md` (fully absorbed into
+  `docs/PROJECT.md` + `docs/REPO-MAP.md` + `docs/ARCHITECTURE.md`). All
+  cross-references updated. Not committed yet -- shown to the user first per
+  the hard gate below.
 
 ## Parked / paused (do not silently resume)
 
@@ -41,7 +55,7 @@ Review section for details.
   queue -- there is no evidence it ran. Procedure in
   `content-ops/calc-prose/SESSION-PLAN.md`.
 - **Phase C (content publishing at scale) and Phase D (guided no-code
-  projects, see [[0012-quizzes-dropped]])** per `statohub-action-plan.md`:
+  projects, see [[0012-quizzes-dropped]])** per `docs/ideas/statohub-action-plan.md`:
   not started, blocked behind Phase A/B closing out first.
 
 ## Standing hard gates

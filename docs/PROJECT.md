@@ -6,8 +6,7 @@ Statohub (statohub.com) is a statistics-education-and-calculators website. It
 is a static site: Astro (SSG) + Tailwind CSS + MDX, deployed to Cloudflare
 Pages, with push-to-deploy CI/CD (GitHub Actions) on every push to `main`.
 
-Full build spec: `doc/BUILD-PLAN.md`. Repo map: `WORKSPACE-OVERVIEW.md` and
-`docs/REPO-MAP.md`.
+Full build spec: `docs/legacy/BUILD-PLAN.md`. Repo map: `docs/REPO-MAP.md`.
 
 ## The wedge thesis
 
@@ -73,8 +72,8 @@ embeds -- the tools have to exist before the teaching that depends on them.
 **Currently: none.** The site is pre-traffic (not yet reliably indexed for
 brand queries at time of writing), so distribution -- not features or
 monetization -- is the binding constraint. Per the strategy review
-(`statohub-strategy-review.md`), the staged model, only entered as each
-trigger is hit, is:
+(`docs/ideas/statohub-strategy-review.md`), the staged model, only entered as
+each trigger is hit, is:
 
 | Stage | Trigger | Model |
 |---|---|---|
@@ -87,7 +86,7 @@ The first planned PRODUCT expansion beyond content+calculators is **guided,
 no-code statistics projects** (`/projects/{slug}`, 12-part structure: problem
 -> dataset -> objectives -> steps -> hints -> solution -> interpretation ->
 mistakes -> extensions -> assessment), each wedging a real calculator, per
-`statohub-action-plan.md` Phase D. This is planned, not yet built.
+`docs/ideas/statohub-action-plan.md` Phase D. This is planned, not yet built.
 
 ## What we are explicitly NOT doing right now
 
