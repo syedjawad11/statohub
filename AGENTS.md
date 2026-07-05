@@ -1,8 +1,27 @@
 # AGENTS.md — statohub.com (Codex entry point)
 
 This is the **statohub.com** build repo. If you are Codex (or any build agent),
-read this, then [`BUILD-PLAN.md`](BUILD-PLAN.md), then your task in
-[`handoff/`](handoff/).
+read this, then your task in [`handoff/`](handoff/).
+
+## Where things live (docs/ router)
+
+The project's durable knowledge lives in `docs/`, not in this file's prose.
+Read the one relevant to your task, skip the rest:
+
+- **`docs/ARCHITECTURE.md`** — stack, URL scheme, build/CI pipeline, content
+  model, the link-safety system. Read this before any structural change.
+- **`docs/REPO-MAP.md`** — annotated directory map (where a calculator's math,
+  config, or a route file actually lives).
+- **`docs/decisions/README.md`** — why past decisions were made, including
+  rejected alternatives. Check this before reversing or relitigating anything
+  that looks like an odd constraint (e.g. "why is there no homepage
+  calculator?") — it's probably a deliberate, documented decision, not an
+  oversight.
+- **`docs/DESIGN-SYSTEM.md`** — tokens, fonts, component patterns; read before
+  any styling task.
+- `doc/BUILD-PLAN.md` is the original full build spec, kept for depth; where
+  it and `docs/ARCHITECTURE.md` disagree, `docs/ARCHITECTURE.md` (newer)
+  wins — flag the conflict in your Work Log rather than silently picking one.
 
 ## Division of labor & handoff
 
@@ -187,6 +206,9 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   frequency-table, and mean calculators, and local preview HTTP checks. Browser
   screenshots/click tests could not run because no in-app browser backend was
   available.
+- **TASK-022 -- trivial fix batch:** removed the article H2 pseudo-element that produced the broken glyph, deleted the obsolete root-segment sitemap noindex filter, removed superseded duplicate `.section-head` / `.article-standfirst` CSS while preserving live computed declarations, and left still-referenced TOC/article-shell rules in place. Verification used `npx astro check`, `npm test` after expected spawn approval, `npm run build`, built CSS U+FFFD byte checks, h2 pseudo-element checks, and root `/normal-distribution/` artifact checks.
+- **TASK-023 -- contrast tokens + CI guard:** adjusted only failing contrast tokens (`--ink-3` light/dark and light `--brass`), added `scripts/check-contrast.mjs` with direct WCAG luminance math reading live CSS tokens, and wired it into GitHub Actions between tests and build. Verification used the contrast script, an intentional temporary failing-token proof, `npx astro check`, `npm test`, and `npm run build`.
+- **TASK-024 -- canonical calculator regression suite:** probed SciPy first (`python3` found SciPy 1.17.1), then added `src/calc/__tests__/canonical-regression.test.ts` covering all 29 live registry engines with sourced typical/edge/larger cases. Distribution cases cite exact SciPy 1.17.1 calls; hand-computable cases show arithmetic inline. No engine files changed and no `// MISMATCH:` cases remained. Verification used focused Vitest, full `npm test`, `npx astro check`, `npm run build`, mismatch grep, and engine-diff scope checks.
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

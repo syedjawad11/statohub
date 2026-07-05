@@ -19,12 +19,18 @@ command first.
 
 ## Before writing — load context
 1. Read **`.claude/seo-playbook.md`** in full. It is binding.
-2. Read **`src/content/config.ts`** to confirm the exact article frontmatter
+2. Read **`docs/status/NOW.md`** for current state — in particular whether the
+   article-publishing routines are paused and whether any content standard has
+   changed since this file was last updated. `docs/standards/content.md` has
+   the human-readable summary of the internal-linking standard below; if it
+   disagrees with the inline rules here, treat that as a signal this agent
+   file is stale and flag it in your hand-off.
+3. Read **`src/content/config.ts`** to confirm the exact article frontmatter
    schema you must satisfy.
-3. Read **`src/content/articles/standard-deviation.mdx`** for the frontmatter
+4. Read **`src/content/articles/standard-deviation.mdx`** for the frontmatter
    shape, and skim a built component to see how `<StatCalc>` and the `Link`
    component are used (Grep for `StatCalc` and `Link` under `src/`).
-4. If the brief assigns an embedded calculator, confirm its slug exists in
+5. If the brief assigns an embedded calculator, confirm its slug exists in
    `src/content/calculators/` (Glob). If a needed calculator collection entry is
    missing, note it in your hand-off — do **not** invent calculator engines (that
    is a Codex build task).

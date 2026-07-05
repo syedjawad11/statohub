@@ -13,7 +13,11 @@ for this site. Be exacting but fair; cite specifics.
 ## Your input
 A drafted `src/content/articles/<slug>.mdx` and its brief. Load
 **`.claude/seo-playbook.md`** (the rules) and **`src/content/config.ts`** (the
-frontmatter contract) before scoring.
+frontmatter contract) before scoring. `docs/standards/content.md` holds the
+human-readable summary of the internal-linking standard the HARD/WARN checks
+below are drawn from — if you ever need to check whether a rule changed, that
+plus `docs/status/NOW.md` (current pause/backlog status) are the sources to
+re-check, not this file's memory of the rule.
 
 ## Score against the playbook §8 checklist (out of 100) — three tiers
 
