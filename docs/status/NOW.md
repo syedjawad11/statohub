@@ -6,18 +6,17 @@
 
 **Last updated:** 2026-07-05.
 
-## Active: two open threads, sequencing conflict flagged
+## Active: one open thread
 
-**1. Phase A -- workspace audit fixes (needs review, blocks nothing else):**
+**1. Phase A -- workspace audit fixes: CLOSED 2026-07-05.**
 `handoff/TASK-022-trivial-fix-batch.md`, `TASK-023-contrast-fix-ci-guard.md`,
-`TASK-024-calc-canonical-regression-suite.md` are all Codex `Status: DONE` but
-**not yet reviewed/closed by Claude** (empty Review sections). Touches
-`src/styles/global.css`, `astro.config.mjs`, `.github/workflows/deploy.yml`,
-new `scripts/check-contrast.mjs`, new `src/calc/__tests__/canonical-regression.test.ts`.
-Per `statohub-action-plan.md`, this was supposed to close before Phase B
-started -- it didn't (Phase B ran ahead). TASK-024's review instructions
-require independently re-deriving >=5 cited canonical values by hand, not just
-re-running the test suite. **This is the next planned work (new session).**
+`TASK-024-calc-canonical-regression-suite.md` all reviewed and closed by
+Claude. Verification independently re-run (not just trusted from the Work
+Log): `npx astro check` (0/0/0), `npm test` (118/118), `npm run build` (56
+pages, 0 link violations), `check-contrast.mjs` (5/5 pairs pass), and
+TASK-024's required spot-check of 7 cited canonical values across categories
+(all reproduced by hand/known math, no discrepancies). See each task file's
+Review section for details.
 
 **2. Phase B -- memory-system migration (`statohub-memory-system.md`), in progress:**
 - Done: `docs/PROJECT.md`, `docs/ARCHITECTURE.md`, `docs/REPO-MAP.md`, all 13

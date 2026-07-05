@@ -40,6 +40,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Contrast check
+        run: node scripts/check-contrast.mjs
+
       - name: Build (runs route-id gen + astro build + link gate)
         run: npm run build
 
