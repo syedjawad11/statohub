@@ -52,12 +52,18 @@ export function breadcrumbList(items: BreadcrumbItem[], site: URL) {
 }
 
 export function articleSchema(input: ArticleSchemaInput, site: URL) {
+  const organizationRef = { '@id': new URL('#organization', site).href };
+  const websiteRef = { '@id': new URL('#website', site).href };
+
   const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: input.headline,
     description: input.description,
     mainEntityOfPage: absoluteRoute(routes.article(input.id), site),
+    author: organizationRef,
+    publisher: organizationRef,
+    isPartOf: websiteRef,
   };
 
   if (input.datePublished) {
@@ -97,7 +103,10 @@ export function organizationSchema(site: URL, input: OrganizationSchemaInput = {
   };
 
   if (input.logo) {
-    schema.logo = absoluteAsset(input.logo, site);
+    schema.logo = {
+      '@type': 'ImageObject',
+      url: absoluteAsset(input.logo, site),
+    };
   }
 
   if (input.sameAs && input.sameAs.length > 0) {
@@ -131,5 +140,6 @@ export function webPageSchema(input: WebPageSchemaInput, site: URL) {
     name: input.name,
     description: input.description,
     url: absoluteRoute(routes.calculator(input.id), site),
+    isPartOf: { '@id': new URL('#website', site).href },
   };
 }

@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import BaseLayout from './BaseLayout.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
-import { articleSchema, type BreadcrumbItem } from '../lib/schema';
+import { articleSchema, organizationSchema, webSiteSchema, type BreadcrumbItem } from '../lib/schema';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
 
@@ -96,6 +96,11 @@ const schema = articleSchema(
   },
   site,
 );
+const articleJsonLd = [
+  schema,
+  webSiteSchema(site),
+  organizationSchema(site, { logo: '/apple-touch-icon.png' }),
+];
 ---
 
 <BaseLayout
@@ -106,7 +111,7 @@ const schema = articleSchema(
   ogImage={article.ogImage}
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={false}
-  jsonLd={[schema]}
+  jsonLd={articleJsonLd}
 >
   <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
 

@@ -58,6 +58,14 @@ build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
 
 ## Parked / paused (do not silently resume)
 
+- **Article schema `image` field (next session):** all 36 articles ship
+  Article JSON-LD with no `image` property -- `ogImage` is optional in
+  `src/content/config.ts` and unset on every article. Google effectively
+  requires `image` for Article rich-result eligibility. Fix is either (a) set
+  `ogImage` per article, or (b) fall back to `/og-default.png` inside
+  `articleSchema()` in `src/lib/schema.ts` the way `Meta.astro` already does
+  for OG tags. Deferred from the 2026-07-06 schema audit/fix session (author,
+  publisher, and entity-graph linking were fixed same session).
 - **Article-publishing cloud routines** (2/day) have been `enabled:false`
   since 2026-06-26, pending the woven-callout automation described in
   [[0010-woven-related-link-callouts]] -- that automation was never finished
