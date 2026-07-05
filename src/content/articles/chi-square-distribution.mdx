@@ -1,0 +1,301 @@
+---
+title: "Chi-Square Distribution: Shape, Table & Probability Density"
+description: "The chi-square distribution explained: shape, formula, and how to read the chi square value table. Covers the chi squared probability density function."
+category: inferential-statistics
+primaryKeyword: chi square distribution
+keywords:
+  - chi square distribution
+  - chi square value table
+  - chi squared probability density function
+  - chi-square distribution
+  - chi-square function
+  - chi-square probability distribution
+  - chi-square test distribution
+  - chi-squared distribution
+  - table for chi square test
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **chi-square distribution** is a continuous probability distribution that arises throughout statistical inference. Whenever you square a standard normal variable and add several of those squared values together, the result follows a chi-square probability distribution. Understanding its shape, its chi squared probability density function, and how to read a chi square value table unlocks the full set of categorical data tests — from goodness-of-fit analysis to tests of independence in contingency tables.
+
+The chi-squared distribution is defined only for positive values, always right-skewed, and controlled by a single parameter: the **degrees of freedom**. These properties make it the natural reference distribution for statistics built from sums of squared deviations.
+
+---
+
+## What Is the Chi-Square Distribution?
+
+The chi-square distribution emerges from a simple construction. Take k independent random variables, each drawn from a standard normal distribution (mean 0, standard deviation 1), square each one, and sum the results. That sum follows a chi-square distribution with k degrees of freedom, written χ²(k).
+
+If Z₁, Z₂, …, Zₖ are independent standard normal variables, then:
+
+```
+X = Z₁² + Z₂² + ... + Zₖ²  ~  χ²(k)
+```
+
+The only parameter is k, the degrees of freedom. Every chi-square distribution is fully determined by a single positive integer k.
+
+Because X is a sum of squared values, it can never be negative. The chi-square probability distribution is therefore defined only for x > 0. A chi-square variable of exactly 0 would require every standard normal term to be exactly 0 simultaneously — a probability-zero event.
+
+### Where degrees of freedom come from
+
+In applied statistics, the degrees of freedom encode the number of independent pieces of information contributing to the test statistic. The count is not always the same as the sample size.
+
+- **Goodness-of-fit test** with c categories: df = c − 1. One degree of freedom is lost because the expected category frequencies must add to the total observed count.
+- **Test of independence** in an r × c contingency table: df = (r − 1)(c − 1). A 3 × 4 table gives df = 2 × 3 = 6.
+- **Test of homogeneity**: same formula as independence, df = (r − 1)(c − 1).
+
+In every case, the chi-square distribution serves as the reference distribution for the test statistic — the chi-square test distribution against which you compare your observed statistic to determine significance.
+
+---
+
+## The Chi-Square Probability Density Function
+
+The **chi squared probability density function** for df = k is:
+
+```
+f(x; k) = x^(k/2 - 1) * e^(-x/2) / ( 2^(k/2) * Gamma(k/2) )    for x > 0
+f(x; k) = 0                                                         for x <= 0
+```
+
+Here Gamma(·) is the gamma function — a generalization of the factorial to real numbers — and e is Euler's number (≈ 2.718).
+
+### Key distribution properties
+
+For a chi-square distribution with k degrees of freedom, the central properties are:
+
+| Property   | Formula         | Example (k = 5) |
+|------------|-----------------|-----------------|
+| Mean       | k               | 5               |
+| Variance   | 2k              | 10              |
+| Std dev    | √(2k)           | ≈ 3.16          |
+| Mode       | max(k − 2, 0)   | 3               |
+| Skewness   | √(8/k)          | ≈ 1.26          |
+
+The mean always equals the degrees of freedom. The mode falls below the mean at k − 2 (for k ≥ 2), reflecting the right skew.
+
+### Worked PDF calculation
+
+To see how the chi-square function behaves numerically, evaluate the density at x = 2 when df = 3 (k = 3).
+
+**Step 1.** Identify each component:
+- x^(k/2 − 1) = 2^(0.5) = √2 ≈ 1.414
+- e^(−x/2) = e^(−1) ≈ 0.368
+- 2^(k/2) = 2^(1.5) ≈ 2.828
+- Gamma(k/2) = Gamma(1.5) = √π / 2 ≈ 0.886
+
+**Step 2.** Compute the denominator:
+```
+2.828 × 0.886 ≈ 2.505
+```
+
+**Step 3.** Compute the density:
+```
+f(2; 3) = (1.414 × 0.368) / 2.505
+        = 0.520 / 2.505
+        ≈ 0.208
+```
+
+A probability density of 0.208 at x = 2 means that a narrow interval of width Δx centered at 2 captures approximately 0.208 × Δx of the total probability. This number is not a probability itself; it becomes one only when integrated over a range.
+
+<RelatedLink to={routes.calculator('chi-square')} label="chi-square calculator" intro="For a related calculation" />
+
+---
+
+## The Shape of the Chi-Square Distribution
+
+The chi-square distribution's shape depends heavily on the degrees of freedom parameter, shifting from extremely skewed at low df to nearly symmetric at high df.
+
+**Small degrees of freedom (k = 1 or 2):** The chi-squared distribution decreases monotonically from its maximum at or near x = 0. There is no interior peak. For k = 1, the density rises to infinity as x → 0+ before decaying. For k = 2, the density starts at a finite value (1/2) at x = 0 and falls off exponentially.
+
+**Moderate degrees of freedom (k = 3 to k ≈ 15):** The distribution develops a clear peak at the mode (k − 2) and a pronounced right tail. The mean k sits above the mode k − 2, pulled upward by the long tail. Most probability mass sits in the left half of the distribution, but the tail extends far to the right.
+
+**Large degrees of freedom (k ≥ 30):** By the central limit theorem, the distribution of X = Z₁² + … + Zₖ² normalizes as k grows. The chi-squared distribution approaches a normal distribution centered on k with standard deviation √(2k). For k = 50, the distribution looks nearly bell-shaped to the eye.
+
+### The right tail is the action zone
+
+In chi-square hypothesis testing, large values of the test statistic fall in the right tail. This is because the test statistic grows when observed counts deviate substantially from expected counts. The chi-square critical value from the table marks the boundary of this tail — values beyond that boundary are rare enough under H₀ to warrant rejection.
+
+---
+
+## Additive Property and Special Cases
+
+The chi-squared distribution has a useful additive property. If X₁ ~ χ²(k₁) and X₂ ~ χ²(k₂) are independent, then:
+
+```
+X₁ + X₂ ~ χ²(k₁ + k₂)
+```
+
+The sum of two independent chi-square variables is itself chi-square, with degrees of freedom equal to the sum. This property carries through to any finite number of independent chi-square variables.
+
+### Connection to other distributions
+
+The chi-square distribution is the building block for two other distributions that appear throughout applied statistics.
+
+The **t-distribution** with df = k can be written as a ratio:
+
+```
+t = Z / sqrt( χ²(k) / k )
+```
+
+where Z is a standard normal variable independent of the chi-square variable. This construction explains why the t-distribution approaches the standard normal as k grows — the chi-square factor stabilizes.
+
+The **F-distribution** with degrees of freedom d₁ and d₂ is the ratio of two independent chi-square variables, each divided by its degrees of freedom:
+
+```
+F = ( χ²(d₁) / d₁ ) / ( χ²(d₂) / d₂ )
+```
+
+ANOVA F-statistics and regression F-tests follow F-distributions built on this chi-square foundation.
+
+---
+
+## How to Read the Chi-Square Value Table
+
+The **chi square value table** (also called the table for chi square test) gives critical values: the chi-square thresholds that cut off a specified tail probability α for each degrees-of-freedom row.
+
+### Table structure
+
+Each row is a degrees-of-freedom value (df = 1, 2, 3, …). Each column is a significance level α for the **upper (right) tail** — the tail relevant to virtually all chi-square tests. Common columns are α = 0.10, 0.05, 0.025, 0.01, and 0.005.
+
+The value in row df, column α satisfies:
+
+```
+P( X > chi-sq-critical ) = alpha
+```
+
+Under a chi-square distribution with the given df, the probability of exceeding the table value is exactly α. To look up a critical value:
+
+1. **Determine df** from the problem context (categories minus 1, or (rows − 1)(columns − 1)).
+2. **Choose α**, your significance level (commonly 0.05).
+3. **Find the row** for your df and **the column** for your α (right-tail direction).
+4. **Read the critical value** from the cell.
+5. **Apply the decision rule**: reject H₀ if your computed chi-square statistic exceeds the critical value.
+
+### Commonly used critical values (right tail)
+
+| df | α = 0.10 | α = 0.05 | α = 0.025 | α = 0.01 |
+|----|----------|----------|-----------|----------|
+| 1  | 2.706    | 3.841    | 5.024     | 6.635    |
+| 3  | 6.251    | 7.815    | 9.348     | 11.345   |
+| 5  | 9.236    | 11.070   | 12.833    | 15.086   |
+| 8  | 13.362   | 15.507   | 17.535    | 20.090   |
+| 10 | 15.987   | 18.307   | 20.483    | 23.209   |
+
+These critical values come from the chi-square distribution CDF, and match the values in the [NIST/SEMATECH e-Handbook of Statistical Methods, Chi-Square Distribution section](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm).
+
+<RelatedLink to={routes.article('p-value')} label="p-value explained" intro="On a related note" />
+
+---
+
+## Worked Example: Finding a Critical Value
+
+**Scenario:** A market researcher records customer preferences across five product categories. To test whether preferences are equally distributed, they compute a chi-square goodness-of-fit statistic of 10.2. Is this significant at α = 0.05?
+
+**Step 1: Degrees of freedom.**
+For a goodness-of-fit test with c = 5 categories:
+```
+df = c - 1 = 5 - 1 = 4
+```
+
+**Step 2: Critical value from the chi square value table.**
+Row df = 4, column α = 0.05 → critical value = **9.488**.
+
+**Step 3: Decision.**
+The computed statistic χ² = 10.2 exceeds 9.488. The researcher rejects H₀ at the 5% significance level and concludes that the preference distribution is not uniform across categories.
+
+**What the critical value tells you:** The value 9.488 is the 95th percentile of the chi-square distribution with 4 degrees of freedom. Values above 9.488 occur only 5% of the time under a uniform preference model. A statistic of 10.2 is in that rare upper region — evidence that the observed pattern differs from equal preferences.
+
+**Effect of changing α:** If the researcher needed α = 0.01 instead, the critical value for df = 4 is 13.277. The statistic 10.2 would then fall below the threshold, failing to reach significance at the stricter 1% level. The same statistic, the same data — but the conclusion changes with the significance level chosen before data collection.
+
+<RelatedLink to={routes.calculator('z-table')} label="z-table calculator" intro="Worth reading next" />
+
+---
+
+## Chi-Square Distribution in Hypothesis Testing
+
+The chi-square distribution is the chi-square test distribution underlying the three most widely used tests for categorical data.
+
+**Goodness-of-fit test.** Tests whether observed categorical frequencies match a hypothesized distribution (uniform, Poisson, normal, or any other). The test statistic is:
+
+```
+chi-sq = SUM( (Oi - Ei)^2 / Ei )
+```
+
+where Oᵢ is the observed count and Eᵢ is the expected count for category i. Under H₀, this statistic follows χ²(c − 1) if expectations hold.
+
+**Test of independence.** Tests whether two categorical variables (for example, gender and political affiliation) are statistically independent. The test statistic has the same formula, applied to the cells of a contingency table. df = (rows − 1)(columns − 1).
+
+**Test of homogeneity.** Tests whether the distribution of a single categorical variable is the same across two or more independent groups. Structurally identical to the independence test.
+
+All three tests share the same chi-square probability distribution — the distribution of the null statistic — and use the chi square value table in the same way to find critical values or convert statistics into p-values.
+
+### How p-values connect to the table
+
+Finding a p-value from a chi-square statistic is the reverse of a table lookup. Instead of reading a critical value for a chosen α, you ask: what α corresponds to your observed statistic?
+
+For example, with df = 4 and χ² = 10.2, the p-value is:
+
+```
+p = P( X > 10.2 )   where X ~ chi-sq(4)
+```
+
+This area can be read approximately from the table (10.2 falls between the α = 0.05 column at 9.488 and the α = 0.025 column at 11.143, so the p-value is between 0.025 and 0.05) or computed exactly via statistical software.
+
+### Assumptions and limitations
+
+The chi-square approximation to the true distribution of the test statistic relies on adequate expected cell counts. A common rule of thumb requires Eᵢ ≥ 5 for each cell. When expected counts are small, the chi-square approximation may be poor and alternatives such as Fisher's exact test are preferred.
+
+<RelatedLink to={routes.article('t-test')} label="the t-test explained" intro="See also" />
+
+---
+
+## Frequently Asked Questions
+
+### What is the chi-square distribution?
+
+The chi-square distribution is a continuous probability distribution defined for positive values. It arises as the sum of k squared, independent standard normal variables. Its shape, mean, and variance are all determined by a single parameter: the degrees of freedom k. The distribution appears throughout inferential statistics wherever squared deviations from expected values are evaluated.
+
+### What is the chi-square function formula?
+
+The chi-square function — the probability density — is:
+
+```
+f(x; k) = x^(k/2 - 1) * e^(-x/2) / ( 2^(k/2) * Gamma(k/2) )   for x > 0
+```
+
+This chi-square function involves the gamma function Gamma(·) and has no closed-form antiderivative, so probabilities and critical values are obtained from tables or numerical computation.
+
+### How do you read a table for chi square test?
+
+Locate the row for your degrees of freedom and the column for your significance level α (right-tail direction). The cell gives the critical chi-square threshold. Reject H₀ if your computed statistic exceeds that threshold. To find a p-value instead, find which two column entries your statistic falls between; your p-value lies in that interval.
+
+### What is the mean of the chi-square distribution?
+
+The mean of a chi-square distribution with k degrees of freedom equals k. At df = 7, the mean is 7. The variance is 2k, so at df = 7 the standard deviation is √14 ≈ 3.74. Because the distribution is right-skewed, the mean exceeds the mode (k − 2), and most of the distribution's probability mass sits below the mean.
+
+### Is the chi-squared distribution always right-skewed?
+
+Yes, for any finite k. The skewness equals √(8/k), which is positive for all k > 0. The chi-squared distribution always has a longer right tail than left. As k increases, skewness shrinks toward zero and the shape approaches a symmetric normal. For practical purposes, the distribution looks nearly normal once k ≥ 30.
+
+### What is the chi-square distribution with 1 degree of freedom?
+
+When df = 1, the chi-square variable is simply Z², the square of a single standard normal variable. The distribution is heavily concentrated near zero, with density that rises toward infinity as x → 0+ and decays rapidly. The mean is 1, the variance is 2, and the mode is 0. This special case appears in the chi-square test for a 2 × 2 contingency table and in the squared z-test for a single proportion.
+
+### How does the chi-square distribution relate to the p-value?
+
+After computing a chi-square statistic, you find the corresponding p-value by evaluating the area under the chi-square probability distribution to the right of your statistic. That right-tail area is the probability of observing a statistic at least as extreme as yours if the null hypothesis were true. Statistical software integrates the chi squared probability density function automatically; a chi-square table gives approximate p-value ranges by bracketing the statistic between column entries.
+
+### Why is the chi-square distribution only for positive values?
+
+The test statistic χ² = Σ(Oᵢ − Eᵢ)² / Eᵢ is a sum of squared terms divided by positive expected counts. Squares are always non-negative, and expected counts are always positive, so each term is non-negative. A sum of non-negative terms is non-negative. The only way χ² could equal zero is if every observed count exactly matched its expected value — the data fit the null model perfectly. Larger deviations in any direction push the statistic upward, never below zero.
+
+---
+
+The chi-square distribution connects squared normal variability to practical decisions about categorical data. Whether you are evaluating the chi squared probability density function at a specific point, reading a chi square value table for a goodness-of-fit test, or tracing how the distribution's shape evolves with degrees of freedom, the core insight remains: it is a non-negative, right-skewed distribution built from squared normal variability that grows more symmetric as k increases. Master it and you hold the key to a wide class of inferential tests.
+
+For the complete chi-square distribution reference tables and technical details, see the [NIST/SEMATECH e-Handbook of Statistical Methods, Chi-Square Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm) and the [OpenStax Introductory Statistics, Facts About the Chi-Square Distribution](https://openstax.org/books/introductory-statistics/pages/11-1-facts-about-the-chi-square-distribution).
