@@ -6,7 +6,7 @@ import StatCalc from '../../../components/StatCalc.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { routes } from '../../../lib/links';
 import { getRelatedCalculators } from '../../../lib/related-calculators';
-import { softwareApplicationSchema, type BreadcrumbItem } from '../../../lib/schema';
+import { organizationSchema, webPageSchema, webSiteSchema, type BreadcrumbItem } from '../../../lib/schema';
 
 type CalculatorEntry = CollectionEntry<'calculators'>;
 type CalculatorData = CalculatorEntry['data'];
@@ -50,7 +50,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { label: calc.title, route: routes.calculator(slug) },
 ];
 const site = Astro.site ?? Astro.url;
-const calculatorSchema = softwareApplicationSchema(
+const calculatorSchema = webPageSchema(
   {
     id: slug,
     name: calc.title,
@@ -58,6 +58,11 @@ const calculatorSchema = softwareApplicationSchema(
   },
   site,
 );
+const calculatorJsonLd = [
+  calculatorSchema,
+  webSiteSchema(site),
+  organizationSchema(site, { logo: '/apple-touch-icon.png' }),
+];
 ---
 
 <BaseLayout
@@ -65,7 +70,7 @@ const calculatorSchema = softwareApplicationSchema(
   description={calc.description}
   canonicalPath={routes.calculator(slug)}
   breadcrumbs={breadcrumbs}
-  jsonLd={[calculatorSchema]}
+  jsonLd={calculatorJsonLd}
 >
   <section class="calc-hero">
     <span class="pill">Calculator</span>

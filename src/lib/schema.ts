@@ -14,7 +14,7 @@ interface ArticleSchemaInput {
   image?: string;
 }
 
-interface SoftwareApplicationSchemaInput {
+interface WebPageSchemaInput {
   id: CalculatorId;
   name: string;
   description: string;
@@ -124,18 +124,12 @@ export function webSiteSchema(site: URL, input: WebSiteSchemaInput = {}) {
   return schema;
 }
 
-export function softwareApplicationSchema(input: SoftwareApplicationSchemaInput, site: URL) {
+export function webPageSchema(input: WebPageSchemaInput, site: URL) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+    '@type': 'WebPage',
     name: input.name,
     description: input.description,
-    applicationCategory: 'UtilityApplication',
     url: absoluteRoute(routes.calculator(input.id), site),
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
   };
 }
