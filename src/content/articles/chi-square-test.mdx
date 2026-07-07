@@ -1,0 +1,326 @@
+---
+title: "Chi-Square Test: Formula, Equation & How to Use It"
+description: "Learn the chi-square test formula, chi squared equation, and step-by-step worked examples to test independence or goodness-of-fit with categorical data."
+category: inferential-statistics
+primaryKeyword: chi square test
+keywords:
+  - chi square test
+  - chi square equation
+  - chi square tests
+  - chi squared equation
+  - chi squared formula
+  - chi-square equation
+  - chi-square formula
+  - chi-square test equation
+  - chi-squared formula
+  - formula for chi square
+  - formula for chi square test
+  - formula for chi squared
+phase: 3
+calculator: chi-square
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **chi-square test** is a statistical procedure for deciding whether observed counts in categorical data differ from expected counts by more than chance alone. Whenever you have data that falls into named groups — survey answers, product categories, blood types, pass/fail outcomes — and you want to know whether the distribution you see is consistent with a particular hypothesis, the chi square test is the standard approach. It produces a test statistic (written χ²) that you compare to a known distribution to decide whether the gap between what you observed and what you expected is statistically significant.
+
+There are two main versions of chi square tests in common use. The **goodness-of-fit test** checks whether one categorical variable follows a specified distribution. The **test of independence** checks whether two categorical variables are related or independent. Both rely on the same chi-square formula and the same chi-square distribution — what changes is how you calculate the expected counts and degrees of freedom.
+
+This article explains the chi-square formula in detail, works through both types of test with fully computed numeric examples, and answers the most common questions about when and how to use chi-squared tests.
+
+---
+
+## What Is a Chi-Square Test?
+
+A chi-square test evaluates a hypothesis about categorical data. Unlike a <Link to={routes.article('t-test')}>t-test</Link>, which compares group means, or a regression model, which models a relationship between numeric variables, chi-square tests work exclusively with **counts** — the number of observations that fall into each category.
+
+The underlying idea is simple: if a null hypothesis were true, how many observations would you expect in each cell? Compare those expected counts to the counts you actually observed. If the discrepancy is small, the data is consistent with the null hypothesis. If the discrepancy is large, the data suggests the null hypothesis is wrong.
+
+**Chi-square goodness-of-fit test.** This version uses one categorical variable. It asks: "Does my observed distribution match the distribution specified by the null hypothesis?" Examples include testing whether a die is fair, whether birth rates are uniform across months, or whether a genetic cross follows Mendelian ratios.
+
+**Chi-square test of independence.** This version uses two categorical variables arranged in a contingency table (rows × columns). It asks: "Are these two variables independent, or are they associated?" Examples include testing whether disease status is independent of treatment group, or whether product preference varies by age group.
+
+Both versions use the same chi-square test equation to compute the statistic, and both use the chi-square distribution to evaluate it. The chi-square distribution is also the foundation for constructing confidence intervals for a variance — see the article on the <Link to={routes.article('chi-square-distribution')}>chi-square distribution</Link> for the shape, table, and probability details.
+
+---
+
+## The Chi-Square Formula
+
+The chi-square equation — also called the chi squared formula or chi-square test equation — is:
+
+```
+χ² = Σ [ (O − E)² / E ]
+```
+
+where:
+
+- **χ²** is the chi-square test statistic (chi squared)
+- **O** is the observed count in a category or cell
+- **E** is the expected count in that same category or cell
+- **Σ** means "sum over all categories or cells"
+
+This formula for chi square applies identically to goodness-of-fit tests and independence tests. The logic behind it is worth understanding:
+
+1. **Subtract E from O.** A large difference means the category is much more or less common than expected.
+2. **Square the difference.** Squaring removes signs so that shortfalls and excesses both contribute positively to χ². It also amplifies large deviations more than small ones.
+3. **Divide by E.** This scales each squared difference relative to how many counts you expected. A deviation of 10 from an expected count of 20 is much more striking than a deviation of 10 from an expected count of 200.
+4. **Sum across all categories or cells.** The total χ² captures the overall discrepancy between observed and expected.
+
+A χ² of 0 means every observed count equals the expected count exactly — essentially impossible in real data. The larger χ² grows, the more evidence you have against the null hypothesis.
+
+### Degrees of Freedom
+
+After computing χ², you compare it to the chi-square distribution using **degrees of freedom (df)**:
+
+- **Goodness-of-fit:** `df = k − 1`, where k is the number of categories.
+- **Test of independence:** `df = (r − 1) × (c − 1)`, where r = rows and c = columns in the contingency table.
+
+More degrees of freedom push the distribution rightward, so a larger χ² is needed to achieve the same significance level. For the commonly used significance level α = 0.05, selected critical values are:
+
+| Degrees of freedom (df) | Critical value (α = 0.05) |
+|-------------------------|--------------------------|
+| 1 | 3.841 |
+| 2 | 5.991 |
+| 3 | 7.815 |
+| 5 | 11.070 |
+| 9 | 16.919 |
+
+If your computed χ² exceeds the critical value for your chosen α and df, you reject the null hypothesis. You can also convert χ² directly to a <Link to={routes.article('p-value')}>p-value</Link> using a table or calculator.
+
+<RelatedLink to={routes.article('chi-square-distribution')} label="Chi-Square Distribution" intro="On a related note" />
+
+---
+
+## Worked Example: Chi-Square Goodness-of-Fit Test
+
+The goodness-of-fit test answers: "Does my observed distribution match the expected distribution?" Here is a step-by-step example with real numbers.
+
+**Scenario.** A coin is flipped 100 times. If the coin is fair, you expect 50 heads and 50 tails. The actual results are 60 heads and 40 tails. Does this provide statistically significant evidence that the coin is unfair?
+
+### Step 1: State the Hypotheses
+
+- **H₀ (null hypothesis):** The coin is fair; P(heads) = 0.5.
+- **H₁ (alternative hypothesis):** The coin is not fair; P(heads) ≠ 0.5.
+
+### Step 2: Calculate Expected Counts
+
+With n = 100 flips and P(heads) = 0.5 under H₀:
+
+| Outcome | Observed (O) | Expected (E) |
+|---------|-------------|-------------|
+| Heads | 60 | 50 |
+| Tails | 40 | 50 |
+| **Total** | **100** | **100** |
+
+All expected counts are ≥ 5, so the chi-square approximation is valid.
+
+### Step 3: Apply the Formula for Chi Square
+
+```
+χ² = (60 − 50)² / 50  +  (40 − 50)² / 50
+   = 100 / 50  +  100 / 50
+   = 2.000  +  2.000
+   = 4.000
+```
+
+### Step 4: Determine Degrees of Freedom
+
+```
+df = k − 1 = 2 − 1 = 1
+```
+
+### Step 5: Compare to the Critical Value
+
+At α = 0.05 and df = 1, the critical value is **3.841**.
+
+Since χ² = 4.000 > 3.841, you **reject H₀**. The data provides statistically significant evidence at the 5% level that the coin is biased.
+
+The exact p-value for χ² = 4.00 with df = 1 is approximately **0.0455** — just below the 0.05 threshold, confirming the same conclusion. Had you chosen α = 0.01 (critical value 6.635), you would not have rejected H₀, illustrating how the choice of significance level affects the decision.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, Chi-Square Goodness-of-Fit Test](https://www.itl.nist.gov/div898/handbook/prc/section4/prc45.htm) covers additional examples and discusses the conditions under which the chi-square approximation performs well.
+
+---
+
+## Try the Chi-Square Calculator
+
+Enter your observed and expected counts below to compute the chi-square statistic and its p-value instantly — no table look-up required.
+
+<StatCalc slug="chi-square" variant="embed" />
+
+For a wider interface with additional options, open the full <Link to={routes.calculator('chi-square')}>chi-square calculator</Link>. All statistical tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="For a related calculation" />
+
+---
+
+## Chi-Square Test of Independence
+
+The independence test evaluates whether two categorical variables are associated or whether they occur independently of each other. The chi-squared formula is identical to the goodness-of-fit case, but the expected values are computed differently — from the row and column totals of a contingency table.
+
+**Scenario.** A researcher surveys 100 people to investigate whether drink preference (coffee vs. tea) is associated with gender (male vs. female). The observed counts are:
+
+|  | Coffee | Tea | Row Total |
+|--|--------|-----|-----------|
+| Male | 30 | 20 | 50 |
+| Female | 15 | 35 | 50 |
+| **Column Total** | **45** | **55** | **100** |
+
+### Step 1: State the Hypotheses
+
+- **H₀:** Drink preference and gender are independent.
+- **H₁:** Drink preference and gender are not independent.
+
+### Step 2: Calculate Expected Values
+
+Under independence, the expected count in each cell is:
+
+```
+E = (Row Total × Column Total) / Grand Total
+```
+
+| Cell | Expected count |
+|------|---------------|
+| Male, Coffee | (50 × 45) / 100 = 22.5 |
+| Male, Tea | (50 × 55) / 100 = 27.5 |
+| Female, Coffee | (50 × 45) / 100 = 22.5 |
+| Female, Tea | (50 × 55) / 100 = 27.5 |
+
+All expected counts exceed 5, so the approximation is valid.
+
+### Step 3: Apply the Chi-Square Test Equation
+
+```
+χ² = (30 − 22.5)² / 22.5  +  (20 − 27.5)² / 27.5
+   + (15 − 22.5)² / 22.5  +  (35 − 27.5)² / 27.5
+
+   = 56.25 / 22.5  +  56.25 / 27.5
+   + 56.25 / 22.5  +  56.25 / 27.5
+
+   = 2.500  +  2.045  +  2.500  +  2.045
+
+   = 9.09
+```
+
+### Step 4: Degrees of Freedom
+
+```
+df = (rows − 1) × (columns − 1) = (2 − 1) × (2 − 1) = 1
+```
+
+### Step 5: Compare and Conclude
+
+At α = 0.05 and df = 1, the critical value is 3.841. Since χ² = 9.09 > 3.841, you **reject H₀**. The data provides strong evidence that drink preference and gender are not independent — the observed pattern differs significantly from what you would expect if the two variables were unrelated.
+
+The p-value for χ² = 9.09 with df = 1 is approximately **0.0026**, well below 0.05. For a comprehensive treatment of chi square tests of independence and additional worked examples, see [Penn State STAT 500, Lesson 8 — Chi-Square Tests](https://online.stat.psu.edu/stat500/lesson/8).
+
+<RelatedLink to={routes.article('t-test')} label="T-Test Explained" intro="Worth reading next" />
+
+---
+
+## How to Conduct a Chi-Square Test: Step-by-Step
+
+The same five-step procedure applies whether you are running a goodness-of-fit test or an independence test:
+
+**Step 1 — State the hypotheses.** Write a null hypothesis (H₀) that specifies the expected distribution (for goodness-of-fit) or asserts independence (for independence tests). Write an alternative hypothesis (H₁) that contradicts H₀.
+
+**Step 2 — Choose a significance level (α).** The standard choice is α = 0.05, meaning you accept a 5% probability of rejecting a true null hypothesis. For more stringent research, α = 0.01 is common.
+
+**Step 3 — Calculate expected values.** For goodness-of-fit: multiply the total sample size by each hypothesized proportion. For independence: for each cell, multiply its row total by its column total and divide by the grand total.
+
+**Step 4 — Compute χ².** Apply the formula χ² = Σ[(O − E)² / E] across all categories or cells.
+
+**Step 5 — Evaluate the result.** Compare χ² to the critical value at your chosen α and df, or compute the p-value directly. If χ² exceeds the critical value (or p < α), reject H₀.
+
+---
+
+## Assumptions of the Chi-Square Test
+
+Chi-square tests produce reliable results only when four conditions are met. Violating them can invalidate the p-value even when the arithmetic is correct.
+
+**Random sampling.** Observations must be drawn randomly from the population. A biased or convenience sample undermines the entire inference.
+
+**Independence of observations.** Each observation must contribute to exactly one cell. Repeated measures, paired designs, or overlapping categories all violate this assumption.
+
+**Adequate expected cell counts.** The conventional rule is that every expected cell count must be at least 5. When expected counts fall below 5 — common in large contingency tables with sparse data — the chi-square approximation performs poorly. In those cases, consider Fisher's exact test (for 2×2 tables) or collapsing small categories where substantively justified.
+
+**Categorical data only.** Chi-square tests are designed for counts in discrete named groups, not for continuous measurements. If your data is continuous (such as height or income), the chi-square test is not appropriate; consider a t-test, ANOVA, or correlation instead.
+
+<RelatedLink to={routes.article('normal-distribution')} label="Normal Distribution" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Applying Chi-Square Tests
+
+### Using Percentages Instead of Counts
+
+The formula for chi square requires raw observed and expected counts, not proportions or percentages. Substituting "60%" for "60 out of 100" will produce an incorrect result. Always ensure that O and E are actual frequencies and that their totals match.
+
+### Ignoring Small Expected Counts
+
+A chi-square calculation that runs to completion is not automatically valid. If any expected cell count falls below 5, the chi-square approximation may be poor. Many statistical software packages issue a warning; do not ignore it.
+
+### Confusing the Two Types of Tests
+
+The goodness-of-fit test uses a single variable compared to a theoretical distribution. The independence test uses two variables in a contingency table. Using the wrong expected-value formula or the wrong degrees-of-freedom formula is a common error that leads to an incorrect p-value.
+
+### Misinterpreting a Significant Result
+
+Rejecting H₀ in an independence test tells you only that the two variables are not independent — it says nothing about the strength or direction of the association. To quantify the association, report a measure of effect size such as Cramér's V (for larger tables) or the phi coefficient (for 2×2 tables) alongside the chi-square result.
+
+### Applying Chi-Square to Related Observations
+
+If the same subject contributes more than one observation — for example, multiple survey responses from the same person — the independence-of-observations assumption is violated. The resulting chi-square statistic and p-value are not interpretable in the usual way.
+
+---
+
+## Frequently Asked Questions
+
+### What is a chi-square test?
+
+A chi-square test is a hypothesis test that evaluates whether observed frequencies in categorical data differ from expected frequencies by more than chance. It produces the chi-square statistic χ², which follows a chi-square distribution under the null hypothesis, and generates a p-value that tells you the probability of seeing a discrepancy as large as the one observed if H₀ is true.
+
+### What is the formula for chi square?
+
+The formula for chi square — also called the chi-square formula, chi squared formula, or chi-square equation — is:
+
+```
+χ² = Σ [ (O − E)² / E ]
+```
+
+where O is the observed count, E is the expected count, and the sum runs over all categories or cells. This formula for chi squared applies to both the goodness-of-fit and the independence test. The difference between the two lies in how expected values E are computed and how degrees of freedom are determined.
+
+### What is the chi-square test equation for a 2×2 contingency table?
+
+For a 2×2 table, compute the expected count for each of the four cells as E = (row total × column total) / grand total, then apply the chi-square test equation χ² = Σ[(O − E)² / E] across all four cells. Degrees of freedom = (2 − 1)(2 − 1) = 1.
+
+### When should I use a chi-square test?
+
+Use a chi-square test when your outcome variable is categorical (nominal or ordinal groups) and you want to test either (a) whether a single variable's distribution matches a hypothesized distribution (goodness-of-fit), or (b) whether two categorical variables are independent. Do not use chi-square for continuous data, for comparing means, or when any expected cell count is below 5.
+
+### How do I find the p-value for a chi-square test?
+
+Compute χ² and note the degrees of freedom, then look up the upper-tail probability in a chi-square table. The p-value is the probability that a chi-square random variable with df degrees of freedom exceeds your observed χ². Statistical software and online calculators return this directly.
+
+### What does a larger chi-square statistic mean?
+
+A larger χ² indicates greater overall discrepancy between observed and expected counts. For fixed degrees of freedom, a larger χ² corresponds to a smaller p-value — that is, stronger evidence against the null hypothesis. However, χ² also grows with sample size, so comparing raw χ² values across studies of different sizes can be misleading; effect-size measures like Cramér's V are more comparable.
+
+### What is the difference between a chi-square test and a t-test?
+
+A chi-square test works with categorical data (counts in groups), while a <Link to={routes.article('t-test')}>t-test</Link> compares means of continuous or numeric measurements. If you have survey response categories, use chi-square. If you have measured values like weight or exam scores and want to compare averages, use a t-test. Both are hypothesis tests, but they address fundamentally different types of data.
+
+### What are the degrees of freedom for a chi-square test?
+
+For a goodness-of-fit test: df = k − 1, where k is the number of categories. For an independence test: df = (r − 1)(c − 1), where r is the number of rows and c the number of columns in the contingency table. Degrees of freedom determine which chi-square distribution you use to convert χ² into a p-value.
+
+---
+
+## Summary
+
+The chi-square test is the workhorse method for analyzing categorical data. The chi-squared formula — χ² = Σ[(O − E)² / E] — is the same whether you are running a goodness-of-fit test (one variable, tested against a specified distribution) or an independence test (two variables, tested for association in a contingency table). What changes between the two is how you calculate the expected counts and degrees of freedom.
+
+Use the five-step procedure: state hypotheses, choose α, compute expected values, calculate the chi-square test statistic, and compare to a critical value or p-value. Verify the assumptions — random sampling, independent observations, expected counts ≥ 5, and categorical data — before trusting the result. When the assumptions hold and χ² exceeds the critical value for your chosen significance level and degrees of freedom, you have evidence to reject the null hypothesis and conclude that the observed data is inconsistent with it.
