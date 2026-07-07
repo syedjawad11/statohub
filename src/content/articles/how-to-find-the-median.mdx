@@ -1,0 +1,317 @@
+---
+title: "How to Find the Median: Formula & Steps"
+description: "Learn how to find the median step by step: sort values, apply the median formula, and handle both odd and even data sets with worked examples."
+category: descriptive-statistics
+primaryKeyword: how to find the median
+keywords:
+  - how to find the median
+  - find the median
+  - formula for median
+  - how to calculate median
+  - how to find median
+  - median formula
+phase: 3
+calculator: median
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**The median is the middle value of a sorted data set.** To find the median, sort all values from smallest to largest, then identify the midpoint: for an odd count of values, take the single middle value; for an even count, average the two middle values. This is how to find the median in its simplest form — a measure of center that is immune to the pull of outliers and skewed distributions.
+
+This guide walks through the median formula, fully worked examples for both the odd and even cases, and how to calculate the median for grouped frequency data. A Frequently Asked Questions section at the end addresses the most common student stumbling blocks.
+
+---
+
+## What Is the Median?
+
+The **median** is the value that divides a ranked data set in half: fifty percent of the observations fall at or below it, and fifty percent fall at or above it. In statistical language, the median is the 50th percentile of the distribution.
+
+Unlike the mean, which is calculated by summing all values and dividing by n, the median is determined by **position**. It depends only on where the middle falls in the sorted list, not on the magnitude of any individual value. This positional nature is exactly why the median holds up better than the mean in the presence of outliers or skew.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the sample median formally as: for an odd number of observations it is the middle value, and for an even number it is the arithmetic mean of the two middle values — the same rule you will apply in the worked examples below.
+
+---
+
+## Why the Median Matters
+
+The mean is sensitive to extreme values. A single very large or very small number shifts the mean away from the bulk of the data. The median is **resistant to outliers**: changing an extreme value does not move the midpoint unless it crosses the middle position in the sorted list.
+
+This resistance makes the median the preferred measure of center in several common situations:
+
+- **Income and wages.** A small number of extremely high earners inflate the mean income well above the level most households experience. Government statistical agencies report median household income for this reason — it describes the typical family, not the average dragged upward by millionaires.
+- **Home prices.** A handful of luxury sales can pull the mean price far above what a typical buyer pays. Real-estate market reports quote the median sale price because it reflects the center of the market, not the tail.
+- **Waiting and service times.** A few unusually long waits would distort the mean. The median wait time better reflects the experience of the typical customer.
+
+Whenever a distribution has a **long tail** on one side — income, prices, wealth, reaction times — the median gives a more honest picture of the center than the mean does. When the distribution is roughly symmetric, the mean and median sit close together and either is informative.
+
+<RelatedLink to={routes.article('how-to-find-the-mean')} label="How to Find the Mean" intro="On a related note" />
+
+---
+
+## The Median Formula
+
+The formula for median depends on whether you have an odd or an even number of observations. In both cases the first step is identical: **sort the data**.
+
+**Step 1 — Sort the data in ascending order.**
+
+This step is mandatory. Skipping it produces a meaningless result. Sort every value, including duplicates.
+
+**Step 2 — Count the observations.**
+
+Let n = the total number of values in the data set.
+
+**Step 3 — Locate the middle position.**
+
+```
+Median position = (n + 1) / 2
+```
+
+- When **n is odd**, (n + 1) / 2 is a whole number. The median is the value at that rank in the sorted list.
+- When **n is even**, (n + 1) / 2 falls halfway between two positions (e.g., position 4.5 for n = 8). Average the values at positions n / 2 and (n / 2) + 1.
+
+This position formula is the median formula in its most universal form. Every variant — ungrouped odd data, ungrouped even data, grouped frequency data — is an application of the same locate-the-midpoint principle.
+
+---
+
+## How to Find the Median: Odd Number of Values
+
+When n is odd, one value sits exactly in the center of the sorted list.
+
+### Step-by-Step Procedure
+
+1. Write out all values.
+2. Sort them from smallest to largest.
+3. Count n.
+4. Compute the median position: (n + 1) / 2.
+5. Read the value at that position — this is the median.
+
+### Worked Example (n = 7)
+
+**Data:** 14, 7, 3, 22, 9, 18, 11
+
+**Step 1 — Sort:** 3, 7, 9, 11, 14, 18, 22
+
+**Step 2 — Count:** n = 7
+
+**Step 3 — Position:** (7 + 1) / 2 = **4**
+
+**Step 4 — Fourth value in the sorted list:**
+
+| Position | 1 | 2 | 3 | **4** | 5 | 6 | 7 |
+|----------|---|---|---|-------|---|---|---|
+| Value | 3 | 7 | 9 | **11** | 14 | 18 | 22 |
+
+**Median = 11**
+
+Verify: three values (3, 7, 9) lie below 11 and three values (14, 18, 22) lie above it. The data is split exactly in half — which is the definition of the median.
+
+---
+
+## How to Find the Median: Even Number of Values
+
+When n is even, no single value sits at the exact center. You identify the two middle values and average them.
+
+### Step-by-Step Procedure
+
+1. Write out all values.
+2. Sort them from smallest to largest.
+3. Count n.
+4. Identify the two middle positions: n / 2 and (n / 2) + 1.
+5. Average the values at those two positions.
+
+The median formula for even n is:
+
+```
+Median = (value at position n/2  +  value at position (n/2)+1) / 2
+```
+
+### Worked Example (n = 8)
+
+**Data:** 42, 17, 38, 6, 29, 54, 13, 25
+
+**Step 1 — Sort:** 6, 13, 17, 25, 29, 38, 42, 54
+
+**Step 2 — Count:** n = 8
+
+**Step 3 — Middle positions:** 8 / 2 = 4 and (8 / 2) + 1 = 5
+
+**Step 4 — Values at those positions:**
+
+| Position | 1 | 2 | 3 | **4** | **5** | 6 | 7 | 8 |
+|----------|---|---|---|-------|-------|---|---|---|
+| Value | 6 | 13 | 17 | **25** | **29** | 38 | 42 | 54 |
+
+**Step 5 — Average:** (25 + 29) / 2 = 54 / 2 = **27**
+
+**Median = 27**
+
+The median 27 does not appear in the original data set — this is completely normal for an even n. Three values fall strictly below 27 and three fall strictly above it; the median correctly marks the halfway point between the two center observations.
+
+<RelatedLink to={routes.article('interquartile-range')} label="Interquartile Range" intro="For a related calculation" />
+
+---
+
+## How to Calculate the Median for Grouped Data
+
+When individual data values are not available and you are working from a **frequency distribution table**, use the grouped-data median formula. This applies the same principle — find the midpoint — but the data is summarised into class intervals.
+
+The median formula for grouped data is:
+
+```
+Median = L  +  ((n/2 − F) / f)  ×  h
+```
+
+where:
+- **L** = lower class boundary of the median class
+- **n** = total number of observations (sum of all frequencies)
+- **F** = cumulative frequency of all classes *before* the median class
+- **f** = frequency of the median class
+- **h** = width of the median class interval
+
+### Identifying the Median Class
+
+Compute n / 2. Move through the cumulative frequency column until you reach the first class where the cumulative total equals or exceeds n / 2. That class is the **median class**.
+
+### Worked Example (Grouped Data, n = 60)
+
+Sixty students sat an exam. Their scores were recorded in the following grouped frequency table:
+
+| Score range | Frequency | Cumulative frequency |
+|-------------|-----------|----------------------|
+| 30–39 | 4 | 4 |
+| 40–49 | 10 | 14 |
+| 50–59 | 16 | 30 |
+| 60–69 | 18 | 48 |
+| 70–79 | 8 | 56 |
+| 80–89 | 4 | 60 |
+
+**Step 1 — Find n / 2:** 60 / 2 = **30**.
+
+**Step 2 — Locate the median class:** The cumulative frequency first reaches 30 at the class 50–59 (cumulative total = 30). The **median class is 50–59**.
+
+**Step 3 — Read the components:**
+- L = 50
+- F = 14 (cumulative frequency of all classes before 50–59)
+- f = 16
+- h = 10
+
+**Step 4 — Apply the formula:**
+
+```
+Median = 50  +  ((30 − 14) / 16)  ×  10
+       = 50  +  (16 / 16)  ×  10
+       = 50  +  1  ×  10
+       = 50  +  10
+       = 60
+```
+
+**Estimated median = 60**
+
+This result means approximately half the 60 students scored at or below 60 and half scored at or above it. Because the formula interpolates within the class interval — assuming values are evenly spread across the class width — the result is an estimate, not an exact value. [OpenStax *Introductory Statistics*, 2.5 — Skewness and the Mean, Median, and Mode](https://openstax.org/books/introductory-statistics/pages/2-5-skewness-and-the-mean-median-and-mode) provides a detailed treatment of how the median relates to the shape of grouped distributions, including further worked problems using this method.
+
+<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="You may also find this useful" />
+
+---
+
+## Median vs Mean: When to Use Each
+
+Both the mean and the median describe the center of a distribution, but they respond differently to the shape of the data.
+
+| Situation | Better measure |
+|-----------|----------------|
+| Symmetric distribution, no outliers | Mean or median (close to each other) |
+| Skewed distribution (income, prices) | Median |
+| Data contains extreme outliers | Median |
+| Computing variance or standard deviation | Mean (required as input) |
+| Ordinal data (ranked; gaps not equal) | Median |
+
+**A quick diagnostic:** when the mean is noticeably higher than the median, the distribution has a right (positive) skew — a long upper tail of large values pulls the mean up. When the mean is lower than the median, the distribution has a left (negative) skew. When mean and median sit close together, the distribution is roughly symmetric, and both measures are informative.
+
+The <Link to={routes.article('median-vs-average')}>median vs mean comparison guide</Link> goes deeper into when each measure is the right choice for reporting and analysis. For the step-by-step arithmetic of finding the mean, see the <Link to={routes.article('how-to-find-the-mean')}>how to find the mean guide</Link>.
+
+---
+
+## Common Mistakes When Finding the Median
+
+### Not Sorting the Data First
+
+This single omission causes more wrong answers than anything else. You must sort the values before counting to the middle. An unsorted list has no meaningful midpoint.
+
+**Error example:** Data: 14, 7, 3, 22, 9. Counting to position 3 without sorting gives 3 — wrong. After sorting (3, 7, **9**, 14, 22), the median is correctly 9.
+
+### Taking Only One Middle Value for Even n
+
+When n is even, some students pick only the lower or only the upper of the two middle values. Both choices are wrong. Always average both middle values.
+
+**Error example:** Data: 4, 6, 9, 15. The two middle values are 6 and 9. The correct median is (6 + 9) / 2 = 7.5, not 6 and not 9.
+
+### Confusing Median Position with Median Value
+
+The position formula (n + 1) / 2 tells you **which rank** to look at, not the value itself. For the data set 5, 9, 12, 18, 23, the position is (5 + 1) / 2 = 3. The value at rank 3 is 12 — the median is 12, not 3.
+
+### Ignoring Duplicate Values
+
+When values repeat, list and sort all occurrences including the duplicates. For data 2, 4, 4, 7, 10, there are five values; the median position is 3, and the value at position 3 is 4. Both copies of 4 are separate entries in the sorted list.
+
+### Using F Incorrectly in the Grouped Formula
+
+In the grouped median formula `Median = L + ((n/2 − F) / f) × h`, **F** is the cumulative frequency of all classes *before* (not including) the median class. A common mistake is including the median class's own frequency in F, which inflates the estimate.
+
+<RelatedLink to={routes.article('mean-median-mode-range')} label="Mean, Median, Mode, and Range" intro="Worth reading next" />
+
+---
+
+## Frequently Asked Questions
+
+### What is the formula for the median?
+
+For ungrouped data, the median formula has two cases based on n (the number of values):
+- **Odd n:** Median = value at position (n + 1) / 2 in the sorted list.
+- **Even n:** Median = average of the values at positions n / 2 and (n / 2) + 1.
+
+For grouped frequency data: `Median = L + ((n/2 − F) / f) × h`, where L is the lower class boundary of the median class, F is the cumulative frequency before that class, f is that class's frequency, and h is the class width.
+
+### How do I find the median of a large data set?
+
+The process is the same regardless of how many values you have: sort, count, find the middle position. In practice you would use software — Excel's `=MEDIAN()`, Python's `statistics.median()`, or R's `median()` — rather than counting by hand. Each function applies the same odd/even rule automatically.
+
+### How do I find median when there are ties (duplicate values)?
+
+Treat duplicates as separate entries. Sort them all, then apply the standard odd/even rule. For the data 3, 5, 5, 7, 9, there are five values; the median position is 3 and the value at position 3 is 5. The fact that 5 appears twice does not change the procedure.
+
+### Can the median be a value not in the data set?
+
+Yes, and this is expected whenever n is even. The median is the average of two middle values, and that average may fall between them. For the two-value data set {10, 20}, the median is (10 + 20) / 2 = 15, which is not in the data set. For grouped data, the interpolated median estimate also typically falls inside a class interval and is not one of the boundary values.
+
+### Does the median change if I add an outlier?
+
+It may shift slightly, but far less than the mean shifts. Adding the extreme value 1000 to the data set 3, 7, 9, 11, 14 (median = 9) gives the six-value set 3, 7, 9, 11, 14, 1000. The new median is (9 + 11) / 2 = 10 — it moved by 1. The mean, meanwhile, jumped from 8.8 to 174.0. The median's resistance to outliers is exactly why it is the preferred summary for skewed distributions.
+
+### How do I calculate the median for a frequency distribution table?
+
+Use the grouped-data formula: `Median = L + ((n/2 − F) / f) × h`. Sort the classes, build the cumulative frequency column, locate the median class (the first class where cumulative frequency equals or exceeds n / 2), then substitute L, F, f, and h into the formula. The full step-by-step example appears in the Grouped Data section above.
+
+### How do I find median in a spreadsheet?
+
+In Microsoft Excel or Google Sheets, enter `=MEDIAN(A1:A10)` with your data range. The function sorts the data internally and handles the odd/even distinction automatically. For a full suite of descriptive statistics tools, visit the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+
+### Is the median the same as the 50th percentile?
+
+Yes. The median and the 50th percentile refer to the same quantity: the value below which 50 percent of the data falls. The percentile framework generalises this idea to any cutoff — 25th, 75th, 90th percentile, and so on.
+
+---
+
+## Summary
+
+To find the median, sort the data first, then count to the midpoint:
+
+- **Odd n:** Median = value at position (n + 1) / 2.
+- **Even n:** Median = average of the values at positions n / 2 and (n / 2) + 1.
+- **Grouped data:** Median = L + ((n/2 − F) / f) × h.
+
+The median is the right measure of center whenever data is skewed or contains outliers — income, prices, times, and similar real-world quantities almost always call for the median rather than the mean. When mean and median sit close together, the distribution is roughly symmetric and either measure tells the same story.
+
+To round out your understanding of descriptive statistics, see <Link to={routes.article('how-to-find-the-range')}>how to find the range</Link>, which measures the spread of a data set using a comparably simple calculation.
