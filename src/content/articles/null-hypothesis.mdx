@@ -1,0 +1,304 @@
+---
+title: "Null Hypothesis: Definition, Examples & How to State It"
+description: "A null hypothesis states there is no effect or difference. Learn what is a null hypothesis, see null hypothesis examples, and how to state one."
+category: inferential-statistics
+primaryKeyword: what is a null hypothesis
+keywords:
+  - what is a null hypothesis
+  - example of a null hypothesis
+  - examples of hypothesis
+  - null hypothesis example
+  - null hypothesis meaning
+  - null what does it mean
+  - what does in null mean
+  - what does null mean
+  - what does null null mean
+phase: 1
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **null hypothesis** is a formal statement that there is no effect, no relationship, or no difference between the variables or groups being studied. In any statistical test, understanding what is a null hypothesis is the starting point: it is the default claim you try to disprove — not prove — using data. Researchers label it **H₀** (read "H-naught" or "H-zero") and pair it with an **alternative hypothesis (H₁)** that captures the effect they expect to find.
+
+If you searched "what does null mean" in a statistics context, note that the word is unrelated to null values in programming. In statistics, *null* means "no effect" — the baseline position you hold until evidence forces you to change it.
+
+---
+
+## What Is a Null Hypothesis?
+
+The null hypothesis meaning in research is the *default assumption of no change*. When a scientist asks "Does this drug lower blood pressure?", the null hypothesis says "No — any observed difference is due to chance." The test then asks: how likely is the observed data if the null hypothesis were actually true?
+
+Formally, the null hypothesis always contains an equality or no-difference statement:
+
+- "There is no difference between group A and group B."
+- "The correlation between X and Y is zero."
+- "The population mean equals a specified value."
+
+The notation H₀ comes from early twentieth-century work by Karl Pearson and Ronald Fisher on statistical inference. The subscript zero signals *zero effect*: start by assuming nothing interesting is happening, then let data push you away from that assumption if they are strong enough.
+
+### The Paired Hypotheses: H₀ and H₁
+
+Every statistical test involves two competing claims. Here are examples of hypothesis pairs across common test types:
+
+| Test | Null hypothesis (H₀) | Alternative hypothesis (H₁) |
+|------|----------------------|------------------------------|
+| Two-sample t-test | The two means are equal (μ₁ = μ₂) | The means differ (μ₁ ≠ μ₂) |
+| Correlation test | No linear relationship exists (ρ = 0) | Some linear relationship exists (ρ ≠ 0) |
+| Proportion test | The proportion equals a target (p = p₀) | The proportion differs (p ≠ p₀) |
+| Chi-square test | The variables are independent | The variables are associated |
+
+H₁ is the claim you are looking for evidence of. H₀ is what you accept by default if the evidence is not strong enough to overturn it. The logic mirrors a courtroom: the defendant (H₀) is presumed innocent until proven guilty beyond reasonable doubt.
+
+According to [Penn State STAT 200 Open Learning Initiative, "6.1 — Introduction to Hypothesis Testing"](https://online.stat.psu.edu/stat200/lesson/6/6.1), "the burden of proof lies with the researcher who believes there is an effect" — the null hypothesis is the position that must be overcome.
+
+<RelatedLink to={routes.article('p-value')} label="P-Value Explained" intro="Worth reading next" />
+
+---
+
+## How to State a Null Hypothesis
+
+Stating H₀ correctly is a mechanical skill once you know the pattern. Three steps cover every case.
+
+**Step 1: Identify the parameter.**
+Decide what quantity you are testing — a mean (μ), a proportion (p), a correlation (ρ), or a variance (σ²).
+
+**Step 2: Write the equality claim.**
+A null hypothesis always uses `=` (or `≤`/`≥` for one-tailed boundaries, but equality is the default). If you are testing whether a mean equals 100:
+
+```
+H₀: μ = 100
+```
+
+**Step 3: Specify the direction in H₁.**
+The alternative hypothesis uses `≠` (two-tailed), `>` (right-tailed), or `<` (left-tailed):
+
+```
+Two-tailed:   H₁: μ ≠ 100
+Right-tailed: H₁: μ > 100
+Left-tailed:  H₁: μ < 100
+```
+
+Choose the direction *before* collecting data, based on the research question — not after looking at the results.
+
+### Worked Example: Stating H₀ for a Drug Trial
+
+A pharmaceutical company claims a new drug reduces systolic blood pressure. Researchers want to test whether it changes blood pressure at all.
+
+- **Parameter**: Mean change in blood pressure, μ (in mmHg)
+- **Null hypothesis**: No change — the mean difference is zero
+
+```
+H₀: μ = 0    (no change in blood pressure)
+H₁: μ ≠ 0   (some change, either direction)
+```
+
+If researchers specifically expected the drug to *lower* blood pressure rather than simply change it, they would use a one-tailed test:
+
+```
+H₀: μ = 0
+H₁: μ < 0   (blood pressure decreases)
+```
+
+The direction in H₁ must match the scientific question before data collection begins.
+
+---
+
+## Null Hypothesis Examples Across Research Areas
+
+A null hypothesis example from one field looks structurally identical to one from another. The parameter name changes; the no-effect logic stays the same.
+
+### Example 1 — Education Research
+
+**Question**: Does a new teaching method improve exam scores compared to the traditional method?
+
+```
+H₀: μ_new = μ_traditional    (mean scores are equal)
+H₁: μ_new ≠ μ_traditional   (mean scores differ)
+```
+
+Researchers collect scores from two groups, run a two-sample t-test, and compare the p-value to α = 0.05. If p ≤ 0.05, they reject H₀ and conclude the methods produce different outcomes on average.
+
+### Example 2 — Medical Research (Proportion)
+
+**Question**: Does a vaccine cut infection rate below the baseline rate of 30%?
+
+```
+H₀: p = 0.30    (infection rate equals baseline)
+H₁: p < 0.30   (infection rate is lower)
+```
+
+This is a one-tailed test because researchers care only about a *decrease*. A two-tailed version (H₁: p ≠ 0.30) would detect any change in either direction.
+
+### Example 3 — Business Analytics (Correlation)
+
+**Question**: Is there a linear relationship between advertising spend and weekly sales?
+
+```
+H₀: ρ = 0    (no linear relationship)
+H₁: ρ ≠ 0   (some linear relationship)
+```
+
+A Pearson correlation test checks whether the observed correlation in the sample is too large to be attributed to random chance alone.
+
+### Example 4 — Quality Control (Variance)
+
+**Question**: Has a manufacturing process change increased the variability of part weights above the target σ² = 0.04?
+
+```
+H₀: σ² = 0.04    (variance at target)
+H₁: σ² > 0.04   (variance has increased)
+```
+
+A chi-square test for variance (or an F-test if comparing two machines) would be used here. This is a common null hypothesis example in manufacturing and quality engineering.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="For a related calculation" />
+
+---
+
+## What Does "Null" Mean in Statistics?
+
+Several searches for "null what does it mean", "what does in null mean", and similar phrases arrive at statistics articles from a programming background, where *null* means an empty or missing value (NULL pointers, null references, missing database fields). In statistics, the word carries a completely different meaning.
+
+In hypothesis testing, *null* is short for *null effect* — the assumption that no meaningful difference, relationship, or change exists. The word traces to the Latin *nullus* ("none") and was adopted in statistical science to denote the condition of zero effect. It has nothing to do with empty memory addresses or missing data.
+
+When you encounter the phrase "what does null null mean" in a search, it typically reflects a repeated or emphatic search for "null hypothesis meaning" — there is no standard statistical concept called "null null." The term you want is the null hypothesis (H₀): the baseline claim of no effect.
+
+| Term | Statistics meaning | Programming meaning |
+|------|--------------------|---------------------|
+| null | No effect / no relationship | Empty or missing value |
+| H₀ | The null hypothesis | (not used) |
+| null hypothesis | The claim that there is no effect | (not used) |
+| NULL value | Rarely used in statistics | A missing or undefined value |
+
+---
+
+## Rejecting the Null Hypothesis
+
+You reject H₀ when the data provide enough evidence that the null claim is implausible. The decision rule combines the **p-value** and the pre-specified **significance level (α)**.
+
+- If **p-value ≤ α** → reject H₀ (the data are inconsistent with the null)
+- If **p-value > α** → fail to reject H₀ (insufficient evidence to overturn it)
+
+A common choice is α = 0.05, meaning you accept a 5% risk of wrongly rejecting a true H₀ (a Type I error). Stricter disciplines use α = 0.01 or α = 0.001.
+
+The p-value is the probability of observing data at least as extreme as what you collected, *assuming H₀ is true*. A small p-value means that the data would be very unlikely if H₀ were true — so you reject H₀.
+
+### The Four Possible Outcomes
+
+| Decision | H₀ is actually true | H₀ is actually false |
+|----------|---------------------|----------------------|
+| Reject H₀ | **Type I error (false positive)**, probability = α | **Correct decision** (power = 1 − β) |
+| Fail to reject H₀ | **Correct decision** (specificity = 1 − α) | **Type II error (false negative)**, probability = β |
+
+Researchers control Type I error by choosing α. Type II error (β) decreases as sample size, effect size, or α increases. The probability of correctly detecting a true effect (1 − β) is called the **statistical power** of the test.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, "7.1.3 What are hypothesis tests?"](https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm), the outcome of a hypothesis test is always a decision to reject or fail to reject H₀ — it is never a proof that H₀ is true.
+
+<RelatedLink to={routes.article('t-test')} label="T-Test Explained" intro="On a related note" />
+
+---
+
+## Why You Cannot Prove a Null Hypothesis True
+
+This is one of the most misunderstood points in applied statistics. You can accumulate strong evidence *against* H₀ by rejecting it, but you can never collect enough evidence to *prove* H₀ is true.
+
+Here is why: every sample has variability. Even if H₀ were perfectly true, a particular sample might look as if it isn't — purely by chance. The hypothesis test accounts for this by asking "how often would data this extreme occur *if* H₀ were true?" It does not ask "how probable is H₀ given this data?" (that is a Bayesian question, which requires a prior).
+
+**Practical consequence**: when a study finds p > 0.05, the correct conclusion is "we found no statistically significant evidence of an effect at α = 0.05" — not "there is no effect." Absence of evidence is not evidence of absence. A study that is underpowered (too small a sample) may fail to detect a real effect; that failure is a Type II error, not proof H₀ is true.
+
+In medical research this distinction is critical. Declaring a drug "does not work" based solely on a non-significant result — without reporting confidence intervals, effect sizes, and power — is a methodological error that has led to premature abandonment of treatments that later proved effective.
+
+---
+
+## Null Hypothesis vs. Alternative Hypothesis
+
+| Property | Null hypothesis (H₀) | Alternative hypothesis (H₁) |
+|----------|-----------------------|------------------------------|
+| Default position | Yes — assumed true until disproven | No — must be supported by data |
+| Notation | = (equality or boundary) | ≠, >, < (inequality) |
+| What a rejection means | Data are inconsistent with H₀ | H₁ becomes the working conclusion |
+| What non-rejection means | Insufficient evidence against H₀ | H₁ is not established |
+| Controls | Type I error rate (α) | Statistical power (1 − β) |
+
+The key principle: your alternative hypothesis H₁ should reflect a specific, directional prediction when you have one. If existing theory tells you that a new drug *lowers* blood pressure, your H₁ should say `μ < 0` (one-tailed) — using a two-tailed H₁ (`μ ≠ 0`) when you had a directional prediction dilutes your statistical power.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Stating a Null Hypothesis
+
+### 1. Placing an Inequality in H₀
+
+Write H₀ with an equality, not an inequality. `H₀: μ > 100` is incorrect; the null should be the boundary condition: `H₀: μ = 100`. The direction belongs in H₁.
+
+### 2. Choosing the Direction of H₁ After Seeing the Data
+
+If you observe that the treatment group scored higher than the control and then write H₁: μ_treatment > μ_control, you have engaged in *post-hoc hypothesis construction* (sometimes called HARKing — Hypothesizing After Results are Known). This inflates Type I error and invalidates the p-value calculation. The entire pair H₀/H₁ must be written before data collection.
+
+### 3. Confusing "Reject H₀" With "H₁ Is Proven"
+
+Rejecting H₀ means you have evidence against the null. It does not guarantee H₁ is the correct explanation — there could be a confounding variable, a measurement error, or a sampling bias. "Statistically significant" means unlikely under H₀, not that the effect is large, important, or causally explained by H₁.
+
+### 4. Setting α After Seeing the p-Value
+
+Choosing α = 0.05 after you see that your p-value is 0.048 is called p-hacking. The significance level must be fixed before the test. Similarly, switching from a two-tailed to a one-tailed test after seeing the data direction is a form of post-hoc manipulation.
+
+### 5. Using the Wrong Test for Your Hypotheses
+
+A <Link to={routes.article('t-test')}>t-test</Link> tests differences in means; a chi-square test of independence tests whether two categorical variables are associated; a correlation test checks for a linear relationship. Applying a test that does not match your H₀ produces a meaningless p-value. Confirm that the statistical test you choose directly addresses the parameter stated in your null hypothesis.
+
+---
+
+## Frequently Asked Questions
+
+### What is a null hypothesis?
+
+A null hypothesis (H₀) is a formal statistical claim that there is no effect, no difference, or no relationship between the variables under study. It is the default assumption in hypothesis testing: you need data strong enough to reject it before concluding that something interesting is happening.
+
+### What is an example of a null hypothesis?
+
+A standard example of a null hypothesis: "The mean exam score of students taught by Method A equals the mean exam score of students taught by Method B (H₀: μ_A = μ_B)." This asserts that the two teaching methods produce identical average outcomes. The paired alternative would be H₁: μ_A ≠ μ_B.
+
+### What are examples of hypothesis pairs?
+
+Examples of hypothesis pairs (H₀ and H₁) cover every research question:
+- Mean comparison: H₀: μ = 50 vs H₁: μ ≠ 50
+- Proportion: H₀: p = 0.20 vs H₁: p > 0.20
+- Correlation: H₀: ρ = 0 vs H₁: ρ ≠ 0
+- Variance: H₀: σ² = 4 vs H₁: σ² > 4
+
+Each pair shares the same parameter, stated as an equality in H₀ and an inequality in H₁.
+
+### What does null mean in statistics?
+
+In statistics, *null* means "no effect" or "no relationship." It comes from the Latin *nullus* ("none"). The null hypothesis is simply the baseline claim that nothing interesting is happening — it is not related to null values or null pointers in programming.
+
+### What does "null null" mean?
+
+There is no standard statistical concept called "null null." Searches for "what does null null mean" typically mean "what does the null hypothesis mean." The null hypothesis (H₀) is the claim of no effect; the word appears once, not twice.
+
+### What is null hypothesis meaning in research?
+
+In research, the null hypothesis meaning is the *skeptical default*: the assumption that any observed difference or pattern in sample data could be explained by random variation alone. Researchers design experiments to collect data strong enough to overturn this default.
+
+### How do you know when to reject the null hypothesis?
+
+Reject H₀ when the p-value from your statistical test is less than or equal to your pre-specified significance level α. At α = 0.05: if p ≤ 0.05, reject H₀ and conclude the data are inconsistent with the null. If p > 0.05, fail to reject H₀ — but do not interpret this as proof that H₀ is true.
+
+### What is the difference between H₀ and H₁?
+
+H₀ is the null hypothesis: the default claim of no effect, stated with an equality. H₁ is the alternative hypothesis: the claim you are trying to support, stated with an inequality. The statistical test asks whether the observed data give enough evidence against H₀ to favor H₁ instead.
+
+---
+
+## Summary
+
+A null hypothesis is the default claim of no effect or no difference — the baseline every statistical test starts from. Written as H₀, it always contains an equality and pairs with an alternative hypothesis H₁ that specifies the effect you expect to find. A test produces a p-value: if p ≤ α you reject H₀ and treat H₁ as the working conclusion; if p > α you fail to reject H₀, but you never prove it true.
+
+The core skill is a three-step process: (1) identify the parameter being tested, (2) write the equality claim in H₀, (3) write the matching inequality in H₁ based on your directional prediction — and always do this *before* collecting data.
+
+For computing the test statistics and p-values you need in practice, the <Link to={routes.calculatorsHub()}>calculators hub</Link> includes a <Link to={routes.calculator('t-test')}>t-test calculator</Link>, a <Link to={routes.calculator('z-score')}>z-score calculator</Link>, and a <Link to={routes.calculator('p-value')}>p-value calculator</Link> to work through your own hypotheses.
