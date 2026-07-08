@@ -45,6 +45,21 @@ git pull --ff-only origin main 2>&1 | tail -3   # start from latest main
 If `REPO_ROOT` is empty: print `PUBLISH_FAILED [0]: cannot locate statohub repo`
 and stop.
 
+**Pause check (must run before anything else).** If
+`content-ops/cloud-routine/PAUSED` exists in the checkout, the routine is
+paused by explicit human decision -- print `PUBLISH_RESULT: paused` (with the
+file's contents for context) and exit 0 immediately. Do NOT pick a queue item,
+write, build, or push. This file is the source of truth for pause state, not
+this doc's prose.
+
+```bash
+if [ -f "content-ops/cloud-routine/PAUSED" ]; then
+  echo "PUBLISH_RESULT: paused"
+  cat "content-ops/cloud-routine/PAUSED"
+  exit 0
+fi
+```
+
 ---
 
 ## Step 1 -- Pick the next article from the queue

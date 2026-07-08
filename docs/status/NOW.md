@@ -66,11 +66,17 @@ build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
   `articleSchema()` in `src/lib/schema.ts` the way `Meta.astro` already does
   for OG tags. Deferred from the 2026-07-06 schema audit/fix session (author,
   publisher, and entity-graph linking were fixed same session).
-- **Article-publishing cloud routines** (2/day) have been `enabled:false`
-  since 2026-06-26, pending the woven-callout automation described in
-  [[0010-woven-related-link-callouts]] -- that automation was never finished
-  before the July strategy pivot took over. Re-enable only after it ships, or
-  after explicit user sign-off to resume manually.
+- **Article-publishing cloud routine: PAUSED 2026-07-08.** The prior note here
+  (routines `enabled:false` since 2026-06-26, pending woven-callout
+  automation) was stale -- the routine was in fact running and publishing
+  successfully through 2026-07-08 (39 articles published; woven `<RelatedLink>`
+  callouts already shipped, see [[0010-woven-related-link-callouts]]). The
+  remaining 7 `planned` articles are all flagged for human review, so the
+  routine was already a no-op -- it is now also hard-paused via a checked-in
+  marker file (`content-ops/cloud-routine/PAUSED`, checked in
+  `publish-next-article.md` Step 0 before any queue/build/push action) while
+  the user reviews the 7 flagged articles and decides what to publish/schedule
+  next. Resume by deleting that file (and this note) once review is done.
 - **Calc-prose teaching-block backlog:** CLOSED 2026-07-05. 25 of 25 done
   (`content-ops/calc-prose/QUEUE.md`) -- Session 6 (`p-value`, `chi-square`,
   `proportion`) published, build green (70 pages, 0 link violations). Queue
