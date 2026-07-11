@@ -6,12 +6,19 @@
 
 **Last updated:** 2026-07-11 (updated same day).
 
-## Active: repo-hygiene cleanup (doc/docs consolidation), pending commit
+## Active: nothing in flight -- workspace restructure just closed
 
-Phase A and Phase B (below) are both closed. The only thing left uncommitted
-right now is the doc/docs folder consolidation + root scratch-file moves
-described under Phase B's "Follow-up cleanup" -- awaiting the user's go-ahead
-to commit.
+The 2026-07-11 restructure session aligned the workspace with the Claude_OS
+delegation-first model: added the `## Operating Model -- Delegation First
+(BINDING)` section to `CLAUDE.md`, built the `/session-close` skill, archived
+the 15 June session logs into `docs/status/sessions/archive/`, and confirmed
+both stats agents already carry `model: sonnet`. Committed + pushed this
+session. See
+`docs/status/sessions/2026-07-11-workspace-restructure-delegation-model.md`.
+
+The doc/docs consolidation this file used to list as "pending commit" is done
+(committed `fa58d8a`); that note was stale. Phase A and Phase B (below) remain
+closed.
 
 **1. Phase A -- workspace audit fixes: CLOSED 2026-07-05.**
 `handoff/TASK-022-trivial-fix-batch.md`, `TASK-023-contrast-fix-ci-guard.md`,

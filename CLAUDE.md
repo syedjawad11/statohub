@@ -57,6 +57,41 @@ strategy planning -- their durable conclusions are already promoted into
 - **No accounts, backend, database, or community features** on the current
   roadmap. See [[0013-no-accounts-backend-community-yet]].
 
+## Operating Model — Delegation First (BINDING)
+
+The main Claude session is the **Orchestrator (Tier 0)**: it plans, routes,
+reviews, gates, decides, and maintains `CLAUDE.md` + `NOW.md`. It does **not**
+do bulk reading, bulk drafting, or long audits itself.
+
+- **Default to delegation without being asked** for: reading more than ~3 files
+  or any large file (e.g. `global.css`, a long brief, a batch of session logs);
+  drafting or reviewing article / calculator-teaching content; any SEO /
+  technical audit or on-page analysis; any live data pull (DataForSEO, SERP, web
+  research); mechanical extraction, counting, cross-checking, or
+  link/verification sweeps. Anything parallelizable -> fire independent
+  subagents in parallel.
+- **Do it yourself only for:** a single small read, a decision, a review or
+  spot-check, a small targeted edit, or a `content_db.py` command.
+- **Model tiering (BINDING):** Orchestrator = the session's own model; Tier 1
+  (mechanical / read-only / verification) = `haiku`; Tier 2 (content drafting /
+  SEO strategy / synthesis) = `sonnet`. Never spawn a subagent on the
+  orchestrator's own model unless the user asks. Apply the same tiers to the
+  `claude-seo` plugin agents via the Agent tool's per-spawn `model` override --
+  never edit plugin files.
+- **Summarization contract (BINDING):** every subagent writes its full output to
+  disk (scratch or the relevant `docs/` / `content-ops/` path) and returns only
+  `STATUS` * file path(s) * a <=250-word summary with headline numbers *
+  decisions needed * flags. Raw file dumps and long tables never enter the
+  orchestrator's context.
+- **Review is never delegated.** Every subagent result gets a spot-check of key
+  claims against the file on disk, a scope check, and a gate.
+- **Repo-write gate interaction (important):** this model governs Claude's own
+  read-only research / drafting subagents, which write to scratch or staging --
+  it does **not** create a second writer on the repo. The "one agent on the repo
+  at a time" hard gate (Codex vs. Claude, [[0004-codex-builds-claude-reviews]])
+  is unchanged: a subagent may *draft* an article body to disk, but the
+  Orchestrator still performs the single gated commit/close.
+
 ## Working model
 
 - **Codex builds to spec; Claude writes content + sets SEO rules + reviews.**
@@ -80,6 +115,9 @@ Promote any durable decision to a new ADR in `docs/decisions/` rather than
 only noting it in the session file. A session that only executes an existing,
 already-decided plan (e.g. publishing already-queued content) doesn't need a
 handoff file -- updating the relevant queue/tracker suffices.
+
+Run **`/session-close`** to execute this ritual; the prose above is the
+fallback if the skill is unavailable.
 
 ## Memory system
 
