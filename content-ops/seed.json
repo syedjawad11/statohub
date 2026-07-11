@@ -786,50 +786,37 @@
       ]
     },
     {
-      "slug": "range-of-a-function",
-      "title": "How to Find the Range of a Function (Domain & Range)",
+      "slug": "range-of-a-function-statistics",
+      "title": "Range of a Function in Statistics: How to Find It",
       "category_slug": "descriptive-statistics",
-      "primary_keyword": "how to find range of a function",
+      "primary_keyword": "range of a function in statistics",
       "phase": 1,
-      "kd_min": 0,
-      "kd_max": 5,
-      "combined_volume": 27400,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
       "embed_calculator": null,
       "standalone_calc": 0,
-      "flagged": 1,
-      "notes": "FLAGGED: algebra (function range) intent, not statistical range. Decide: disambiguation page vs fold a note into how-to-find-the-range.",
+      "flagged": 0,
+      "notes": "Unflagged + re-scoped 2026-07-11: original keyword set was algebra (function domain/range) intent (dropped 2 phrasings: graph range, piecewise function range). Primary keyword extended to \"range of a function in statistics\" and slug suffixed -statistics to disambiguate from the algebra term. KD/volume nulled -- needs fresh keyword research.",
       "keywords": [
-        "how to find range of a function",
-        "how to find the range of a graph",
-        "find the range of the following piecewise function"
+        "range of a function in statistics"
       ]
     },
     {
-      "slug": "how-to-find-frequency",
-      "title": "How to Find Frequency (Waves & Wavelength)",
+      "slug": "how-to-find-frequency-statistics",
+      "title": "How to Find Frequency in Statistics",
       "category_slug": "descriptive-statistics",
-      "primary_keyword": "how to find frequency",
+      "primary_keyword": "how to find frequency in statistics",
       "phase": 1,
-      "kd_min": 0,
-      "kd_max": 14,
-      "combined_volume": 64800,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
       "embed_calculator": null,
       "standalone_calc": 0,
-      "flagged": 1,
-      "notes": "FLAGGED/QUARANTINE: physics (wave frequency) intent, not statistical frequency. Keep quarantined or drop - dilutes topical relevance.",
+      "flagged": 0,
+      "notes": "Unflagged + re-scoped 2026-07-11: original keyword set was 100% wave/wavelength physics intent (dropped 11 phrasings). Primary keyword extended to \"how to find frequency in statistics\" and slug suffixed -statistics to disambiguate from the physics term. KD/volume nulled -- old figures were driven by the dropped physics keywords and no longer apply; needs fresh keyword research before a KD-based priority is trusted.",
       "keywords": [
-        "how to find frequency",
-        "how to find wave frequency",
-        "how to calculate frequency of a wavelength",
-        "how to find wavelength with frequency",
-        "how to find wavelength and frequency",
-        "how to find frequency with wavelength",
-        "how do you find the frequency of a wavelength",
-        "how to find frequency and wavelength",
-        "how to calculate frequency and wavelength",
-        "how to calculate wavelength and frequency",
-        "how to calculate frequency with wavelength",
-        "how to find wavelength from frequency"
+        "how to find frequency in statistics"
       ]
     },
     {
@@ -1130,8 +1117,8 @@
       "combined_volume": 32400,
       "embed_calculator": null,
       "standalone_calc": 0,
-      "flagged": 1,
-      "notes": "FLAGGED thin (4 KWs). Recommend standalone (distinct intent from regression analysis).",
+      "flagged": 0,
+      "notes": "FLAGGED thin (4 KWs). Recommend standalone (distinct intent from regression analysis). Unflagged 2026-07-11: no keyword/intent issue found, cleared for publishing as-is.",
       "keywords": [
         "regression to the mean",
         "mean regression",
@@ -1325,8 +1312,8 @@
       "combined_volume": 28000,
       "embed_calculator": "confidence-interval",
       "standalone_calc": 1,
-      "flagged": 1,
-      "notes": "FLAGGED thin (3 KWs). Rich topic; flag for a dedicated KW pass (margin of error, confidence level, sample size).",
+      "flagged": 0,
+      "notes": "FLAGGED thin (3 KWs). Rich topic; flag for a dedicated KW pass (margin of error, confidence level, sample size). Unflagged 2026-07-11: no keyword/intent issue found, cleared for publishing as-is.",
       "keywords": [
         "confidence interval formula",
         "95 confidence interval",
@@ -1383,42 +1370,41 @@
       ]
     },
     {
-      "slug": "statistics-symbols",
-      "title": "Statistics Symbols & Notation: The Complete Reference",
+      "slug": "statistics-symbols-cheatsheet",
+      "title": "Statistics Symbols Cheat Sheet",
       "category_slug": "statistics-basics",
-      "primary_keyword": "statistics symbols",
+      "primary_keyword": "statistics symbols cheat sheet",
       "phase": 1,
       "kd_min": 0,
       "kd_max": 1,
       "combined_volume": 28000,
       "embed_calculator": null,
       "standalone_calc": 0,
-      "flagged": 1,
-      "notes": "FLAGGED thin (3 KWs) but KD 0-1. Home for the ~40-entry symbol glossary - substance is fine.",
+      "flagged": 0,
+      "notes": "FLAGGED thin (3 KWs) but KD 0-1. Home for the ~40-entry symbol glossary - substance is fine. Unflagged + rebranded 2026-07-11: reframed as a \"cheat sheet\" reference page, slug/title updated to match; underlying keywords were already statistics-scoped so KD/volume left as-is.",
       "keywords": [
         "statistics symbols",
         "statistics and or symbols",
-        "what is mu 0 in statistics"
+        "what is mu 0 in statistics",
+        "statistics symbols cheat sheet"
       ]
     },
     {
       "slug": "proportions-in-statistics",
       "title": "Proportions in Statistics: Meaning, Formula & How to Solve Them",
       "category_slug": "statistics-basics",
-      "primary_keyword": "proportion means",
+      "primary_keyword": "proportion means in statistics",
       "phase": 1,
-      "kd_min": 0,
-      "kd_max": 29,
-      "combined_volume": 46000,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
       "embed_calculator": "proportion",
       "standalone_calc": 1,
-      "flagged": 1,
-      "notes": "FLAGGED thin (4 KWs). Algebra/ratio sense of proportion; teachable + solver hook.",
+      "flagged": 0,
+      "notes": "Unflagged + re-scoped 2026-07-11: dropped 2 pure-algebra phrasings (\"indirect proportion\", homework-style \"what value of x...\" query) that do not read as statistics intent even extended. Remaining keywords extended with \"in statistics\". Slug/title already statistics-scoped, left unchanged. KD/volume nulled -- needs fresh keyword research.",
       "keywords": [
-        "proportion means",
-        "proportion definition",
-        "indirect proportion",
-        "what value of x makes this proportion true"
+        "proportion means in statistics",
+        "proportion definition in statistics"
       ]
     },
     {

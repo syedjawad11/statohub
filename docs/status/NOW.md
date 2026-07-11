@@ -4,7 +4,7 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-07-11.
+**Last updated:** 2026-07-11 (updated same day).
 
 ## Active: repo-hygiene cleanup (doc/docs consolidation), pending commit
 
@@ -86,6 +86,31 @@ build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
     publish 23:45 Malta` (`trig_011bnYzdcX76mXawduUgnHnP`), kept `statohub
     publish 03:00 Malta` (`trig_01DhQoEV3sRaKynzFC88xTzh`, cron `0 1 * * *`
     UTC) as the sole daily publisher -- one article/day going forward.
+- **6 previously-flagged articles: unblocked 2026-07-11.** 4 had genuine
+  keyword/intent problems (physics or algebra terms, not statistics) and were
+  re-scoped rather than dropped:
+  - `how-to-find-frequency` -> **`how-to-find-frequency-statistics`**: 11
+    wave/wavelength-physics keyword phrasings dropped, primary keyword
+    extended to "how to find frequency in statistics".
+  - `range-of-a-function` -> **`range-of-a-function-statistics`**: 2
+    algebra-only phrasings dropped, primary keyword extended to "range of a
+    function in statistics".
+  - `statistics-symbols` -> **`statistics-symbols-cheatsheet`**: rebranded as
+    a cheat-sheet reference page (title/slug only; underlying keywords were
+    already statistics-scoped).
+  - `proportions-in-statistics` (slug unchanged, already statistics-scoped):
+    2 pure-algebra phrasings dropped, remaining keywords extended with "in
+    statistics".
+  - All 4 had kd_min/kd_max/combined_volume nulled where keywords were
+    dropped (old figures were driven by the removed off-topic keywords and
+    no longer apply -- needs fresh keyword research before trusting a
+    KD-based priority for these).
+  - `regression-to-the-mean` and `confidence-interval` had no intent problem
+    -- unflagged as-is, no other changes.
+  - All 6 are now `flagged=0` (phase 1-2, below the Phase 2 batch's phase
+    40-69), so they resolve ahead of the 30-article batch in `content_db.py
+    next` -- confirmed via `next` (resolves `proportions-in-statistics`) and
+    `list --status planned`.
 - **Calc-prose teaching-block backlog:** CLOSED 2026-07-05. 25 of 25 done
   (`content-ops/calc-prose/QUEUE.md`) -- Session 6 (`p-value`, `chi-square`,
   `proportion`) published, build green (70 pages, 0 link violations). Queue
