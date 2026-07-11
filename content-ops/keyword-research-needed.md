@@ -1,7 +1,9 @@
 # Keyword research needed: wrong-intent articles
 
-**Created:** 2026-07-11. **Status:** open -- waiting on fresh keyword research
-from the user before the content-ops board is updated again.
+**Created:** 2026-07-11. **Status:** RESOLVED 2026-07-11 -- fresh keyword
+research delivered in `22-wrongintent-reseed-keyword-research.md` and merged
+into `content-ops/seed.json` + `content-ops/content.db` same day. Kept below
+for historical context only; do not action further from this file.
 
 ## Why this file exists
 

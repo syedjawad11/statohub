@@ -676,11 +676,11 @@
       "phase": 1,
       "kd_min": 0,
       "kd_max": 19,
-      "combined_volume": 151200,
+      "combined_volume": 161760,
       "embed_calculator": "range-iqr",
       "standalone_calc": 0,
       "flagged": 0,
-      "notes": "",
+      "notes": "2026-07-11: absorbed 5 keywords from the retired range-of-a-function-statistics stub (exact-match DataForSEO pull, see 22-wrongintent-reseed-keyword-research.md) -- that stub's algebra intent was dropped, its clean statistics-range keywords folded in here instead of shipping a separate page. Stretch keyword 'range statistics' (2,900 vol, KD 25, mixed SERP) deliberately left out -- optional add later. Article is already published; this keyword addition needs a light content refresh pass to actually work the new phrases into the live page, not just the DB.",
       "keywords": [
         "how to find the range",
         "how to find range",
@@ -693,7 +693,12 @@
         "how do you calculate the range",
         "how do i calculate range",
         "how do you find range in a data set",
-        "how to find the range of a data set"
+        "how to find the range of a data set",
+        "range in statistics",
+        "what is range in statistics",
+        "range formula",
+        "range of data",
+        "range in statistics formula"
       ]
     },
     {
@@ -786,37 +791,25 @@
       ]
     },
     {
-      "slug": "range-of-a-function-statistics",
-      "title": "Range of a Function in Statistics: How to Find It",
-      "category_slug": "descriptive-statistics",
-      "primary_keyword": "range of a function in statistics",
-      "phase": 1,
-      "kd_min": null,
-      "kd_max": null,
-      "combined_volume": null,
-      "embed_calculator": null,
-      "standalone_calc": 0,
-      "flagged": 0,
-      "notes": "Unflagged + re-scoped 2026-07-11: original keyword set was algebra (function domain/range) intent (dropped 2 phrasings: graph range, piecewise function range). Primary keyword extended to \"range of a function in statistics\" and slug suffixed -statistics to disambiguate from the algebra term. KD/volume nulled -- needs fresh keyword research.",
-      "keywords": [
-        "range of a function in statistics"
-      ]
-    },
-    {
       "slug": "how-to-find-frequency-statistics",
       "title": "How to Find Frequency in Statistics",
       "category_slug": "descriptive-statistics",
-      "primary_keyword": "how to find frequency in statistics",
+      "primary_keyword": "frequency in statistics",
       "phase": 1,
-      "kd_min": null,
-      "kd_max": null,
-      "combined_volume": null,
+      "kd_min": 0,
+      "kd_max": 15,
+      "combined_volume": 4700,
       "embed_calculator": null,
       "standalone_calc": 0,
       "flagged": 0,
-      "notes": "Unflagged + re-scoped 2026-07-11: original keyword set was 100% wave/wavelength physics intent (dropped 11 phrasings). Primary keyword extended to \"how to find frequency in statistics\" and slug suffixed -statistics to disambiguate from the physics term. KD/volume nulled -- old figures were driven by the dropped physics keywords and no longer apply; needs fresh keyword research before a KD-based priority is trusted.",
+      "notes": "2026-07-11: fresh exact-match keyword research complete (22-wrongintent-reseed-keyword-research.md), replacing the physics-drifted list from the 2026-07-11 re-scope. Primary swapped to \"frequency in statistics\" (1,000 vol, KD 15). High-volume near-zero-KD split candidates (frequency table 22,200/KD1, relative frequency 18,100/KD2, frequency distribution 8,100/KD20, cumulative frequency 5,400/KD0, frequency polygon 5,400/KD0) were checked against seed.json: frequency table and frequency distribution/polygon/relative-frequency-table are already covered by the published frequency-table article; relative frequency and cumulative frequency as standalone primaries are NOT yet covered and are a candidate for future new articles -- flagged for a board decision, not created here.",
       "keywords": [
-        "how to find frequency in statistics"
+        "frequency in statistics",
+        "what is frequency in statistics",
+        "frequency statistics",
+        "frequency distribution statistics",
+        "grouped frequency distribution",
+        "class frequency"
       ]
     },
     {
@@ -1393,18 +1386,29 @@
       "slug": "proportions-in-statistics",
       "title": "Proportions in Statistics: Meaning, Formula & How to Solve Them",
       "category_slug": "statistics-basics",
-      "primary_keyword": "proportion means in statistics",
+      "primary_keyword": "proportion in statistics",
       "phase": 1,
-      "kd_min": null,
-      "kd_max": null,
-      "combined_volume": null,
+      "kd_min": 0,
+      "kd_max": 13,
+      "combined_volume": 7320,
       "embed_calculator": "proportion",
       "standalone_calc": 1,
       "flagged": 0,
-      "notes": "Unflagged + re-scoped 2026-07-11: dropped 2 pure-algebra phrasings (\"indirect proportion\", homework-style \"what value of x...\" query) that do not read as statistics intent even extended. Remaining keywords extended with \"in statistics\". Slug/title already statistics-scoped, left unchanged. KD/volume nulled -- needs fresh keyword research.",
+      "notes": "2026-07-11: fresh exact-match keyword research complete (22-wrongintent-reseed-keyword-research.md), replacing the 2026-07-11 re-scope's placeholder list. Primary swapped to \"proportion in statistics\" (880 vol, KD 3); old primary \"proportion means in statistics\" dropped -- confirmed null/no-volume in the exact-match pull. sample proportion (1,600) and population proportion (1,000) are distinct inferential-stats concepts folded into this hub for now; could split into their own pages later if the board wants more depth.",
       "keywords": [
-        "proportion means in statistics",
-        "proportion definition in statistics"
+        "proportion in statistics",
+        "sample proportion",
+        "population proportion",
+        "confidence interval for a proportion",
+        "proportion statistics",
+        "sample proportion formula",
+        "hypothesis test for a proportion",
+        "population proportion formula",
+        "proportion formula statistics",
+        "pooled proportion",
+        "proportion definition in statistics",
+        "sampling distribution of the sample proportion",
+        "point estimate of proportion"
       ]
     },
     {

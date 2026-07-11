@@ -111,6 +111,37 @@ build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
     40-69), so they resolve ahead of the 30-article batch in `content_db.py
     next` -- confirmed via `next` (resolves `proportions-in-statistics`) and
     `list --status planned`.
+- **Fresh keyword research for 3 of the 6 re-scoped articles: DONE 2026-07-11.**
+  Live DataForSEO exact-match pull, results in
+  `22-wrongintent-reseed-keyword-research.md` (repo root), merged into
+  `content-ops/seed.json` + `content-ops/content.db` same day:
+  - `how-to-find-frequency-statistics`: primary keyword swapped to
+    "frequency in statistics" (1,000 vol, KD 15), 6 keywords total, KD 0-15 /
+    ~4,700 combined vol.
+  - `proportions-in-statistics`: primary swapped to "proportion in
+    statistics" (880 vol, KD 3); dead keyword "proportion means in
+    statistics" dropped (null volume). 13 keywords, KD 0-13 / ~7,320
+    combined vol.
+  - `range-of-a-function-statistics`: **retired** per user decision -- in
+    statistics "range" already means max-min, owned by the published
+    `how-to-find-the-range` article. Its 3 old algebra keywords were dropped
+    and the row deleted from seed.json + content.db (same pattern as the
+    `non-parametric-tests` retirement); 5 clean range-in-statistics keywords
+    were folded into `how-to-find-the-range` instead (now 17 keywords, KD
+    0-19 / ~161,760 combined vol). That article is already `published`, so
+    the new keywords are in the DB but not yet worked into the live page
+    text -- needs a light content refresh pass, not a rewrite.
+  - Split-candidate check: high-volume near-zero-KD terms the research
+    flagged (frequency table, relative frequency, frequency distribution,
+    interquartile range) were checked against the board -- `frequency-table`
+    and `interquartile-range` already exist and are published, so no action
+    needed there. `relative frequency` and `cumulative frequency` as
+    standalone primaries are NOT yet covered by any article -- open
+    candidate for future new articles, not created in this pass.
+  - `content-ops/keyword-research-needed.md` marked RESOLVED (kept for
+    history, not actioned further).
+  - Seeded clean: `python content-ops/content_db.py seed` -> 0
+    cannibalization conflicts, 75 articles (was 76, minus the retired one).
 - **Calc-prose teaching-block backlog:** CLOSED 2026-07-05. 25 of 25 done
   (`content-ops/calc-prose/QUEUE.md`) -- Session 6 (`p-value`, `chi-square`,
   `proportion`) published, build green (70 pages, 0 link violations). Queue
