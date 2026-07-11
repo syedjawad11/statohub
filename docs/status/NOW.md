@@ -4,7 +4,7 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-07-05.
+**Last updated:** 2026-07-11.
 
 ## Active: repo-hygiene cleanup (doc/docs consolidation), pending commit
 
@@ -66,17 +66,26 @@ build` (70 pages, 0 violations), `astro check` (0/0/0), `npm test`
   `articleSchema()` in `src/lib/schema.ts` the way `Meta.astro` already does
   for OG tags. Deferred from the 2026-07-06 schema audit/fix session (author,
   publisher, and entity-graph linking were fixed same session).
-- **Article-publishing cloud routine: PAUSED 2026-07-08.** The prior note here
-  (routines `enabled:false` since 2026-06-26, pending woven-callout
-  automation) was stale -- the routine was in fact running and publishing
-  successfully through 2026-07-08 (39 articles published; woven `<RelatedLink>`
-  callouts already shipped, see [[0010-woven-related-link-callouts]]). The
-  remaining 7 `planned` articles are all flagged for human review, so the
-  routine was already a no-op -- it is now also hard-paused via a checked-in
-  marker file (`content-ops/cloud-routine/PAUSED`, checked in
-  `publish-next-article.md` Step 0 before any queue/build/push action) while
-  the user reviews the 7 flagged articles and decides what to publish/schedule
-  next. Resume by deleting that file (and this note) once review is done.
+- **Article-publishing cloud routine: RESUMED 2026-07-11.** Was hard-paused
+  2026-07-08 (marker file `content-ops/cloud-routine/PAUSED`) because all 7
+  `planned` articles were flagged for human review, so the routine was a
+  no-op. Resolved by queueing a new Phase 2 batch: 30 articles merged into
+  `content-ops/seed.json`/`content.db` from `21-phase2-content-briefs-full30.md`
+  (15 keyword-validated, phase 40-54, locked write order; 15
+  topical-authority/structural, phase 55-69), commit `6e04220`. The old
+  `non-parametric-tests` stub was retired (superseded by the new
+  `mann-whitney-u-test` + `kruskal-wallis-test` split per the brief's own
+  guard) and two keywords moved off the existing `t-test` article onto the
+  new `paired-vs-independent-t-test`. PAUSED marker deleted; `content_db.py
+  next` now resolves `types-of-variables` first. The original 6 remaining
+  flagged articles (how-to-find-frequency, proportions-in-statistics,
+  statistics-symbols, range-of-a-function, regression-to-the-mean,
+  confidence-interval) are still `flagged=1` and excluded from the queue --
+  still awaiting a decision, unaffected by this batch.
+  - Also consolidated from 2 daily cron routines to 1: disabled `statohub
+    publish 23:45 Malta` (`trig_011bnYzdcX76mXawduUgnHnP`), kept `statohub
+    publish 03:00 Malta` (`trig_01DhQoEV3sRaKynzFC88xTzh`, cron `0 1 * * *`
+    UTC) as the sole daily publisher -- one article/day going forward.
 - **Calc-prose teaching-block backlog:** CLOSED 2026-07-05. 25 of 25 done
   (`content-ops/calc-prose/QUEUE.md`) -- Session 6 (`p-value`, `chi-square`,
   `proportion`) published, build green (70 pages, 0 link violations). Queue
