@@ -1,0 +1,414 @@
+---
+title: "Statistics Symbols Cheat Sheet: All 40+ Signs Explained"
+description: "A complete statistics symbols cheat sheet: Greek letters, sample vs. population notation, hypothesis testing signs, and probability symbols — all explained."
+category: foundations
+primaryKeyword: statistics symbols cheat sheet
+keywords:
+  - statistics symbols cheat sheet
+  - statistics and or symbols
+  - statistics symbols
+  - what is mu 0 in statistics
+phase: 1
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+This **statistics symbols cheat sheet** collects every common symbol you will encounter across descriptive statistics, probability theory, and hypothesis testing in one place. Whether you are studying for an exam, reading a research paper, or writing up your own analysis, knowing what each symbol means — and when to use σ instead of s, or P(A ∩ B) instead of P(A ∪ B) — removes the friction of constantly cross-referencing a textbook.
+
+Statistics symbols follow a consistent underlying logic. Greek letters (μ, σ, β, ρ, α) almost always stand for **population parameters** — fixed but typically unknown values that describe an entire group. Latin letters (x̄, s, b, r, p) almost always stand for **sample statistics** — values you compute from a measured subset to estimate the corresponding parameter. Once you recognise this Greek-versus-Latin convention, most new statistics symbols decode themselves on contact.
+
+This reference page organises every symbol by topic so you can jump straight to the section you need. Each entry explains what the symbol means, what it is used for, and how it fits into the broader system.
+
+---
+
+## How to Use This Reference
+
+Jump to any section:
+
+- [Full statistics symbols cheat sheet table](#full-statistics-symbols-cheat-sheet) — all 40+ symbols at a glance
+- [Descriptive statistics symbols](#descriptive-statistics-symbols) — mean, variance, standard deviation, median, range
+- [Probability symbols](#probability-symbols) — events, unions, intersections, conditional probability
+- [Hypothesis testing symbols](#hypothesis-testing-symbols) — null hypothesis, significance level, p-value, μ₀
+- [Regression and correlation symbols](#regression-and-correlation-symbols) — slope, intercept, r, R²
+- [And / or symbols in statistics](#and-or-symbols-in-statistics) — ∩ and ∪ explained with an example
+- [FAQ](#frequently-asked-questions) — what is μ₀, what is x̄, Greek vs. Latin guide
+
+---
+
+## Full Statistics Symbols Cheat Sheet
+
+The table below lists more than 40 of the most common statistics symbols, grouped by area. Use it as a quick-lookup reference; the sections below give fuller explanations for the symbols beginners most often confuse.
+
+### Descriptive Statistics
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| μ | Mu | Population mean (true average of the whole group) |
+| x̄ | X-bar | Sample mean (estimated average from the data you collected) |
+| M or Mdn | Median | Middle value in a sorted dataset |
+| Mo | Mode | Most frequently occurring value |
+| σ | Lowercase sigma | Population standard deviation |
+| s | Latin s | Sample standard deviation |
+| σ² | Sigma squared | Population variance |
+| s² | s squared | Sample variance |
+| N | Population size | Count of every individual in the population |
+| n | Sample size | Count of individuals in the sample |
+| Σ | Uppercase sigma | Summation operator ("add everything that follows") |
+| xᵢ | x sub i | The i-th individual data value |
+| IQR | Interquartile range | Q3 − Q1; spread of the middle 50 % |
+| Q1, Q3 | First and third quartile | 25th and 75th percentile values |
+| CV | Coefficient of variation | (s / x̄) × 100 %; relative spread |
+| SE | Standard error | Standard deviation of a sampling distribution; SE = σ / √n |
+
+### Probability
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| P(A) | Probability of A | Likelihood event A occurs (0 = impossible, 1 = certain) |
+| P(A ∩ B) | P of A and B | Probability both events A and B occur |
+| P(A ∪ B) | P of A or B | Probability A or B (or both) occur |
+| P(A \| B) | P of A given B | Conditional probability; probability of A given B occurred |
+| Aᶜ or A' | Complement of A | Probability A does NOT occur: P(Aᶜ) = 1 − P(A) |
+
+### Hypothesis Testing
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| H₀ | H-naught | Null hypothesis (the default claim being tested) |
+| H₁ or Hₐ | Alternative hypothesis | What you suspect instead of H₀ |
+| α | Alpha | Significance level; maximum acceptable false-positive rate |
+| β | Beta (error) | Probability of a Type II error (missing a real effect) |
+| 1 − β | Power | Probability of correctly detecting a real effect |
+| μ₀ | Mu-zero | Hypothesised population mean under H₀ |
+| p | p-value | Probability of results at least as extreme as observed, assuming H₀ is true |
+| t | t-statistic | Test statistic for comparing means when σ is unknown |
+| z | z-statistic | Test statistic when σ is known or n is large |
+| χ² | Chi-squared | Test statistic for goodness-of-fit and independence tests |
+| F | F-statistic | Ratio of variances; used in ANOVA and regression tests |
+| df | Degrees of freedom | Number of values free to vary in the calculation |
+| CI | Confidence interval | Range of plausible values for an unknown parameter |
+
+### Regression and Correlation
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| r | Pearson r | Sample correlation coefficient (−1 to +1) |
+| ρ | Rho | Population correlation coefficient |
+| R² | R-squared | Proportion of variance in Y explained by the model |
+| b₀ | b-naught | Sample regression y-intercept |
+| b₁ | b-one | Sample regression slope |
+| β₀ | Beta-zero | Population regression y-intercept |
+| β₁ | Beta-one | Population regression slope |
+| ŷ | y-hat | Predicted value of the outcome variable |
+| ε | Epsilon | Random error term in a regression model |
+
+<RelatedLink to={routes.article('parameter-vs-statistic')} label="Parameter vs. Statistic" intro="Worth reading next" />
+
+---
+
+## Descriptive Statistics Symbols
+
+Descriptive statistics summarise a dataset's centre, spread, and shape. These are the symbols you will use in every introductory statistics course and most applied analyses.
+
+### Mean: μ and x̄
+
+The **mean** is the arithmetic average — the sum of all values divided by how many there are. Two symbols exist because it matters whether you measured the entire population or only a sample.
+
+- **μ (mu)** — the population mean. This is a fixed, true value. You write μ when your data covers every member of the defined group (for example, the average height of all players in a specific sports league in a given season).
+- **x̄ (x-bar)** — the sample mean. This is an estimate of μ, computed from the data you actually collected. In practice, almost every real-world dataset uses x̄ because measuring an entire population is rarely feasible.
+
+```
+Population mean:  μ = Σxᵢ / N
+Sample mean:      x̄ = Σxᵢ / n
+```
+
+The Greek-versus-Latin distinction matters for communicating precision. Writing x̄ in a results section tells the reader you have an estimate of an unknown μ, not the true population value.
+
+### Standard Deviation and Variance: σ, s, σ², s²
+
+Standard deviation quantifies spread — how far values typically fall from the mean.
+
+- **σ** — population standard deviation
+- **s** — sample standard deviation (uses n − 1 in the denominator, not N)
+- **σ²** — population variance (standard deviation squared)
+- **s²** — sample variance
+
+```
+σ = √( Σ(xᵢ − μ)² / N )          [population]
+s = √( Σ(xᵢ − x̄)² / (n − 1) )    [sample]
+```
+
+The n − 1 in the sample formula is **Bessel's correction**. Because a sample's deviations are measured from the sample mean x̄ rather than the true population mean μ, the raw average squared deviation would systematically underestimate the true population variance. Subtracting 1 from the denominator corrects this bias, making s² an unbiased estimator of σ². This distinction is explained in detail in the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3.5.6 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm), one of the most authoritative online references for statistical notation and methods.
+
+The most important confusion to avoid: **Σ (uppercase sigma) is not σ (lowercase sigma).** Uppercase Σ is the summation operator — an instruction to add up a series of values. Lowercase σ is the population standard deviation. In the formula `σ = √( Σ(xᵢ − μ)² / N )`, both symbols appear. Σ tells you to sum the squared deviations; σ on the left is the result of taking that sum, dividing by N, and finding the square root. Context and capitalisation always distinguish them.
+
+For a deeper reference on every variant of the standard deviation symbol — including σ̂, σₓ̄, SD, and RSD — see the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link>. To compute standard deviations directly, use the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>.
+
+<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="For a related calculation" />
+
+### Other Descriptive Symbols
+
+- **N** — population size (total count of all individuals in the defined population)
+- **n** — sample size (count of individuals in your measured subset)
+- **M or Mdn** — median (the middle value in a sorted dataset; when n is even, average the two middle values)
+- **Mo** — mode (the most frequently occurring value; a dataset can have none, one, or several modes)
+- **IQR** — interquartile range, equal to Q3 − Q1, which captures the spread of the middle 50 % of the data
+- **Q1, Q3** — the 25th and 75th percentile values that define the IQR
+- **CV** — coefficient of variation, expressed as (s / x̄) × 100 %, useful for comparing relative spread across datasets measured in different units
+
+---
+
+## Probability Symbols
+
+Probability notation describes events, how they combine, and their likelihoods. The core statistics symbols in this area are the ones that appear in the phrase "statistics and or symbols" — the union and intersection operators.
+
+### Basic Probability: P(A)
+
+**P(A)** denotes the probability that event A occurs. Values always fall between 0 (impossible) and 1 (certain). You compute it as:
+
+```
+P(A) = (number of outcomes where A occurs) / (total possible outcomes)
+```
+
+For example, if you draw one card from a standard 52-card deck, the probability of drawing a heart is P(heart) = 13/52 = 0.25.
+
+### And/Or Symbols in Statistics
+
+Two of the most important statistics and or symbols are the **intersection** (∩, meaning "and") and the **union** (∪, meaning "or").
+
+**P(A ∩ B)** — the probability that event A **and** event B both occur. The intersection ∩ is the set of outcomes that belong to both A and B. If A and B are independent events, P(A ∩ B) = P(A) × P(B).
+
+**P(A ∪ B)** — the probability that event A **or** event B occurs (including both occurring together). The union ∪ is the set of all outcomes that belong to A, B, or both. The formula connecting union and intersection is the **addition rule**:
+
+```
+P(A ∪ B) = P(A) + P(B) − P(A ∩ B)
+```
+
+You subtract P(A ∩ B) because the outcomes where both events occur are counted twice — once in P(A) and once in P(B) — so you remove the duplicate.
+
+**Worked example:** In a class of 40 students, 24 passed the maths exam (event M) and 20 passed the statistics exam (event S). 12 students passed both.
+
+```
+P(M ∪ S) = 24/40 + 20/40 − 12/40
+          = 0.60 + 0.50 − 0.30
+          = 0.80
+```
+
+Eighty percent of students passed at least one exam.
+
+### Conditional Probability: P(A | B)
+
+**P(A | B)** is the probability of event A **given that** event B has already occurred. The vertical bar "|" reads "given" or "conditioned on":
+
+```
+P(A | B) = P(A ∩ B) / P(B)
+```
+
+In the class example: P(passed statistics | passed maths) = P(S ∩ M) / P(M) = (12/40) / (24/40) = 0.50. Half of the students who passed maths also passed statistics.
+
+### Complement: Aᶜ
+
+**Aᶜ** (also written A' or Ā) is the complement of A — all outcomes that are not A.
+
+```
+P(Aᶜ) = 1 − P(A)
+```
+
+If P(rain tomorrow) = 0.30, then P(no rain) = P(rainᶜ) = 1 − 0.30 = 0.70.
+
+<RelatedLink to={routes.calculator('probability')} label="probability calculator" intro="You may also find this useful" />
+
+---
+
+## Hypothesis Testing Symbols
+
+Hypothesis testing is where statistics notation becomes most dense. These symbols communicate what you are assuming, what you are estimating, and what the results mean.
+
+### Null and Alternative Hypotheses: H₀ and H₁
+
+- **H₀ (H-naught)** — the **null hypothesis**: the default claim your test is designed to challenge, usually a statement of "no effect" or "no difference from a known baseline." You never prove H₀ true; you either reject it (based on sufficient evidence) or fail to reject it (insufficient evidence to rule it out).
+- **H₁ or Hₐ** — the **alternative hypothesis**: the claim you suspect might be true instead of H₀. In a two-sided test, H₁: μ ≠ μ₀. In a one-sided test, H₁: μ > μ₀ or H₁: μ < μ₀.
+
+The subscript zero in H₀ signals "null" (baseline, no-effect state). This convention is separate from the symbol μ₀, though they appear together in the same tests.
+
+### Significance Level and Statistical Power: α, β, 1 − β
+
+- **α (alpha)** — the **significance level**: the maximum probability of a false positive (Type I error — rejecting H₀ when it is actually true) that you are willing to accept before collecting data. The most common choices are α = 0.05 (a 5 % false-positive threshold) and α = 0.01. You set α before the test; you never adjust it after seeing the results.
+- **β (beta)** — the probability of a **Type II error**: failing to detect a real effect when one exists (a false negative). Note that this β is completely different from the regression slope β₁; context always distinguishes them.
+- **1 − β** — **statistical power**: the probability that the test correctly detects a real effect when one exists. Researchers typically aim for power ≥ 0.80 (at least an 80 % chance of detecting a true effect of the size they expect).
+
+### What Is μ₀ in Statistics?
+
+**μ₀ (mu-zero)** is the **hypothesised value of the population mean** specified in the null hypothesis H₀. It is a constant — not a value you compute from your sample — and it represents the baseline you are testing against.
+
+For example, a factory claims its bolts have a mean diameter of 10 mm. A quality inspector samples 25 bolts to test this claim. The test setup is:
+
+```
+H₀: μ = 10 mm    (the claimed population mean is the null value μ₀ = 10)
+H₁: μ ≠ 10 mm   (the true mean differs from the claimed value)
+```
+
+The one-sample t-statistic is:
+
+```
+t = (x̄ − μ₀) / (s / √n)
+```
+
+where x̄ is the sample mean, s is the sample standard deviation, n is the sample size, and μ₀ is the null hypothesis value. If x̄ = 9.85 mm, s = 0.20 mm, and n = 25:
+
+```
+t = (9.85 − 10) / (0.20 / √25)
+  = −0.15 / (0.20 / 5)
+  = −0.15 / 0.04
+  = −3.75
+```
+
+With df = 24 and α = 0.05 (two-tailed), the critical t-value is approximately ±2.064. Because |−3.75| > 2.064, the inspector rejects H₀ and concludes there is strong evidence that the true mean diameter differs from 10 mm.
+
+μ₀ appears in every one-sample test — t-tests, z-tests, and sign tests — wherever you compare a sample against a fixed reference point. The [OpenStax *Introductory Statistics*, Chapter 9 — Hypothesis Testing with One Sample](https://openstax.org/books/introductory-statistics/pages/9-introduction) walks through this notation and additional worked examples in detail.
+
+### p-value and Test Statistics
+
+- **p (p-value)** — the probability of observing a result as extreme as (or more extreme than) your sample data, **assuming H₀ is true**. A small p-value (below α) means the result is unlikely under H₀, providing evidence to reject it. A large p-value means the result is consistent with H₀, so you retain it (but this is not proof H₀ is true).
+- **t** — the **t-statistic**, used in t-tests (one-sample, two-sample, paired). Follows a t-distribution with a specified number of degrees of freedom.
+- **z** — the **z-statistic** (or z-score in the context of a test), used when the population standard deviation σ is known or when sample sizes are large enough for the central limit theorem to approximate normality.
+- **χ² (chi-squared)** — the test statistic in chi-square tests, used for assessing goodness of fit and testing independence in contingency tables.
+- **F** — the **F-statistic**: the ratio of two variance estimates (between-group variance / within-group variance in ANOVA). A large F suggests the groups differ more than chance alone would predict.
+- **df** — **degrees of freedom**: the number of independent values in a calculation. For a one-sample t-test, df = n − 1. For a two-sample t-test (equal variance assumed), df = n₁ + n₂ − 2. For a chi-square test on a contingency table with r rows and c columns, df = (r − 1)(c − 1).
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="On a related note" />
+
+---
+
+## Regression and Correlation Symbols
+
+Regression and correlation describe and quantify relationships between variables.
+
+### Correlation Coefficients: r and ρ
+
+- **r** — the **sample Pearson correlation coefficient**. Values range from −1 (perfect negative linear relationship) to +1 (perfect positive linear relationship), with 0 indicating no linear relationship. It is a dimensionless measure — its value does not depend on the units of the variables.
+- **ρ (rho)** — the **population Pearson correlation coefficient**: the true, unknown parameter r is estimating.
+- **R²** — the **coefficient of determination**: the proportion of variance in the dependent variable that the model explains. An R² of 0.75 means 75 % of the variability in Y is accounted for by X (or by all predictors in a multiple regression). It equals r² in simple linear regression.
+
+### Regression Coefficients
+
+Simple linear regression fits a straight line to data:
+
+```
+Sample equation:      ŷ = b₀ + b₁x
+Population equation:  Y  = β₀ + β₁x + ε
+```
+
+- **b₀** — sample y-intercept: the predicted value of Y when x = 0
+- **b₁** — sample slope: the change in ŷ for each one-unit increase in x
+- **β₀** — population y-intercept (true, unknown value; b₀ estimates it)
+- **β₁** — population slope (true, unknown value; b₁ estimates it)
+- **ŷ** (y-hat) — the fitted (predicted) value of Y for a given x
+- **ε (epsilon)** — the random error term: the part of Y not explained by the linear model, assumed to be normally distributed with mean 0
+
+A critical naming trap: the regression slope β₁ and the Type II error rate β are both written with the Greek letter β. The context (regression vs. hypothesis testing) always disambiguates them. In a paper reporting both, authors sometimes write β₁ for the slope and β for the error probability, or they describe which is which in their notation table.
+
+---
+
+## Worked Example: Connecting Symbols Across a Full Analysis
+
+A researcher measures the resting heart rate (bpm) of 8 adults: 62, 71, 58, 75, 68, 64, 70, 72.
+
+**Step 1 — Sample mean (x̄)**
+
+```
+x̄ = (62 + 71 + 58 + 75 + 68 + 64 + 70 + 72) / 8
+   = 540 / 8
+   = 67.5 bpm
+```
+
+**Step 2 — Sample variance (s²)**
+
+Deviations from the mean (x̄ = 67.5): −5.5, 3.5, −9.5, 7.5, 0.5, −3.5, 2.5, 4.5
+
+Squared deviations: 30.25, 12.25, 90.25, 56.25, 0.25, 12.25, 6.25, 20.25
+
+Sum = 228.00
+
+```
+s² = 228.00 / (8 − 1) = 228.00 / 7 ≈ 32.571 bpm²
+```
+
+**Step 3 — Sample standard deviation (s)**
+
+```
+s = √32.571 ≈ 5.707 bpm
+```
+
+**Step 4 — One-sample t-test (testing H₀: μ = 70 bpm)**
+
+The researcher wants to know if the sample differs from a population reference of μ₀ = 70 bpm.
+
+```
+t = (x̄ − μ₀) / (s / √n)
+  = (67.5 − 70) / (5.707 / √8)
+  = −2.5 / (5.707 / 2.828)
+  = −2.5 / 2.018
+  ≈ −1.239
+```
+
+With df = 7 and α = 0.05 (two-tailed), the critical t-value is approximately ±2.365. Because |−1.239| < 2.365, the researcher fails to reject H₀. The sample does not provide sufficient evidence that the population mean differs from 70 bpm.
+
+Every symbol in this analysis — x̄, s, n, μ₀, t, df, α — maps directly to a row in the statistics symbols cheat sheet above.
+
+---
+
+## Frequently Asked Questions
+
+### What is the statistics symbols cheat sheet?
+
+A **statistics symbols cheat sheet** is a reference table that lists every common notation used in descriptive statistics, probability, hypothesis testing, and regression in one place. The key symbols are μ (population mean), x̄ (sample mean), σ (population standard deviation), s (sample standard deviation), P(A) (probability of an event), H₀ (null hypothesis), α (significance level), p (p-value), r (correlation), and R² (coefficient of determination).
+
+### What are statistics and or symbols?
+
+The statistics **"and" symbol is ∩** (intersection) and the **"or" symbol is ∪** (union). They come from set theory and appear in probability notation. P(A ∩ B) is the probability that events A and B both occur. P(A ∪ B) is the probability that A or B (or both) occur, computed as P(A) + P(B) − P(A ∩ B). These two statistics and or symbols appear whenever you combine events in probability calculations.
+
+### What is mu 0 (μ₀) in statistics?
+
+**μ₀ (mu-zero)** is the hypothesised value of the population mean stated in the null hypothesis H₀. It is a fixed constant that represents the baseline or reference value your test is checking against — for example, "is the true population mean equal to 70?" sets μ₀ = 70. The one-sample t-statistic formula is `t = (x̄ − μ₀) / (s / √n)`. A large absolute t-value means x̄ is far from μ₀, providing evidence against H₀.
+
+### What is the difference between σ and s?
+
+**σ** is the population standard deviation and **s** is the sample standard deviation. The formulas differ in the denominator: σ divides by N (population size) and s divides by n − 1 (Bessel's correction, which removes a systematic bias). In practice, you almost always use s because you rarely have data for an entire population.
+
+### What does x̄ mean in statistics?
+
+**x̄ (x-bar)** is the sample mean — the arithmetic average of the values in your sample. It is the sample counterpart of the population mean μ, and it estimates μ when you cannot measure the whole population. Compute it as the sum of all sample values divided by the sample size n.
+
+### How do I know whether to use a Greek or a Latin symbol?
+
+The general rule is: **Greek letter → population parameter, Latin letter → sample statistic.** Population parameters (μ, σ, β, ρ) are the true, fixed values of an entire group — usually unknown because you cannot measure everyone. Sample statistics (x̄, s, b, r) are values you compute from your data to estimate those parameters. There are a handful of exceptions (the test statistics t, z, χ², F use mixed conventions), but the Greek = population, Latin = sample rule works for the symbols you will encounter most often.
+
+### What is the difference between α (alpha) and p (p-value)?
+
+**α** is the significance level you set *before* running the test — your maximum tolerance for a false positive (for example, α = 0.05 means you accept up to a 5 % chance of incorrectly rejecting a true H₀). **p** is the p-value computed *from* your data after running the test — the probability of observing results at least as extreme as yours if H₀ were true. The decision rule is simple: if p < α, reject H₀; if p ≥ α, retain H₀. You must set α before looking at p; adjusting α after seeing the data is a form of p-hacking.
+
+### Can σ and s ever give the same value?
+
+Yes. As the sample size n grows very large, the difference between dividing by N and dividing by n − 1 becomes negligible, so s approaches σ. For small n (say, n = 8), the two values differ noticeably (as in the worked example above, where σ for those eight values would be √(228/8) ≈ 5.339, while s ≈ 5.707). For n = 1 000, the difference is less than 0.1 %.
+
+---
+
+## Summary
+
+This **statistics symbols cheat sheet** covers more than 40 symbols across every major area of introductory and intermediate statistics. The single most important rule to carry with you:
+
+- **Greek letter → population parameter** (μ, σ, ρ, β₁, ε)
+- **Latin letter → sample statistic** (x̄, s, r, b₁, ŷ)
+
+Within probability, the two essential **statistics and or symbols** are **∩** ("and," intersection) and **∪** ("or," union) — use the addition rule P(A ∪ B) = P(A) + P(B) − P(A ∩ B) whenever you combine events.
+
+Within hypothesis testing, remember that **μ₀ is the null hypothesis value** (a fixed reference you set before the test, not something you compute from data), **α is your pre-set false-positive threshold**, and **p is the data-driven result** you compare against α.
+
+For a comprehensive authoritative reference on notation and methods, the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/) is one of the most reliable and freely accessible statistical resources available online.
+
+Put these statistics symbols to work with real computations on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
