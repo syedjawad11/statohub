@@ -1,0 +1,325 @@
+---
+title: "How to Find Frequency in Statistics"
+description: "Learn what frequency in statistics means and how to find class frequency, frequency distributions, and grouped frequency tables with a worked example."
+category: descriptive-statistics
+primaryKeyword: frequency in statistics
+keywords:
+  - frequency in statistics
+  - class frequency
+  - frequency distribution statistics
+  - frequency statistics
+  - grouped frequency distribution
+  - what is frequency in statistics
+phase: 1
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Frequency in statistics** describes how often a particular value or category appears in a dataset. When you collect raw numbers — exam scores, daily temperatures, or survey responses — the frequency of each value tells you how common or rare it is across all your observations. Learning how to find frequency statistics is the first step in summarising any quantitative dataset, whether you are building a simple tally, constructing a frequency distribution table, or reading a histogram.
+
+This article explains what frequency in statistics means, walks you through counting class frequency step by step, shows how to build both ungrouped and grouped frequency distribution tables, and works through a complete numeric example so you can follow every calculation from raw data to finished table.
+
+---
+
+## What Is Frequency in Statistics?
+
+Frequency is the count of how many times a specific value or category appears in a dataset. If you survey 30 students about their exam grade and 8 of them answer "B," then the frequency of "B" is 8.
+
+Frequency statistics encompasses the full toolkit for organising and displaying these counts:
+
+- **Absolute frequency** (usually just "frequency"): the raw count of times a value or class appears.
+- **Relative frequency**: the count expressed as a proportion or percentage of the total number of observations.
+- **Cumulative frequency**: a running total that accumulates from the smallest value to the largest.
+
+These three measures form the backbone of a frequency distribution — a table or chart that shows every possible value (or range of values) alongside its count, proportion, and running total. Frequency distributions are foundational in descriptive statistics because they reveal the shape, centre, and spread of a dataset in a compact, readable form.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3 — EDA Techniques](https://www.itl.nist.gov/div898/handbook/eda/section3/eda30.htm), examining the distribution of data — how often each value occurs — is the essential first step in any quantitative analysis. Frequency tables and histograms are the primary tools for that initial exploration.
+
+---
+
+## How to Find Frequency in Raw Data
+
+Finding frequency requires four systematic steps:
+
+1. **List all distinct values** (for ungrouped data) or **define class intervals** (for grouped data).
+2. **Tally** — work through each observation and mark a tally next to the matching value or interval.
+3. **Count the tallies** — sum the marks for each value or class to get the absolute frequency.
+4. **Compute derived measures** — divide each count by n for relative frequency; accumulate counts from top to bottom for cumulative frequency.
+
+The formula for **relative frequency** is:
+
+```
+Relative frequency = f / n
+```
+
+where `f` is the count for a specific value or class and `n` is the total number of observations.
+
+The formula for **cumulative frequency** is a running sum:
+
+```
+Cumulative frequency (row k) = f₁ + f₂ + … + fₖ
+```
+
+No advanced mathematics is required. The skill lies in setting up the table correctly and choosing class intervals that are meaningful when the data range is wide.
+
+<RelatedLink to={routes.article('frequency-table')} label="how to build a frequency table" intro="On a related note" />
+
+---
+
+## Class Frequency and Frequency Tables
+
+A **class frequency** is the count of observations that fall within a specific class interval (also called a bin or group). When every value in a dataset is different — for example, twenty distinct exam scores — listing each value on its own row creates a table too long to be useful. Instead, you group the data into classes and record how many observations land in each group.
+
+### Defining Class Intervals
+
+A well-formed class interval has:
+- A **lower class limit** — the smallest value that belongs to the class.
+- An **upper class limit** — the largest value that belongs to the class.
+- A **class width** — the numerical distance from the lower limit of one class to the lower limit of the next.
+
+A widely used guideline for choosing the number of classes is **Sturges' rule**:
+
+```
+k ≈ 1 + 3.322 × log₁₀(n)
+```
+
+where `k` is the suggested number of classes and `n` is the total number of observations. For n = 20, this gives k ≈ 1 + 3.322 × 1.301 ≈ 5.3, so use 5 or 6 classes.
+
+The class width is then:
+
+```
+Class width = ⌈(max value − min value) / k⌉
+```
+
+Round up to a convenient whole number so the class limits are easy to read.
+
+### Relative Frequency Within a Class
+
+Once you have the class frequency `f` for each interval, convert it to a relative frequency by dividing by the total count n:
+
+```
+Relative class frequency = f / n
+```
+
+Multiply by 100 to express as a percentage.
+
+### Cumulative Class Frequency
+
+Add each class frequency to the sum of all previous class frequencies:
+
+```
+Cumulative frequency (class k) = f₁ + f₂ + … + fₖ
+```
+
+The cumulative frequency in the last row always equals n — a useful self-check.
+
+<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="For a related calculation" />
+
+---
+
+## Frequency Distribution Statistics
+
+A **frequency distribution** is the organised presentation of a dataset's frequency information — usually a table with columns for class interval, frequency, relative frequency, and cumulative frequency. It is the central object in frequency distribution statistics, and building one is the standard first move when exploring a new quantitative dataset.
+
+Frequency distributions serve three core purposes:
+
+1. **Summarise** large datasets into a manageable form without losing the key pattern.
+2. **Reveal the shape** of the data — whether it is symmetric, skewed left or right, or bimodal.
+3. **Enable fair comparison** across datasets of different sizes, because relative frequencies put everything on the same 0-to-1 scale regardless of how many total observations each dataset has.
+
+A standard frequency distribution table has five columns:
+
+| Column | What it shows |
+|---|---|
+| Class interval | The range of values for this row |
+| Tally | Optional counting marks |
+| Frequency (f) | Number of observations in the class |
+| Relative frequency (f/n) | Proportion of total observations |
+| Cumulative frequency | Running total from the first class |
+
+A **frequency distribution histogram** is the graphical counterpart: each rectangular bar spans one class interval and its height equals the class frequency (or relative frequency). The histogram gives an immediate visual impression of whether the data clusters in one region, spreads evenly, or has multiple peaks.
+
+For a hands-on tool, the <Link to={routes.calculator('frequency-table')}>frequency table calculator</Link> on this site builds the table automatically from a list of values — useful for checking your manual work.
+
+The [OpenStax Introductory Statistics textbook, Section 1.3 — Frequency, Frequency Tables, and Levels of Measurement](https://openstax.org/books/introductory-statistics/pages/1-3-frequency-frequency-tables-and-levels-of-measurement) provides a thorough walkthrough of constructing both ungrouped and grouped frequency distribution tables, with additional worked examples covering relative and cumulative frequencies.
+
+---
+
+## Grouped Frequency Distribution
+
+A **grouped frequency distribution** organises data into non-overlapping class intervals rather than listing every distinct value individually. Use a grouped frequency distribution when:
+
+- The data range (maximum minus minimum) is large.
+- Individual values are so varied that a row-per-value table would be unwieldy.
+- You want to reveal the underlying pattern — the shape — of the data.
+
+### Steps to Build a Grouped Frequency Distribution
+
+**Step 1: Calculate the range.**
+
+```
+Range = max value − min value
+```
+
+**Step 2: Choose the number of classes k.**
+
+Apply Sturges' rule or practical judgment. Five to fifteen classes typically produces a clear picture of the distribution shape.
+
+**Step 3: Determine the class width.**
+
+```
+Class width = ⌈Range / k⌉   (round up to a convenient value)
+```
+
+**Step 4: Set the class limits.**
+
+Start the first class at a round number at or below the minimum. Each new class begins where the previous one ends. Use non-overlapping boundaries — for example, 40–49 and 50–59, not 40–50 and 50–60, which would place the value 50 in two classes at once.
+
+**Step 5: Tally each observation.**
+
+Go through the dataset value by value. Add 1 to the class frequency of whichever interval contains that observation.
+
+**Step 6: Compute relative and cumulative frequencies.**
+
+Divide each class frequency by n for the relative frequency. Accumulate from top to bottom for the cumulative frequency column.
+
+<RelatedLink to={routes.article('mean-median-mode-range')} label="mean, median, mode, and range explained" intro="Worth reading next" />
+
+---
+
+## Fully Worked Example
+
+**Dataset:** Twenty students' exam scores (out of 100):
+
+45, 52, 67, 71, 83, 90, 54, 68, 72, 85, 92, 56, 69, 73, 87, 94, 58, 65, 78, 88
+
+### Step 1: Calculate the Range
+
+Minimum = 45, maximum = 94.
+
+```
+Range = 94 − 45 = 49
+```
+
+### Step 2: Choose the Number of Classes
+
+With n = 20, Sturges' rule gives k ≈ 5.3. Use 6 classes of width 10 — a round number that covers the full range (6 × 10 = 60 ≥ 49).
+
+### Step 3: Set the Class Width and Limits
+
+```
+Class width = 10
+```
+
+Classes (starting at 40, stepping by 10): 40–49, 50–59, 60–69, 70–79, 80–89, 90–99.
+
+### Step 4: Tally Each Score
+
+Work through every score and assign it to its class:
+
+| Class interval | Observations | Frequency (f) |
+|---|---|---|
+| 40–49 | 45 | 1 |
+| 50–59 | 52, 54, 56, 58 | 4 |
+| 60–69 | 65, 67, 68, 69 | 4 |
+| 70–79 | 71, 72, 73, 78 | 4 |
+| 80–89 | 83, 85, 87, 88 | 4 |
+| 90–99 | 90, 92, 94 | 3 |
+
+**Verification:** 1 + 4 + 4 + 4 + 4 + 3 = **20 = n** ✓
+
+### Step 5: Compute Relative and Cumulative Frequencies
+
+| Class | f | Relative f | Cumulative f |
+|---|---|---|---|
+| 40–49 | 1 | 0.05 (5%) | 1 |
+| 50–59 | 4 | 0.20 (20%) | 5 |
+| 60–69 | 4 | 0.20 (20%) | 9 |
+| 70–79 | 4 | 0.20 (20%) | 13 |
+| 80–89 | 4 | 0.20 (20%) | 17 |
+| 90–99 | 3 | 0.15 (15%) | 20 |
+
+Final cumulative frequency = 20 = n ✓
+
+### Reading the Table
+
+- The 40–49 class has a class frequency of 1 — only one student scored in that range.
+- Four classes each have a class frequency of 4 — the majority of students scored between 50 and 89.
+- Relative frequencies show that 80% of students (16 out of 20) scored between 50 and 89.
+- The cumulative frequency of 9 in the 60–69 row means 45% of students (9 out of 20) scored below 70.
+- The 90–99 class has a relative frequency of 0.15, meaning 15% of students scored 90 or above.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Finding Frequency
+
+### Using Overlapping Class Intervals
+
+Define class intervals so each observation belongs to exactly one class. Use 40–49 and 50–59, not 40–50 and 50–60 — in the latter scheme, the value 50 falls into both intervals and gets counted twice.
+
+### Ignoring Unequal Class Widths
+
+If you must use unequal class widths — sometimes necessary when data is sparse at the extremes — a histogram must display **frequency density** (frequency ÷ class width) rather than raw frequency. Bars of different widths but the same height give a misleading picture of the distribution.
+
+### Confusing Frequency with Relative Frequency
+
+A frequency of 4 means four observations. A relative frequency of 0.20 means 20% of observations. Both matter, but they serve different purposes: frequency gives the raw count; relative frequency allows fair comparison across datasets of different total sizes.
+
+### Skipping the Verification Step
+
+Always confirm that the class frequencies sum to n and that the cumulative frequency in the last row equals n. A mismatch means an observation was miscounted, placed in the wrong class, or accidentally omitted.
+
+### Choosing Too Few or Too Many Classes
+
+Too few classes (e.g., two) collapse all variation into broad buckets and hide the distribution's shape. Too many classes (e.g., one class per unique value for a dataset of 200 observations) produce a table with no discernible pattern. Aim for five to fifteen classes; Sturges' rule gives a reliable starting point for any sample size.
+
+---
+
+## Frequently Asked Questions
+
+### What is frequency in statistics?
+
+Frequency in statistics is the count of how many times a specific value, category, or range of values appears in a dataset. It is the most fundamental measure of how common each outcome is. Absolute frequency gives the raw count; relative frequency expresses the same count as a proportion (or percentage) of the total number of observations.
+
+### What is frequency statistics?
+
+Frequency statistics is the area of descriptive statistics concerned with counting, organising, and displaying how often each value occurs in a dataset. The core tools are the frequency distribution table — showing absolute frequency, relative frequency, and cumulative frequency for each class — and the histogram, the bar-chart representation of the same information. Together they describe the distribution of any quantitative dataset.
+
+### How do you find frequency in statistics?
+
+To find frequency: (1) list all distinct values or define class intervals; (2) tally each observation against the matching value or interval; (3) sum the tally marks to get the absolute frequency for each value or class; (4) divide by the total count n to get the relative frequency; (5) accumulate from top to bottom for the cumulative frequency. The worked example above demonstrates every step for a dataset of 20 exam scores.
+
+### What is class frequency?
+
+Class frequency is the count of observations that fall within a specific class interval in a grouped frequency distribution. If 4 out of 20 exam scores fall between 50 and 59, the class frequency for that interval is 4. Each class interval has its own class frequency, and the sum of all class frequencies always equals the total number of observations n.
+
+### What is a grouped frequency distribution?
+
+A grouped frequency distribution is a frequency distribution table in which observations are organised into non-overlapping class intervals (groups) rather than individual values. It is used when the data range is large or when listing every distinct value would produce an unmanageable table. Each row shows a class interval, the class frequency, the relative frequency, and the cumulative frequency up to that row.
+
+### What is the difference between frequency and relative frequency?
+
+Frequency is the raw count of observations for a value or class. Relative frequency is that count divided by the total number of observations (n). If 4 students out of 20 scored in the 50–59 range, the frequency is 4 and the relative frequency is 4 ÷ 20 = 0.20, or 20%. Relative frequency is especially useful when comparing groups of different sizes, because it puts every count on the same 0-to-1 scale.
+
+### What is cumulative frequency?
+
+Cumulative frequency is a running total of frequencies accumulated from the first class to the current class. After the third class in a frequency table, the cumulative frequency equals the sum of the first three class frequencies. The cumulative frequency of the last class always equals n — the total number of observations — which serves as a built-in check that no values were missed.
+
+### How do I choose the number of classes for a grouped frequency distribution?
+
+Sturges' rule gives a common starting point: k ≈ 1 + 3.322 × log₁₀(n), where k is the number of classes and n is the sample size. For most practical datasets, five to fifteen classes gives a clear picture of the distribution's shape. Prefer class widths that are round numbers (multiples of 5 or 10) so the table is easy to read and interpret.
+
+---
+
+## Summary
+
+Frequency in statistics is the count of how many times each value or range of values appears in a dataset. To find frequency statistics: list or define class intervals, tally each observation, count the tallies, then extend the table with relative and cumulative frequencies.
+
+Class frequency is the count within one interval of a grouped frequency distribution table. A grouped frequency distribution organises all counts into non-overlapping intervals, revealing the shape of the data's distribution at a glance — whether it is symmetric, skewed, or concentrated in a particular range.
+
+The worked example above demonstrated every step, from computing the range and applying Sturges' rule through to verifying the final cumulative count. Applying these steps to any dataset produces a frequency distribution that clearly summarises where values fall across the range.
