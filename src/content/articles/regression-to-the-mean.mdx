@@ -1,0 +1,231 @@
+---
+title: "Regression to the Mean: Definition & Real-World Examples"
+description: "Learn what regression to the mean is, how Galton discovered it, the key formula, and real-world examples from sports, medicine, and education."
+category: regression-correlation
+primaryKeyword: regression to the mean
+keywords:
+  - regression to the mean
+  - mean regression
+  - regression of the mean
+  - regression to the mean definition
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Regression to the mean was discovered in the Victorian era, misidentified as a real causal force for decades, and today ranks as one of the most important confounders in medical research, sports analytics, and business decision-making. Understanding it — truly understanding it, not just the label — protects you from one of the most expensive mistakes in applied statistics: concluding that an intervention worked when nature was simply going to pull the numbers toward average anyway.
+
+This article explains the regression to the mean definition, shows you the underlying formula, walks through a fully worked numeric example, and illustrates why the phenomenon trips up researchers, coaches, doctors, and investors alike.
+
+---
+
+## What Is Regression to the Mean?
+
+**Regression to the mean** is the statistical tendency for extreme measurements to be followed by measurements that are closer to the average. When the same variable is measured twice and the two measurements are imperfectly correlated, the more extreme the first measurement, the more the second measurement will tend to be less extreme.
+
+The regression to the mean definition can be stated even more precisely: if you select individuals — or observations — on the basis of an extreme first measurement, their *expected* second measurement is less extreme. The effect is symmetric, pulling from both tails. A class that scored unusually high on an exam will, on average, score lower on the next exam. A class that scored unusually low will, on average, score higher. In both cases, nothing caused the change. The scores simply moved back toward where they usually are.
+
+This is not coincidence, and it is not a sign of improvement or decline. It is a mathematical consequence of variation and imperfect measurement.
+
+### Why "Regression" Is in the Name
+
+The word *regression* here is not the same technique as statistical regression analysis. The naming connection is historical: the term entered statistics through this phenomenon and was later repurposed for the broader family of modeling tools now known as <Link to={routes.article('linear-regression')}>linear regression</Link>. Mean regression is about the mathematical pull toward average across repeated measurements. Regression analysis is a modeling tool for predicting one variable from another. Both names trace to the same discovery, but they describe different things.
+
+---
+
+<RelatedLink to={routes.article('what-is-correlation')} label="what is correlation" intro="On a related note" />
+
+## The Origin: How Galton Discovered the Regression of the Mean
+
+The regression of the mean was first documented by **Sir Francis Galton** in 1886. Galton was studying the heights of parents and their adult children and noticed something puzzling: tall fathers tended to have tall sons, but not *as* tall as themselves. Short fathers tended to have short sons, but not *as* short. The extremes moderated across generations.
+
+Galton initially called the phenomenon *regression towards mediocrity in hereditary stature* — a phrase that has nothing to do with "mediocre" in the colloquial sense. He was describing the mathematical pull back toward the middle of the distribution. The term *mediocrity* was Victorian vocabulary for the mean, not a value judgment.
+
+He later coined the term *regression* for this pull toward the mean, and that word has been embedded in statistical vocabulary ever since. The discovery that imperfect correlation between parent and child height produces this moderation was the seed from which [Penn State STAT 501: Regression Methods](https://online.stat.psu.edu/stat501/) and the entire regression analysis tradition grew — the analytical framework was named for the phenomenon, not the other way around.
+
+The Galton example is instructive about the mechanism. If height were perfectly inherited — if the correlation between parent and child height were exactly r = 1 — tall parents would have equally tall children and short parents would have equally short children, generation after generation, with no regression. The regression of the mean arises precisely because inheritance is *imperfect*. The real-world correlation between parent height and child height is roughly r = 0.5. That imperfect correlation is the engine.
+
+---
+
+## The Formula: Why Regression to the Mean Happens
+
+The mathematical structure of regression to the mean follows directly from the formula for predicting one variable from another when they share an imperfect correlation.
+
+Let X be the first measurement (for example, a father's height) and Y be the second (a son's height). Suppose X and Y have population means μ_X and μ_Y, standard deviations σ_X and σ_Y, and a <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient</Link> r between them. The best linear prediction of Y given X is:
+
+```
+E[Y] = μ_Y + r × (σ_Y ÷ σ_X) × (X − μ_X)
+```
+
+The regression to the mean effect is visible immediately. When X is well above μ_X — an extreme value — the predicted Y is still above μ_Y, but the multiplier r (which lies between −1 and +1) compresses the gap. The deviation of X from its mean is multiplied by r, so the predicted deviation of Y from its mean is always r times the deviation of X. Whatever was extreme gets pulled back.
+
+For the special case where both variables are standardized to mean = 0 and standard deviation = 1, the formula simplifies to:
+
+```
+E[Y | X = z] = r × z
+```
+
+If a first measurement is z standard deviations above average, the expected second measurement is only r × z standard deviations above average. The remaining fraction (1 − r) of the deviation is, in expectation, absorbed by regression to the mean.
+
+The table below shows how much of an extreme first measurement survives to the second, depending on correlation:
+
+| Correlation r | First measurement (z-score) | Predicted second (r × z) | Amount regressed |
+|---|---|---|---|
+| 1.0 | 2.0 | 2.0 | 0% |
+| 0.8 | 2.0 | 1.6 | 20% |
+| 0.5 | 2.0 | 1.0 | 50% |
+| 0.2 | 2.0 | 0.4 | 80% |
+| 0.0 | 2.0 | 0.0 | 100% |
+
+When r = 0 (the two measurements share no linear relationship), the best prediction of the second measurement is simply the mean — total regression. When r = 1 (perfect positive correlation), no regression occurs at all.
+
+As the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/) documents in its coverage of regression and correlation methods, imperfect correlation between variables is the norm in observational data, which means regression to the mean is essentially always present to some degree whenever two measurements of the same trait are compared.
+
+---
+
+<RelatedLink to={routes.article('correlation-coefficient')} label="correlation coefficient" intro="For a related calculation" />
+
+## A Fully Worked Example
+
+Let's ground the formula in numbers, using Galton's original context of father-and-son heights.
+
+**Setup:**
+- Mean father height (μ_X): 175 cm
+- Mean son height (μ_Y): 175 cm (the population mean has been stable across generations)
+- Standard deviation of both (σ_X = σ_Y): 7 cm
+- Pearson correlation between father and son height: r = 0.5
+
+**Scenario:** A father is 189 cm tall — two standard deviations above average.
+
+**Step 1: Compute the father's Z-score.**
+
+```
+Z_father = (189 − 175) ÷ 7 = 14 ÷ 7 = 2.0
+```
+
+The father sits at the 97.7th percentile for height.
+
+**Step 2: Apply the regression formula.**
+
+Because σ_X = σ_Y = 7, the ratio σ_Y ÷ σ_X = 1, and the formula simplifies:
+
+```
+E[son height] = μ_Y + r × (X − μ_X)
+             = 175 + 0.5 × (189 − 175)
+             = 175 + 0.5 × 14
+             = 175 + 7
+             = 182 cm
+```
+
+**Using the Z-score shortcut:**
+
+```
+Z_son = r × Z_father = 0.5 × 2.0 = 1.0
+```
+
+The son's expected height is one standard deviation above average — 182 cm — not two. The father's extreme stature has been moderated by the imperfect correlation. The son is still tall; he just is not as tall as the father.
+
+**Why this matters:** Nothing in the biology "decided" to make the son shorter relative to the father. The moderation is a mathematical artifact of imperfect heritability. Run this thought experiment with 1 000 very tall fathers and plot the distribution of their sons' heights — the *average* son's height will be 182 cm, even though individual sons vary widely. Some will be taller than their fathers; most will not. The regression is an average effect across the population of extreme first measurements, not a law applied to each individual pair.
+
+**Symmetric direction:** The same arithmetic applies at the other extreme. A father who is 161 cm — two standard deviations below average — would have a son with an expected height of 168 cm (one SD below average). The regression pulls from both tails toward the center.
+
+---
+
+## Real-World Examples of Regression to the Mean
+
+Regression to the mean appears wherever two measurements are taken on the same subject and correlation is imperfect — which is to say, virtually everywhere.
+
+### Sports: The Sophomore Slump
+
+Perhaps the most discussed example in sports analytics is the **sophomore slump**: a player who has an outstanding rookie season tends to perform worse in their second year. Critics attribute it to overconfidence, increased defensive attention, or fatigue. The statistical explanation is often simpler.
+
+A player's observed rookie performance equals their true skill plus a luck component. A player who has an exceptional rookie season likely had both high skill *and* above-average luck. In the sophomore year, their true skill is unchanged, but luck reverts toward neutral — producing a seemingly "worse" season. The slump is mean regression, not a meaningful decline in ability.
+
+The same logic explains the so-called Sports Illustrated cover curse: athletes featured on the cover after extraordinary performances tend to perform more modestly afterward. This is not a curse. It is selection bias combined with regression to the mean. The cover was awarded precisely because of an extreme measurement; the extreme was partly luck; the luck regresses.
+
+### Medical Research: Treatment Without Effect
+
+Regression to the mean is among the most serious confounders in clinical medicine. Patients typically seek treatment when their symptoms are at their worst — their pain scores, blood pressure readings, or test results are at a personal extreme. Even with an entirely inactive intervention, their readings will tend to improve simply because extreme measurements regress toward each individual's personal average.
+
+A study without a proper control group — where patients receive a treatment and are compared before and after — will appear to show improvement even if the treatment does nothing. The pre-post change is a mixture of genuine treatment effect and regression to the mean, and without a control group there is no way to separate them.
+
+This is precisely why **randomized controlled trials (RCTs)** are the gold standard in medical research. By randomly assigning patients to treatment and control groups before any intervention occurs, an RCT ensures that regression to the mean acts equally on both groups. Only differences *between* groups — not the within-group pre-post improvement — are attributed to the treatment.
+
+### Education: Praise, Criticism, and the Feedback Paradox
+
+Psychologist Daniel Kahneman described a vivid feedback paradox in his research with military flight instructors. Instructors noticed that praising a pilot for an excellent landing was typically followed by a worse landing on the next attempt, while criticizing a poor landing was typically followed by improvement. This led instructors to conclude that praise was counterproductive and punishment was effective.
+
+In fact, both observations were entirely explained by regression to the mean. The excellent landing was partly due to a lucky day, so the next landing regressed toward average. The poor landing was partly due to an unlucky moment, so the next landing also regressed toward average. Neither praise nor punishment caused the change. The change was going to happen anyway.
+
+The same distortion affects educational policy. A school that introduces an intensive program in its worst-performing year will typically see scores improve the following year — not solely because the program worked, but because the school was selected at an extreme low point, and the extreme regresses.
+
+### Business and Finance
+
+Investment managers who significantly outperform their benchmarks in one year tend, on average, to perform more modestly in subsequent years. This is not solely because the market corrected their strategy. It is partly because exceptional single-year performance contains a luck component that is unlikely to repeat with the same magnitude.
+
+Regression to the mean in finance is one statistical reason that selecting actively managed funds on the basis of last year's performance is a weak strategy: you are systematically selecting at an extreme, and the extreme tends to moderate.
+
+---
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="correlation vs. causation" intro="You may also find this useful" />
+
+## Regression to the Mean Is Not Causation
+
+The most costly error that regression to the mean produces is the attribution of a cause to a statistical inevitability.
+
+When test scores rise after tutoring, when pain scores drop after a new medication, when a business unit's numbers recover after leadership changes — any of these outcomes could be entirely or partially explained by regression to the mean. Without a proper control group or a study design that accounts for selection at extremes, it is impossible to distinguish genuine improvement from the mathematical pull toward average.
+
+Regression to the mean is therefore a specific mechanism by which correlation misleads people into inferring causation. Two time points on the same subject, both measured, both showing improvement — that looks like cause and effect. But if the first measurement was selected because it was extreme, the improvement was partly or entirely baked in before the intervention began.
+
+---
+
+## How to Control for Regression to the Mean
+
+Recognizing the phenomenon is the first step. Accounting for it in study design is the practical follow-through.
+
+**Randomized control groups.** The cleanest solution in medicine and behavioral research. When treatment and control groups are drawn from the same population at the same selection moment, regression to the mean operates equally on both arms. Any difference in outcomes between the arms cannot be attributed to regression — only to the intervention.
+
+**Regression discontinuity designs.** When randomization is not possible — for example, students who just barely qualify for a support program based on a test score cutoff — regression discontinuity analysis estimates causal effects near the selection threshold by comparing observations just above and just below the cutoff.
+
+**Multiple baseline measurements.** Using the average of several pre-measurements as the baseline, rather than a single extreme measurement, reduces the impact of regression to the mean on the apparent change. The more pre-measures averaged, the closer the baseline is to the true underlying level.
+
+**Calculating the expected regression.** Using the formula — E[Y] = μ_Y + r × (σ_Y ÷ σ_X) × (X − μ_X) — it is possible to estimate how much improvement to expect from regression alone, then subtract that expected regression from the observed improvement. What remains is a more honest upper bound on the intervention's contribution.
+
+---
+
+<RelatedLink to={routes.article('pearson-correlation-coefficient')} label="Pearson correlation coefficient" intro="Worth reading next" />
+
+## Frequently Asked Questions
+
+### What is the regression to the mean definition in simple terms?
+
+Regression to the mean means that if something is measured at an extreme value — very high or very low — the next measurement of the same thing will tend to be closer to average. It happens because extreme values are partly due to chance, and chance does not consistently favor the same direction. The pull toward average is an automatic consequence of imperfect correlation between measurements, not evidence of any intervention or change.
+
+### What is the difference between mean regression and statistical regression analysis?
+
+Mean regression — or regression to the mean — is a naturally occurring statistical phenomenon: the tendency for extreme observations to be followed by less extreme ones. Statistical regression analysis (such as linear regression) is an intentionally applied modeling technique for predicting one variable from another. Both names trace back to Galton's 1886 discovery, because Galton's term *regression* was borrowed and extended to describe the broader analytical framework. However, they refer to different things: mean regression describes a behavior in data; regression analysis describes a family of mathematical models.
+
+### Is regression to the mean always present?
+
+Regression to the mean occurs whenever two measurements of the same quantity are imperfectly correlated — that is, whenever r is less than 1 in absolute value. In practice, no two real-world measurements of the same trait are perfectly correlated because noise, biological variability, and measurement error are always present. So regression to the mean is present, to some degree, in virtually every situation where the same subject is measured at two different times. The closer r is to 1, the weaker the regression effect. The closer r is to 0, the stronger the effect.
+
+### Does regression to the mean only apply to values above the mean?
+
+No. The regression is symmetric. If you select observations at the *low* extreme, their second measurements will tend to be less extreme — that is, higher, and closer to the mean. Regression to the mean pulls from both tails. A student who scored far below average on one test will, on average, score higher on the next test — not because anything changed in their ability, but because extremely low scores contain a large chance component that does not persist.
+
+### How do researchers protect against regression to the mean?
+
+The most reliable protection is a randomized control group, which ensures regression operates equally on all arms of a study so it cancels out as a confounder. When randomization is not feasible, researchers can use pre-specified baseline averaging (averaging multiple pre-measurements to stabilize the baseline), regression discontinuity designs (which exploit sharp selection cutoffs to estimate local causal effects), or statistical correction (computing expected regression from the formula and subtracting it from observed effects).
+
+---
+
+## Summary
+
+Regression to the mean — sometimes called mean regression or the regression of the mean — describes the mathematical pull that draws extreme observations back toward the center of a distribution on subsequent measurement. Discovered by Francis Galton in 1886 while studying hereditary heights, it arises whenever two measurements of the same quantity are imperfectly correlated.
+
+The formula is: the expected second measurement equals the population mean plus r times the deviation of the first measurement from that mean, where r is the Pearson correlation between the two measurements. When r is less than 1, the deviation shrinks in expectation — and that shrinkage is regression to the mean.
+
+In practice, this phenomenon masquerades as the effect of interventions, feedback, or effort when it is actually a statistical artifact of measuring at an extreme. The researchers, coaches, and analysts who understand the regression to the mean definition account for it in their designs — using randomized controls, multiple baselines, and careful causal reasoning to separate genuine effects from statistical inevitability.
