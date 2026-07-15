@@ -1,0 +1,324 @@
+---
+title: "Confidence Interval: Formula & How to Calculate a 95% CI"
+description: "Learn the confidence interval formula and how to calculate a 95% CI step by step, with a fully worked example, calculator embed, and common-mistake guide."
+category: inferential-statistics
+primaryKeyword: confidence interval formula
+keywords:
+  - confidence interval formula
+  - 95 confidence interval
+  - what is a confidence interval
+phase: 2
+calculator: confidence-interval
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+A **confidence interval** gives you a range of values that is likely to contain an unknown population parameter — such as the true mean — with a stated level of certainty. The **confidence interval formula** for a population mean is:
+
+```
+x̄ ± z* × (σ / √n)
+```
+
+where `x̄` is the sample mean, `z*` is the critical value for your chosen confidence level, `σ` is the population standard deviation (or sample standard deviation `s` when σ is unknown), and `n` is the sample size. A **95% confidence interval** is the most common choice, using a critical value of `z* = 1.96`.
+
+Rather than claiming a single point estimate is the true population mean, a confidence interval communicates the precision of your estimate. This article covers what is a confidence interval, how to apply the formula, and walks through a complete worked example with real numbers.
+
+---
+
+## What Is a Confidence Interval?
+
+A confidence interval is a range constructed from sample data that, over many repeated samples, would contain the true population parameter a specified percentage of the time. When you hear "95% confidence interval," it means: if you drew 100 independent random samples from the same population and built a 95% CI from each one, approximately 95 of those 100 intervals would contain the true population mean.
+
+The statement is about the procedure, not about one particular interval. The population mean is fixed; after you compute your one interval, it either contains the mean or it does not. What is 95% is the long-run success rate of the method itself.
+
+This distinction matters in practice. Saying "there is a 95% probability that the true mean falls in this interval" is technically incorrect — a common mistake covered later in this article. The correct statement is: "we used a method that produces intervals containing the true mean 95% of the time."
+
+A confidence interval has two components:
+
+- **Point estimate** — the center of the interval (usually the sample mean x̄).
+- **Margin of error** — the half-width on either side, which depends on the desired confidence level, the variability in the data, and the sample size.
+
+Wider intervals reflect more uncertainty; narrower intervals reflect less. You can shrink a confidence interval by increasing the sample size, decreasing the confidence level, or (if possible) reducing variability in the measurements themselves.
+
+For authoritative background on interval estimation, the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.2.5 — Confidence Intervals](https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm) provides a thorough treatment of the theory and assumptions underlying confidence intervals.
+
+---
+
+## The Confidence Interval Formula
+
+### For a Population Mean (Known σ)
+
+When the population standard deviation σ is known, the two-sided confidence interval for the population mean is:
+
+```
+CI = x̄ ± z* × (σ / √n)
+```
+
+Breaking down each term:
+
+- **x̄** — the sample mean, the center of the interval.
+- **z*** — the critical z-value corresponding to your confidence level (see the table below).
+- **σ** — the known population standard deviation.
+- **n** — the number of observations in the sample.
+- **σ / √n** — the **standard error of the mean**; it measures how much sample means vary from sample to sample.
+- **z* × (σ / √n)** — the **margin of error**; the ± amount added and subtracted from x̄.
+
+The lower bound of the interval is `x̄ − z* × (σ / √n)` and the upper bound is `x̄ + z* × (σ / √n)`.
+
+### Critical z-Values for Common Confidence Levels
+
+| Confidence Level | α (significance level) | z* |
+|-----------------|------------------------|-----|
+| 90% | 0.10 | 1.645 |
+| 95% | 0.05 | 1.960 |
+| 99% | 0.01 | 2.576 |
+
+The critical value z* comes from the standard normal distribution. For a 95% confidence interval, z* = 1.96 because 95% of the standard normal distribution falls within ±1.96 standard deviations of the mean.
+
+### For a Population Mean (Unknown σ, Small Sample)
+
+When σ is unknown — the typical case in applied research — you substitute the sample standard deviation `s` and replace `z*` with the t-critical value `t*` from the t-distribution with `n − 1` degrees of freedom:
+
+```
+CI = x̄ ± t* × (s / √n)
+```
+
+The t-distribution has heavier tails than the standard normal distribution, reflecting the added uncertainty of estimating σ from the sample itself. As n grows large, t* approaches z*, so the two methods converge for large samples.
+
+---
+
+## How to Calculate a 95% Confidence Interval: Worked Example
+
+Here is a step-by-step calculation using real numbers.
+
+**Scenario:** A quality control engineer measures the weight of 36 components from a production line. The sample mean is x̄ = 85 grams. Historical data shows the population standard deviation is σ = 12 grams. Calculate a 95% confidence interval for the true mean weight.
+
+### Step 1: Identify the values
+
+```
+x̄ = 85      (sample mean)
+σ = 12       (population standard deviation)
+n = 36       (sample size)
+z* = 1.96    (critical value for 95% confidence level)
+```
+
+### Step 2: Calculate the standard error
+
+```
+SE = σ / √n = 12 / √36 = 12 / 6 = 2
+```
+
+### Step 3: Calculate the margin of error
+
+```
+ME = z* × SE = 1.96 × 2 = 3.92
+```
+
+### Step 4: Construct the interval
+
+```
+Lower bound = x̄ − ME = 85 − 3.92 = 81.08
+Upper bound = x̄ + ME = 85 + 3.92 = 88.92
+
+95% CI: (81.08, 88.92)
+```
+
+**Interpretation:** The 95% confidence interval for the true mean weight of components is 81.08 to 88.92 grams. The engineer used a method that produces intervals containing the true population mean 95% of the time.
+
+### What Changes the Width?
+
+You can see from the formula that three factors control interval width:
+
+1. **Confidence level** — raise it from 95% to 99% and z* jumps from 1.96 to 2.576, widening the interval.
+2. **Standard deviation** — more variable data (larger σ) produces a wider interval; more precise measurements narrow it.
+3. **Sample size** — doubling n multiplies √n by √2 ≈ 1.414, cutting the margin of error by about 29%. To halve the margin of error, you need to quadruple the sample size.
+
+<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="For a related calculation" />
+
+---
+
+## Understanding Confidence Levels and Critical Values
+
+The confidence level you choose is a deliberate trade-off between precision and certainty.
+
+- **90% CI:** Narrower interval — better precision, but wrong 1 in 10 times under repeated sampling.
+- **95% CI:** The most common default in scientific research; balances width and reliability.
+- **99% CI:** Wider interval — rarely wrong, but less useful if the range becomes too broad to inform decisions.
+
+The critical value z* is derived from the standard normal distribution by finding the z-score that cuts off half of α in each tail. For a 95% CI, α = 0.05, so you want the z-score that leaves 0.025 (2.5%) in each tail. Standard normal tables give z* = 1.96.
+
+When you look up a z-table for a two-tailed test at 95%, you are finding the value where the cumulative probability reaches 0.975 (the upper 97.5th percentile of the standard normal), which equals 1.96. The symmetry of the normal distribution means the lower critical value is −1.96 and the upper is +1.96.
+
+For small samples (typically n < 30) or when σ is unknown, always use the t-distribution. The t-critical value is always larger than the corresponding z-critical value for the same confidence level, which is the distribution's way of acknowledging extra uncertainty.
+
+---
+
+## Try the Confidence Interval Calculator
+
+Use the calculator below to verify the worked example above, or enter your own values. Enter the sample mean (85), standard deviation (12), and sample size (36), then select the 95% confidence level to see the margin of error and the lower and upper bounds.
+
+<StatCalc slug="confidence-interval" variant="embed" />
+
+For a wider view with all the output details, open the full <Link to={routes.calculator('confidence-interval')}>confidence interval calculator</Link>. You can also explore all available tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis Explained" intro="Worth reading next" />
+
+---
+
+## Confidence Interval for a Proportion
+
+The same logic applies to proportions (percentages). If you observe p̂ ("p-hat") successes in a sample of n observations, the 95% confidence interval for the true population proportion is:
+
+```
+CI = p̂ ± z* × √(p̂ × (1 − p̂) / n)
+```
+
+where `√(p̂ × (1 − p̂) / n)` is the standard error of a proportion.
+
+**Example:** A survey of 400 voters finds that 220 support a candidate, giving p̂ = 220 / 400 = 0.55. Calculate a 95% CI.
+
+```
+SE = √(0.55 × 0.45 / 400)
+   = √(0.2475 / 400)
+   = √0.0006188
+   ≈ 0.0249
+
+ME = 1.96 × 0.0249 ≈ 0.0488
+
+Lower bound = 0.55 − 0.0488 = 0.501
+Upper bound = 0.55 + 0.0488 = 0.599
+
+95% CI: (50.1%, 59.9%)
+```
+
+This is exactly the type of "margin of error" reported in political polling — the ±4.9% range you often see in news coverage.
+
+**Assumptions for the proportion formula:** This formula assumes the sample is large enough that the distribution of p̂ is approximately normal. The standard rule of thumb is that both `n × p̂ ≥ 10` and `n × (1 − p̂) ≥ 10`. In the example: 400 × 0.55 = 220 ≥ 10 ✓ and 400 × 0.45 = 180 ≥ 10 ✓.
+
+<RelatedLink to={routes.calculator('proportion')} label="proportion calculator" intro="Another helpful calculator is" />
+
+---
+
+## When to Use the t-Distribution Instead of z
+
+You should use the t-distribution (and t* instead of z*) when:
+
+- **σ is unknown** (you only have a sample standard deviation s), AND
+- **The sample size is small** (typically n < 30).
+
+The formula stays the same shape, but t* replaces z* and `s` replaces `σ`:
+
+```
+CI = x̄ ± t* × (s / √n)
+```
+
+The degrees of freedom for the t-critical value is `df = n − 1`. You look up t* in a t-table or compute it from statistical software.
+
+**Example:** A researcher measures the reaction times of 10 participants. The sample mean is x̄ = 250 ms and the sample standard deviation is s = 30 ms. Construct a 95% CI.
+
+```
+n = 10, df = 9
+t* for df = 9 at 95% confidence = 2.262 (from t-table)
+
+SE = s / √n = 30 / √10 ≈ 30 / 3.162 ≈ 9.49
+ME = 2.262 × 9.49 ≈ 21.47
+
+95% CI: (250 − 21.47, 250 + 21.47)
+       = (228.53, 271.47) ms
+```
+
+Notice how t* = 2.262 is larger than z* = 1.96 at 95% confidence. The t-distribution compensates for small-sample uncertainty by producing a wider interval. As n increases, t* converges toward 1.96. With n = 100, the t* at 95% and df = 99 is already 1.984 — very close to z*.
+
+The detailed chapter on t-based confidence intervals is covered in [OpenStax, *Introductory Statistics* — Chapter 8, Confidence Intervals](https://openstax.org/books/introductory-statistics/pages/8-introduction), which provides additional worked examples and discusses when the normality assumption can be relaxed.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="On a related note" />
+
+---
+
+## Common Mistakes and Misinterpretations
+
+### Mistake 1: Saying "95% probability the true mean is in this interval"
+
+This is the single most common error. After you compute a specific interval, it is not correct to say there is a 95% probability the true mean lies within it. The true mean is a fixed (unknown) constant — it is either in your interval or it is not. What is 95% is the long-run success rate of the confidence-interval procedure across many repetitions.
+
+The correct phrasing: "We are 95% confident that the true mean weight lies between 81.08 g and 88.92 g," where "confident" refers to the reliability of the method, not a probability about this one interval.
+
+### Mistake 2: Confusing confidence level with accuracy
+
+A 95% CI does not mean your sample was 95% accurate, or that 95% of the data falls in the range. The interval is about the mean, not about individual data values. Individual data points are described by the full data distribution, not a confidence interval for the mean.
+
+### Mistake 3: Thinking a wider CI means a worse study
+
+A wide interval simply reflects more uncertainty — which might be due to high natural variability, a small sample, or a high confidence level. A wide interval from a well-designed study with honest reporting is more valuable than a narrow interval from an underpowered study that happened to estimate well by chance. Width is not a quality judgment; it is information.
+
+### Mistake 4: Using z when you should use t
+
+When σ is unknown and n is small, using z* = 1.96 understates the true uncertainty. The correct approach is t* with n − 1 degrees of freedom, which is always larger than 1.96 for small samples and ensures your stated confidence level is honest.
+
+### Mistake 5: Interpreting a non-overlapping CI as proof of a difference
+
+Two confidence intervals that do not overlap do imply a statistically significant difference between the two means at the stated level. However, overlapping CIs do not necessarily mean the means are not significantly different — this is a subtlety that trips up many practitioners. A proper two-sample test (like a t-test) is the correct tool for comparing two group means formally.
+
+---
+
+## Frequently Asked Questions
+
+### What is a confidence interval?
+
+A confidence interval is a range of plausible values for an unknown population parameter, constructed from sample data with a stated level of confidence (typically 90%, 95%, or 99%). A 95% CI means the construction procedure produces an interval containing the true parameter 95% of the time under repeated sampling.
+
+### What is the confidence interval formula?
+
+The standard formula for a confidence interval for a population mean (known σ) is:
+
+```
+CI = x̄ ± z* × (σ / √n)
+```
+
+where x̄ is the sample mean, z* is the critical z-value (1.96 for 95%), σ is the population standard deviation, and n is the sample size. When σ is unknown, replace z* with the t-critical value and σ with the sample standard deviation s.
+
+### How do I calculate a 95% confidence interval?
+
+Follow four steps: (1) Find x̄, σ (or s), and n. (2) Use z* = 1.96 for a 95% CI with a large sample. (3) Compute the standard error: SE = σ / √n. (4) Multiply SE by z* to get the margin of error, then add and subtract it from x̄ to get the lower and upper bounds.
+
+### What does 95% confidence actually mean?
+
+It means the construction method — not the particular interval you computed — captures the true population mean 95% of the time across repeated random samples. For any single interval you compute, the true mean either is or is not inside it; the 95% describes the long-run reliability of the procedure.
+
+### What is the margin of error?
+
+The margin of error (ME) is the half-width of the confidence interval:
+
+```
+ME = z* × (σ / √n)
+```
+
+It equals the distance from the sample mean to either end of the interval. A larger margin of error means a wider, less precise interval.
+
+### How does sample size affect the confidence interval?
+
+Larger sample sizes produce narrower (more precise) intervals, because the standard error σ / √n shrinks as n grows. To reduce the margin of error by half, you need to quadruple the sample size. This is a fundamental constraint of statistical estimation: precision comes at the cost of data.
+
+### When should I use a t-distribution instead of a z-distribution?
+
+Use the t-distribution when the population standard deviation σ is unknown and you are substituting the sample standard deviation s, especially for small samples (n < 30). For large samples (n ≥ 30 or n ≥ 40 depending on the textbook), the t-distribution approaches the z-distribution closely enough that the choice rarely matters in practice.
+
+### What is the difference between a confidence interval and a prediction interval?
+
+A confidence interval targets the population mean — where the center of the distribution is. A prediction interval targets the location of a single future observation. Prediction intervals are always wider than confidence intervals for the same data and confidence level, because they must account for both the uncertainty in the mean and the natural variability of individual measurements.
+
+---
+
+## Summary
+
+A confidence interval quantifies the uncertainty around a sample-based estimate of a population parameter. The confidence interval formula `x̄ ± z* × (σ / √n)` captures three influences on precision: the variability in your data (σ), how much data you collected (n), and how much certainty you want (z*). A 95% confidence interval uses z* = 1.96 and is the standard default across scientific disciplines.
+
+The worked example above showed a 95% CI of (81.08, 88.92) grams for a sample of 36 components with mean 85 and standard deviation 12. Verify those numbers — or explore your own — with the calculator embedded in this article.
+
+When σ is unknown or the sample is small, use the t-distribution with `n − 1` degrees of freedom instead of z. For proportions, use `p̂ ± z* × √(p̂(1 − p̂) / n)`. In all cases, avoid the common mistake of saying "there is a 95% probability the mean is in this range" — the correct statement is that the procedure produces accurate intervals 95% of the time.
+
+Understanding the confidence interval formula is a gateway to hypothesis testing, regression output, and virtually every inferential result in applied statistics. Once you know how a CI is built, every "±" you see in a published study tells you exactly where the uncertainty comes from.
