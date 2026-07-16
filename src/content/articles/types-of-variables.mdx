@@ -1,0 +1,274 @@
+---
+title: "Types of Variables: Qualitative vs. Quantitative"
+description: "Learn to classify types of variables in statistics: qualitative vs quantitative, discrete vs continuous, and how each type shapes your research and analysis."
+category: foundations
+primaryKeyword: types of variables
+keywords:
+  - qualitative vs quantitative
+  - discrete vs continuous variables
+  - qualitative vs quantitative research
+  - quantitative vs qualitative
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Understanding the **types of variables** in a dataset is the first skill every statistics student needs to develop. The most fundamental split is **qualitative vs quantitative**: some variables describe categories (eye colour, treatment group, political affiliation) while others describe measurable amounts (height, test score, income). Getting this distinction right before you pick a statistical method prevents wasted analysis and, more importantly, prevents meaningless results.
+
+A variable is any characteristic, number, or quantity that can take different values across observations. Before you calculate a single mean, run a regression, or draw a bar chart, you need to know what kind of variable you are working with.
+
+## What Is a Variable in Statistics?
+
+In statistics, a **variable** is a property that can vary from one observation to the next. In a dataset of 500 university students, each column — gender, age, GPA, hometown, number of courses — is a variable. Each row is one observation (one student), and the cell value records that variable's value for that observation.
+
+Variables are the raw material of every statistical analysis. You cannot choose the right summary measure, the right test, or the right visualisation without knowing what kind of variable you have. The <Link to={routes.article('fundamental-statistics')}>fundamental statistics</Link> guide explains this broader framing if you are still building your core statistical vocabulary.
+
+The high-level taxonomy branches into two camps: **qualitative variables** (also called categorical variables) and **quantitative variables** (also called numerical variables). Each camp further divides into subtypes, and the subtypes determine what arithmetic you can legally perform on the data.
+
+<RelatedLink to={routes.article('fundamental-statistics')} label="Fundamental Statistics" intro="Worth reading next" />
+
+---
+
+## Qualitative vs. Quantitative Variables: The Core Distinction
+
+A **qualitative variable** (or categorical variable) records a quality, a label, or a group membership. The values are names or categories, not numbers. Even if the categories are coded as integers (1 = male, 2 = female, 3 = non-binary), the numbers are just shorthand labels — arithmetic on them is meaningless. Computing the average of 1, 2, and 3 gives you 2, but that number does not represent any gender in any real sense.
+
+A **quantitative variable** (or numerical variable) records a measurable amount. The values are genuine numbers where the difference between two values means something. "A student scored 82 while another scored 74" — the 8-point gap is a real quantity that tells you something about the difference in performance.
+
+The qualitative vs quantitative distinction is the most important classification you will make about a variable because it determines:
+- which summary statistics make sense (mode for qualitative; mean and standard deviation for quantitative)
+- which charts are appropriate (bar chart or pie chart for qualitative; histogram or box plot for quantitative)
+- which statistical tests apply (chi-square for associations between qualitative variables; t-tests and ANOVA for quantitative outcomes)
+
+### Quick Reference
+
+| Property | Qualitative | Quantitative |
+|---|---|---|
+| Records | Categories, labels | Amounts, measurements |
+| Examples | Blood type, country, Likert rating | Height, temperature, income |
+| Central tendency | Mode | Mean, median |
+| Spread | Frequency table | Standard deviation, IQR |
+| Association test | Chi-square, Fisher's exact | Pearson correlation, ANOVA |
+| Chart | Bar chart, pie chart | Histogram, box plot |
+
+The table above summarises the working definitions. Each side breaks down further into subtypes.
+
+---
+
+## Types of Qualitative Variables
+
+Qualitative variables divide into two subtypes based on whether their categories have a natural order.
+
+### Nominal Variables
+
+A **nominal variable** has categories with no natural ranking. Swapping the order of the categories does not change what they mean. Examples:
+- Blood type (A, B, AB, O) — O is not "greater than" A in any meaningful sense
+- Country of birth (France, Nigeria, Thailand, Australia)
+- Colour of a product (red, blue, green)
+- Political party membership
+- Whether an email is spam or not spam (binary nominal)
+
+For a nominal variable, the only arithmetic you can legally perform is counting frequencies and computing proportions. The **mode** (the most common category) is the only meaningful measure of centre. You cannot compute a mean or median for blood type — "the average blood type is B+" has no meaning.
+
+When a nominal variable has exactly two categories (yes/no, pass/fail, heads/tails), it is called a **binary** or **dichotomous** variable. Binary variables are a common special case with their own body of methods (logistic regression, the binomial distribution, the proportion test).
+
+### Ordinal Variables
+
+An **ordinal variable** has categories that can be ranked, but the gaps between adjacent categories are not equal or even defined. Examples:
+- Education level (primary, secondary, bachelor's, master's, doctorate)
+- Pain rating (none, mild, moderate, severe)
+- Star rating (1 star through 5 stars)
+- Military rank (private, corporal, sergeant, …)
+- Satisfaction survey response: strongly disagree → disagree → neutral → agree → strongly agree (a **Likert scale**)
+
+For an ordinal variable, you can say that "master's" is higher than "bachelor's" in educational attainment, but you cannot say the jump from bachelor's to master's involves the same amount of advancement as the jump from secondary to bachelor's. The gaps are unknown and likely unequal.
+
+The **median** and **percentiles** are valid summary statistics for ordinal data because they depend only on rank order. The **mean** is technically not valid for truly ordinal data, though in practice researchers often treat Likert scales with five or more levels as approximately continuous — a contested but common choice that requires explicit acknowledgement.
+
+The nominal-vs-ordinal distinction matters when selecting visualisations and tests. Ordinal data can be meaningfully sorted and plotted in rank order; nominal data cannot be given a meaningful sort order.
+
+<RelatedLink to={routes.calculator('frequency-table')} label="frequency table calculator" intro="For a related calculation" />
+
+---
+
+## Types of Quantitative Variables: Discrete vs. Continuous
+
+Quantitative variables divide into **discrete** and **continuous** based on the possible values they can take. This discrete vs continuous split matters for choosing probability distributions and statistical models.
+
+### Discrete Variables
+
+A **discrete variable** can only take specific, countable values — typically whole numbers with no values in between. Examples:
+- Number of children in a household (0, 1, 2, 3 …)
+- Number of defective items in a production batch
+- Number of hospital admissions in a week
+- Number of questions answered correctly on a test
+- Number of car accidents recorded in a city per year
+
+You cannot have 2.37 children or 5.5 defective items. The values form a countable list, even if that list is very long. Crucially, a discrete variable is still quantitative: you can compute the mean number of children per household (say, 1.8), and that number is meaningful even though no family has exactly 1.8 children.
+
+The **binomial distribution**, the **Poisson distribution**, and the **negative binomial distribution** are all discrete probability models — they are built to describe counts, not measurements on a continuous scale. When you model a count outcome, you typically reach for one of these distributions rather than the normal distribution.
+
+### Continuous Variables
+
+A **continuous variable** can take any value within a range, including every fraction and decimal in between. Examples:
+- Height (172.3 cm, 172.31 cm — any precision is theoretically possible)
+- Temperature (36.8°C, 36.81°C, 36.817°C …)
+- Time (how long it takes to run 100 metres)
+- Annual income (measured to the cent or smaller in some financial contexts)
+- Blood pressure (systolic and diastolic readings)
+
+Between any two heights — say 170 cm and 171 cm — there are infinitely many possible values. In practice, continuous variables are rounded to some precision level (a thermometer reads to one decimal place), but the underlying construct is truly continuous. The rounding is a measurement limitation, not a property of the variable itself.
+
+The **normal distribution**, the **t-distribution**, and the **F-distribution** are continuous probability models. Linear regression assumes a continuous numerical outcome. When you read about regression or ANOVA, you are almost always working with continuous quantitative data.
+
+### Discrete vs. Continuous at a Glance
+
+| Feature | Discrete | Continuous |
+|---|---|---|
+| Possible values | Countable, often integers | Any value in a range |
+| Example variable | Number of goals scored | Time to score a goal |
+| Example model | Binomial, Poisson | Normal, t-distribution |
+| Histogram style | Bars with gaps between categories | Bins touching; width encodes range |
+
+---
+
+## Qualitative vs. Quantitative Research
+
+The qualitative vs quantitative distinction in **statistics** is closely related to — but not identical to — the same terminology in **research methodology**. In research design, the terms describe different approaches to gathering and analysing data.
+
+**Quantitative research** collects numerical data that can be summarised with statistics and tested with formal hypothesis tests. A clinical trial measuring blood pressure in two groups, a survey counting how many people prefer brand A over brand B, or an experiment recording reaction times — all are quantitative research. The goal is to quantify the size of an effect and express uncertainty as a p-value, confidence interval, or effect size.
+
+**Qualitative research** collects non-numerical data: interviews, open-ended survey responses, observational field notes, focus-group transcripts. The goal is to understand meanings, themes, and experiences, not to measure them numerically. Analysis involves identifying and categorising themes rather than computing means or running t-tests.
+
+The two approaches are not mutually exclusive. Mixed-methods research uses both: a survey might include a Likert scale (producing ordinal quantitative data) alongside an open-ended comment field (producing qualitative text data). A medical study might measure blood pressure (quantitative) while also interviewing patients about their lived experience of treatment (qualitative).
+
+From a statistical standpoint, what matters is the type of variable each approach produces. Qualitative research typically produces nominal and ordinal variables — themes, categories, and rating scales. Quantitative research produces continuous and discrete variables — measurements and counts. Understanding this connection helps you match the right analysis method to your research question and data structure.
+
+The <Link to={routes.article('parameter-vs-statistic')}>parameter vs statistic</Link> article explores a closely related distinction: how we describe populations versus samples, and why the same measurement can represent a fixed truth or an estimate depending on context.
+
+<RelatedLink to={routes.article('parameter-vs-statistic')} label="Parameter vs. Statistic" intro="On a related note" />
+
+---
+
+## A Fully Worked Classification Example
+
+Consider a fictional study on 200 university students. The dataset includes eight variables. Classifying each one before starting the analysis determines every subsequent methodological decision.
+
+| Variable | Sample values | Type | Subtype | Reason |
+|---|---|---|---|---|
+| Student ID | 10001, 10002, 10003 | Qualitative | Nominal | Numbers are labels; averaging IDs is meaningless |
+| Major | Biology, History, CS | Qualitative | Nominal | No natural ordering of majors |
+| Year of study | 1st, 2nd, 3rd, 4th | Qualitative | Ordinal | Natural rank order; gaps unknown |
+| Satisfaction rating | 1, 2, 3, 4, 5 | Qualitative | Ordinal | Ordered levels; interval equality not guaranteed |
+| GPA | 2.31, 3.74, 3.95 | Quantitative | Continuous | Any value in [0.00, 4.00] possible |
+| Courses enrolled | 4, 5, 6, 7 | Quantitative | Discrete | Must be a whole number |
+| Hours studied per week | 8.5, 12.0, 15.25 | Quantitative | Continuous | Any non-negative decimal is theoretically possible |
+| Passed the year? | Yes, No | Qualitative | Nominal (binary) | Two unordered categories |
+
+Working through the logic for each variable:
+
+**Student ID** — Even though it looks numeric, the number is a label with no arithmetic meaning. Computing the mean of student IDs gives a number that corresponds to no one. It is a nominal qualitative variable; the only useful operation is checking for duplicates.
+
+**Major** — Unordered categories with no natural ranking. No major is objectively "higher than" another. Nominal qualitative. Summary: frequency count of each major.
+
+**Year of study** — First year comes before second year, and so on. There is a natural order, but the advance from year 1 to year 2 (adjusting to university) is not the same experience as year 3 to year 4 (completing final projects). Ordinal qualitative. Summary: median year, frequency table.
+
+**Satisfaction rating (1–5)** — A five-point scale with ordered levels. Technically ordinal since the subjective gap from "2 to 3" may not equal "4 to 5". In practice, many researchers treat 5-point Likert items as approximately continuous when sample size is large — just note the assumption explicitly.
+
+**GPA** — Can take any value between 0.00 and 4.00, and is measured to two decimal places. The gap between 3.0 and 3.5 GPA is the same size as 2.0 to 2.5 GPA. Continuous quantitative. Summary: mean GPA, standard deviation, histogram.
+
+**Courses enrolled** — Must be a whole number; you cannot be enrolled in 4.7 courses. The mean number of courses (say, 5.3) is still meaningful. Discrete quantitative.
+
+**Hours studied per week** — Measured on a continuous scale; you can study for 8 hours 37 minutes, or 8.617 hours, expressible to any precision. Continuous quantitative. Summary: mean, standard deviation, box plot by major.
+
+**Passed the year?** — A binary nominal variable. Two unordered categories: yes and no. Summary: proportion who passed; test of whether passing rate differs by year of study.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="You may also find this useful" />
+
+---
+
+## Choosing the Right Statistical Analysis
+
+Variable type is the gatekeeper for statistical methods. Using the wrong method for a variable type produces results that are technically computed by software but factually meaningless.
+
+### For Qualitative Variables
+
+- **Describe** with frequency counts and percentages. A <Link to={routes.calculator('frequency-table')}>frequency table</Link> shows how many observations fall into each category and what proportion of the total that represents.
+- **Display** with a bar chart (for nominal and ordinal data) or a stacked bar chart to compare groups side by side.
+- **Compare two groups** with a chi-square test of independence (when expected cell counts are ≥ 5) or Fisher's exact test (for small samples). These tests ask whether the distribution across categories differs between groups.
+- **Measure association** between two qualitative variables with Cramér's V, which scales the chi-square statistic to a 0–1 effect size regardless of table size.
+
+### For Quantitative Variables
+
+- **Describe** with the mean and standard deviation (for symmetric distributions) or the median and interquartile range (for skewed distributions). The choice of summary statistic follows from the shape of the data, not just the variable type.
+- **Display** with a histogram or density plot (for a single variable), or a box plot or scatter plot (for comparisons or relationships).
+- **Compare two groups** with a two-sample t-test (continuous, approximately normal) or a Mann-Whitney U test when normality is in doubt or the sample is small.
+- **Compare more than two groups** with one-way ANOVA or the Kruskal-Wallis test (the non-parametric alternative).
+- **Model a relationship** with linear regression when the outcome is continuous, or logistic regression when the outcome is binary qualitative (yes/no, pass/fail).
+
+The authoritative reference for matching variable types to appropriate analysis methods is the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/), which systematically addresses data types and the appropriate statistical tools for each. The [OpenStax *Introductory Statistics*, Chapter 1.1 — Definitions of Statistics, Probability, and Key Terms](https://openstax.org/books/introductory-statistics/pages/1-1-definitions-of-statistics-probability-and-key-terms) covers the qualitative/quantitative split at an accessible introductory level.
+
+---
+
+## Common Mistakes When Classifying Variables
+
+**Treating nominal codes as numbers.** When categories are stored as integers (1 = Control, 2 = Treatment A, 3 = Treatment B), it is tempting to compute an average. The mean of [1, 2, 3] is 2, which lands on "Treatment A" — but averaging group labels is meaningless. Whenever you see a numeric code for a categorical variable, treat it as nominal qualitative.
+
+**Treating ordinal variables as continuous without acknowledgement.** A three-point pain scale (none = 0, mild = 1, severe = 2) is ordinal. The gap from 0 to 1 (no pain to mild pain) is not necessarily the same as 1 to 2 (mild to severe). Using the mean as if the scale were an interval measurement can give a misleading picture of where the "average" sits. When you treat ordinal data as continuous — which is sometimes defensible for larger scales — state the assumption explicitly.
+
+**Confusing discrete quantitative with qualitative.** A count of 0, 1, 2, or 3 events is a quantitative discrete variable, not a qualitative variable. Even though it has only a few distinct values, the difference between 2 and 3 events is a real numerical quantity. You can compute a meaningful mean of counts; you cannot compute a meaningful mean of qualitative labels.
+
+**Assuming continuous variables must be normally distributed.** A continuous variable is defined by the type of values it can take, not by its distribution shape. A continuous variable can be highly skewed, bimodal, or follow an exponential distribution. The shape of the distribution is a separate question from the classification of the variable as continuous.
+
+**Letting measurement method determine the concept.** Age is naturally a continuous quantitative variable, but when recorded as age groups (18–24, 25–34, 35–44) it becomes ordinal qualitative. Income measured in dollars is continuous quantitative; income recorded as low/medium/high is ordinal qualitative. The type of variable you work with depends on how the data were collected and recorded, not on the underlying concept in the abstract. When a continuous underlying measure is grouped into categories, you lose precision — a fact worth remembering when designing a study.
+
+**Using the mean to summarise a skewed quantitative variable.** Even when a variable is genuinely quantitative and continuous (income is a classic example), a highly skewed distribution makes the mean misleading as a measure of centre. The median is often more informative for right-skewed distributions. This is not a classification error, but it is the most common analysis error that follows from misunderstanding what a quantitative variable's distribution actually looks like.
+
+---
+
+## Frequently Asked Questions
+
+### What is the difference between qualitative and quantitative variables?
+
+A qualitative variable records a category or label — eye colour, country of birth, survey rating. A quantitative variable records a numerical amount where arithmetic is meaningful — height, temperature, test score. The qualitative vs quantitative split is the most important first classification in data analysis because it determines which summary statistics and tests are valid.
+
+### What are discrete vs continuous variables?
+
+Both are quantitative, but they differ in what values are possible. A discrete variable takes countable values, usually whole numbers with no in-between values (number of siblings, defect count, goals scored). A continuous variable can take any value in a range, including every fraction and decimal (height, weight, reaction time). The distinction matters for choosing probability distributions and regression model types.
+
+### What is qualitative vs quantitative research?
+
+In research methodology, quantitative research collects numerical data to measure effects and test hypotheses with statistics. Qualitative research collects non-numerical data — interviews, observations, open-ended text — to understand meanings, experiences, and themes. These approaches map onto the statistical types: quantitative research produces counts and measurements (quantitative variables); qualitative research produces categories and themes (qualitative variables).
+
+### Can a variable be both qualitative and quantitative?
+
+Not simultaneously, but how you measure a concept determines which type it becomes. Age is naturally continuous quantitative; grouped into age brackets it becomes ordinal qualitative. Income measured in dollars is continuous quantitative; split into low/medium/high it is ordinal qualitative. The variable type is set by the measurement instrument and recording method, not by the underlying concept.
+
+### What are examples of qualitative variables?
+
+Common examples: blood type (A, B, AB, O); country of birth; political party affiliation; car colour; job title; university major; whether a patient recovered (yes/no, a binary qualitative variable). Any variable whose values are names, labels, or categories is qualitative — including variables where those labels happen to be stored as integers in a spreadsheet.
+
+### What are examples of quantitative variables?
+
+Common examples: height and weight; blood pressure reading; annual income; exam score out of 100; reaction time in milliseconds; number of daily steps (discrete quantitative); body temperature (continuous quantitative). Any variable where the difference between two values is itself a meaningful quantity is quantitative. A useful test: if you can legitimately ask "how much more?" or "what is the average?", the variable is quantitative.
+
+### Why does the type of variable matter for statistical analysis?
+
+Variable type determines what arithmetic is valid. You can compute the mean of heights but not the mean of blood types. You can use a chi-square test to compare two qualitative variables but not a t-test on a qualitative outcome. Most software will compute whatever number you ask for — it does not know that you have misclassified a nominal variable as numeric. The result looks like a statistic but is statistically meaningless. Knowing your variable types before analysis prevents this class of mistake entirely.
+
+### What is the difference between interval and ratio variables?
+
+Within quantitative variables, some researchers use a finer four-level scale — nominal, ordinal, interval, ratio — proposed by psychologist S. S. Stevens in 1946. An **interval variable** has equal gaps between values but no true zero (calendar year, degrees Celsius). A **ratio variable** has equal gaps and a meaningful zero point (height, weight, income, count). The ratio scale allows statements like "twice as much," which interval scales do not. In most applied statistics, the practical difference between interval and ratio is small; the more important divide is the qualitative vs quantitative split described throughout this article.
+
+---
+
+## Summary
+
+Every variable falls into one of two broad camps: **qualitative** (categorical, labels, group memberships) or **quantitative** (numerical, measurable amounts where arithmetic is meaningful). Qualitative variables divide further into **nominal** (unordered categories) and **ordinal** (ranked categories with unknown gap sizes). Quantitative variables divide into **discrete** (countable values, typically integers) and **continuous** (any value in a range, including fractions).
+
+These distinctions are not academic formalities. They determine which summary statistics make sense, which charts communicate clearly, and which statistical tests are valid. Misclassifying a variable does not cause software to crash — it produces a number that looks like a result but carries no real meaning.
+
+Before any analysis, work through your variables column by column: is this a category or a measurement? If a category, is it ordered? If a measurement, is it a count or a continuous reading? Those three questions take seconds and prevent the most common class of analytical errors in practice.
