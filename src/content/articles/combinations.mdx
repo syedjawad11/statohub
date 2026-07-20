@@ -1,0 +1,394 @@
+---
+title: "Combination Formula: Definition, Examples & Method"
+description: "Learn the combination formula C(n,r) = n! / (r!(n-r)!), work through fully worked examples, and know when to use combinations instead of permutations."
+category: combinatorics
+primaryKeyword: combination formula
+keywords:
+  - combination formula
+phase: 2
+calculator: combination
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **combination formula** C(n, r) = n! / (r!(n−r)!) tells you exactly how many ways you can select r items from a group of n when the order of selection does not matter. Whether you are counting possible lottery tickets, figuring out how many teams can be assembled from a squad, or determining the number of five-card poker hands in a standard deck, the combination formula delivers the precise count every time.
+
+Combinations differ from permutations in one key respect: if you pick three people to serve on a committee, the group [Alice, Bob, Carol] is identical to [Carol, Alice, Bob]. Neither arrangement is new — the members are what matter, not the sequence. That single distinction — order is irrelevant — is what sends you to the combination formula rather than the permutation formula.
+
+This article defines combinations precisely, derives the formula from first principles, works through several fully solved numeric examples, covers the important special cases, and answers the questions students most commonly ask.
+
+---
+
+## What Is a Combination?
+
+A combination is a selection of items from a larger set in which the arrangement of the chosen items does not affect the result. In formal terms, a combination of n distinct objects taken r at a time is any r-element subset of those objects, without regard to the order in which they are listed.
+
+A simple illustration makes this concrete. Suppose you have four athletes — Aaron, Beth, Carlos, and Diana — and you want to choose two to represent a team. Every possible team is one combination:
+
+- [Aaron, Beth]
+- [Aaron, Carlos]
+- [Aaron, Diana]
+- [Beth, Carlos]
+- [Beth, Diana]
+- [Carlos, Diana]
+
+There are exactly six combinations. Notice that [Aaron, Beth] and [Beth, Aaron] name the same team — swapping the names does not produce a new group. This is the defining property of a combination: only the membership of the subset counts, not the sequence.
+
+If order had mattered — say, you were assigning first and second place rather than picking a team — then [Aaron, Beth] and [Beth, Aaron] would be different outcomes, and you would use the permutation formula instead.
+
+The key question to ask before any counting problem is therefore: **does swapping two chosen items create a new valid outcome?** If yes, use permutations. If no, use combinations.
+
+---
+
+## The Combination Formula
+
+The number of ways to choose r items from n distinct items (with order irrelevant, without replacement) is written C(n, r), read as "n choose r." You may also see it written as ⁿCᵣ or as the binomial coefficient notation (n above r in brackets). All three represent the same quantity. The formula is:
+
+```
+C(n, r) = n! / ( r! × (n − r)! )
+```
+
+where `n!` (n factorial) is the product of every positive integer from 1 up to n:
+
+```
+n! = n × (n − 1) × (n − 2) × … × 2 × 1
+```
+
+By definition, `0! = 1`. This convention is not arbitrary — it ensures the formula works correctly for the special cases C(n, 0) = 1 and C(n, n) = 1.
+
+### What Each Symbol Represents
+
+| Symbol | Name | Meaning in the formula |
+|--------|------|------------------------|
+| n | Population size | Total number of items available to choose from |
+| r | Selection size | Number of items chosen |
+| ! | Factorial | Product of all integers from 1 to that number |
+| C(n, r) | Combination count | Number of distinct r-element subsets of n objects |
+
+The constraint `0 ≤ r ≤ n` must hold. If r is greater than n, there are 0 combinations — you cannot choose more items than exist.
+
+### Where the Combination Formula Comes From
+
+The formula is derived by adjusting the permutation count. When order matters, the number of ordered arrangements of r items chosen from n is:
+
+```
+P(n, r) = n! / (n − r)!
+```
+
+Each unordered group of r items can be internally arranged in exactly r! different sequences. For a three-person group [A, B, C], the possible orderings are ABC, ACB, BAC, BCA, CAB, and CBA — that is 3! = 6 orderings. Because a combination treats all those sequences as the same single subset, you divide the permutation count by r!:
+
+```
+C(n, r) = P(n, r) / r! = n! / ( (n − r)! × r! )
+```
+
+This division by r! collapses every group of r! duplicate orderings into one counted subset. For a rigorous probability-theory derivation, see [Penn State STAT 414 — Counting Techniques, Lesson 1.3](https://online.stat.psu.edu/stat414/lesson/1/1.3), which develops both the permutation and combination formulas as foundational tools for computing classical probabilities.
+
+<RelatedLink to={routes.article('permutations')} label="Permutations: Formula & Examples" intro="Worth reading next" />
+
+---
+
+## How to Apply the Combination Formula: Four Steps
+
+Applying the combination formula follows the same four steps every time.
+
+**Step 1.** Read the problem and identify n (total items available) and r (items to choose). Confirm that r ≤ n.
+
+**Step 2.** Compute the three factorial values: n!, r!, and (n − r)!.
+
+**Step 3.** Compute r! × (n − r)!.
+
+**Step 4.** Divide n! by that product. Simplify by cancelling common factors in the numerator and denominator before you multiply — this avoids enormous intermediate numbers.
+
+A common simplification trick: the (n − r)! in the denominator always cancels with the tail of n!. So instead of computing the full n!, you only need the top r factors of n!:
+
+```
+n! / (n − r)! = n × (n − 1) × (n − 2) × … × (n − r + 1)
+```
+
+This product has exactly r factors and is much faster to compute by hand.
+
+---
+
+## Fully Worked Example 1: Choosing a Committee
+
+**Problem.** A club has 10 members. How many distinct 3-person committees can be formed?
+
+**Identify.** Swapping any two members of a committee gives the same committee, so order does not matter. Use combinations with n = 10, r = 3.
+
+**Apply the formula.**
+
+```
+C(10, 3) = 10! / ( 3! × 7! )
+```
+
+Cancel 7! from numerator and denominator — only the top three factors of 10! remain:
+
+```
+10 × 9 × 8 = 720
+3! = 3 × 2 × 1 = 6
+C(10, 3) = 720 / 6 = 120
+```
+
+**Answer.** There are **120 distinct 3-person committees** that can be formed from 10 members.
+
+**Verification using symmetry.** C(10, 3) = C(10, 7), because choosing 3 to include is the same as choosing 7 to leave out:
+
+```
+C(10, 7) = 10 × 9 × 8 × 7 × 6 × 5 × 4 / 7! = 604,800 / 5,040 = 120 ✓
+```
+
+---
+
+## Fully Worked Example 2: Five-Card Poker Hands
+
+**Problem.** A standard 52-card deck is shuffled and five cards are dealt. How many distinct 5-card hands are possible?
+
+**Identify.** The order cards are dealt does not change the hand, so this is a combination: n = 52, r = 5.
+
+**Apply the formula.**
+
+```
+C(52, 5) = 52! / ( 5! × 47! )
+```
+
+Cancel 47! — keep only the top 5 factors of 52!:
+
+```
+52 × 51 × 50 × 49 × 48 = 311,875,200
+5! = 120
+C(52, 5) = 311,875,200 / 120 = 2,598,960
+```
+
+**Answer.** A standard deck produces **2,598,960 distinct 5-card hands.** Only 4 of those hands are royal flushes — a probability of roughly 1 in 650,000.
+
+---
+
+## Fully Worked Example 3: Lottery Tickets
+
+**Problem.** A lottery requires choosing 6 numbers from 1 through 49. How many distinct tickets exist?
+
+**Identify.** No two tickets are the same unless they contain the exact same set of six numbers. Order is irrelevant. Use combinations with n = 49, r = 6.
+
+**Apply the formula.**
+
+```
+C(49, 6) = 49! / ( 6! × 43! )
+```
+
+Keep only the top 6 factors of 49!:
+
+```
+49 × 48 × 47 × 46 × 45 × 44 = 10,068,347,520
+6! = 720
+C(49, 6) = 10,068,347,520 / 720 = 13,983,816
+```
+
+**Answer.** There are approximately **14 million distinct lottery tickets.** Each ticket has a 1-in-13,983,816 chance of matching the jackpot — which illustrates why lottery jackpots grow so large before anyone wins.
+
+---
+
+## Try the Combination Calculator
+
+Enter any valid values of n and r below to compute C(n, r) instantly. The calculator uses the same formula worked through in the examples above.
+
+<StatCalc slug="combination" variant="embed" />
+
+For a larger interactive view, open the full <Link to={routes.calculator('combination')}>combination calculator</Link> page. You can also explore the full suite of tools at the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+
+<RelatedLink to={routes.calculator('factorial')} label="factorial calculator" intro="For a related calculation" />
+
+---
+
+## Combinations vs Permutations
+
+The combination formula and the permutation formula solve similar problems, but for different scenarios. The central question is always the same: **does the order of the selected items matter?**
+
+- Order matters → **permutation formula**: `P(n, r) = n! / (n − r)!`
+- Order does not matter → **combination formula**: `C(n, r) = n! / (r! × (n − r)!)`
+
+The two formulas are directly related:
+
+```
+P(n, r) = C(n, r) × r!
+```
+
+For any fixed n and r, P(n, r) ≥ C(n, r), because each single combination corresponds to r! different permutations — all the orderings of its members.
+
+**Side-by-side comparison.**
+
+| Scenario | Order matters? | Correct formula | Count (example) |
+|----------|---------------|----------------|----------------|
+| Awarding 1st, 2nd, 3rd place from 20 contestants | Yes | P(20, 3) | 6,840 |
+| Selecting any 3 winners from 20 contestants | No | C(20, 3) | 1,140 |
+| Arranging 4 books on a shelf | Yes | P(4, 4) | 24 |
+| Choosing 2 books from 4 for a reading list | No | C(4, 2) | 6 |
+| Creating a 4-digit PIN from digits 0–9 | Yes | P(10, 4) | 5,040 |
+| Drawing 4 raffle tickets from a drum of 10 | No | C(10, 4) | 210 |
+
+Notice that the combination count is always smaller than the corresponding permutation count. For the winner scenario, C(20, 3) = 1,140 is exactly 1/6 of P(20, 3) = 6,840, because 3! = 6 orderings are collapsed into each combination. The <Link to={routes.article('permutations')}>permutations article</Link> works through the permutation formula with its own complete set of examples if you want to compare the two methods side by side.
+
+<RelatedLink to={routes.calculator('combination')} label="combination calculator" intro="Another helpful calculator is" />
+
+---
+
+## Special Cases of the Combination Formula
+
+Four special cases arise so often that they are worth memorising.
+
+### r = 0: Choosing Nothing
+
+```
+C(n, 0) = n! / ( 0! × n! ) = n! / ( 1 × n! ) = 1
+```
+
+There is exactly **one way to choose zero items** from any group: the empty selection. This holds for every value of n ≥ 0.
+
+### r = 1: Choosing One Item
+
+```
+C(n, 1) = n! / ( 1! × (n − 1)! ) = n
+```
+
+There are exactly **n ways to choose one item** — one way per item. C(10, 1) = 10, C(52, 1) = 52, and so on.
+
+### r = n: Choosing the Entire Set
+
+```
+C(n, n) = n! / ( n! × 0! ) = n! / n! = 1
+```
+
+There is exactly **one way to choose all n items** — the entire set is the only possible selection.
+
+### r = n − 1: Leaving Out One Item
+
+```
+C(n, n − 1) = n! / ( (n − 1)! × 1! ) = n
+```
+
+There are exactly **n ways to choose all-but-one item** — one way for each item you leave out. Notice this equals C(n, 1): choosing 1 item to include is equivalent to choosing 1 item to exclude.
+
+### The Symmetry Identity
+
+These special cases reflect a broader and very useful identity:
+
+```
+C(n, r) = C(n, n − r)
+```
+
+Selecting r items to include is always equivalent to selecting (n − r) items to exclude. In practice, when r > n/2, compute C(n, n − r) instead — it requires fewer multiplications:
+
+```
+C(50, 47) = C(50, 3) = (50 × 49 × 48) / (3 × 2 × 1) = 117,600 / 6 = 19,600
+```
+
+Computing C(50, 47) directly would require multiplying 47 numbers in the numerator. Using the symmetry reduces it to just 3.
+
+---
+
+## Real-World Applications of the Combination Formula
+
+The combination formula appears wherever you need to count distinct subsets of a larger set.
+
+**Probability and statistics.** Classical probability computes the chance of an event as (number of favourable outcomes) ÷ (total outcomes). Both the numerator and denominator are often combination counts. The hypergeometric distribution — used in quality control and genetics — is built entirely on combinations. The open-access textbook [OpenStax Introductory Statistics, Chapter 3 — Probability Topics](https://openstax.org/books/introductory-statistics/pages/3-introduction) introduces counting techniques including combinations in the context of probability calculations.
+
+**Card games.** All probability questions about poker, bridge, or blackjack hands reduce to combination counts. The probability of a full house, for instance, requires computing C(13, 1) (choose the rank), C(4, 3) (choose three suits for that rank), C(12, 1) (choose the pair rank), and C(4, 2) (choose two suits for the pair), then dividing by C(52, 5).
+
+**Genetics.** The number of genotypes that arise when r alleles are drawn from n possible variants follows the combination formula. Punnett square calculations scale up using C(n, r) when considering multiple loci simultaneously.
+
+**Network design.** The number of distinct point-to-point connections possible among n nodes is C(n, 2) = n(n − 1)/2. A fully connected network of 10 devices requires C(10, 2) = 45 direct links. Adding an 11th device requires 10 new links — C(11, 2) − C(10, 2) = 55 − 45 = 10.
+
+**Tournament scheduling.** A round-robin tournament among n teams requires every pair to play exactly once. The number of matches is C(n, 2). For 8 teams: C(8, 2) = 28 matches.
+
+**Quality-control sampling.** When an inspector randomly samples r items from a production batch of n to test for defects, the number of possible samples is C(n, r). Acceptance sampling plans are designed around these combination counts to set acceptable reject rates.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes with the Combination Formula
+
+### Using Combinations When Order Matters
+
+This is the most frequent error. If the problem rewards specific positions — 1st place, 2nd place, a particular seat, a PIN digit sequence — the outcomes are ordered and you need P(n, r), not C(n, r). Apply the ordering test: does swapping two chosen items give a different valid outcome? If yes, it is a permutation problem.
+
+### Confusing n and r
+
+The formula requires n ≥ r. Writing C(3, 10) is undefined because you cannot choose 10 items from a group of only 3. Always confirm which number is the total group size (n) and which is the selection size (r) before substituting.
+
+### Ignoring the Symmetry C(n, r) = C(n, n − r)
+
+Computing C(50, 47) by brute force means multiplying out 47! in the numerator. Using the symmetry, C(50, 47) = C(50, 3) — a three-multiplication problem. Whenever r is more than halfway to n, use the symmetric form.
+
+### Conflating Combinations with Replacement and Without Replacement
+
+The standard formula C(n, r) = n! / (r!(n − r)!) applies to selection **without replacement**: once an item is chosen, it cannot be chosen again. If items may be chosen more than once (selection with replacement), the count becomes C(n + r − 1, r). These are different problems with different formulas — always check whether repeats are allowed.
+
+### Treating 0! as 0
+
+A common slip is writing C(n, 0) = n! / (0 × n!), which would divide by zero and be undefined. The correct value is 0! = 1, so C(n, 0) = n! / (1 × n!) = 1. The convention 0! = 1 is not an exception — it is required to make factorial-based formulas consistent.
+
+---
+
+## Frequently Asked Questions
+
+### What is the combination formula?
+
+The combination formula is C(n, r) = n! / (r! × (n − r)!). It counts the number of ways to select r distinct items from a set of n items when the order of selection does not matter. It is also written ⁿCᵣ or as the binomial coefficient (n above r).
+
+### How does the combination formula differ from the permutation formula?
+
+The permutation formula P(n, r) = n! / (n − r)! counts ordered arrangements. The combination formula divides that count by r! to eliminate duplicate orderings of the same subset:
+
+```
+C(n, r) = P(n, r) / r!
+```
+
+Since r! ≥ 1 for all r ≥ 0, C(n, r) ≤ P(n, r) in all cases. They are equal only when r = 0 or r = 1 (where r! = 1).
+
+### What does nCr mean?
+
+nCr is an alternative notation for C(n, r) — "n choose r," the number of combinations of n things taken r at a time. It is also written as ⁿCᵣ or as the binomial coefficient (n r). All notations mean the same thing and use the same formula.
+
+### Can r be greater than n?
+
+No. Choosing more items than exist in the set is impossible, so C(n, r) = 0 when r > n. The formula yields an undefined result (a factorial of a negative number) for r > n, so the convention sets the count to zero in those cases.
+
+### How do you compute combinations on a calculator or in a spreadsheet?
+
+Scientific calculators provide a dedicated nCr button (sometimes labeled C(n,r) or Cn,r). Enter n, press nCr, enter r, then press the equals key. Graphing calculators such as the TI-84 use MATH → PRB → nCr. In spreadsheet software, use `=COMBIN(n, r)` — available in Excel, Google Sheets, and compatible programs.
+
+### What is C(n, 0) equal to?
+
+C(n, 0) = 1 for any n ≥ 0. There is exactly one way to choose zero items from any set: the empty selection. This result follows directly from 0! = 1 in the denominator.
+
+### What is the connection between combinations and Pascal's Triangle?
+
+The entry in row n and column r (both zero-indexed) of Pascal's Triangle is exactly C(n, r). Each entry equals the sum of the two entries directly above it, which corresponds to the identity:
+
+```
+C(n, r) = C(n − 1, r − 1) + C(n − 1, r)
+```
+
+This recursive formula provides an alternative way to compute combinations without computing large factorials — useful when working with small values of n by hand.
+
+### What are combinations with replacement?
+
+Standard combinations count subsets where each item can appear at most once (without replacement). When items may be reused (with replacement), the number of distinct selections of r items from n types is:
+
+```
+C(n + r − 1, r)
+```
+
+For example, choosing 3 scoops from 5 ice-cream flavours with repetition allowed gives C(5 + 3 − 1, 3) = C(7, 3) = 35 options.
+
+---
+
+## Summary
+
+The combination formula C(n, r) = n! / (r!(n − r)!) counts the number of distinct r-item subsets that can be chosen from a set of n objects when order does not matter. The four-step process — identify n and r, compute the three factorials, simplify by cancellation, then divide — applies to every combination problem. Use the symmetry C(n, r) = C(n, n − r) whenever r is large relative to n to reduce the arithmetic. Before reaching for the formula, always confirm whether order matters: ordered selections require the permutation formula P(n, r) = n! / (n − r)! instead.
+
+Mastering the combination formula opens the door to classical probability, the binomial distribution, and a broad class of counting problems that arise in statistics, genetics, card games, network design, and sampling theory. Once you can correctly identify whether a counting problem is ordered or unordered, the rest is arithmetic.
