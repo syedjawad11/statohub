@@ -1,0 +1,234 @@
+---
+title: "Type I and Type II Errors: Definition and Examples"
+description: "Learn what type I and type II errors are in hypothesis testing, how they differ, and how to reduce them. Includes worked examples and a comparison table."
+category: inferential-statistics
+primaryKeyword: type i and type ii errors
+keywords:
+  - type i and type ii errors
+  - type 1 and type 2 errors
+  - type i vs type ii errors
+  - types of statistical errors
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+When you run a hypothesis test, you can make exactly two kinds of errors: you can reject the null hypothesis when it is actually true, or you can fail to reject it when it is actually false. Statisticians call these **type I and type II errors**, and understanding them is central to interpreting any test result. Every experiment carries some risk of both mistakes. The goal of good study design is not to eliminate that risk — that is impossible — but to keep it at an acceptable level for the decision at hand.
+
+Type I errors are sometimes called false positives; type II errors are called false negatives. Each has its own Greek-letter probability (α for type I, β for type II), its own consequences, and its own lever for control. Confusing the two is one of the most common mistakes in applied statistics. This guide covers each type of statistical error in depth, compares them side by side, and shows you how to reason about both in practice.
+
+---
+
+## What Is a Type I Error?
+
+A **type I error** occurs when you reject a null hypothesis that is actually true. In other words, your test concludes that an effect exists when it does not. This is why type I errors are also called **false positives**.
+
+The probability of committing a type I error is denoted by the Greek letter **α** (alpha) and is set by the researcher before collecting data. If you set α = 0.05, you accept a 5 % chance of rejecting a true null hypothesis in any single test. This pre-set threshold is called the **significance level**.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.2.1 — Hypothesis Testing](https://www.itl.nist.gov/div898/handbook/prc/section2/prc21.htm), a hypothesis test always carries the risk of falsely rejecting the null — and the researcher controls that risk directly through the choice of α before the test is run.
+
+**Medical analogy.** A test that reports a disease when a healthy patient does not have it commits a type I error. The null hypothesis — "this patient is healthy" — is true, but the test rejects it. The patient then undergoes unnecessary follow-up procedures, which is the cost of the false positive.
+
+**In formal notation.** If H₀ is true and the test rejects H₀, that is a type I error with probability α.
+
+The significance level α is the only direct lever researchers have over type I errors in a single study. Choose α = 0.01 instead of 0.05 and you cut the false-positive rate — but at a cost: with a stricter threshold, real effects are harder to detect and the chance of a type II error rises.
+
+---
+
+## What Is a Type II Error?
+
+A **type II error** occurs when you fail to reject a null hypothesis that is actually false. Your test misses a real effect. This is why type II errors are also called **false negatives**.
+
+The probability of committing a type II error is denoted by **β** (beta). Closely related is **statistical power**, defined as `1 − β`. Power is the probability that the test correctly rejects a false null hypothesis. A study with 80 % power (β = 0.20) has an 80 % chance of detecting a real effect if one exists.
+
+**Medical analogy.** A test that returns a negative result for a patient who is actually infected commits a type II error. The null hypothesis — "this patient is not infected" — is false, but the test fails to reject it. The infected patient is not isolated, which carries its own serious consequence.
+
+**In formal notation.** If H₀ is false and the test fails to reject H₀, that is a type II error with probability β.
+
+Unlike α, which you set directly, β depends on three factors: the sample size, the true magnitude of the effect (the effect size), and the chosen significance level. Increasing any one of these — most often by increasing the sample size — reduces β and raises power.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis Explained" intro="Worth reading next" />
+
+---
+
+## Type I vs Type II Errors: Core Differences
+
+The table below shows how type I vs type II errors differ across every key dimension.
+
+| Property | Type I Error | Type II Error |
+|---|---|---|
+| Plain-English name | False positive | False negative |
+| What happened | Rejected a true H₀ | Failed to reject a false H₀ |
+| Probability symbol | α (alpha) | β (beta) |
+| Controlled by | Choosing the significance level | Sample size, effect size, α |
+| Related concept | Significance level | Statistical power (1 − β) |
+| Criminal justice analogy | Convicting an innocent person | Acquitting a guilty person |
+| Direction of mistake | Saw an effect that was not there | Missed an effect that was there |
+
+The two types of statistical errors are inversely linked for a fixed sample size. As α decreases (stricter test), β increases (more missed real effects), and vice versa. The only way to reduce both simultaneously is to collect more data.
+
+---
+
+## The Significance Level and Type I Error Control
+
+The significance level α is the maximum tolerated probability of a type I error. Researchers set it before running the test — not after — because choosing α post-hoc based on the observed p-value defeats the purpose of a pre-specified decision rule.
+
+**Common choices:**
+
+- **α = 0.05** — the default in many fields. Acceptable when a false positive is moderately costly and the study is exploratory or confirmatory within a replication programme.
+- **α = 0.01** — common in fields where false positives are expensive (clinical trials, policy decisions) or when many comparisons are made simultaneously.
+- **α = 0.001** — standard in high-energy physics for claiming a new discovery. Often described informally as the "five-sigma rule" because a z-score of 5 corresponds to p ≈ 0.0000003 in a one-tailed test.
+
+A **p-value** is the probability of observing a test statistic at least as extreme as the one you got, assuming H₀ is true. If p < α, you reject H₀. Crucially, the p-value is not the probability that H₀ is true — it is a conditional statement about the data under the assumption that H₀ is true.
+
+Choosing a smaller α reduces the type I error rate but increases the type II error rate (for the same sample size), because you need more extreme evidence to reject H₀. This trade-off is at the heart of hypothesis test design.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="For a related calculation" />
+
+---
+
+## Statistical Power and Type II Errors
+
+Statistical power (`1 − β`) is the probability that a test correctly detects a real effect. A power of 0.80 is the conventional minimum in many disciplines, meaning the study has an 80 % chance of finding a true effect and a 20 % chance of committing a type II error.
+
+**Four factors that increase power (and reduce β):**
+
+1. **Larger sample size.** More data produces more precise estimates, making it easier to distinguish a real signal from noise. This is the most controllable factor in study design.
+2. **Larger effect size.** A large difference between the null value and the true population parameter is easier to detect than a small one. Researchers cannot control the true effect size in the world, but they can specify a smallest-effect-size-of-interest for their power calculation — the minimum effect worth detecting.
+3. **Higher significance level (α).** Raising α makes it easier to reject H₀, which reduces β. But it also increases the type I error rate, so this trade-off must be weighed carefully in context.
+4. **Reduced measurement error.** More precise instruments, tighter protocols, and consistent data collection reduce noise in measurements, so the test statistic more cleanly reflects the true signal.
+
+**Power analysis** combines these factors to calculate the minimum sample size needed to achieve a target power (usually 0.80 or 0.90) for a specified effect size and α. Researchers who skip this step frequently underpowered their studies — they find no statistically significant result not because the effect is absent but because the study was too small to detect it. A non-significant result from an underpowered study is not evidence of no effect; it is an inconclusive result.
+
+---
+
+## A Fully Worked Example
+
+**Scenario.** A school district tests whether a new tutoring programme raises students' maths scores. The historical population mean is μ₀ = 70 (out of 100). Researchers collect scores from n = 50 students who received tutoring and observe a sample mean x̄ = 73.2. Historical records give a population standard deviation σ = 12. They use a one-tailed z-test at α = 0.05.
+
+### Step 1: State the Hypotheses
+
+```
+H₀: μ = 70   (tutoring has no effect on scores)
+H₁: μ > 70   (tutoring raises scores)
+```
+
+### Step 2: Calculate the Test Statistic
+
+The z-statistic formula for a known population standard deviation:
+
+```
+z = (x̄ − μ₀) / (σ / √n)
+z = (73.2 − 70) / (12 / √50)
+z = 3.2 / 1.697
+z ≈ 1.886
+```
+
+### Step 3: Find the Critical Value
+
+For a one-tailed test at α = 0.05, the critical z-value is z* = 1.645. Any test statistic above 1.645 falls in the rejection region.
+
+### Step 4: Make the Decision
+
+Since z = 1.886 > 1.645, you reject H₀ at the 5 % significance level.
+
+**Conclusion:** the sample provides sufficient evidence to conclude that the tutoring programme raises maths scores.
+
+### Identifying Each Error Type in This Scenario
+
+**Type I error (false positive):** suppose the programme truly has no effect on the population. Your test still rejected H₀ because the sample mean happened to be 73.2 by chance. This scenario has probability α = 0.05 — the risk you accepted before the study began.
+
+**Type II error (false negative):** suppose the programme genuinely raises the population mean to 73.2. If a different sample of 50 students had produced a test statistic below 1.645 (perhaps because that sample happened to include more students who benefited less), you would have failed to reject H₀ and missed the real effect. The probability of that miss is β, which depends on the true effect size, n, and α.
+
+After running the test, you know the result (reject or fail to reject), but you never know for certain which error scenario applies. This is why replication across independent samples is necessary to build scientific confidence.
+
+<RelatedLink to={routes.calculator('sample-size')} label="sample size calculator" intro="Another helpful calculator is" />
+
+---
+
+## Real-World Consequences of Types of Statistical Errors
+
+Different fields carry vastly different costs for each error type, which explains why α is not universally set to 0.05.
+
+### Medicine and Clinical Trials
+
+A type I error in a drug trial — concluding that an ineffective drug works — sends a useless or potentially harmful treatment to patients. Regulatory agencies such as the US Food and Drug Administration (FDA) therefore demand small α values (often 0.025 per arm in a two-arm trial, or 0.01 for pivotal studies) for drug approval. A type II error — concluding that an effective drug doesn't work — fails patients who would benefit and delays or kills a valuable treatment. Pharmaceutical companies design trials with high power (often 90 %) to minimise this risk.
+
+### Criminal Justice (as a Conceptual Model)
+
+The presumption of innocence is a formal statement about which type of statistical error a legal system prefers to risk. Define H₀ = "the defendant is innocent". A type I error (false positive) convicts an innocent person; a type II error (false negative) acquits a guilty one. Most common-law systems deliberately accept a higher type II error rate to protect against the costlier type I error — hence the standard "beyond reasonable doubt" rather than "on the balance of probabilities".
+
+### Quality Control in Manufacturing
+
+A factory testing components for defects treats H₀ = "the component passes". A type I error scraps a good part (wasted production cost). A type II error ships a defective part (customer harm, recalls, and liability). The acceptable balance between these two types of statistical errors drives the choice of sampling plan, inspection thresholds, and acceptance criteria in process control.
+
+### The Replication Crisis in Science
+
+Widespread use of α = 0.05 across thousands of independent studies means that a substantial fraction of published significant results are type I errors, even when the studies are conducted perfectly. This is one mechanism behind the replication crisis: studies that found an effect fail to replicate because the original finding was a false positive arising by chance. Pre-registration of hypotheses and analyses, stricter α thresholds, and larger sample sizes have all been proposed as structural responses to this problem.
+
+---
+
+## How to Reduce Type I and Type II Errors
+
+No study can eliminate both risks simultaneously for a fixed sample size. These are the main levers available:
+
+**1. Increase the sample size.** The most powerful tool. A larger n narrows the sampling distribution of the test statistic, making it easier to detect real effects (reducing β) without changing α. This is the only lever that reduces both error types simultaneously.
+
+**2. Pre-specify and justify α.** Set α before collecting data. If the consequences of a false positive are severe, use α = 0.01 or 0.001. Never adjust the threshold after seeing the results — that inflates the true type I error rate.
+
+**3. Conduct a power analysis before the study.** Determine the minimum n needed to achieve the target power given a realistic minimum effect size. A study below this threshold is likely to produce type II errors and waste resources collecting data that cannot answer the question definitively.
+
+**4. Use one-tailed tests when the direction is pre-specified.** A one-tailed test at α = 0.05 has a lower critical value than a two-tailed test, making it easier to reject H₀ in the expected direction and reducing β. One-tailed tests are only justified when the direction of the effect is specified before the study and deviations in the other direction are of no practical interest.
+
+**5. Reduce measurement error.** More precise instruments, better questionnaire design, and consistent data-collection protocols reduce noise in measurements and increase effective power without changing n.
+
+**6. Apply corrections for multiple comparisons.** When running many tests simultaneously (for example, testing 20 outcomes at α = 0.05), roughly one spurious significant result is expected by chance alone. The Bonferroni correction divides α by the number of tests; the Benjamini-Hochberg procedure controls the false discovery rate. Both methods keep the family-wise type I error rate under control at the cost of a higher type II error rate per comparison.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="You may also find this useful" />
+
+---
+
+## Frequently Asked Questions
+
+### What is a type I error?
+
+A type I error is a false positive — you reject a null hypothesis that is actually true. Its probability equals the significance level α, which the researcher sets before the study. At α = 0.05, one in twenty correct null hypotheses will be falsely rejected over many repeated tests conducted at that level.
+
+### What is a type II error?
+
+A type II error is a false negative — you fail to reject a null hypothesis that is actually false. Its probability is β. The complement `1 − β` is statistical power: the probability of correctly detecting a true effect. Most well-designed studies aim for power ≥ 0.80, meaning β ≤ 0.20.
+
+### What is the difference between type I vs type II errors?
+
+A type I error rejects a true null hypothesis (false positive); a type II error fails to reject a false null hypothesis (false negative). Type I errors are controlled by choosing a smaller α; type II errors are reduced primarily by increasing the sample size. The two error probabilities are inversely linked for a fixed sample size: stricter α means more missed real effects, and vice versa.
+
+### What are type 1 and type 2 errors in simple terms?
+
+Type 1 error: the test says "there's an effect" when there isn't one. Type 2 error: the test says "no effect found" when there actually is one. The medical testing analogy makes this concrete: a type 1 error is a false alarm (positive test result for a healthy person); a type 2 error is a missed diagnosis (negative test result for a sick person).
+
+### Which error is more serious, type I or type II?
+
+It depends entirely on the context and the relative cost of each mistake. In drug approval, a type I error (approving a harmful drug) is usually considered more serious, so trials are designed with strict α values. In disease screening, a type II error (missing a serious illness) can be more costly, so screening tests are calibrated to maximise sensitivity (minimise false negatives) even at the expense of more false positives. There is no universal answer — the study design must reflect the real-world cost of each of the two types of statistical errors in that specific context.
+
+### How does sample size affect type I and type II errors?
+
+Increasing the sample size does not change the type I error rate (that is fixed by α), but it reduces the type II error rate by increasing statistical power. More data narrows the sampling distribution of the test statistic, making it easier to distinguish a true signal from random variation. A properly conducted power analysis before the study specifies the minimum n needed to achieve a target power, usually 0.80 or 0.90, for a given effect size and α.
+
+### How are type I and type II errors related to the p-value?
+
+The p-value is the probability of observing a result at least as extreme as the observed data, assuming H₀ is true. If p < α, you reject H₀ and accept the risk of a type I error at rate α. The p-value itself is not the probability of a type I error in the current test — it is a data-dependent quantity, while α is the pre-specified decision threshold that bounds the long-run false-positive rate.
+
+---
+
+## Summary
+
+**Type I and type II errors** are the two ways a hypothesis test can reach a wrong conclusion. A type I error — a false positive — rejects a true null hypothesis with probability α, the significance level you set before the test runs. A type II error — a false negative — fails to reject a false null hypothesis with probability β; the complement `1 − β` is statistical power.
+
+Managing both types of statistical errors requires deliberate study design: pre-specify a justifiable α, calculate the required sample size with a power analysis, and understand that reducing one error type, all else equal, raises the other for a fixed n. In practice the only tool for reducing both simultaneously is to collect more data.
+
+The worked tutoring-programme example in this article illustrates how to compute a test statistic, compare it to a critical value, and identify which error scenario applies to each possible outcome. Applying the same logic to your own data helps you communicate not only whether an effect was detected but how confident you should be in that conclusion.
+
+For a rigorous treatment of both error types in an applied context, the open-access [OpenStax, *Introductory Statistics*, Chapter 9.2 — Outcomes and the Type I and Type II Errors](https://openstax.org/books/introductory-statistics/pages/9-2-outcomes-and-the-type-i-and-type-ii-errors) covers the definitions, notation, and the relationship between error probabilities with additional exercises.
