@@ -1,0 +1,311 @@
+---
+title: "Bayes' Theorem (Bayes' Rule): Formula & Examples"
+description: "Learn Bayes' rule — the formula for updating probability with new evidence. Worked medical and spam examples, the prior and posterior explained."
+category: probability-distributions
+primaryKeyword: bayes rule
+keywords:
+  - bayes rule
+  - bayesian
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Bayes' rule** is the mathematical formula for calculating how much a probability should change when you receive new evidence. Named after the Reverend Thomas Bayes, an 18th-century English statistician, the theorem shows exactly how to combine what you already believed with what you just observed to produce an updated, more accurate belief. It is the formal engine behind Bayesian statistics, medical diagnostics, spam filters, and machine learning classifiers — any system that must reason under uncertainty and revise its beliefs as data arrives.
+
+The power of Bayes' rule is not that it is complicated — the equation itself is compact — but that it forces you to account for the background frequency of an event (the *prior*) alongside the strength of your new evidence. Skipping the prior is the single most common mistake in probabilistic reasoning, and the formula makes it impossible to ignore.
+
+---
+
+## What Is Bayes' Rule?
+
+Bayes' rule answers a deceptively simple question: *given that B has occurred, what is the probability that A is true?*
+
+This is a conditional probability question, and conditional probability has a direction. Knowing that a patient tests positive for a disease (B) tells you something about whether they actually have the disease (A) — but the answer depends not just on how accurate the test is, but on how common the disease is in the first place. Ignoring the background rate — called *base rate neglect* — leads to wildly wrong conclusions, and Bayes' theorem corrects for it automatically.
+
+The theorem connects two related conditional probabilities:
+
+- **P(A | B)** — the probability of A given that B has occurred (this is what you want)
+- **P(B | A)** — the probability of B given that A is true (this is what the test or evidence reports)
+
+These two are different quantities. Confusing them is called the *prosecutor's fallacy*, and it has led to real miscarriages of justice in court cases where forensic statistics were misread.
+
+Bayes' theorem was published posthumously in 1763 in Thomas Bayes' "An Essay towards solving a Problem in the Doctrine of Chances" and subsequently generalised by Pierre-Simon Laplace. Today it is foundational to a whole school of statistical thought — Bayesian inference — which treats probability as a degree of belief that updates as evidence accumulates.
+
+---
+
+## The Bayes' Theorem Formula
+
+The standard form of Bayes' rule for two events A and B is:
+
+```
+P(A | B) = P(B | A) × P(A) / P(B)
+```
+
+Because P(B) can be expanded using the law of total probability, you will often see the denominator written out in full when A has only two possibilities (A is true, or A is false):
+
+```
+P(A | B) = P(B | A) × P(A)
+           ─────────────────────────────────────────────────
+           P(B | A) × P(A) + P(B | Aᶜ) × P(Aᶜ)
+```
+
+where Aᶜ means "not A" — the complement, the case where A is false.
+
+Each symbol has a specific name in Bayesian language:
+
+| Symbol | Name | Plain meaning |
+|--------|------|---------------|
+| P(A) | Prior | Probability of A before seeing B |
+| P(B \| A) | Likelihood | Probability of observing B if A is true |
+| P(A \| B) | Posterior | Updated probability of A after seeing B |
+| P(B) | Marginal likelihood | Overall probability of observing B |
+
+The marginal likelihood P(B) acts as a normalising constant. It ensures that the posterior probabilities for all possible values of A sum to 1.
+
+---
+
+## Prior, Likelihood, and Posterior
+
+The vocabulary of Bayes' rule is worth understanding deeply, because it appears throughout Bayesian statistics.
+
+**The prior, P(A)**, is your belief in A before you see any new evidence. It encodes background knowledge: the disease prevalence in a population, the base rate of defective parts off a production line, or your starting estimate of a coin being fair. Choosing the prior thoughtfully is one of the core challenges of Bayesian analysis.
+
+**The likelihood, P(B | A)**, measures how probable the observed evidence B is if A were true. In a medical test, this is the *sensitivity* — the probability of a positive test result given that the patient actually has the disease. The likelihood does not tell you the probability that A is true; it tells you how well A would explain the evidence.
+
+**The posterior, P(A | B)**, is the updated belief in A after incorporating the new evidence B. It combines everything: your prior knowledge and the strength of the current observation. In Bayesian updating, the posterior from one round can become the prior for the next round as more evidence arrives.
+
+**The normalising constant, P(B)**, is calculated by summing the likelihood multiplied by the prior over all possible states of A. For a binary case (A or not A):
+
+```
+P(B) = P(B | A) × P(A) + P(B | Aᶜ) × P(Aᶜ)
+```
+
+This denominator ensures that when you compute P(A | B), you get a number between 0 and 1.
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability: Formula, Conditional Probability & Expected Value" intro="For a related calculation" />
+
+---
+
+## Worked Example 1 — Medical Testing
+
+This is the canonical example for Bayes' rule because the result surprises almost everyone who first encounters it.
+
+**Setup:**
+- A disease affects 1 % of the general population: P(Disease) = 0.01
+- A screening test has 95 % sensitivity: P(Positive | Disease) = 0.95
+- The test has a 5 % false-positive rate: P(Positive | No Disease) = 0.05
+- A randomly selected person from the general population tests positive.
+
+**Question:** What is the probability they actually have the disease?
+
+### Applying Bayes' Rule
+
+First, identify the four values needed:
+
+| Value | Symbol | Number |
+|-------|--------|--------|
+| Prior — disease prevalence | P(Disease) | 0.01 |
+| Complement | P(No Disease) | 0.99 |
+| Likelihood — sensitivity | P(Positive \| Disease) | 0.95 |
+| False positive rate | P(Positive \| No Disease) | 0.05 |
+
+**Step 1 — Calculate the marginal likelihood P(Positive):**
+
+```
+P(Positive) = P(Pos | Disease) × P(Disease)
+            + P(Pos | No Disease) × P(No Disease)
+
+           = 0.95 × 0.01 + 0.05 × 0.99
+           = 0.0095 + 0.0495
+           = 0.059
+```
+
+**Step 2 — Apply Bayes' rule:**
+
+```
+P(Disease | Positive) = P(Positive | Disease) × P(Disease) / P(Positive)
+                      = 0.95 × 0.01 / 0.059
+                      = 0.0095 / 0.059
+                      ≈ 0.161
+```
+
+**Result:** Even with a positive test from a 95 % accurate instrument, the probability of actually having the disease is only about **16.1 %**.
+
+### Why Is the Answer So Low?
+
+The test is 95 % accurate, so many people expect a positive result to be nearly conclusive. The prior rescues the reasoning.
+
+Out of 10,000 randomly selected people:
+- 100 have the disease (1 %). Of those, 95 test positive (true positives).
+- 9,900 do not have the disease (99 %). Of those, 495 test positive (false positives: 5 % × 9,900).
+
+Total positives: 95 + 495 = 590. Of those 590, only 95 actually have the disease.
+
+```
+P(Disease | Positive) = 95 / 590 ≈ 0.161 ✓
+```
+
+The same calculation, framed as counting rather than algebra, gives the same answer. False positives swamp true positives because the disease is rare. The prior — 1 % prevalence — dominates the result. Bayes' rule forces you to account for it; informal intuition often forgets it entirely.
+
+This is base rate neglect in action: the raw numbers produced by tests in low-prevalence populations are mostly false positives, no matter how accurate the test is. The correct clinical response to this result is not alarm but a confirmatory test, which would update the posterior again using the new result.
+
+<RelatedLink to={routes.calculator('probability')} label="probability calculator" intro="Worth reading next" />
+
+---
+
+## Worked Example 2 — Email Spam Filtering
+
+Bayesian spam filters — first popularised in the early 2000s — are one of the most commercially important applications of Bayes' rule. Each email is classified by updating a probability estimate using the words it contains.
+
+**Setup:**
+- 40 % of all emails arriving at this server are spam: P(Spam) = 0.40
+- Among spam emails, 70 % contain the word "free": P("free" | Spam) = 0.70
+- Among legitimate emails, 10 % also contain the word "free": P("free" | Not Spam) = 0.10
+- A new email arrives containing the word "free". What is P(Spam | "free")?
+
+**Step 1 — Marginal likelihood:**
+
+```
+P("free") = P("free" | Spam) × P(Spam) + P("free" | Not Spam) × P(Not Spam)
+          = 0.70 × 0.40 + 0.10 × 0.60
+          = 0.28 + 0.06
+          = 0.34
+```
+
+**Step 2 — Posterior:**
+
+```
+P(Spam | "free") = P("free" | Spam) × P(Spam) / P("free")
+                 = 0.70 × 0.40 / 0.34
+                 = 0.28 / 0.34
+                 ≈ 0.824
+```
+
+An email containing the word "free" has roughly an **82 % probability of being spam**, up from the baseline 40 % prior.
+
+Real Bayesian filters chain hundreds of such words together, treating each word's posterior as the prior for the next word. After enough words are processed, the cumulative posterior is either high enough to route the email to spam or low enough to pass it through. The math is the same Bayes' rule, applied iteratively — a process called *Bayesian updating*.
+
+<RelatedLink to={routes.article('normal-distribution')} label="Normal Distribution: The Bell Curve Explained" intro="On a related note" />
+
+---
+
+## Bayesian Updating: Beliefs That Evolve with Evidence
+
+One of the most powerful aspects of Bayes' rule is that it is recursive. The posterior from one observation becomes the prior for the next, allowing beliefs to accumulate evidence continuously.
+
+Suppose you are trying to determine whether a coin is fair (P(Heads) = 0.5) or biased toward heads (P(Heads) = 0.7). You start with an equal prior: 50 % chance the coin is fair.
+
+- You flip the coin and get Heads.
+- Bayes' rule updates your belief: the biased coin is now slightly more probable.
+- You flip again and get Heads.
+- Another update: the biased coin looks more likely.
+- After ten heads in a row, the posterior probability of the coin being biased is very high.
+
+Each flip adds evidence; the posterior after each flip feeds into the prior of the next. This incremental updating is the Bayesian approach to statistical inference, and it contrasts sharply with classical (frequentist) methods, which typically wait for a fixed sample size before drawing conclusions.
+
+Bayesian updating is particularly valuable when data arrives in real time — in medical monitoring, financial forecasting, or machine-learning models that improve as they see more data. In these settings, the ability to revise the posterior after each new observation is a decisive practical advantage.
+
+---
+
+## Bayesian vs. Frequentist Statistics
+
+The two dominant frameworks in statistics — Bayesian and frequentist — differ fundamentally in how they interpret probability.
+
+**Frequentist probability** is defined as the long-run frequency of an event over many repeated trials. A frequentist would say that a coin's probability of landing heads is the proportion of heads in an infinite sequence of flips. Probabilities apply only to repeatable events; the "true" value of a parameter (like the disease prevalence) is fixed and unknown — not itself a random variable.
+
+**Bayesian probability** is a degree of belief. A Bayesian assigns probability to any uncertain proposition — even a one-time event — and updates that probability using Bayes' rule when new evidence arrives. The unknown parameter (disease prevalence, coin bias) is treated as a random variable with its own distribution.
+
+In practice:
+- Frequentist methods — null hypothesis significance testing, p-values, confidence intervals — dominate most published research and regulatory frameworks.
+- Bayesian methods shine in small-sample problems, sequential updating, and applications where expressing uncertainty as a full probability distribution (rather than a single point estimate plus a p-value) is valuable.
+
+Neither framework is universally superior. The choice depends on the scientific question, the available data, and the decisions being made. Many statisticians use both approaches depending on the context. The key insight is that Bayes' rule is not a competing method — it is the fundamental mathematical principle of rational belief revision, valid within any framework that treats probability as a degree of belief.
+
+For authoritative reference, the [NIST/SEMATECH e-Handbook of Statistical Methods — Bayesian Statistical Framework](https://www.itl.nist.gov/div898/handbook/apr/section1/apr122.htm) provides a detailed treatment of the Bayesian approach in the context of reliability engineering. The [MIT OpenCourseWare course 18.05, Introduction to Probability and Statistics](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2014/) covers Bayes' theorem and its applications in depth.
+
+---
+
+## Common Mistakes with Bayes' Rule
+
+### Ignoring the Prior (Base Rate Neglect)
+
+The most pervasive mistake is forgetting to account for the prior probability. When a test is 95 % accurate and someone tests positive, the naive response is "there is a 95 % chance they have the disease." As the medical example above shows, this is completely wrong when the disease is rare. The prior (1 % prevalence) dominates the calculation.
+
+A quick sanity check: if the event you are testing for is rare, a positive result is mostly false positives, no matter how accurate the test. If the event is common, even a moderately accurate test is highly diagnostic. The prior tells you which regime you are in.
+
+### Confusing P(A | B) with P(B | A)
+
+These two quantities are mathematically distinct. P(Disease | Positive) — the probability of having the disease given a positive test — is not the same as P(Positive | Disease) — the probability of testing positive given that you have the disease. Bayes' rule converts one into the other.
+
+Confusing the two is called the *prosecutor's fallacy* or the *transposition of the conditional*. In forensic contexts, it can lead to the incorrect inference that because DNA evidence is 1-in-a-million unlikely if the suspect were innocent (P(Evidence | Innocent) = 0.000001), the suspect is 999,999-in-a-million likely to be guilty — which completely ignores how many potential suspects there are in the population.
+
+### Forgetting the Normalising Constant
+
+The denominator P(B) is sometimes treated as a minor detail. It is not. Without it, the numerator P(B | A) × P(A) is just an unnormalised score, not a probability. The denominator sums these scores over all possible states of A to ensure the posterior is a proper probability distribution.
+
+When there are only two hypotheses (A and not-A), the denominator is straightforward to compute. When A can take many values — for example, estimating a continuous parameter — computing the denominator becomes the central computational challenge of Bayesian inference, which is why methods like Markov Chain Monte Carlo (MCMC) were developed.
+
+### Updating Too Aggressively on Weak Evidence
+
+A single weak signal should shift your posterior modestly, not dramatically. If you start with a very strong prior and the evidence has low likelihood ratio, the posterior stays close to the prior. Students sometimes treat every update as if it resolves all uncertainty. Bayes' rule is more measured: the magnitude of the update scales with the strength of the evidence relative to the prior.
+
+---
+
+## Frequently Asked Questions
+
+### What is Bayes' rule in simple terms?
+
+Bayes' rule is the formula for updating a probability when new evidence arrives. It says: your updated probability equals your initial probability multiplied by how likely the evidence is if your hypothesis is true, divided by the overall probability of seeing the evidence. It quantifies exactly how much new information should change what you believe.
+
+### What is the difference between Bayes' theorem and conditional probability?
+
+Conditional probability, P(A | B), is the probability of A given B. Bayes' theorem is a formula for *calculating* that conditional probability using three other quantities: the prior P(A), the likelihood P(B | A), and the marginal likelihood P(B). It is the tool for flipping a conditional probability around — turning P(B | A) into P(A | B).
+
+### What is a prior in Bayesian statistics?
+
+A prior is your probability estimate for a hypothesis before incorporating new data. It can come from previous studies, expert knowledge, or a default assumption of no information. After you observe evidence and apply Bayes' rule, the result is the posterior — your updated belief. In sequential Bayesian updating, the posterior becomes the new prior for the next observation.
+
+### How do I calculate the posterior probability?
+
+Apply the Bayes' rule formula:
+
+```
+Posterior = Likelihood × Prior / Marginal likelihood
+P(A | B) = P(B | A) × P(A) / P(B)
+```
+
+where P(B) = P(B | A) × P(A) + P(B | Aᶜ) × P(Aᶜ) for a binary hypothesis. Calculate P(B) first (sum the likelihood-times-prior products for every possible state of A), then divide the numerator for your specific A by P(B).
+
+### What is the prosecutor's fallacy?
+
+The prosecutor's fallacy is the error of treating P(Evidence | Innocent) as if it were P(Innocent | Evidence). Just because evidence is unlikely given innocence does not mean innocence is unlikely given the evidence. Rare evidence can still be much more likely than guilt if the suspect pool is large and the prior probability of guilt is low.
+
+### Is Bayesian statistics hard to learn?
+
+The core idea — multiply your prior belief by the likelihood of the data, divide by a normalising constant — is simple enough to compute by hand in two-hypothesis problems. The difficulty arises in complex models with many parameters, where computing the normalising constant requires numerical integration or sampling techniques. For single-equation problems like the medical test example, Bayes' rule requires only basic arithmetic.
+
+### How does Bayes' rule relate to conditional probability?
+
+Bayes' rule is derived from the definition of conditional probability. By definition, P(A | B) = P(A ∩ B) / P(B) and P(B | A) = P(A ∩ B) / P(A). Rearranging the second expression gives P(A ∩ B) = P(B | A) × P(A). Substituting into the first expression yields Bayes' theorem: P(A | B) = P(B | A) × P(A) / P(B). The theorem follows directly from probability axioms — it is not an additional assumption.
+
+<RelatedLink to={routes.article('binomial-distribution')} label="Binomial Distribution: Formula & Examples" intro="You may also find this useful" />
+
+---
+
+## Summary
+
+Bayes' rule is a compact formula with far-reaching consequences:
+
+```
+P(A | B) = P(B | A) × P(A) / P(B)
+```
+
+It converts a likelihood P(B | A) — how probable the evidence is if A is true — into a posterior P(A | B) — how probable A is now that you have seen B. The prior P(A) ensures that rare events remain improbable even after a positive signal, and the normalising constant P(B) ensures the result is a valid probability.
+
+The medical testing example shows why the prior cannot be ignored: a 95 %-accurate test yields only a 16 % positive predictive value when the disease affects just 1 % of the population. The spam-filter example shows how Bayesian updating chains observations together. The framework generalises from two-hypothesis problems all the way to continuous parameter estimation in machine learning and Bayesian statistical modelling.
+
+Understanding Bayes' rule provides a foundation for the Bayesian approach to statistics — an approach that treats probability as a degree of belief, updates beliefs with evidence, and produces full probability distributions over unknowns rather than single-point estimates. It is one of the most useful tools in quantitative reasoning, and its applications span medicine, engineering, artificial intelligence, and science.
