@@ -1,0 +1,256 @@
+---
+title: "Levels of Measurement: Nominal, Ordinal, Interval & Ratio"
+description: "Learn the four levels of measurement — nominal, ordinal, interval, and ratio — and understand the ordinal variable vs nominal distinction with clear examples."
+category: foundations
+primaryKeyword: levels of measurement
+keywords:
+  - ordinal variable vs nominal
+  - nominal ordinal interval or ratio
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **four levels of measurement** — nominal, ordinal, interval, and ratio — tell you what kind of information a variable carries and which statistical operations you can legitimately perform on it. Getting the level right is not a formality: treating ordinal survey responses as if they were interval data produces misleading averages, and treating a ratio variable as nominal throws away information you paid to collect.
+
+The framework was formalised by psychologist S. S. Stevens in a 1946 paper in *Science* and remains the standard classification in every introductory statistics course. Understanding the four scales — and especially the contrast between an ordinal variable vs nominal variable — prevents the most common analytic errors in data science, research, and business intelligence work.
+
+## What Are the Four Levels of Measurement?
+
+Stevens identified four scales arranged in a hierarchy from least to most informative. Each higher level carries all the properties of the levels below it, plus one new property.
+
+| Level | Order | Equal gaps | True zero | Example |
+|-------|-------|-----------|-----------|---------|
+| Nominal | No | No | No | Blood type, eye colour |
+| Ordinal | Yes | No | No | Survey rating, education level |
+| Interval | Yes | Yes | No | Temperature (°C), IQ score |
+| Ratio | Yes | Yes | Yes | Height, weight, income |
+
+The phrase "nominal ordinal interval or ratio" captures this hierarchy in the order it is typically taught. Each step up unlocks more powerful statistics while keeping all the capabilities of the level below.
+
+A variable's level of measurement is fixed by the nature of what is being measured and how the data is collected — not by the numbers used to represent it. Coding blood types as 1, 2, 3, 4 does not make them an interval variable; the codes are still arbitrary labels.
+
+---
+
+<RelatedLink to={routes.article('types-of-variables')} label="Types of Variables in Statistics" intro="Worth reading next" />
+
+## Nominal Scale: Categories With No Inherent Order
+
+A **nominal variable** sorts observations into named categories that have no meaningful rank. The word *nominal* comes from the Latin *nomen* (name) — you are labelling, not measuring magnitude or ordering.
+
+**Examples:**
+- Blood type (A, B, AB, O)
+- Country of birth
+- Species (cat, dog, bird)
+- Eye colour (brown, blue, green)
+- Preferred programming language (Python, R, Julia)
+
+**What you can do with nominal data:**
+- Count how many observations fall in each category (frequency)
+- Identify the most common value — the **mode**
+- Test whether two groups have similar distributions (chi-square test)
+
+**What you cannot do:**
+- Compute a mean or median — there is no sensible average of blood types
+- Say one category is "more than" another
+- Measure the distance between categories
+
+The arithmetic operators `+`, `−`, `×`, and `÷` have no meaning on nominal values. If you code eye colour as 1 = brown, 2 = blue, 3 = green to enter it into a spreadsheet, those numbers are still nominal — reversing the codes (brown = 3, blue = 2, green = 1) changes nothing meaningful.
+
+## Ordinal Scale: Ranked Categories With Unequal Gaps
+
+An **ordinal variable** places categories in a definite order, but the gaps between adjacent categories are not guaranteed to be equal. You know which value is higher, but not precisely *how much* higher.
+
+**Examples:**
+- Customer satisfaction: Very dissatisfied / Dissatisfied / Neutral / Satisfied / Very satisfied
+- Education level: No qualification / High school / Bachelor's / Master's / Doctorate
+- Pain scale: 1 (no pain) to 10 (worst imaginable pain)
+- Military rank: Private / Corporal / Sergeant / Lieutenant / Captain
+
+**What you can do with ordinal data:**
+- Everything nominal allows — count, identify the mode
+- Rank observations from lowest to highest
+- Find the **median** (the middle value when sorted)
+- Use non-parametric tests such as the Mann-Whitney U test or Spearman rank correlation
+
+**What you cannot do:**
+- Assume equal spacing between ranks — the psychological step from "Satisfied" to "Very satisfied" may not equal the step from "Neutral" to "Satisfied"
+- Compute a meaningful arithmetic mean without additional assumptions
+- Make ratio statements such as "this company scored twice as high in satisfaction"
+
+The contested area: many researchers compute means for ordinal Likert-scale items and argue this is reasonable when the scale has enough levels and is symmetrically distributed. That is a pragmatic judgement, not a statistical law. The technically correct summary for ordinal data is the **median**.
+
+## Ordinal Variable vs Nominal: The Key Differences
+
+The most commonly confused pair is the **ordinal variable vs nominal variable**. Both involve categories, so the difference is easy to miss.
+
+The defining question is: **does the order of the categories carry meaning?**
+
+| Feature | Nominal | Ordinal |
+|---------|---------|---------|
+| Named categories | Yes | Yes |
+| Meaningful rank or order | No | Yes |
+| Equal gaps between levels | No | No |
+| Can compute mode | Yes | Yes |
+| Can compute median | No | Yes |
+| Valid to rank-order observations | No | Yes |
+
+**Nominal example — eye colour:** Brown, blue, and green cannot be ranked. There is no colour that is "more than" another. The order in which you list them is arbitrary and reversible without loss of meaning.
+
+**Ordinal example — education level:** No qualification < High school < Bachelor's < Master's < Doctorate is a genuine order. Someone with a doctorate has completed more formal education than someone with a high school diploma. The ranking is real, even though the time and difficulty of each step differ.
+
+**A quick test:** If you scrambled the category labels and the interpretation still made perfect sense, the variable is nominal. If scrambling the labels would destroy the meaning, the variable is ordinal.
+
+The same underlying concept can be recorded at either level depending on how you ask. A question about patient improvement recorded as "Improved / Unchanged / Worsened" produces ordinal data. Recoded as "Improved or not improved (Yes/No)" it becomes a nominal binary variable. The measurement level follows the instrument, not the concept.
+
+---
+
+<RelatedLink to={routes.article('parameter-vs-statistic')} label="Parameter vs Statistic Explained" intro="On a related note" />
+
+## Interval Scale: Equal Gaps, No True Zero
+
+An **interval variable** has ordered categories with equal, measurable gaps — but the zero point is arbitrary rather than a genuine absence of the quantity being measured.
+
+**Examples:**
+- Temperature in Celsius or Fahrenheit (0 °C is the freezing point of water, not "no temperature")
+- IQ scores (an IQ of 0 does not mean zero intelligence)
+- Calendar years (year 0 is a reference point, not the start of time)
+- Standardised test scores rescaled to a fixed baseline
+
+**What you can do with interval data:**
+- Compute the **mean** and **standard deviation**
+- Measure distances between values — the difference between 20 °C and 30 °C equals the difference between 30 °C and 40 °C
+- Use most parametric tests: t-tests, ANOVA, Pearson correlation
+
+**What you cannot do:**
+- Make ratio statements. You cannot say "40 °C is twice as hot as 20 °C" because 0 °C is not a true zero. On the Kelvin scale, 293 K vs 313 K is a valid ratio comparison because 0 K represents an absolute absence of thermal energy.
+- The ratio of two interval values is meaningless when zero is arbitrary.
+
+The interval–ratio boundary is a common source of errors when working with temperature data. Celsius and Fahrenheit are interval scales; Kelvin is a ratio scale.
+
+## Ratio Scale: Equal Gaps Plus a True Zero
+
+A **ratio variable** has all the properties of interval data plus an absolute zero that represents a genuine absence of the measured quantity. This makes ratio comparisons valid.
+
+**Examples:**
+- Height (0 cm means no height)
+- Weight (0 kg means no mass)
+- Income (£0 means no income)
+- Reaction time in milliseconds
+- Count of events (0 events means none occurred)
+- Distance and volume
+
+**What you can do with ratio data:**
+- All operations: mean, median, mode, standard deviation, correlation coefficients
+- Ratio statements: "Product A weighs twice as much as Product B" is valid
+- Geometric mean, coefficient of variation, log transformations
+
+Ratio data is the most informative level. Most physical measurements and counts are ratio variables. Age is ratio; length of hospital stay is ratio; the number of sales per month is ratio.
+
+---
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="For a related calculation" />
+
+## Which Statistical Methods Match Each Level?
+
+The level of measurement determines which analysis tools are valid. Using the wrong tool can produce results that look precise but carry no meaning.
+
+| Level | Central tendency | Spread | Appropriate tests |
+|-------|-----------------|--------|-------------------|
+| Nominal | Mode only | — | Chi-square, Fisher's exact |
+| Ordinal | Median, mode | Interquartile range | Mann-Whitney U, Spearman ρ, Kruskal-Wallis |
+| Interval | Mean, median, mode | Standard deviation, variance | t-test, ANOVA, Pearson r |
+| Ratio | All of the above, geometric mean | All of the above, coefficient of variation | All parametric tests, log transformations |
+
+**Why you cannot average ordinal data without caveats:** A 5-point Likert item running from 1 (Strongly Disagree) to 5 (Strongly Agree) gives a mean of 3.7 only if the gap from 3 to 4 equals the gap from 4 to 5. Ordinal scales do not guarantee that. Many researchers compute the mean anyway and argue it is reasonable for symmetric, multi-item scales — but that is an assumption you should state explicitly, not a right you automatically have.
+
+**Why non-parametric tests are the correct default for ordinal data:** The Mann-Whitney U test asks whether one group tends to rank higher than another without assuming equal intervals. It is the ordinal analogue of the independent-samples t-test and is the appropriate choice when comparing Likert-item responses between two groups.
+
+A comprehensive guide to matching analysis methods to data types is the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/), which covers exploratory data analysis and test selection across variable types.
+
+## Worked Example: Classifying Variables in a Healthcare Survey
+
+A hospital collects the following information from each patient. Classifying each variable before analysis prevents errors downstream.
+
+| Variable | Values collected | Level | Justification |
+|----------|-----------------|-------|---------------|
+| Blood type | A, B, AB, O | Nominal | Categories with no inherent order |
+| Pain score | 1 – 10 | Ordinal | Ranked, but equal gaps are not guaranteed |
+| Body temperature | 36.1 °C, 37.2 °C … | Interval | Equal gaps; 0 °C is not a true zero |
+| Body weight | 62 kg, 84 kg … | Ratio | Equal gaps; 0 kg is a true zero |
+| Ward assignment | Medical, Surgical, ICU | Nominal | Named categories, no ordering |
+| Length of stay | 2 days, 5 days … | Ratio | Count of days; 0 days = no stay |
+| Discharge status | Improved / Unchanged / Worsened | Ordinal | Three ordered outcomes |
+
+**What this means in practice:**
+
+- To find the most common blood type, compute the **mode**.
+- To describe the typical pain score, use the **median**, not the mean.
+- To compare average body temperature between two wards, run an independent-samples **t-test** (interval data with approximately normal distribution).
+- To compare body weight between treatment groups, use a **t-test** or **ANOVA** (ratio data; parametric tests are fully valid).
+- To test whether discharge status differs between wards, use an **ordinal logistic regression** or a chi-square test on the three ordered categories.
+
+Getting these classifications right before analysis saves significant time during peer review or quality audits. The [OpenStax *Introductory Statistics*, Chapter 1 — Sampling and Data](https://openstax.org/books/introductory-statistics/pages/1-intro) covers levels of measurement in the context of study design and data collection, with additional worked examples for students.
+
+---
+
+<RelatedLink to={routes.article('frequency-table')} label="Frequency Tables Explained" intro="You may also find this useful" />
+
+## Common Mistakes When Working With Levels of Measurement
+
+### Treating ordinal data as interval
+
+The most widespread error in applied research is computing the arithmetic mean of an ordinal scale and treating it as an interval quantity. When you see "mean customer satisfaction = 3.84 out of 5," the authors are treating ordinal ratings as if the gaps between categories are equal. This may be a defensible pragmatic choice with many items and respondents — but state the assumption explicitly if you make it, and consider non-parametric alternatives when in doubt.
+
+### Running arithmetic on nominal codes
+
+Assigning Male = 1, Female = 2, Other = 3 is useful for data entry, but it does not make gender an ordinal variable. Computing "mean gender = 1.7" is meaningless. Use dummy variables (0/1 binary indicators) or appropriate categorical methods such as logistic regression instead.
+
+### Confusing a reference zero with a true zero
+
+Zero degrees Celsius is a meaningful measurement but not an absence of heat. The Kelvin scale's 0 K is. Similarly, a stock index rebased to 100 is an interval measure — the 100 is a reference point, not a true zero. When zero is conventional rather than physical, the scale is interval, not ratio.
+
+### Changing level by changing the question
+
+A question recorded as "Did the patient improve? (Yes/No)" produces a nominal binary variable. The same outcome rated as "Rate the improvement on a 1–10 scale" produces an ordinal variable. Document how data was collected, not just the values — the level of measurement belongs to the measurement process, not the concept alone.
+
+## Frequently Asked Questions
+
+### Is age a nominal, ordinal, interval, or ratio variable?
+
+Age is a **ratio variable**. Zero years represents no elapsed time since birth. The gaps between ages are equal (one year has the same duration at every age), and ratio statements are valid: a 40-year-old has lived twice as long as a 20-year-old.
+
+### Is temperature a nominal, ordinal, interval, or ratio variable?
+
+It depends on the scale. **Celsius and Fahrenheit are interval scales** — the gaps between degrees are equal, but the zero point is an arbitrary reference (the freezing point of water, or a fixed historical calibration point). **Kelvin is a ratio scale** — 0 K is absolute zero, a true absence of thermal energy, so you can validly say 400 K is twice as energetic as 200 K.
+
+### What is the difference between ordinal and interval data?
+
+The key difference is **whether the gaps between values are equal**. An ordinal variable guarantees a consistent rank order but not equal-sized steps between ranks. An interval variable guarantees equal-sized steps throughout the scale, which makes addition, subtraction, means, and standard deviations meaningful. That single property — equal spacing — is what separates the ordinal and interval levels.
+
+### Can you compute a mean for an ordinal variable?
+
+Strictly, **no** — a mean requires equal intervals, a property ordinal scales do not guarantee. In practice, many researchers compute means for Likert-scale items when the scale has enough points and the distribution is symmetric, arguing the violation is minor. This is a pragmatic judgement you must justify. The correct default for ordinal data is the **median**.
+
+### What does "nominal ordinal interval or ratio" mean?
+
+It is the shorthand for Stevens' four-level hierarchy of measurement scales. In order from least to most informative: **nominal** (categories, no order), **ordinal** (ranked categories, unequal gaps), **interval** (ranked, equal gaps, no true zero), **ratio** (ranked, equal gaps, true zero). When a statistics course asks you to classify a variable as nominal, ordinal, interval, or ratio, it is asking you to place it in this hierarchy.
+
+### How do I know whether a zero is "true" or arbitrary?
+
+Ask: "If this variable equalled zero, would it mean a complete absence of what is being measured?" A bank balance of £0 means no money — ratio. A temperature of 0 °C means the freezing point of water, not the absence of heat — interval. A stock index reset to 100 is a reference point — interval. Physical measurements of mass, length, time elapsed, and event counts almost always have genuine zeros and belong to the ratio level.
+
+### Can a variable's level change depending on context?
+
+Yes. The variable "income" recorded as "above/below the median" is nominal (two unordered categories, or at best ordinal if you add a middle band). Recorded as an exact dollar amount it is ratio. The underlying concept does not change; the measurement level follows the precision and nature of the instrument used to capture it. Always classify the measurement, not the concept.
+
+## Summary
+
+The four levels of measurement — nominal, ordinal, interval, and ratio — determine what arithmetic operations and statistical tests are valid for a given variable. Nominal data gives you named categories; ordinal adds a meaningful rank order; interval adds equal-spaced gaps; ratio adds a true zero that makes ratio statements valid.
+
+The distinction between an **ordinal variable vs nominal variable** comes down to one question: does the category order carry meaning? Eye colour is nominal because no category is inherently greater than another. Education level is ordinal because one level genuinely exceeds another in the hierarchy of formal qualifications, even if the steps between levels vary in duration or difficulty.
+
+Getting the classification right before analysis is the single most reliable way to avoid the most common quantitative errors — averaging ordinal ratings as if they were interval, running parametric tests on nominal codes, or making ratio statements about Celsius temperatures. Ask two questions for any new variable: are the categories ordered? If yes, are the gaps between them equal? If both answers are yes, check for a true zero. The four-level hierarchy gives you a precise answer every time.
