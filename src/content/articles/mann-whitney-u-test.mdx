@@ -1,0 +1,308 @@
+---
+title: "Mann-Whitney U Test: Formula & When to Use It"
+description: "Learn the Mann-Whitney U test formula, how it ranks values to compare two independent groups, and when to use this Wilcoxon rank-sum alternative to the t-test."
+category: inferential-statistics
+primaryKeyword: mann-whitney t-test
+keywords:
+  - mann-whitney t-test
+  - mann-whitney u test wilcoxon rank sum
+  - wilcoxon rank sum test
+  - wilcoxon sum rank test
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **Mann-Whitney U test** is a non-parametric hypothesis test that compares two independent groups by ranking every observation together and counting how often values from one group outrank values from the other. Because it works on ranks rather than raw values, it does not require the data to be normally distributed. Many students first meet it under the label **mann-whitney t-test** — a common shorthand that arises because both methods compare two groups — but the Mann-Whitney test belongs to an entirely different family: it replaces means with rank orders and makes no distributional assumptions. It is also called the **Wilcoxon rank-sum test** or the **wilcoxon sum rank test**, names that are mathematically identical and used interchangeably in the literature.
+
+---
+
+## What Is the Mann-Whitney U Test?
+
+Proposed by Henry Mann and Donald Whitney in 1947 and independently covered by Frank Wilcoxon, the Mann-Whitney U test asks a single question: do the two groups come from the same population distribution, or does one tend to produce systematically larger values than the other?
+
+The null hypothesis (H₀) is that the two populations have the same distribution — neither group systematically exceeds the other. The alternative hypothesis (H₁) is that one population tends to produce larger values. This makes the test suitable for:
+
+- Comparing medians when the data is skewed or contains outliers.
+- Ordinal data where differences between values are not meaningful (survey rating scales, pain scores, satisfaction scores).
+- Small samples where the Central Limit Theorem cannot rescue the t-test's normality assumption.
+- Distributions that are clearly non-normal — heavily skewed, bimodal, or bounded at zero.
+
+The test statistic is the **U statistic**, which counts the number of pairs — one observation from each group — where the Group 1 observation is smaller than the Group 2 observation. A U value far from the expected midpoint `n₁×n₂ / 2` signals that one group consistently dominates the other.
+
+---
+
+## When to Use the Mann-Whitney U Test
+
+Four conditions must all hold for the Mann-Whitney U test to be appropriate:
+
+**1. Two independent samples.** The observations in Group 1 must be unrelated to those in Group 2. Paired designs (before/after measurements on the same subjects, matched pairs) require the Wilcoxon signed-rank test instead, which is a different procedure.
+
+**2. Ordinal or continuous dependent variable.** The values must have a natural order so that "rank 3 is larger than rank 2" is meaningful. Purely nominal categories (eye colour, political party affiliation) cannot be ranked and cannot use this test.
+
+**3. Similar distributional shape.** When comparing medians — the most common goal — the two distributions should have roughly the same shape and spread, differing mainly in location. If the shapes differ dramatically, the test still detects a general stochastic ordering (one group tends to be larger) but the result cannot be interpreted cleanly as a difference in medians.
+
+**4. Independence within each group.** Each observation must be drawn independently. Clustered or time-series data violates this assumption.
+
+When should you choose Mann-Whitney over the <Link to={routes.article('t-test')}>independent-samples t-test</Link>? A useful rule: if your sample is small (n < 30 per group) and you cannot confirm normality, or if your data has clear outliers or follows an ordinal scale, Mann-Whitney is the safer default. The t-test is more powerful when its assumptions hold, but losing little power to use Mann-Whitney on continuous data that is reasonably symmetric is often an acceptable trade.
+
+---
+
+<RelatedLink to={routes.article('t-test')} label="Student's t-test guide" intro="See also" />
+
+## The Mann-Whitney U Formula
+
+For two groups with sample sizes n₁ and n₂:
+
+**Step 1 — Pool and rank.** Combine all N = n₁ + n₂ observations into one list, rank them from 1 (smallest) to N (largest). Tied values receive the average of the ranks they would occupy.
+
+**Step 2 — Sum the ranks.** Let R₁ = sum of ranks assigned to Group 1, and R₂ = sum of ranks assigned to Group 2.
+
+**Check:** R₁ + R₂ = N(N + 1) / 2.
+
+**Step 3 — Compute U statistics.**
+
+```
+U₁ = n₁ × n₂  +  n₁(n₁ + 1) / 2  −  R₁
+U₂ = n₁ × n₂  +  n₂(n₂ + 1) / 2  −  R₂
+```
+
+**Check:** U₁ + U₂ = n₁ × n₂.
+
+Interpretation: U₁ counts the number of pairs (one from each group) where a Group 1 value is **less than** a Group 2 value. U₂ counts the reverse. If Group 1 consistently produces smaller values, U₁ will be large and U₂ will be small.
+
+**Step 4 — Test statistic.** For a two-tailed test, the test statistic is:
+
+```
+U = min(U₁, U₂)
+```
+
+**Step 5 — Determine significance.** For small samples (typically n₁, n₂ ≤ 20), compare U to a critical value from a Mann-Whitney U table at your chosen α. For larger samples, use the normal approximation:
+
+```
+μU = n₁ × n₂ / 2
+
+σ²U = n₁ × n₂ × (n₁ + n₂ + 1) / 12
+
+z = (U − μU) / σU
+```
+
+A z-score beyond ±1.96 corresponds to a two-tailed p-value below 0.05.
+
+The formal definition and distributional properties of the U statistic appear in the [NIST/SEMATECH e-Handbook of Statistical Methods — Wilcoxon-Mann-Whitney Test](https://www.itl.nist.gov/div898/handbook/prc/section2/prc213.htm), which also provides critical value tables and worked examples for both small and large samples.
+
+---
+
+<RelatedLink to={routes.article('normal-distribution')} label="Normal distribution explained" intro="Worth reading next" />
+
+## Wilcoxon Rank-Sum Test: Same Method, Different Name
+
+The Wilcoxon rank-sum test and the **mann-whitney u test wilcoxon rank sum** formulation are the same hypothesis test. Frank Wilcoxon published his rank-sum procedure in 1945; Mann and Whitney independently published a more general version in 1947 that extended it to unequal sample sizes and provided the exact null distribution.
+
+The connection in formulas is direct:
+
+```
+W = R₁   (Wilcoxon statistic = rank sum of Group 1)
+
+U₁ = W − n₁(n₁ + 1) / 2
+```
+
+Software packages use both names. R and SAS default to reporting W; SPSS reports U. Either way the p-value is identical — only the labelling differs. When you read a paper that calls it the **wilcoxon sum rank test**, the Wilcoxon rank-sum test, or the Mann-Whitney U test, you are reading about the same procedure.
+
+---
+
+## Step-by-Step Worked Example
+
+**Scenario:** A physiotherapy clinic tests a new rehabilitation program against standard care. They recruit 12 patients with similar injuries, assign 6 randomly to each group, and record days to full recovery (lower = faster recovery = better outcome).
+
+| Group A — New Program | Group B — Standard Care |
+|-----------------------|-------------------------|
+| 2 | 9 |
+| 4 | 13 |
+| 5 | 15 |
+| 6 | 17 |
+| 8 | 19 |
+| 11 | 22 |
+
+The clinic cannot assume normality with only 6 patients per group, and recovery time is often skewed, making the Mann-Whitney U test appropriate.
+
+### Step 1 — Pool all observations and rank them
+
+Combining both groups and sorting smallest to largest:
+
+| Value | Group | Rank |
+|-------|-------|------|
+| 2 | A | 1 |
+| 4 | A | 2 |
+| 5 | A | 3 |
+| 6 | A | 4 |
+| 8 | A | 5 |
+| 9 | B | 6 |
+| 11 | A | 7 |
+| 13 | B | 8 |
+| 15 | B | 9 |
+| 17 | B | 10 |
+| 19 | B | 11 |
+| 22 | B | 12 |
+
+No tied values, so ranks are the integers 1 through 12.
+
+### Step 2 — Sum the ranks for each group
+
+```
+R₁ (Group A) = 1 + 2 + 3 + 4 + 5 + 7 = 22
+R₂ (Group B) = 6 + 8 + 9 + 10 + 11 + 12 = 56
+```
+
+Verification: R₁ + R₂ = 22 + 56 = 78 = 12 × 13 / 2 = 78 ✓
+
+### Step 3 — Compute U₁ and U₂
+
+With n₁ = n₂ = 6:
+
+```
+n₁ × n₂ = 36
+n₁(n₁ + 1) / 2 = 6 × 7 / 2 = 21
+n₂(n₂ + 1) / 2 = 6 × 7 / 2 = 21
+
+U₁ = 36 + 21 − 22 = 35
+U₂ = 36 + 21 − 56 = 1
+```
+
+Verification: U₁ + U₂ = 35 + 1 = 36 = n₁ × n₂ ✓
+
+**Meaning of U₁ = 35:** Of the 36 possible pairings (each Group A recovery time paired with each Group B recovery time), Group A was faster (had a lower value) in 35 pairs. The only exception is the pair (11, 9), where Group B's 9 days beats Group A's 11 days. This single exception produces U₂ = 1.
+
+### Step 4 — Test statistic
+
+For a two-tailed test:
+
+```
+U = min(U₁, U₂) = min(35, 1) = 1
+```
+
+### Step 5 — Normal approximation and p-value
+
+With n₁ = n₂ = 6, the normal approximation is appropriate:
+
+```
+μU = 36 / 2 = 18
+
+σ²U = 6 × 6 × (6 + 6 + 1) / 12
+    = 36 × 13 / 12
+    = 468 / 12
+    = 39
+
+σU = √39 ≈ 6.245
+
+z = (1 − 18) / 6.245 = −17 / 6.245 ≈ −2.72
+```
+
+For a two-tailed test: p ≈ 2 × P(Z < −2.72) ≈ 2 × 0.0033 ≈ **0.007**.
+
+### Step 6 — Decision
+
+At α = 0.05: p = 0.007 < 0.05. **Reject H₀.** The Mann-Whitney U test provides strong evidence that recovery times differ between the new program and standard care, with Group A recovering significantly faster (median 6.5 days versus 16 days for Group B).
+
+---
+
+<RelatedLink to={routes.article('p-value')} label="P-value: definition and interpretation" intro="For a related calculation" />
+
+## Interpreting the U Statistic and P-Value
+
+**What U represents:** U₁ counts the number of (Group 1, Group 2) pairs where Group 1's value is smaller. If Group 1 and Group 2 come from identical distributions, you expect roughly half of all pairs to go each way, so U₁ ≈ U₂ ≈ n₁n₂/2. The further U is from n₁n₂/2, the stronger the evidence that one group systematically differs from the other.
+
+**Effect size:** U alone is not an effect size, but you can compute a simple measure called the **rank-biserial correlation r** or the **probability of superiority A₁₂**:
+
+```
+A₁₂ = U₁ / (n₁ × n₂)
+```
+
+In the worked example: A₁₂ = 35/36 ≈ 0.97. This means there is a 97% probability that a randomly selected Group A patient will recover faster than a randomly selected Group B patient — a large and practically meaningful effect.
+
+**One-tailed vs. two-tailed tests:** A two-tailed test asks whether either group tends to be larger. A one-tailed test asks specifically whether Group 1 tends to be smaller (or larger). For a one-tailed test, use U₁ or U₂ directly rather than min(U₁, U₂), and halve the p-value from the two-tailed result.
+
+**Handling ties:** When two observations share the same value, assign each the average of the ranks they would occupy. Ties inflate σ²U slightly; most software applies a correction automatically. For heavy ties, consider exact permutation-based p-values rather than the normal approximation.
+
+---
+
+## Mann-Whitney U Test vs. the Independent-Samples t-Test
+
+The table below contrasts the two tests on the dimensions that matter most when choosing:
+
+| Feature | Mann-Whitney U Test | Independent Samples t-Test |
+|---------|---------------------|---------------------------|
+| Data scale | Ordinal or continuous | Continuous (interval or ratio) |
+| Distributional assumption | None | Normality (or large n) |
+| What is compared | Rank distributions | Means |
+| Sensitive to | Systematic ranking differences | Differences in mean |
+| Effect of outliers | Very robust | Sensitive |
+| Power when t-test assumptions hold | ~95% of t-test power | 100% (reference) |
+
+The power comparison is the key practical insight: when the independent-samples t-test assumptions hold (normality, no severe outliers), the Mann-Whitney test loses only about 5% statistical power relative to the t-test. That is a very small cost for robustness to assumption violations. In practice, many researchers default to Mann-Whitney for small samples and use the t-test only when they can verify normality via a QQ-plot or when sample sizes are large enough for the Central Limit Theorem to apply.
+
+The [Boston University School of Public Health — Nonparametric Tests module](https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704_nonparametric/bs704_nonparametric4.html) provides a detailed side-by-side comparison of parametric and non-parametric two-sample tests, including conditions under which each is preferred.
+
+One scenario where the t-test is clearly preferable: when your data is normally distributed and your sample is small. In this setting, the t-test's exact null distribution (the t-distribution with n − 2 degrees of freedom) is more precise, and Mann-Whitney wastes the Gaussian structure of the data by reducing it to ranks.
+
+---
+
+## Common Mistakes When Using the Mann-Whitney U Test
+
+**Applying it to paired data.** The Mann-Whitney U test requires two independent groups. If the same subjects are measured twice (before and after an intervention, or in two conditions), use the Wilcoxon signed-rank test, not the rank-sum variant. Confusing the two leads to inflated p-values and incorrect conclusions.
+
+**Interpreting U as a difference in means.** A significant U tells you that one group's ranks tend to be higher, not that the means differ by any specific amount. Report the median and interquartile range of each group alongside the U statistic, not the group means.
+
+**Ignoring effect size.** Reporting only "U = 1, p = 0.007" is incomplete. Always pair the significance test with A₁₂ (probability of superiority) or the rank-biserial correlation r = 1 − 2U/(n₁n₂), so readers understand the magnitude of the difference.
+
+**Assuming it tests medians unconditionally.** The Mann-Whitney U test compares medians only when both distributions have the same shape and spread. If Group A is symmetric and Group B is right-skewed, a significant U does not mean the medians differ; it means the rank distributions differ. State which interpretation applies in your specific context.
+
+**Using the normal approximation with very small samples.** For n₁ or n₂ below 5, the normal approximation to the U distribution is unreliable. Use exact critical values from a Mann-Whitney U table, or run an exact permutation test via software.
+
+---
+
+<RelatedLink to={routes.article('type-i-and-type-ii-errors')} label="Type I and type II errors explained" intro="On a related note" />
+
+## Frequently Asked Questions
+
+### Is the Mann-Whitney U test the same as the Wilcoxon rank-sum test?
+
+Yes — they are mathematically identical procedures. Frank Wilcoxon published the rank-sum statistic W in 1945; Mann and Whitney published the equivalent U statistic in 1947 for unequal sample sizes and provided its exact null distribution. The relationship is W = U + n₁(n₁+1)/2, so the p-values are identical regardless of which statistic the software reports. The names "Mann-Whitney U test," "Wilcoxon rank-sum test," and "Mann-Whitney-Wilcoxon test" all refer to the same procedure.
+
+### What is the difference between the Mann-Whitney U test and the t-test?
+
+The independent-samples t-test compares group means and assumes the underlying data is (approximately) normally distributed. The Mann-Whitney U test compares rank distributions and makes no normality assumption. When the t-test assumptions hold, both tests give similar p-values, but the t-test is slightly more powerful. When the assumptions are violated — with small samples, outliers, or ordinal data — the Mann-Whitney test is more reliable. Many researchers use the Mann-Whitney test as the default for small samples and switch to the t-test only when normality can be verified.
+
+### What does the U statistic measure?
+
+U counts the number of times an observation from Group 1 is smaller than an observation from Group 2 (all n₁ × n₂ pairwise comparisons). If U₁ = 35 with 36 total pairs, Group 1 values were smaller 35 out of 36 times. The probability of superiority A₁₂ = U₁/(n₁n₂) converts U into an effect size: A₁₂ = 35/36 ≈ 0.97 means Group 1 has a 97% chance of producing a smaller value than Group 2.
+
+### Can I use the Mann-Whitney U test with more than two groups?
+
+No — the Mann-Whitney U test is strictly a two-group test. For three or more independent groups, use the **Kruskal-Wallis test**, which extends the rank-based approach to multiple groups in the same way that one-way ANOVA extends the t-test. For pairwise comparisons after a significant Kruskal-Wallis result, apply Mann-Whitney tests with a Bonferroni or Dunn correction for multiple comparisons.
+
+### What sample size do I need for the Mann-Whitney U test?
+
+The test requires at least 5 observations per group for the normal approximation to be reasonably accurate. Smaller samples can use exact critical values from tabulated U distributions. The test has about 95% of the statistical power of the t-test when both tests are appropriate, so required sample sizes are only slightly larger than those calculated for the t-test. For a two-tailed test at α = 0.05 with 80% power and a medium effect size, approximately 20–30 observations per group is typical.
+
+### How do I handle tied values in the Mann-Whitney U test?
+
+Assign each tied observation the average rank of the tied positions. For example, if two observations share rank positions 4 and 5, each receives rank 4.5. This maintains R₁ + R₂ = N(N+1)/2. Ties slightly deflate σ²U; software applies a tie-correction factor automatically. For data with many ties — such as Likert-scale responses where large clusters of respondents choose the same value — the exact permutation distribution is more reliable than the normal approximation.
+
+### When should I NOT use the Mann-Whitney U test?
+
+Avoid the test when: (1) your groups are paired or matched rather than independent; (2) your dependent variable is purely nominal with no natural ordering; (3) you need to compare means rather than rank distributions (only the t-test speaks directly to means); or (4) your distributional shapes differ so much between groups that a "stochastic ordering" test is hard to interpret in practical terms. In each case, a different method — Wilcoxon signed-rank, chi-square, t-test, or a permutation test — is more appropriate.
+
+---
+
+## Summary
+
+The Mann-Whitney U test (also called the Wilcoxon rank-sum test or, informally, the mann-whitney t-test) compares two independent groups by ranking all observations together and counting favourable pairs. It requires no normality assumption, resists outliers, and works naturally on ordinal data. The key formula computes U₁ = n₁n₂ + n₁(n₁+1)/2 − R₁, where R₁ is the sum of ranks for Group 1. The test statistic U = min(U₁, U₂) is then compared against a critical value or converted to a z-score for a p-value via the normal approximation.
+
+For the worked rehabilitation example (n₁ = n₂ = 6), U = 1 yielded z ≈ −2.72 and p ≈ 0.007 — strong evidence that the new program leads to faster recovery. The probability of superiority A₁₂ = 35/36 ≈ 0.97 quantified the magnitude: a Group A patient is 97% likely to recover faster than a randomly selected Group B patient.
+
+Use Mann-Whitney whenever you have two independent groups, ordinal or continuous data, and cannot verify normality — particularly with small samples. When normality does hold, the test sacrifices only about 5% power relative to the t-test, making it a safe default in most two-group comparisons. Explore all the tools for hypothesis testing and related methods at the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
