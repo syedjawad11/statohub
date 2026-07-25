@@ -1,0 +1,324 @@
+---
+title: "Coefficient of Determination (R-Squared) Explained"
+h1: "R-Squared & Adjusted R-Squared Explained"
+description: "The coefficient of determination (R²) measures how well a regression model fits your data. Learn the formula, a worked example, and when adjusted R² is better."
+category: regression-correlation
+primaryKeyword: coefficient of determination
+keywords:
+  - coefficient of determination
+phase: 2
+calculator: linear-regression
+related: []
+draft: true
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+The **coefficient of determination**, written as R² (R-squared), is the most widely used measure of how well a regression model fits a dataset. It tells you the proportion of variance in the outcome variable that is explained by the predictor variable (or variables in a multiple regression). An R² of 0.73, for example, means the model accounts for 73% of the variability in the response — the remaining 27% comes from factors outside the model or from natural randomness.
+
+R² ranges from 0 to 1. A value of 0 means the model explains none of the variation in the outcome; a value of 1 means it explains all of it perfectly. Whether you are fitting a simple line through two variables or a multiple regression model with a dozen predictors, R² is the first statistic most analysts check to gauge model fit.
+
+---
+
+## What Is the Coefficient of Determination?
+
+The coefficient of determination quantifies the proportion of the total variance in a dependent variable Y that is predictable from the independent variable X (or variables X₁, X₂, … in multiple regression). It answers a direct question: compared with a model that simply predicts the sample mean ȳ for every observation, how much better does the regression line perform?
+
+To understand that framing, start from the baseline. If you know nothing about a dataset except its mean, your best single-number prediction for any new observation is ȳ. The total spread of the data around that baseline is captured by the **total sum of squares (SST)**:
+
+```
+SST = Σ(yᵢ − ȳ)²
+```
+
+Your fitted regression line produces predicted values ŷᵢ for each observation. Part of the total variation is captured by the model — the part explained by moving from ȳ to ŷᵢ. This is the **regression (explained) sum of squares (SSR)**:
+
+```
+SSR = Σ(ŷᵢ − ȳ)²
+```
+
+The variation left unexplained — the scatter of actual values around the fitted line — is the **residual (error) sum of squares (SSE)**:
+
+```
+SSE = Σ(yᵢ − ŷᵢ)²
+```
+
+These three quantities satisfy the identity SST = SSR + SSE. The coefficient of determination is simply the share of total variation that the model explains:
+
+```
+R² = SSR / SST = 1 − (SSE / SST)
+```
+
+When R² = 0.73, the model explains 73% of the total variance in Y. The remaining 27% is residual variation the predictors do not capture.
+
+---
+
+## The R-Squared Formula
+
+For simple linear regression (one predictor), R² has an elegant connection to the Pearson correlation coefficient r between X and Y:
+
+```
+R² = r²
+```
+
+This identity is where the name "R-squared" comes from — in the simple case it literally is the squared Pearson correlation. Squaring r removes its sign, so R² is always non-negative regardless of whether the relationship is positive or negative.
+
+For multiple regression, compute R² directly from the sums of squares:
+
+```
+R² = 1 − (SSE / SST)
+```
+
+This form works for any number of predictors. The [NIST/SEMATECH e-Handbook of Statistical Methods — Assessing the Fit of the Model](https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd44.htm) provides thorough coverage of R² within the multiple-regression context, including the relationship between R², SSE, and SST.
+
+<RelatedLink to={routes.article('linear-regression')} label="How Linear Regression Works" intro="On a related note" />
+
+---
+
+## How to Interpret R-Squared Values
+
+A high R² is not always a sign of a good model, and a low R² is not always a sign of a bad one. Context matters enormously.
+
+**What counts as a "good" R²?**
+
+There is no universal threshold because the answer depends on the field and what you are predicting:
+
+- **Physical sciences and engineering**: R² above 0.95 is common when physical laws govern the relationship. A model with R² = 0.70 might be considered mediocre in that context.
+- **Social sciences and economics**: Predicting human behavior introduces far more unmeasured variation. R² values of 0.30 to 0.60 are often entirely acceptable for cross-sectional survey data.
+- **Finance**: Stock-return models sometimes have R² below 0.10, yet still provide statistically significant and economically useful predictive power.
+
+The right benchmark is not a universal number — it is the best R² achievable in your domain with your available predictors.
+
+**R² and model complexity**
+
+Adding any predictor to a multiple regression model will increase R² (or at worst leave it unchanged), even if that predictor is pure noise. This is a mathematical inevitability: least-squares regression optimizes the fit to the sample, and having one more free parameter can never make the fit worse. The practical trap is that you can make R² look high by adding irrelevant variables. That is precisely why **adjusted R²** (described below) was developed — it corrects for the number of predictors.
+
+**R² and prediction on new data**
+
+A high R² on the data used to fit the model does not guarantee accurate predictions on new data. Overfitted models can show R² near 1 on the training set while performing poorly out of sample. Always evaluate your model on a held-out test set or through cross-validation before trusting its predictive power.
+
+**R² and causation**
+
+A high R² tells you that X is associated with Y in a way the regression line captures, but it says nothing about whether X causes Y. See the in-depth discussion in <Link to={routes.article('correlation-vs-causation')}>correlation vs causation</Link>.
+
+---
+
+## Fully Worked Example
+
+The following five-point dataset illustrates every component of the R² calculation by hand. The values match the linear regression calculator defaults so you can verify each result directly.
+
+**Data:** x = 1, 2, 3, 4, 5 and y = 2, 4, 5, 4, 6
+
+### Step 1: Compute the means
+
+```
+x̄ = (1 + 2 + 3 + 4 + 5) / 5 = 15 / 5 = 3
+ȳ = (2 + 4 + 5 + 4 + 6) / 5 = 21 / 5 = 4.2
+```
+
+### Step 2: Fit the regression line
+
+The least-squares slope b₁ and intercept b₀ require two intermediate sums. Work across each data point:
+
+| xᵢ | yᵢ | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)(yᵢ − ȳ) | (xᵢ − x̄)² |
+|----|----|---------|---------|--------------------|------------|
+| 1  | 2  | −2      | −2.2    | 4.4                | 4          |
+| 2  | 4  | −1      | −0.2    | 0.2                | 1          |
+| 3  | 5  | 0       | 0.8     | 0                  | 0          |
+| 4  | 4  | 1       | −0.2    | −0.2               | 1          |
+| 5  | 6  | 2       | 1.8     | 3.6                | 4          |
+| **Sum** | | |         | **8.0**            | **10**     |
+
+```
+b₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)² = 8.0 / 10 = 0.8
+b₀ = ȳ − b₁ · x̄ = 4.2 − 0.8 × 3 = 4.2 − 2.4 = 1.8
+```
+
+Fitted line: **ŷ = 1.8 + 0.8x**
+
+### Step 3: Compute predicted values and residuals
+
+Apply the fitted line to each x to get ŷᵢ, then compute (yᵢ − ŷᵢ) and (yᵢ − ȳ):
+
+| xᵢ | yᵢ | ŷᵢ | yᵢ − ŷᵢ | (yᵢ − ŷᵢ)² | yᵢ − ȳ | (yᵢ − ȳ)² |
+|----|----|----|----------|------------|--------|-----------|
+| 1  | 2  | 2.6 | −0.6   | 0.36       | −2.2   | 4.84      |
+| 2  | 4  | 3.4 | 0.6    | 0.36       | −0.2   | 0.04      |
+| 3  | 5  | 4.2 | 0.8    | 0.64       | 0.8    | 0.64      |
+| 4  | 4  | 5.0 | −1.0   | 1.00       | −0.2   | 0.04      |
+| 5  | 6  | 5.8 | 0.2    | 0.04       | 1.8    | 3.24      |
+| **Sum** | | |         | **2.40 (SSE)**  |        | **8.80 (SST)**  |
+
+### Step 4: Compute the coefficient of determination
+
+```
+SST = 8.80  (total variance to be explained)
+SSE = 2.40  (residual variance after fitting the line)
+SSR = SST − SSE = 8.80 − 2.40 = 6.40  (variance explained by the model)
+
+R² = SSR / SST = 6.40 / 8.80 ≈ 0.73
+```
+
+**Interpretation:** The regression model explains approximately 73% of the variance in y. The remaining 27% is residual variation that the linear fit on x does not capture.
+
+You can verify this result using the correlation method. Compute r between x and y, then square it:
+
+```
+r = Σ(xᵢ − x̄)(yᵢ − ȳ) / √[Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)²]
+  = 8.0 / √(10 × 8.80)
+  = 8.0 / √88
+  = 8.0 / 9.381
+  ≈ 0.853
+
+R² = r² = 0.853² ≈ 0.73  ✓
+```
+
+Both routes give the same result, as expected for simple linear regression.
+
+---
+
+## Try the Calculator
+
+Enter x = 1, 2, 3, 4, 5 and y = 2, 4, 5, 4, 6 in the calculator below to confirm R² ≈ 0.73. The tool reports the slope, intercept, correlation coefficient r, and the coefficient of determination R-squared.
+
+<StatCalc slug="linear-regression" variant="embed" />
+
+To use the full standalone tool with more display options, open the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link>. For other analysis tools, browse the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
+
+---
+
+## What Is Adjusted R-Squared?
+
+Adjusted R² (written R̄² or Adj. R²) is a corrected version of the coefficient of determination that accounts for the number of predictors in the model. Because adding any predictor — even a meaningless noise variable — can only keep R² the same or push it higher, raw R² inflates as you add variables. Adjusted R² penalizes that inflation.
+
+The formula is:
+
+```
+Adjusted R² = 1 − (1 − R²) · (n − 1) / (n − k − 1)
+```
+
+where:
+- n = number of observations
+- k = number of predictor variables (not counting the intercept)
+- R² = the ordinary coefficient of determination
+
+The multiplier `(n − 1) / (n − k − 1)` is always ≥ 1, so adjusted R² is always ≤ R². When you add a predictor that genuinely improves the model, adjusted R² rises. When you add a predictor that contributes less than expected by chance — that is, a near-noise variable — adjusted R² falls.
+
+### Worked continuation: adjusted R² for the five-point example
+
+With n = 5, k = 1, and R² ≈ 0.73 (= 8/11 exactly):
+
+```
+Adjusted R² = 1 − (1 − 0.73) · (5 − 1) / (5 − 1 − 1)
+            = 1 − 0.27 · (4 / 3)
+            = 1 − 0.27 · 1.333
+            = 1 − 0.36
+            = 0.64
+```
+
+The adjusted R² of 0.64 is noticeably lower than R² = 0.73, largely because n = 5 is a very small sample. With a larger dataset the penalty shrinks. For n = 100, k = 1, R² = 0.73, adjusted R² would be approximately 0.727 — nearly identical.
+
+**What can adjusted R² tell you about model building?**
+
+- If adding a new predictor increases adjusted R², that predictor earns its place.
+- If adding a predictor decreases adjusted R², the predictor hurts more than it helps on a degrees-of-freedom-adjusted basis.
+- Adjusted R² can be negative if the model performs worse than the mean-only baseline — a sign of serious overfitting or fundamentally wrong predictors.
+
+The [Penn State STAT 501 course notes — Lesson 2.2: Significance of the Overall Regression Equation](https://online.stat.psu.edu/stat501/lesson/2/2.2) cover the rationale for the degrees-of-freedom correction and walk through adjusted R² alongside the ordinary coefficient of determination.
+
+<RelatedLink to={routes.article('pearson-correlation-coefficient')} label="Pearson Correlation Coefficient" intro="Worth reading next" />
+
+---
+
+## R-Squared vs Adjusted R-Squared: When to Use Each
+
+| Situation | Recommended statistic |
+|-----------|----------------------|
+| Simple linear regression (one predictor) | Either; they differ only slightly |
+| Comparing models with the same number of predictors | Either |
+| Comparing models with **different numbers of predictors** | Adjusted R² |
+| Reporting overall model fit in a paper | Report both: R² and Adj. R² |
+| Stepwise or forward-selection model building | Adjusted R² (or AIC/BIC) |
+
+In simple linear regression — one predictor, one response — R² and adjusted R² are very close because there is only one predictor to penalize. The gap widens when you move to multiple regression and add many predictors.
+
+For model selection — deciding which variables to include — adjusted R² is the better guide than raw R². But many analysts also consider the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC), which impose different complexity penalties and can be more sensitive to model misspecification. Adjusted R² is a good first check; formal model selection tasks benefit from examining several criteria together.
+
+---
+
+## Common Mistakes with R-Squared
+
+### Treating R² alone as proof of a good model
+
+A high coefficient of determination tells you the model fits the training data well — not that the model is correctly specified, meaningful in a practical sense, or accurate on new data. Always examine the residual plots alongside R². A model with R² = 0.95 but systematic curvature in the residuals is misspecified; the high R² reflects an accidental alignment with the training points, not a fundamentally correct functional form.
+
+### Comparing R² across models with different numbers of predictors
+
+Raw R² increases automatically when you add any predictor, including random noise. Never compare two models on R² alone if they have different numbers of predictors. Use adjusted R² or another penalized criterion.
+
+### Ignoring sample size
+
+With a small sample (like n = 5 in the worked example), R² is highly sensitive to individual data points. Remove one observation and the value can shift dramatically. Small-sample R² values are unreliable; treat them as rough estimates until the sample is large enough — typically n > 30 at minimum for simple regression, and considerably more for multiple regression.
+
+### Confusing R² with prediction error
+
+R² is a relative measure of fit, not an absolute one. Two models with R² = 0.73 can have very different root-mean-square errors if their response variables are on different scales. To compare prediction accuracy in original units, look at RMSE or mean absolute error.
+
+### Assuming linearity
+
+R² is defined through a linear decomposition of variance. If you apply a linear regression model to a curved relationship, the R² you obtain understates how predictable the outcome actually is. Inspect a scatter plot of X vs Y before fitting any linear model — if the relationship is curved, a polynomial or log-transformed predictor may improve both fit and the meaningfulness of R².
+
+### Interpreting R² as causation
+
+A coefficient of determination of 0.85 does not mean X causes Y. It means the linear model using X explains 85% of Y's variance in this sample. Causation requires controlled experiments or carefully designed observational studies with appropriate adjustment for confounders, not a high R². See <Link to={routes.article('what-is-correlation')}>what is correlation</Link> for the full distinction.
+
+<RelatedLink to={routes.article('correlation-coefficient')} label="Correlation Coefficient (r) Explained" intro="You may also find this useful" />
+
+---
+
+## Frequently Asked Questions
+
+### What does the coefficient of determination measure?
+
+The coefficient of determination (R²) measures the proportion of variance in the dependent variable that is explained by the regression model. An R² of 0.65 means the model accounts for 65% of the variability in the outcome; the remaining 35% is unexplained by the included predictors.
+
+### Can R-squared be negative?
+
+For standard ordinary least-squares regression, R² is always between 0 and 1 because the fitted line minimizes SSE and can only perform as well as or better than the mean-only baseline. However, **adjusted R²** can be negative when the number of predictors is large relative to the sample size, or when the predictors genuinely add no information above the mean. A negative adjusted R² is a clear warning that something is wrong with the model.
+
+### What is a good R-squared value?
+
+There is no universal threshold. In physical sciences and engineering, R² above 0.90 or 0.95 is often expected. In social and behavioral sciences, R² of 0.30 to 0.60 is commonly acceptable. In financial return models, R² below 0.20 is routine. Always compare your R² to what is typical in your specific application area, not to an abstract standard.
+
+### What is the difference between r and R-squared?
+
+Lowercase r (the Pearson correlation coefficient) measures the strength and direction of the linear relationship between two variables, ranging from −1 to +1. Uppercase R² is r squared: it measures the proportion of variance in Y explained by the regression and ranges from 0 to 1. While r captures the direction of the association (positive or negative), R² does not — squaring removes the sign. See the <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient</Link> article for a full treatment of r.
+
+### Why does R-squared always increase when you add predictors?
+
+In ordinary least-squares, adding any predictor gives the optimizer one more degree of freedom to reduce SSE. Because R² = 1 − SSE/SST and SST is fixed, R² can only stay the same or increase when a new predictor enters the model — even if that predictor is random noise. Adjusted R² corrects for this by dividing by the residual degrees of freedom rather than the total degrees of freedom.
+
+### How is adjusted R-squared different from R-squared?
+
+Adjusted R² applies a degrees-of-freedom penalty to the ordinary coefficient of determination. It is always ≤ R², and it can decrease when a new predictor adds less predictive power than would be expected by chance. Use adjusted R² when comparing models with different numbers of predictors; use R² for a simple description of fit within a single, fixed model.
+
+### What does an R-squared of zero mean?
+
+An R² of zero means the regression model explains none of the variance in Y — the fitted line performs no better than simply predicting the sample mean ȳ every time. This typically indicates either a genuinely nonexistent linear relationship between X and Y, or a misspecified model (for example, fitting a straight line to a circular pattern of data).
+
+### What does an R-squared of 1 mean?
+
+An R² of 1 means the model explains 100% of the variance in Y — every predicted value ŷᵢ equals the observed value yᵢ exactly, leaving no residuals. In practice R² = 1 is almost never achieved on real data, and when it does occur it usually signals data entry errors, perfectly collinear predictors, or a model that exactly memorizes the training set.
+
+---
+
+## Summary
+
+The coefficient of determination (R²) is the standard measure of goodness-of-fit in regression analysis. Computed as R² = SSR/SST = 1 − SSE/SST, it tells you what fraction of the total variance in the outcome is accounted for by the model on a 0-to-1 scale. For simple linear regression, R² equals the square of the Pearson correlation r — which is where the name comes from.
+
+When comparing models with different numbers of predictors, switch to adjusted R², which penalizes model complexity and can fall when a predictor adds less signal than noise. Neither R² nor adjusted R² proves causation or guarantees good out-of-sample predictions — they are tools for comparing models and communicating fit, not end-points in themselves.
+
+To see the coefficient of determination calculated live from your own data, use the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link>. For a deeper look at the relationship between R² and correlation, the <Link to={routes.article('correlation-coefficient')}>correlation coefficient</Link> article covers the Pearson r formula and its interpretation alongside related measures.
