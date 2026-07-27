@@ -1,0 +1,254 @@
+---
+title: "Effect Size: What It Means & How to Interpret It"
+description: "Understand what effect size means in statistics, how to calculate Cohen's d for group comparisons, and how to interpret effect sizes in statistical research."
+category: inferential-statistics
+primaryKeyword: effect size
+keywords:
+  - effect size
+  - effect size d
+  - effect sizes
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+An **effect size** is a number that quantifies how large a statistical relationship or difference actually is — separate from whether that relationship is statistically significant. Statistical tests like the t-test or chi-square test produce a p-value that answers a binary question: is there enough evidence to reject the null hypothesis? Effect size answers the more important follow-up: *how large is the effect*?
+
+Two studies can both achieve p < 0.05 yet produce completely different effect sizes. A drug trial with 10,000 participants might detect a statistically significant reduction in systolic blood pressure of just 0.5 mmHg — a finding that is real but clinically meaningless. A smaller trial with 30 participants might detect a 15 mmHg reduction that is both statistically significant and medically important. The p-value cannot distinguish these scenarios; the effect size does. This is why major journals and style guides now require researchers to report effect sizes alongside p-values.
+
+This article covers the most common effect size measures — Cohen's d, Pearson's r, and eta-squared — explains how to interpret them using Cohen's widely adopted benchmarks, and walks through a complete numeric example from raw data to a labeled interpretation.
+
+---
+
+## Why Effect Size Matters More Than p-Values Alone
+
+Statistical significance and practical significance are two separate things. A **statistically significant** result means only that the observed data are unlikely under the null hypothesis. **Practical significance** — whether the effect is large enough to matter in the real world — is what effect sizes measure.
+
+The problem with relying on p-values alone has been well documented. When a sample is very large, even a trivially small effect can produce a p-value below any conventional threshold. A study comparing two teaching methods across 50,000 students might find that one method produces a statistically significant improvement in test scores — of 0.3 points on a 100-point scale. The p-value might be 0.001. The effect size, however, would be vanishingly small: no teacher or school board should change their curriculum for an improvement measured in fractions of a point.
+
+Conversely, a well-designed small study might find a clinically large effect — say, a new physical therapy protocol that cuts recovery time nearly in half — but fail to reach p < 0.05 simply because the sample was not large enough to detect it reliably. The p-value here reflects statistical power, not the size of the benefit.
+
+Effect sizes let you compare findings across studies even when those studies use different scales, sample sizes, or outcome measures. A meta-analysis that pools results from twenty separate experiments depends entirely on standardized effect sizes to make the studies commensurable. Without them, pooling the raw numbers would be meaningless.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis Explained" intro="On a related note" />
+
+---
+
+## Types of Effect Sizes
+
+Different statistical tests call for different effect size measures. The choice depends on the type of test you ran and the nature of your data.
+
+### Cohen's d — The Effect Size for Group Comparisons
+
+**Cohen's d** is the standardized mean difference between two groups. It expresses the difference in group means as a multiple of the pooled standard deviation, making it interpretable on a common scale regardless of the original measurement units. This is the most commonly reported effect size in the behavioral and social sciences.
+
+The formula for Cohen's d is:
+
+```
+d = (x̄₁ − x̄₂) / s_pooled
+```
+
+where x̄₁ and x̄₂ are the means of the two groups and s_pooled is the pooled standard deviation, computed as:
+
+```
+s_pooled = √( ((n₁ − 1)·s₁² + (n₂ − 1)·s₂²) / (n₁ + n₂ − 2) )
+```
+
+Here n₁ and n₂ are the sample sizes and s₁ and s₂ are the standard deviations of the two groups. The pooled SD is a weighted average that gives more influence to the group with more observations.
+
+Cohen's d is the natural effect size to report when you have conducted an independent-samples <Link to={routes.article('t-test')}>t-test</Link> or any analysis comparing two group means. A positive d means Group 1 scored higher; a negative d means Group 1 scored lower. The sign tells you direction; the magnitude tells you size.
+
+<RelatedLink to={routes.article('t-test')} label="T-Test: Formula and Examples" intro="For a related calculation" />
+
+---
+
+### Pearson's r — The Effect Size for Correlations
+
+When the relationship between two continuous variables is measured with a correlation, Pearson's r is itself the effect size. No additional computation is needed; r already ranges from −1 to +1 and directly captures both the strength and direction of the linear relationship.
+
+Cohen (1988) proposed separate benchmarks for r compared to d (see the interpretation table below). For example, an r of 0.30 is considered a medium effect — meaning there is a moderate linear association between the two variables. A value near zero indicates little or no linear relationship; a value near ±1 indicates a near-perfect linear relationship.
+
+Pearson's r is also closely related to r² (R-squared), which tells you the proportion of variance in one variable explained by the other. An r of 0.50 means that r² = 0.25, so the predictor explains 25% of the variance in the outcome. R-squared is the standard effect size reported in regression analyses.
+
+### Eta-Squared (η²) — The Effect Size for ANOVA
+
+When an analysis involves more than two groups — that is, when you run a one-way or factorial ANOVA — the appropriate effect size is **eta-squared (η²)**. It quantifies the proportion of total variance in the outcome variable that is accounted for by the group variable.
+
+```
+η² = SS_between / SS_total
+```
+
+where SS_between is the sum of squares between groups and SS_total is the total sum of squares. An η² of 0.06, for example, means that 6% of the total variance in the outcome can be attributed to group membership.
+
+A limitation of η² is that it is biased upward in small samples. For this reason, researchers in some fields prefer **omega-squared (ω²)** or **partial eta-squared (η²_p)**, which apply corrections for sample size and model complexity. The basic interpretation benchmarks, however, follow the same scale as eta-squared.
+
+### Odds Ratio — The Effect Size for Categorical Outcomes
+
+When the outcome variable is binary (yes/no, success/failure) and you have compared two groups, the **odds ratio (OR)** is the standard effect size. An OR of 1 means no difference in odds; an OR > 1 means the first group has higher odds of the outcome; an OR < 1 means the first group has lower odds.
+
+The odds ratio is common in epidemiology and clinical medicine — for example, reporting that patients who received a treatment had 2.5 times the odds of recovery compared to controls. Unlike Cohen's d, there is no single universally accepted small/medium/large benchmark for odds ratios, because the relevant "large" effect varies dramatically between clinical, social, and biological contexts.
+
+---
+
+## How to Interpret Effect Sizes: Cohen's Benchmarks
+
+Jacob Cohen established the most widely used interpretation benchmarks in his 1988 book *Statistical Power Analysis for the Behavioral Sciences*. These thresholds were designed as rough guides for the social and behavioral sciences. Always consider the specific context of your study before labeling an effect as "small" or "large" — what is large in one field can be trivially small in another.
+
+| Effect Size Measure | Small | Medium | Large |
+|---------------------|-------|--------|-------|
+| Cohen's d           | 0.2   | 0.5    | 0.8   |
+| Pearson's r         | 0.1   | 0.3    | 0.5   |
+| Eta-squared (η²)    | 0.01  | 0.06   | 0.14  |
+
+**Cohen's d of 0.2 (small):** The two group means differ by 0.2 standard deviations. This is a subtle difference — the two distributions overlap substantially. In a normal-distribution model, roughly 85% of individuals from the lower group would score below the average of the upper group.
+
+**Cohen's d of 0.5 (medium):** The means differ by half a standard deviation. This is the kind of difference that a careful observer would notice — distributions still overlap significantly, but the separation is meaningful.
+
+**Cohen's d of 0.8 (large):** The means differ by nearly a full standard deviation. This is a prominent difference that would be apparent even in a small sample. In Cohen's own words, this represents a difference that is "grossly perceptible" in practical settings.
+
+Keep in mind that Cohen himself noted these benchmarks were "in the absence of other information," intended as a starting point when field-specific standards are not available. In some domains — for example, comparing cognitive test scores of patients with a specific neurological condition versus healthy controls — an effect size of 2.0 or higher would not be unusual. In others — for example, detecting a policy effect across millions of individuals — a Cohen's d of 0.1 might represent billions of dollars of economic impact.
+
+<RelatedLink to={routes.article('p-value')} label="P-Value: Definition and Interpretation" intro="Worth reading next" />
+
+---
+
+## Worked Example: Calculating Cohen's d Step by Step
+
+To make the formula concrete, work through a study comparing two reading instruction methods.
+
+**Setup:** A researcher randomly assigns 30 students to two groups of 15. Group A receives the new structured literacy method; Group B continues with the standard approach. After twelve weeks, all students take the same reading comprehension test scored from 0 to 100.
+
+**Results:**
+- Group A (structured literacy): n₁ = 15, x̄₁ = 72, s₁ = 8
+- Group B (standard): n₂ = 15, x̄₂ = 65, s₂ = 8
+
+**Step 1: Calculate the pooled standard deviation.**
+
+Because both groups have the same sample size and the same standard deviation in this example, the calculation simplifies:
+
+```
+s_pooled = √( ((15 − 1)·8² + (15 − 1)·8²) / (15 + 15 − 2) )
+         = √( (14 × 64 + 14 × 64) / 28 )
+         = √( (896 + 896) / 28 )
+         = √( 1792 / 28 )
+         = √64
+         = 8
+```
+
+When both groups share the same standard deviation, s_pooled equals that common value. In a real study with unequal SDs, the pooled value will fall between the two group SDs, weighted by sample size.
+
+**Step 2: Compute Cohen's d.**
+
+```
+d = (x̄₁ − x̄₂) / s_pooled
+  = (72 − 65) / 8
+  = 7 / 8
+  = 0.875
+```
+
+**Step 3: Interpret the result.**
+
+A Cohen's d of 0.875 exceeds the large benchmark of 0.8. The structured literacy group's mean comprehension score is 0.875 standard deviations higher than the standard group's mean. This is a practically meaningful effect: students receiving the new method outperformed the control group by nearly a full standard deviation.
+
+**What the p-value alone would not tell you:** If a colleague ran a t-test and reported "the difference was statistically significant, p = 0.023," you would know the result is unlikely to be due to chance — but you would have no basis for judging whether the benefit is worth implementing the new curriculum. The effect size fills that gap. An effect of d = 0.875 in an educational context is large enough that any school administrator reviewing the data would have good reason to take it seriously.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="You may also find this useful" />
+
+---
+
+## Effect Size in Different Statistical Tests
+
+Knowing which effect size to pair with each test is as important as knowing how to calculate it.
+
+**Independent-samples t-test:** Use Cohen's d. Compute the pooled SD from both group SDs and sample sizes, then divide the mean difference by s_pooled. Report both d and its direction.
+
+**Paired-samples t-test:** Use Cohen's d, but here the SD should be the standard deviation of the *difference scores* (each participant's post-test score minus pre-test score). This is sometimes called d_z.
+
+**One-sample t-test:** Use Cohen's d with the population standard deviation (or sample SD if the population value is unknown) in the denominator.
+
+**ANOVA (one-way or factorial):** Use eta-squared (η²) or partial eta-squared (η²_p). Most statistical software reports partial η² automatically. For small samples, report omega-squared (ω²) to correct for positive bias.
+
+**Pearson correlation:** r is already the effect size. Report r and r² (the proportion of explained variance) together.
+
+**Chi-square test of independence:** Use **Cramér's V** (also written V or φ for a 2×2 table), which ranges from 0 to 1. The standard interpretation benchmarks for V are the same as for r: 0.1 (small), 0.3 (medium), 0.5 (large).
+
+**Logistic regression / binary outcomes:** Use the odds ratio or log odds ratio. For a standardized effect size comparable to Cohen's d, you can convert the log odds to d using the approximation d ≈ log(OR) × (√3 / π).
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/) provides detailed procedures for many of these tests, including comparison of two process means, where the relationship between the test statistic and the underlying effect size is worked out in the context of industrial process control and experimental design.
+
+---
+
+## Effect Size and Statistical Power
+
+Effect size is one of the four quantities that define a complete power analysis: sample size, significance level (α), statistical power (1 − β), and effect size. Knowing any three allows you to calculate the fourth.
+
+In practice this means:
+
+- **Planning a study:** Choose a minimum effect size worth detecting (based on practical significance), set α = 0.05 and power = 0.80, and solve for required sample size. A larger effect requires fewer participants; a smaller effect requires more.
+- **Interpreting a non-significant result:** If a study failed to reject the null hypothesis, a large effect size combined with a small sample suggests the study was underpowered. Conversely, a small effect size combined with a large sample and a non-significant p-value is stronger evidence that no practically important effect exists.
+- **Evaluating a significant result:** A statistically significant result with a small effect size and a very large sample raises the question of practical importance. The effect is real but may not justify any action.
+
+This interplay between sample size and effect size is why researchers distinguish between **statistical significance** (a function of both effect size and sample size) and **practical significance** (a function of effect size alone). Effect sizes cut through the dependence on sample size and give you a direct statement about magnitude.
+
+The [OpenStax Introductory Statistics, Chapter 9: Hypothesis Testing with One Sample](https://openstax.org/books/introductory-statistics/pages/9-introduction) covers how hypothesis tests relate to the underlying differences in population means — context that makes the role of effect size clearer within the full inferential framework.
+
+---
+
+## Common Mistakes When Reporting Effect Sizes
+
+**Omitting effect sizes entirely.** This was once standard practice in many fields. If you have run a hypothesis test, add the effect size. Most software either computes it directly or provides the quantities needed to compute it in seconds.
+
+**Using the wrong formula for the study design.** An effect size d computed from the pooled SD of two independent groups is not the same as a d computed from paired difference scores. Using the pooled formula for paired data underestimates the true effect size because it ignores the within-person correlation.
+
+**Interpreting benchmarks rigidly.** Cohen's 0.2 / 0.5 / 0.8 scale is a starting point, not a law. An educational intervention with d = 0.30 is small by Cohen's threshold but would be widely implemented if it applied to millions of students at low cost. A pharmaceutical effect of d = 0.30 in a life-threatening disease context might be highly meaningful. Always contextualize.
+
+**Confusing statistical significance with effect size magnitude.** A p-value of 0.001 does not imply a large effect size. A p-value of 0.08 does not imply a small effect size. These are separate quantities. Report both.
+
+**Reporting effect sizes without confidence intervals.** A single effect size point estimate has sampling error. Reporting a 95% confidence interval around Cohen's d or Pearson's r tells readers how precisely the effect has been estimated. A d of 0.80 with a 95% CI of [0.02, 1.58] is far less certain than d = 0.80 with a CI of [0.65, 0.95].
+
+**Squaring Pearson's r without flagging it.** Cohen's benchmarks for r are 0.1, 0.3, and 0.5. Some researchers accidentally apply these benchmarks to r² (which is r squared), making their effects appear larger than they are. An r² of 0.25 corresponds to an r of 0.50 — a large effect by Cohen's scale, not a medium one.
+
+---
+
+## Frequently Asked Questions
+
+### What is an effect size in simple terms?
+
+An effect size is a number that tells you the magnitude of a statistical finding, independently of sample size. If a training program raises exam scores, the effect size tells you by how much — in standardized units — not just whether the improvement is statistically detectable.
+
+### What is Cohen's d and when do I use it?
+
+Cohen's d, or effect size d, is the standardized difference between two group means. You use it when you have compared two groups with a t-test or equivalent and want to express the difference on a common scale. Compute it by dividing the mean difference by the pooled standard deviation. Values of 0.2, 0.5, and 0.8 are Cohen's benchmarks for small, medium, and large effect sizes, respectively.
+
+### How do you interpret effect sizes?
+
+Use Cohen's conventions as a starting point: for Cohen's d, small is around 0.2, medium is around 0.5, and large is around 0.8. For Pearson's r, the thresholds are 0.1, 0.3, and 0.5. Always consider the context of your field — a "small" effect in a high-stakes medical trial or a population-level policy may still be practically important.
+
+### Can two studies have the same effect size but different p-values?
+
+Yes. The p-value depends on both the effect size and the sample size. Two studies with identical effect sizes will produce different p-values if they have different sample sizes. The larger study will yield a smaller (more significant) p-value, even though the underlying effect is the same. This is why effect sizes are used in meta-analyses: they allow results from differently powered studies to be compared on equal footing.
+
+### Is a large effect size always better?
+
+Not necessarily. The question is whether the effect size is large enough to justify action, given the costs and context. A drug with a large side-effect burden might need to show a very large therapeutic effect to be worth prescribing. A low-cost classroom intervention that produces a small effect size might still be worth adopting because the cost per student is negligible. Effect size describes magnitude; it does not prescribe whether that magnitude is sufficient.
+
+### What is the difference between effect size and statistical significance?
+
+Statistical significance (summarized by the p-value) tells you whether the observed data are unlikely under the null hypothesis. It depends heavily on sample size. Effect size tells you how large the difference or relationship is, independent of sample size. A study can be statistically significant with a tiny effect (large n) or statistically non-significant with a large effect (small n). Best practice is to report both.
+
+### Do I need to report effect sizes for every statistical test?
+
+Yes, for virtually all inferential tests in empirical research. The <Link to={routes.article('z-score')}>z-score</Link>, <Link to={routes.article('chi-square-test')}>chi-square test</Link>, <Link to={routes.article('t-test')}>t-test</Link>, ANOVA, and regression each have associated effect size measures. Major style guides — APA, AMA, and others — now require or strongly recommend reporting effect sizes. If your analysis software does not report the effect size automatically, compute it from the summary statistics the software does provide.
+
+---
+
+## Summary
+
+Effect size is the measure that turns a statistical result into a practical statement. Where p-values answer "is there an effect?" effect sizes answer "how big is it?" The most common measures are Cohen's d (for group comparisons), Pearson's r (for correlations), and eta-squared (for ANOVA). Cohen's benchmarks — small 0.2, medium 0.5, large 0.8 for d — provide a useful starting point for interpretation, but field-specific context should always inform how a given value is labeled.
+
+Reporting effect sizes alongside p-values is standard practice in rigorous empirical research, required by most major journals and style guides. When you plan a study, the target effect size determines the sample size you need. When you read a study, the effect size tells you whether a statistically significant finding is also practically meaningful. Understanding effect sizes is therefore not just a technical requirement — it is a fundamental tool for critical thinking about research evidence.
+
+<RelatedLink to={routes.article('type-i-and-type-ii-errors')} label="Type I and Type II Errors" intro="See also" />
