@@ -1,0 +1,298 @@
+---
+title: "Kruskal-Wallis Analysis of Variance: Formula & Uses"
+h1: "Kruskal-Wallis Test: Formula & When to Use It"
+description: "Learn the Kruskal-Wallis analysis of variance: formula, step-by-step example, assumptions, and when to use it over one-way ANOVA."
+category: inferential-statistics
+primaryKeyword: kruskal-wallis analysis of variance
+keywords:
+  - kruskal-wallis analysis of variance
+  - kruskal wallis analysis of variance
+  - kruskal wallis one way analysis of variance
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **Kruskal-Wallis test** is a non-parametric alternative to one-way analysis of variance (ANOVA) that compares three or more independent groups to determine whether at least one group differs from the others. Because it is a **kruskal-wallis analysis of variance** built on ranked data rather than raw scores, it works even when the data violate normality — making it essential any time your outcome variable is ordinal, heavily skewed, or comes in small samples that can't support parametric assumptions.
+
+Unlike parametric ANOVA, which tests whether the group means differ, the Kruskal-Wallis test evaluates whether the distributions of the groups differ in location. In practice, when the groups share a similar shape, this amounts to comparing medians. When shapes differ, the test answers the broader question: is the central tendency (or rank distribution) the same across all groups?
+
+This article covers everything you need: the logic behind the test, when and why to use it, the formula and its components, a fully worked numeric example, and the most common mistakes practitioners make.
+
+---
+
+## What Is the Kruskal-Wallis Test?
+
+The Kruskal-Wallis test was introduced in 1952 by statisticians William Kruskal and Wilson Wallis. It extends the logic of the two-sample Mann-Whitney U test to three or more groups, and it is often described as a **kruskal wallis one way analysis of variance** because it fills the same conceptual role as one-way ANOVA while requiring far fewer distributional assumptions.
+
+The test works by converting all observations, regardless of which group they come from, into a single set of ranks. The smallest value in the entire dataset receives rank 1, the next-smallest receives rank 2, and so on. Once every observation has a rank, the test checks whether the average ranks across the groups are close enough to be consistent with a world where group membership makes no difference. If one group consistently receives high ranks and another consistently receives low ranks, the test statistic becomes large and the null hypothesis is rejected.
+
+This ranking strategy is what makes the test "non-parametric": it does not assume that the raw data follow a normal distribution, because the statistical work is done on the ranks, not the original scores. The price paid for this flexibility is a modest reduction in power compared to one-way ANOVA when normality actually holds — but when the data are far from normal, the Kruskal-Wallis test is the more reliable choice.
+
+<RelatedLink to={routes.article('mann-whitney-u-test')} label="Mann-Whitney U Test" intro="On a related note" />
+
+---
+
+## When to Use the Kruskal-Wallis Test
+
+Use the Kruskal-Wallis test when all of the following apply:
+
+**Three or more independent groups.** The test compares *k* ≥ 3 groups. For exactly two groups, use the Mann-Whitney U test instead. Each observation must belong to exactly one group — the groups cannot be paired or matched.
+
+**Ordinal or continuous outcome variable.** The test requires that you can rank the observations from smallest to largest. It works with Likert-scale responses, reaction times, pain scores, concentrations, or any other data that can be meaningfully ordered. It does not work with purely nominal (categorical, unordered) data.
+
+**Normality assumption is violated or unverifiable.** One-way ANOVA requires that the data within each group come from a population that is approximately normally distributed. When you have small samples and cannot verify this, when residuals from a preliminary ANOVA are clearly non-normal, or when the measurement scale is ordinal (which is inherently non-normal), reach for the Kruskal-Wallis test.
+
+**Homogeneity of variance is in question.** Standard ANOVA also assumes roughly equal variances across groups (homoscedasticity). While Welch's ANOVA relaxes this for normally distributed data, the Kruskal-Wallis test sidesteps the issue at the rank level — though see the assumptions section below for an important nuance.
+
+**Practical rule of thumb.** Many statisticians apply the following guide: if each group has at least 30 observations, the central limit theorem makes ANOVA reasonably robust to non-normality, so ANOVA is preferred for power. For groups with fewer than 30 observations — especially fewer than 10 — non-normality is a genuine concern and the Kruskal-Wallis test provides more reliable inference.
+
+| Situation | Recommended test |
+|-----------|-----------------|
+| 3+ groups, normal distribution, equal variances | One-way ANOVA |
+| 3+ groups, normal distribution, unequal variances | Welch's ANOVA |
+| 3+ groups, non-normal or ordinal data | **Kruskal-Wallis test** |
+| 2 groups, non-normal or ordinal data | Mann-Whitney U test |
+| 3+ related (repeated) groups, non-normal | Friedman test |
+
+---
+
+## The Kruskal-Wallis H Statistic Formula
+
+The test statistic is called **H** (after the test's inventors). It is computed from the rank sums of each group and compared against a chi-square distribution with *k* − 1 degrees of freedom, where *k* is the number of groups.
+
+The formula for H is:
+
+```
+H = [ 12 / (N × (N + 1)) ] × SUM[ Rⱼ² / nⱼ ] − 3 × (N + 1)
+```
+
+Where:
+
+- **N** = total number of observations across all groups
+- **k** = number of groups
+- **nⱼ** = number of observations in group *j*
+- **Rⱼ** = sum of the ranks assigned to the observations in group *j*
+- **SUM** = summation across all *k* groups (j = 1 to k)
+
+If all group rank-sums were perfectly equal — meaning group membership explains nothing — each `Rⱼ / nⱼ` would equal `(N + 1) / 2` (the overall average rank), and H would equal zero. As the rank sums diverge, H grows. A large H is evidence against the null hypothesis.
+
+**Ties.** When two or more observations share the same value, they each receive the average of the ranks they would have occupied. For datasets with many tied values, a correction factor is applied to the denominator of H:
+
+```
+C = 1 − SUM(tᵢ³ − tᵢ) / (N³ − N)
+```
+
+where `tᵢ` is the number of observations tied at rank *i*. Divide H by C to obtain the tie-corrected statistic. The correction rarely changes the conclusion when ties are uncommon.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="For a related calculation" />
+
+---
+
+## Step-by-Step Worked Example
+
+A researcher tests whether three doses of a dietary supplement affect exercise endurance (measured in minutes). Twelve participants are randomly assigned, four to each dose group.
+
+**Data:**
+
+| Group A (low dose) | Group B (medium dose) | Group C (high dose) |
+|-------------------|-----------------------|---------------------|
+| 12 | 20 | 30 |
+| 15 | 22 | 33 |
+| 16 | 25 | 36 |
+| 19 | 28 | 40 |
+
+### Step 1: Rank all observations together
+
+Pool all 12 values and rank them from smallest (rank 1) to largest (rank 12):
+
+| Value | Group | Rank |
+|-------|-------|------|
+| 12 | A | 1 |
+| 15 | A | 2 |
+| 16 | A | 3 |
+| 19 | A | 4 |
+| 20 | B | 5 |
+| 22 | B | 6 |
+| 25 | B | 7 |
+| 28 | B | 8 |
+| 30 | C | 9 |
+| 33 | C | 10 |
+| 36 | C | 11 |
+| 40 | C | 12 |
+
+There are no ties in this dataset, so no correction factor is needed.
+
+### Step 2: Compute the rank sum for each group
+
+```
+R_A = 1 + 2 + 3 + 4 = 10
+R_B = 5 + 6 + 7 + 8 = 26
+R_C = 9 + 10 + 11 + 12 = 42
+```
+
+### Step 3: Apply the H formula
+
+```
+N = 12,  k = 3,  n_A = n_B = n_C = 4
+
+SUM[ Rⱼ² / nⱼ ] = (10² / 4) + (26² / 4) + (42² / 4)
+                 = (100 / 4) + (676 / 4) + (1764 / 4)
+                 = 25 + 169 + 441
+                 = 635
+
+H = [ 12 / (12 × 13) ] × 635 − 3 × 13
+  = [ 12 / 156 ] × 635 − 39
+  = (1 / 13) × 635 − 39
+  = 48.846 − 39
+  = 9.846
+```
+
+### Step 4: Find the p-value
+
+With *k* = 3 groups, the degrees of freedom equal *k* − 1 = 2. Compare H = 9.846 to the chi-square distribution with df = 2.
+
+From a chi-square table, the critical values at α = 0.05 and α = 0.01 with df = 2 are:
+
+```
+χ²(0.05, df=2) = 5.991
+χ²(0.01, df=2) = 9.210
+```
+
+H = 9.846 exceeds both critical values. The associated p-value is approximately **0.007**, which is less than 0.01.
+
+### Step 5: Interpret the result
+
+**Null hypothesis (H₀):** The distribution of endurance minutes is the same across all three dose groups.
+**Alternative hypothesis (H₁):** At least one group's distribution differs from the others.
+
+Since p ≈ 0.007 < 0.05, reject H₀. There is statistically significant evidence that endurance differs across the three supplement doses. The test does not specify which groups differ — that question requires a post hoc test (see below).
+
+---
+
+## Assumptions of the Kruskal-Wallis Test
+
+The Kruskal-Wallis test makes fewer assumptions than one-way ANOVA, but it does have requirements. Violating them can lead to incorrect conclusions.
+
+**1. Independence.** Observations within and across groups must be independent. Each participant contributes exactly one measurement to exactly one group. If the same individuals are measured under each condition (a within-subject or repeated-measures design), use the Friedman test instead.
+
+**2. Ordinal-scale outcome.** The observations must be rankable. If you are working with truly nominal data (colours, categories with no natural order), the Kruskal-Wallis test is not appropriate.
+
+**3. Similar distributional shape (for median interpretation).** When the test is used to compare medians specifically — which is the most common goal — the groups must have distributions that are similar in shape and spread, differing only in location. If one group's distribution is symmetric while another's is heavily skewed, the test still detects a location difference, but describing that difference as a "median difference" is technically imprecise.
+
+**4. Sufficient group size for the chi-square approximation.** The chi-square approximation used to derive the p-value works well when each group has at least five observations. For very small groups (fewer than five per group), use exact Kruskal-Wallis tables rather than the chi-square approximation. Many statistical software packages switch to exact p-values automatically in this situation.
+
+<RelatedLink to={routes.article('t-test')} label="T-Test Explained" intro="You may also find this useful" />
+
+---
+
+## Kruskal-Wallis vs. One-Way ANOVA
+
+Both the Kruskal-Wallis test and one-way ANOVA answer the same broad question — does the outcome differ across three or more independent groups? — but they do so in fundamentally different ways.
+
+One-way ANOVA compares **group means** using the actual measurement values. It partitions the total variability in the data into between-group variability (how much the group means differ) and within-group variability (how much individual observations deviate from their group mean). The F-ratio is the quotient of these two variances. This approach is statistically powerful when the data are normally distributed and variances are equal, but it can give misleading results when those assumptions fail.
+
+The Kruskal-Wallis test compares **rank distributions** rather than means. By replacing raw scores with their ranks, it becomes insensitive to extreme values and immune to the shape of the underlying distribution. The downside is a small power loss when data genuinely are normally distributed — you give up a little sensitivity in exchange for broader applicability.
+
+A practical decision rule: first check for normality (Shapiro-Wilk test for small samples; a Q-Q plot for larger ones) and for equal variances (Levene's test). If both assumptions hold and sample sizes are adequate, use one-way ANOVA. If normality fails, or if you are working with ordinal data, use the Kruskal-Wallis test. The two tests will often agree, but they disagree most when the data contain extreme outliers or have strongly skewed distributions — exactly the cases where the Kruskal-Wallis test is most trustworthy.
+
+It is worth noting that the Kruskal-Wallis test is not entirely free of assumptions. It still requires that if you want to compare medians specifically, the group distributions must have the same shape. Stating that the Kruskal-Wallis test is "assumption-free" is a common misconception.
+
+---
+
+## Post Hoc Tests After a Significant Kruskal-Wallis Result
+
+A significant Kruskal-Wallis result tells you that *at least one* group differs, but not *which* groups differ from one another. To identify the specific pairs, you need a post hoc test that controls the family-wise error rate — the probability of making at least one false-positive error across all pairwise comparisons.
+
+**Dunn's test** is the most widely used post hoc procedure for the Kruskal-Wallis test. It performs pairwise Mann-Whitney U comparisons on the rank sums from the global ranking (not re-ranked separately for each pair), then applies a multiple-comparison correction — most commonly the Bonferroni or Holm-Bonferroni correction — to the resulting p-values.
+
+**Conover-Iman test** is a more powerful alternative to Dunn's test. It uses t-statistics derived from the global ranks rather than the U statistic, which gives it higher power while still controlling the error rate. It is available in R (the `conover.test` package) and Python (the `scikit_posthocs` library).
+
+**Bonferroni correction.** If you are doing pairwise Bonferroni correction manually, divide the significance threshold α by the number of comparisons. For three groups, there are *k(k−1)/2* = 3 pairwise comparisons, so each individual comparison is evaluated at α/3. For k = 5, there are 10 comparisons, so α/10.
+
+In the worked example with three groups, a post hoc Dunn's test would compare Group A vs. Group B, Group A vs. Group C, and Group B vs. Group C — each adjusted for three simultaneous comparisons. Given the H statistic of 9.846 (p ≈ 0.007), you would expect at least the A vs. C comparison to be significant; the A vs. B or B vs. C comparisons might or might not survive the correction depending on sample size and overlap.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="Worth reading next" />
+
+---
+
+## Common Mistakes When Using the Kruskal-Wallis Test
+
+### Forgetting that a significant result is omnibus
+
+A significant Kruskal-Wallis test tells you that the groups are not all equivalent — nothing more, nothing less. It does not tell you which pair of groups is responsible for the difference, nor does it tell you the direction or size of the effect. Always follow up with a post hoc test and report an effect size (such as eta-squared calculated from H, or the rank-biserial correlation for each pairwise comparison).
+
+### Using it on paired or repeated-measures data
+
+The Kruskal-Wallis test assumes independent groups. If the same participants are measured at three time points or under three conditions, the correct non-parametric test is the **Friedman test**, not the Kruskal-Wallis test. Using Kruskal-Wallis in this setting ignores the correlation between observations from the same individual and inflates the Type I error rate.
+
+### Ignoring ties or handling them incorrectly
+
+When two or more observations have identical values, assigning them ranks carelessly will bias the H statistic. The correct approach is to assign each tied observation the average of the ranks those observations would occupy if they were distinct — a process called "mid-rank assignment." For example, if values 15, 15, and 16 occupy positions 3, 4, and 5, the two values of 15 each receive rank (3+4)/2 = 3.5, and the value of 16 receives rank 5. Apply the tie-correction formula to H when there are many ties.
+
+### Treating the Kruskal-Wallis test as comparing medians only
+
+The test detects any difference in the rank distribution across groups — shifts in location, but also changes in spread or shape. The median interpretation is valid when the groups have the same distributional shape; if they do not, say more carefully that the test detected a difference in the rank distributions, not specifically in medians.
+
+### Re-ranking for each pair in post hoc tests
+
+When running pairwise comparisons after a significant Kruskal-Wallis result, do not re-rank observations for each separate pair. Dunn's test uses the global ranks from the full dataset; re-ranking would change those values and break the statistical logic. Let your software handle this, or apply the Dunn procedure manually using the global rank sums.
+
+---
+
+## Frequently Asked Questions
+
+### What does the Kruskal-Wallis test actually test?
+
+The Kruskal-Wallis test tests the null hypothesis that all *k* groups have the same distribution of the outcome variable. In other words, it asks whether group membership is irrelevant to the observed values. When the groups share the same shape and differ only in location, rejecting the null hypothesis means at least one group has a different median.
+
+### How is the Kruskal-Wallis test related to one-way ANOVA?
+
+The Kruskal-Wallis test is the non-parametric equivalent of one-way ANOVA. Both tests compare three or more independent groups and both produce an omnibus result (either the groups are consistent with a single population or they are not). The key difference is that ANOVA works on the raw values and requires normality, while the kruskal wallis analysis of variance works on ranks and does not assume a specific distribution.
+
+### When should I use the Mann-Whitney U test instead?
+
+Use the <Link to={routes.article('mann-whitney-u-test')}>Mann-Whitney U test</Link> when you have exactly two independent groups. The Kruskal-Wallis test generalises the Mann-Whitney U to three or more groups in the same way that one-way ANOVA generalises the independent-samples t-test. Do not run multiple Mann-Whitney tests for all pairs without a correction — that inflates the Type I error rate.
+
+### What is the minimum sample size for the Kruskal-Wallis test?
+
+The chi-square approximation for the p-value is reliable when each group contains at least five observations. For smaller groups, use exact tables or software that computes exact p-values. The test can technically be applied to groups with as few as two or three observations, but the p-value approximation will be poor.
+
+### Can I use the Kruskal-Wallis test with Likert-scale data?
+
+Yes. Likert scales (1-to-5 or 1-to-7 response scales) produce ordinal data, and ordinal data can be ranked. The Kruskal-Wallis test is well-suited to comparing Likert responses across three or more groups. Many researchers treat Likert data as continuous and use ANOVA; this is debated in the literature, but the Kruskal-Wallis test is the conservative, assumption-safe choice.
+
+### What is the effect size for the Kruskal-Wallis test?
+
+The most common effect size is **eta-squared (η²)**, calculated from the H statistic:
+
+```
+η² = (H − k + 1) / (N − k)
+```
+
+Conventional benchmarks: η² ≈ 0.01 (small), 0.06 (medium), 0.14 (large). For pairwise post hoc comparisons, the **rank-biserial correlation** (r) is reported for each pair, interpreted the same way as Cohen's d (small: 0.1, medium: 0.3, large: 0.5). For the worked example: η² = (9.846 − 3 + 1) / (12 − 3) = 7.846 / 9 ≈ 0.87 — a very large effect, consistent with the clear rank separation visible in the data.
+
+### How do I report the Kruskal-Wallis test in APA style?
+
+A standard APA-format report includes the H statistic, degrees of freedom, and p-value. Example: *H*(2) = 9.85, *p* = .007. Report the medians and interquartile ranges for each group in the results table (not the means, since you have chosen a non-parametric test that does not rely on the mean). If you ran a post hoc test, name it and report the corrected p-values for each significant pair.
+
+---
+
+## Summary
+
+The Kruskal-Wallis test is the go-to non-parametric tool for comparing three or more independent groups when normality cannot be assumed or when the data are ordinal. It converts raw observations to ranks, computes the H statistic based on how much the group rank-sums diverge from what chance would predict, and evaluates H against a chi-square distribution.
+
+The key takeaways:
+
+- Use it when you have three or more independent groups and normality fails or the data are ordinal.
+- The formula operates on rank sums: `H = [12 / (N(N+1))] × SUM(Rⱼ² / nⱼ) − 3(N+1)`.
+- Compare H to chi-square with *k* − 1 degrees of freedom to obtain the p-value.
+- A significant result is omnibus — follow up with Dunn's test or the Conover-Iman test to identify which groups differ.
+- It is a **kruskal wallis analysis of variance** in the broad sense: it tests whether group membership explains the rank distribution of the outcome, the same conceptual question that one-way ANOVA asks about means.
+
+For the statistical theory underlying this test, the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.4.7.4 — Kruskal-Wallis Test](https://www.itl.nist.gov/div898/handbook/prc/section4/prc474.htm) is the authoritative technical reference. The [Penn State STAT 415 online course notes on non-parametric tests](https://online.stat.psu.edu/stat415/lesson/5/5.1) provide an accessible companion treatment with additional worked examples.
+
+For inference tools that complement this test, explore the <Link to={routes.calculatorsHub()}>calculators hub</Link> — including a <Link to={routes.calculator('p-value')}>p-value calculator</Link> for chi-square distributions. Understanding the <Link to={routes.article('null-hypothesis')}>null hypothesis</Link> framework that underpins this and every other significance test is also essential background for interpreting Kruskal-Wallis results correctly.
