@@ -1,0 +1,348 @@
+---
+title: "Permutations vs. Combinations: What's the Difference?"
+description: "Learn the key difference between permutations and combinations, when to use each, and how to apply their formulas with fully worked step-by-step examples."
+category: combinatorics
+primaryKeyword: permutations and combinations
+keywords:
+  - permutations and combinations
+  - permutation vs combination
+  - difference between permutations and combinations
+  - permutations and combinations formula
+  - when to use permutation vs combination
+  - counting in statistics
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The single most important question in any counting problem is: **does the order of selection matter?** That question is what separates permutations and combinations. A **permutation** is an arrangement where order matters — choosing A, then B, then C is different from choosing C, then B, then A. A **combination** is a selection where order does not matter — the group `{A, B, C}` is the same as `{C, B, A}`. Choosing the right counting method changes the final answer completely, and confusing the two is one of the most common errors in introductory probability and statistics.
+
+This guide explains what each concept means, derives both formulas from first principles, walks through side-by-side worked examples using identical numbers, and builds a decision framework you can apply to any counting problem.
+
+---
+
+## The Key Difference: Does Order Matter?
+
+The clearest way to remember the distinction is to ask a single test question before you start counting: **if you rearrange the selected items, do you get a new outcome, or the same one?**
+
+- **Yes, a new outcome** → permutation. The sequence matters, so each ordering is counted separately.
+- **No, the same outcome** → combination. Only the membership of the group matters, so all orderings of the same group count as one.
+
+One well-known mnemonic: **P**ermutations are like a **P**adlock — the sequence 1-2-3 opens the lock, but 3-2-1 does not. **C**ombinations are like a **C**ommittee — the same people seated in a different order around a table are still the same committee.
+
+The mathematical relationship between the two follows directly from this logic. Every combination of *r* items can be internally rearranged in *r!* (r factorial) different ways, and each of those reorderings counts as a separate permutation. So:
+
+```
+P(n, r) = C(n, r) × r!
+```
+
+This means the permutation count is always larger than or equal to the combination count (since r! ≥ 1 for all r ≥ 0). Understanding that relationship is the key to checking your own work: if your permutation answer is not a multiple of r!, something has gone wrong.
+
+---
+
+## What Is a Permutation?
+
+A permutation is a way of selecting items from a set where **the order of selection matters**. When you choose and arrange *r* items from a pool of *n* distinct items, the count of possible ordered arrangements is written P(n, r), ⁿPᵣ, or P(n; r) depending on the textbook.
+
+### The Permutation Formula
+
+```
+P(n, r) = n! / (n − r)!
+```
+
+where:
+- *n* = the total number of distinct items available
+- *r* = the number of items you are selecting and arranging
+- *n!* = n factorial = n × (n−1) × (n−2) × … × 2 × 1
+
+The denominator (n − r)! cancels out the factorial contribution of the items you did **not** select, leaving only the product of the top *r* factors of n!. A useful shortcut for hand calculation: P(n, r) = n × (n−1) × (n−2) × … × (n−r+1), multiplying exactly *r* consecutive integers down from *n*.
+
+### Why the Formula Works
+
+Imagine filling r positions one at a time from left to right. For the first position you have n choices. For the second, one item is already placed, so you have n−1 choices. For the third, n−2 choices. Continuing down to the r-th position, you have n−r+1 choices. Multiplying all these independent choices together:
+
+```
+n × (n−1) × (n−2) × … × (n−r+1) = n! / (n−r)! = P(n, r)
+```
+
+This is the Fundamental Counting Principle applied to sequential selections without replacement.
+
+### Permutation Worked Example: Awarding Medals
+
+A track competition has 8 runners. In how many ways can gold, silver, and bronze medals be awarded?
+
+Order matters — giving gold to runner A and silver to runner B is a different outcome from giving gold to B and silver to A.
+
+**Given:** n = 8, r = 3
+
+```
+P(8, 3) = 8! / (8 − 3)!
+         = 8! / 5!
+         = (8 × 7 × 6 × 5!) / 5!
+         = 8 × 7 × 6
+         = 336
+```
+
+There are **336** distinct ways to award the three medals. You can verify this intuitively: 8 runners compete for gold, 7 remain for silver, and 6 for bronze — 8 × 7 × 6 = 336.
+
+<RelatedLink to={routes.article('permutations')} label="Permutations: Formula and Examples" intro="Worth reading next" />
+
+---
+
+## What Is a Combination?
+
+A combination is a way of selecting items from a set where **the order of selection does not matter**. When you choose *r* items from a pool of *n* distinct items and treat every ordering of the same group as a single outcome, the count of distinct selections is written C(n, r), ⁿCᵣ, or sometimes the binomial coefficient notation (n choose r).
+
+### The Combination Formula
+
+```
+C(n, r) = n! / (r! × (n − r)!)
+```
+
+The only difference from the permutation formula is the extra **r!** in the denominator. That factor removes the duplicate orderings within each selected group: because every rearrangement of the r chosen items counts as the same combination, you divide out all r! internal orderings.
+
+### Why the Extra r! Factor?
+
+You can derive the combination formula directly from the permutation formula. The P(n, r) = 336 arrangements for 8 runners taken 3 at a time count every ordering of each set of 3 runners as a separate outcome. If you don't care about the order — say you just want to know which three runners will appear on the podium — then every set of 3 runners has been counted 3! = 6 times (once for each way to rank them). Dividing by 3! gives:
+
+```
+C(8, 3) = P(8, 3) / 3! = 336 / 6 = 56
+```
+
+And indeed the formula gives the same result:
+
+```
+C(8, 3) = 8! / (3! × 5!)
+         = (8 × 7 × 6) / (3 × 2 × 1)
+         = 336 / 6
+         = 56
+```
+
+### Combination Worked Example: Choosing a Committee
+
+A class of 8 students needs to elect a 3-person committee. In how many ways can the committee be chosen?
+
+Order does not matter — a committee of `{Ali, Bea, Carlos}` is the same committee regardless of who was nominated first.
+
+**Given:** n = 8, r = 3
+
+```
+C(8, 3) = 8! / (3! × (8 − 3)!)
+         = 8! / (3! × 5!)
+         = (8 × 7 × 6) / (3 × 2 × 1)
+         = 336 / 6
+         = 56
+```
+
+There are **56** distinct committees. Each of those 56 committees corresponds to exactly 3! = 6 permutations (the different ordered arrangements of the same three people), which is why 56 × 6 = 336 matches the permutation count.
+
+<RelatedLink to={routes.article('combinations')} label="Combinations: Formula and Examples" intro="On a related note" />
+
+---
+
+## Formulas Side by Side
+
+Understanding both formulas together makes the relationship obvious:
+
+| | Permutation P(n, r) | Combination C(n, r) |
+|---|---|---|
+| **Formula** | n! / (n − r)! | n! / (r! × (n − r)!) |
+| **Order matters?** | Yes | No |
+| **Relationship** | C(n, r) × r! | P(n, r) / r! |
+| **Result (n=8, r=3)** | 336 | 56 |
+
+The denominator of the combination formula, r! × (n − r)!, contains two components:
+- **(n − r)!** cancels the items not selected (same as in permutations).
+- **r!** cancels the internal reorderings of the selected group (unique to combinations).
+
+### Factorial Quick Reference
+
+Both formulas rely on the factorial function. Factorials grow very fast:
+
+| n | n! |
+|---|---|
+| 0 | 1 (by convention) |
+| 1 | 1 |
+| 2 | 2 |
+| 3 | 6 |
+| 4 | 24 |
+| 5 | 120 |
+| 6 | 720 |
+| 10 | 3,628,800 |
+
+The 0! = 1 convention ensures the formulas work at the boundary cases: when r = n (selecting every item), C(n, n) = n! / (n! × 0!) = 1, which is correct — there is exactly one way to choose all items without regard to order.
+
+---
+
+## A Fully Worked Example: Two Interpretations of the Same Problem
+
+This example holds n and r constant and changes only the interpretation to show exactly how the answers differ.
+
+**Setup:** You have 5 coloured marbles (Red, Green, Blue, Yellow, Orange) and you draw 2 of them.
+
+### Interpretation 1 — Permutation (First Draw and Second Draw Are Distinct)
+
+Suppose you record which marble you drew first and which you drew second, because you will place them in order on a shelf. Drawing Red first and Green second is a different outcome from drawing Green first and Red second.
+
+```
+P(5, 2) = 5! / (5 − 2)!
+         = 5! / 3!
+         = (5 × 4 × 3!) / 3!
+         = 5 × 4
+         = 20
+```
+
+**All 20 ordered pairs:**
+Red-Green, Red-Blue, Red-Yellow, Red-Orange,
+Green-Red, Green-Blue, Green-Yellow, Green-Orange,
+Blue-Red, Blue-Green, Blue-Yellow, Blue-Orange,
+Yellow-Red, Yellow-Green, Yellow-Blue, Yellow-Orange,
+Orange-Red, Orange-Green, Orange-Blue, Orange-Yellow.
+
+### Interpretation 2 — Combination (Only the Pair Matters)
+
+Suppose you just want to know which two marbles are in your hand, with no regard to which came out first. The pair `{Red, Green}` is the same pair as `{Green, Red}`.
+
+```
+C(5, 2) = 5! / (2! × 3!)
+         = (5 × 4) / (2 × 1)
+         = 20 / 2
+         = 10
+```
+
+**All 10 unordered pairs:**
+`{Red, Green}`, `{Red, Blue}`, `{Red, Yellow}`, `{Red, Orange}`,
+`{Green, Blue}`, `{Green, Yellow}`, `{Green, Orange}`,
+`{Blue, Yellow}`, `{Blue, Orange}`,
+`{Yellow, Orange}`.
+
+### Cross-Check
+
+Each of the 10 unordered pairs appears exactly 2! = 2 times in the ordered list (once in each direction). So 10 × 2 = 20 = P(5, 2). ✓
+
+To compute any C(n, r) or P(n, r) without manual arithmetic, use the <Link to={routes.calculator('combination')}>combination calculator</Link> or explore more tools on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+
+<RelatedLink to={routes.article('binomial-theorem')} label="Binomial Theorem and Binomial Coefficients" intro="For a related calculation" />
+
+---
+
+## When to Use Permutations vs. Combinations
+
+### The Decision Framework
+
+Before applying any formula, answer two questions:
+
+1. **How many items am I choosing from the pool?** This sets r.
+2. **Does the sequence or rank of the chosen items affect the outcome?** This sets which formula to use.
+
+| Scenario keyword | Likely type |
+|---|---|
+| arrange, order, sequence, rank, assign roles | Permutation |
+| choose, select, form a group, pick a subset | Combination |
+| first / second / third position matters | Permutation |
+| committee, team, sample, draw, hand (cards) | Combination |
+
+The word "arrange" is almost always a signal for permutations. The words "choose" or "select" lean toward combinations — but verify by asking whether the sequence matters.
+
+### Classic Permutation Scenarios
+
+- **Awarding ranked prizes:** 1st, 2nd, and 3rd from 20 contestants. Swapping 1st and 2nd changes who gets the gold medal, so order matters.
+- **Creating PIN codes:** A 4-digit PIN where "2-4-7-9" differs from "9-7-4-2". Each position is distinct.
+- **Scheduling speakers:** 6 keynote speakers can take the stage in P(6, 6) = 720 different orders.
+- **Assigning roles:** Choosing a president, treasurer, and secretary from 15 club members — same three people, different roles, is a different outcome.
+- **Arranging books on a shelf:** 10 distinct books can be arranged in 10! = 3,628,800 different orders.
+
+### Classic Combination Scenarios
+
+- **Forming a committee:** 5 people chosen from 20 for a project group — no internal hierarchy.
+- **Selecting a sample:** A quality-control inspector draws 4 units from a batch of 100 for testing. The order of drawing doesn't change which units are inspected.
+- **Choosing menu items:** Selecting any 3 dishes from a menu of 10 — the order in which you order them doesn't change your meal.
+- **Card hands:** A standard 5-card poker hand drawn from a 52-card deck. The same hand is the same hand regardless of dealing order.
+- **Lottery tickets:** Picking 6 numbers from 49 — the ticket `{3, 11, 22, 31, 40, 47}` is valid regardless of the order the numbers were selected.
+
+As the [OpenStax *Introductory Statistics* textbook, Chapter 4 — Probability Topics](https://openstax.org/books/introductory-statistics/pages/4-introduction) explains, correctly counting the sample space — whether ordered or unordered — is a prerequisite for computing any classical probability. An error in the counting step propagates directly into a wrong probability.
+
+<RelatedLink to={routes.calculatorsHub()} label="Statistics Calculators" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes When Working with Permutations and Combinations
+
+### Mistake 1: Using Permutations When Combinations Are Required
+
+This is the most frequent error, and it overcounts by exactly r!. If your answer for a committee-selection problem is 6 times too large, you almost certainly forgot to divide by r!. Check whether swapping the order of the selected items would genuinely produce a different real-world outcome. If it would not, use C(n, r).
+
+### Mistake 2: Forgetting That 0! = 1
+
+When r = n (you are selecting all n items), the combination formula becomes C(n, n) = n! / (n! × 0!). Because 0! = 1 by convention, this equals 1 — there is exactly one way to select every item (the whole group). Forgetting this convention leads to a zero in the denominator and an apparent division-by-zero error.
+
+### Mistake 3: Swapping n and r
+
+Always identify which quantity is the pool size n and which is the selection size r before substituting into the formula. A common slip is placing the smaller number in the n position. Sanity check: n ≥ r always, since you cannot select more items than the pool contains. If your formula gives a result with a negative factorial (like (n − r)! where n − r is negative), you have swapped them.
+
+### Mistake 4: Ignoring Multi-Step Structure
+
+Some problems require you to count separately in two or more stages and then multiply. For example: "In how many ways can a president, secretary, and treasurer be chosen from 15 people, and then a 4-person advisory board (with no overlap) be chosen from the remaining 12?" The role-assignment step uses P(15, 3) = 2730, and the board-selection step uses C(12, 4) = 495. The total is 2730 × 495 = 1,351,350. Neither formula alone gives the right answer. Apply the Multiplication Principle to multi-step problems.
+
+### Mistake 5: Overlooking Whether Repetition Is Allowed
+
+Both P(n, r) and C(n, r) assume sampling **without replacement** — once an item is selected, it cannot be chosen again. Problems that allow repetition (a 4-digit PIN where digits can repeat, choosing flavours from a menu where the same flavour can appear twice) require different formulas. With ordered repetition allowed the count is nʳ; with unordered repetition the formula is C(n + r − 1, r). Always read the problem statement carefully for phrases like "repetition permitted" or "with replacement."
+
+For a comprehensive treatment of probability foundations, including the rules that underpin these counting techniques, the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/) provides rigorous definitions that are consistent with both classical and frequentist probability frameworks.
+
+---
+
+## Frequently Asked Questions
+
+### What is the difference between a permutation and a combination?
+
+A permutation is an **ordered** arrangement — the sequence in which items are selected affects the outcome. A combination is an **unordered** selection — only which items are chosen matters, not their sequence. The same set of r items generates r! permutations but only one combination. Formally, C(n, r) = P(n, r) / r!.
+
+### When should I use permutations instead of combinations?
+
+Use permutations when the problem assigns a rank, role, or sequence to the selected items: awarding medals, assigning offices, scheduling events, creating codes or passwords, or arranging objects in a line. Use combinations when the problem asks only for a group or subset with no internal hierarchy: selecting a committee, drawing a card hand, choosing a sample, or picking items from a menu. The test: would swapping two selected items change the real-world outcome? If yes, permutations. If no, combinations.
+
+### What is the formula for permutations and combinations?
+
+Permutation formula:
+```
+P(n, r) = n! / (n − r)!
+```
+Combination formula:
+```
+C(n, r) = n! / (r! × (n − r)!)
+```
+In both formulas, n is the total number of distinct items in the pool, r is the number of items being chosen, and ! denotes the factorial function (n! = n × (n−1) × … × 1). The combination formula has an extra r! in the denominator that cancels the internal reorderings of each selected group.
+
+### Why does C(n, r) have r! in the denominator but P(n, r) does not?
+
+The r! factor cancels all the ways the same group of r items can be internally arranged. Since combinations treat `{A, B, C}` and `{B, A, C}` as identical, those r! arrangements must not be counted separately. Permutations do distinguish every arrangement, so r! is not divided out — it remains embedded in the numerator as part of n!.
+
+### Is a lottery a permutation or combination problem?
+
+A standard lottery where you pick 6 numbers from 49 is a **combination** problem. The winning ticket `{3, 11, 22, 31, 40, 47}` wins regardless of the order the numbers appear. The total number of possible tickets is:
+```
+C(49, 6) = 49! / (6! × 43!) = 13,983,816
+```
+If order did matter (a number is drawn for 1st place, 2nd place, and so on), it would be a permutation problem with a much larger answer: P(49, 6) = 10,068,347,520.
+
+### Can C(n, r) ever equal P(n, r)?
+
+Yes, in two boundary cases. When r = 0, both P(n, 0) and C(n, 0) equal 1 (there is exactly one way to select or arrange zero items: do nothing). When r = 1, both P(n, 1) and C(n, 1) equal n (each single item is both its own arrangement and its own selection). For r ≥ 2, P(n, r) > C(n, r) because r! > 1.
+
+### How do permutations and combinations relate to probability?
+
+In classical probability, the probability of an event = (number of favourable outcomes) / (total number of equally likely outcomes). Permutations and combinations count those outcomes. For example, the probability that a randomly dealt 5-card hand from a standard 52-card deck is a flush requires C(52, 5) = 2,598,960 in the denominator (total 5-card hands) and C(13, 5) × 4 = 5,148 in the numerator (suited hands). A counting error — confusing permutations for combinations or vice versa — directly corrupts the probability.
+
+### What is the connection between combinations and the binomial theorem?
+
+The binomial coefficient C(n, r) appears as the coefficient of the xʳyⁿ⁻ʳ term in the expansion of (x + y)ⁿ. This is why C(n, r) is also called "n choose r" — it counts the number of ways to choose r of the n factors to contribute an x rather than a y. The binomial theorem is the formula that generalises this pattern to all integer powers n.
+
+---
+
+## Summary
+
+Permutations and combinations are the two fundamental tools for counting selections. **Permutations** count ordered arrangements — use them when the sequence, rank, or role of the chosen items matters. **Combinations** count unordered selections — use them when only the membership of the group matters. The formulas differ by a single r! factor that cancels or preserves internal orderings. Every combination of r items generates exactly r! permutations, and every group of r! permutations collapses into one combination. Keeping that bridge between the two formulas in mind is the fastest way to check your own work and choose the right formula on the first attempt.
