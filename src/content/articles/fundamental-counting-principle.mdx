@@ -1,0 +1,296 @@
+---
+title: "The Fundamental Counting Principle Explained: With Examples"
+description: "The fundamental counting principle lets you count all possible outcomes of a multi-step process by multiplying the number of choices at each step."
+category: combinatorics
+primaryKeyword: fundamental counting principle
+keywords:
+  - fundamental counting principle
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **fundamental counting principle** states that if one event can happen in *m* ways and a second, independent event can happen in *n* ways, then both events together can happen in *m* × *n* ways. This multiplication rule is the gateway to counting all possible outcomes in probability, permutations, and combinations — and it scales to any number of independent steps.
+
+A student choosing an outfit has 3 shirts and 4 pairs of trousers. The fundamental counting principle says there are 3 × 4 = 12 possible outfits without listing them all. That same straightforward logic — multiply the choices at each stage — works for phone passwords, menu combinations, experimental designs, and any situation where you need to count ordered, multi-step sequences.
+
+---
+
+## What Is the Fundamental Counting Principle?
+
+The fundamental counting principle (also called the **multiplication principle** or **rule of product**) gives a fast way to count the total number of possible outcomes when a process involves several independent steps.
+
+The formal statement: if a task consists of *k* sequential, independent steps, and step *i* can be completed in *nᵢ* ways, then the total number of ways to complete the entire task is:
+
+```
+Total outcomes = n₁ × n₂ × n₃ × … × nₖ
+```
+
+"Independent" is the key word here. The number of choices at each step must not change based on what was chosen before. When choices do shrink because of earlier selections — as in seating arrangements where the same person cannot occupy two chairs — you are in the territory of permutations, which extend this exact same principle.
+
+The principle earns the label "fundamental" because it underlies every formula in combinatorics. Before you can apply the permutation formula *P*(*n*, *r*) or the combination formula *C*(*n*, *r*), you need to understand this multiplication logic at its core. Every counting shortcut in statistics traces back to it.
+
+---
+
+## The Multiplication Rule in Action
+
+Suppose a café offers a fixed-price lunch with three separate choices: a starter, a main course, and a drink.
+
+- **Starters:** soup, salad, or bruschetta — **3 options**
+- **Mains:** pasta, grilled chicken, or veggie curry — **3 options**
+- **Drinks:** water, juice, or coffee — **3 options**
+
+The total number of distinct three-item lunches is:
+
+```
+Total lunches = 3 × 3 × 3 = 27
+```
+
+Rather than listing all 27 possible meals, the fundamental counting principle gives the answer in one multiplication. Each choice for the starter (3 options) pairs with every main (3 options), giving 9 starter-main combinations. Each of those 9 pairs then combines with every drink option (3 more), giving 27 complete meals. The count grows multiplicatively because each new independent step multiplies all previous outcomes by the number of new choices.
+
+### Fully Worked Example: Counting Outfits
+
+You have 4 shirts (white, grey, blue, black), 3 pairs of trousers (jeans, chinos, joggers), and 2 pairs of shoes (trainers, boots). How many distinct outfits can you make?
+
+| Step | Choice | Number of options |
+|------|--------|-------------------|
+| 1 | Shirt | 4 |
+| 2 | Trousers | 3 |
+| 3 | Shoes | 2 |
+
+```
+Total outfits = 4 × 3 × 2 = 24
+```
+
+The 24 outfits cover every combination — white shirt with jeans and trainers, white shirt with jeans and boots, white shirt with chinos and trainers, all the way through to black shirt with joggers and boots. Listing them all would take time; the multiplication takes three seconds.
+
+### Why the Count Is Always Exact
+
+For every one of the 4 shirt choices, there are exactly 3 trouser options. This produces 4 × 3 = 12 shirt-trouser pairs. For each of those 12 pairs, there are exactly 2 shoe options, adding a final factor of 2. The reasoning is symmetric: the shirt you chose does not limit your trouser or shoe options. That independence is what makes the multiplication exact, not an approximation.
+
+---
+
+## Why the Multiplication Rule Holds
+
+The mathematical justification follows from the structure of a Cartesian product. For two steps with *m* and *n* outcomes respectively, arrange all outcomes in a grid:
+
+- Rows represent the *m* choices for step 1.
+- Each row contains *n* cells, one per choice at step 2.
+- Total cells = *m* × *n*.
+
+Every cell represents a distinct ordered pair (choice₁, choice₂). No two cells are the same, because a cell is uniquely identified by its row and column coordinates. This extends to three dimensions for three steps (a cuboid of cells), and to higher dimensions for more steps — each new dimension multiplies the total count by the number of options at that stage.
+
+The [OpenStax *Introductory Statistics*, Section 3.3 — Two Basic Rules of Probability](https://openstax.org/books/introductory-statistics/pages/3-3-two-basic-rules-of-probability) formalises this as the **multiplication rule**: when two events are independent, the probability that both occur equals the product of their individual probabilities. The counting principle and the probability multiplication rule share the same algebraic foundation — counting the cells in a grid and weighting them by probability are two sides of the same coin.
+
+<RelatedLink to={routes.article('permutations')} label="Permutations Explained" intro="Worth reading next" />
+
+---
+
+## Tree Diagrams: Making the Count Visual
+
+A **tree diagram** turns the multiplication rule into a picture. Each branch represents one choice at a given stage, and each path from the root to a leaf traces one complete outcome.
+
+For 2 fair coin flips:
+
+```
+Flip 1      Flip 2      Outcome
+  H    ----   H   ----   HH
+       |----   T   ----   HT
+  T    ----   H   ----   TH
+       |----   T   ----   TT
+```
+
+Stage 1 creates 2 branches (H or T). Each branch then splits into 2 more at stage 2 — giving 4 leaf nodes, which equals 2 × 2 = 4 total outcomes. The tree makes the multiplication rule concrete: each branch at one level spawns a full new set of branches at the next level, so the total number of paths grows as a product.
+
+For larger problems, tree diagrams become impractical quickly. Five independent stages with 4 choices each would need 4⁵ = 1,024 leaf nodes. Instead of drawing a tree with over a thousand branches, you write 4 × 4 × 4 × 4 × 4 = 1,024. The formula is the tree diagram in compressed form.
+
+Tree diagrams are especially useful when the number of steps and options is small enough to draw (up to about 3–4 stages with 3–4 options each), because they also reveal the structure of the problem — showing exactly which combinations are possible and helping you spot when an "independence" assumption breaks down.
+
+<RelatedLink to={routes.article('combinations')} label="Combinations Formula and Examples" intro="On a related note" />
+
+---
+
+## From the Counting Principle to Permutations and Combinations
+
+The fundamental counting principle counts **ordered sequences**, meaning the order in which choices are made produces different outcomes. Choosing option A then option B is a different result from choosing B then A.
+
+### Permutations
+
+When you choose *r* distinct items from a group of *n* items **without replacement**, and order matters, the principle applies with a decreasing pool at each step:
+
+- First item: *n* choices
+- Second item: *n* − 1 choices (one item now used)
+- Third item: *n* − 2 choices
+- … down to *r*th item: *n* − *r* + 1 choices
+
+```
+P(n, r) = n × (n − 1) × (n − 2) × … × (n − r + 1)
+         = n! / (n − r)!
+```
+
+This is the fundamental counting principle applied *r* times, with the pool shrinking by one at each step. The formula for permutations is a direct consequence — nothing more than the principle in closed form.
+
+### Combinations
+
+When order does **not** matter — you care only about *which* items are selected, not their sequence — you divide the permutation count by the number of ways to arrange *r* items among themselves, which is *r*!:
+
+```
+C(n, r) = P(n, r) / r!
+         = n! / (r! × (n − r)!)
+```
+
+Every combination formula starts from the counting principle. Understanding the principle first makes the permutation and combination formulas feel inevitable rather than arbitrary.
+
+To see how to tell these two apart in practice, the article on <Link to={routes.article('permutations-and-combinations')}>permutations vs. combinations</Link> works through the decision rule with examples. For quick calculations, the <Link to={routes.calculator('factorial')}>factorial calculator</Link> computes *n*! at any scale, and the <Link to={routes.calculator('combination')}>combination calculator</Link> handles *C*(*n*, *r*) values directly.
+
+<RelatedLink to={routes.article('permutations-and-combinations')} label="Permutations vs Combinations" intro="You may also find this useful" />
+
+---
+
+## The Principle Applied to Probability
+
+Once you know the total number of equally likely outcomes, probability is a ratio:
+
+```
+P(event) = number of favourable outcomes / total number of outcomes
+```
+
+The fundamental counting principle determines both the numerator and the denominator of this fraction.
+
+**Example — PIN code security:**
+
+A 4-digit PIN uses digits 0–9, each chosen independently with repetition allowed. What is the probability of guessing the correct PIN on one random attempt?
+
+Step 1 — count total outcomes:
+```
+Total PINs = 10 × 10 × 10 × 10 = 10,000
+```
+
+Step 2 — favourable outcomes: exactly 1 (the correct PIN).
+
+```
+P(correct guess) = 1 / 10,000 = 0.0001 (0.01%)
+```
+
+If repetition is not allowed (each digit can appear only once):
+```
+Total PINs = 10 × 9 × 8 × 7 = 5,040
+```
+
+The denominator drops because each successive digit has one fewer valid option. The probability of a correct guess rises to 1/5,040 ≈ 0.02%. As Penn State's STAT 414 course notes in [Lesson 2 — Probability](https://online.stat.psu.edu/stat414/lesson/2), counting the size of a sample space is almost always the first step in a discrete probability calculation, and the fundamental counting principle is the standard tool for that count.
+
+**Example — rolling two dice:**
+
+A fair six-sided die has 6 outcomes. Two independent dice have:
+```
+Total outcomes = 6 × 6 = 36
+```
+
+To find the probability of rolling a sum of 7, count the favourable pairs: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1) — that is 6 favourable outcomes.
+
+```
+P(sum = 7) = 6 / 36 = 1/6 ≈ 0.167
+```
+
+The denominator came from the principle; the numerator came from a careful list (or another application of the principle for more complex events).
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability Formula Explained" intro="For a related calculation" />
+
+---
+
+## Applying the Principle When Restrictions Apply
+
+Real counting problems often fix certain choices or exclude some options. The standard technique is to handle restricted steps first, reduce their option count accordingly, then multiply through the remaining steps as usual.
+
+**Restriction: a required element in a specific slot**
+
+A 4-digit code must start with the digit 5. The remaining three digits are free (0–9, repetition allowed).
+
+```
+Total = 1 × 10 × 10 × 10 = 1,000
+```
+
+The first position carries a count of 1 (only 5 is allowed), and the principle multiplies that 1 by the free choices at steps 2–4.
+
+**Restriction: two people cannot be adjacent**
+
+A team of 5 people must sit in a row of 5 seats. Two colleagues (call them A and B) must not sit next to each other. Count the valid arrangements.
+
+Step 1 — count all unrestricted arrangements: 5! = 120.
+Step 2 — subtract arrangements where A and B *are* adjacent.
+
+Treat A and B as a single block: the block and the other 3 people give 4 units to arrange — 4! = 24 ways. Within the block, A and B can swap: 2 ways.
+
+```
+Arrangements with A and B adjacent = 4! × 2 = 48
+Valid arrangements = 120 − 48 = 72
+```
+
+This uses the principle twice — once for the total count, once to count the invalid cases — and subtracts (a technique called complementary counting).
+
+---
+
+## Common Mistakes to Avoid
+
+### Multiplying When Choices Are Not Independent
+
+The principle requires that the number of options at each step does not depend on earlier choices. Choosing a committee of 2 from 5 people is *not* 5 × 5 = 25, because you cannot pick the same person twice. The correct ordered count is 5 × 4 = 20; then dividing by 2! = 2 gives 10 unordered committees. Always check: does an earlier choice shrink the available pool for later steps?
+
+### Confusing "And" With "Or"
+
+**Multiply** ("and") when you make choices at multiple independent steps simultaneously. **Add** ("or") when you face mutually exclusive alternatives at a single decision point.
+
+A restaurant offers 4 pasta dishes or 3 pizza dishes — pick exactly one. Total options: 4 + 3 = 7 (addition, because you choose one dish *or* the other, not both). If instead you order a starter *and* a main, and there are 4 starters and 3 mains, the combinations are 4 × 3 = 12 (multiplication). "And" means multiply; "or" means add.
+
+### Ignoring Whether Order Matters
+
+The principle counts ordered sequences by default. If you need *unordered* selections (lottery numbers where {1, 3, 7} is the same winning ticket as {7, 3, 1}), divide by the number of ways to rearrange the selected items. That division is exactly what separates combinations from permutations.
+
+### Overcounting in Circular or Symmetric Arrangements
+
+In circular seating, rotating everyone one seat to the right produces the same relative arrangement. The principle applied naively gives *n*! orderings; the correct count for circular permutations is (*n* − 1)!, because one seat is fixed as a reference to eliminate rotational duplicates. Recognising symmetry before applying the principle avoids overcounting.
+
+---
+
+## Frequently Asked Questions
+
+### What does the fundamental counting principle say?
+
+The fundamental counting principle states: if event A can occur in *m* ways and event B can occur in *n* ways, and the two events are independent, then the sequence of both events can occur in *m* × *n* ways. For *k* independent events with *n₁*, *n₂*, …, *nₖ* ways respectively, the total is *n₁* × *n₂* × … × *nₖ*.
+
+### How does it differ from permutations and combinations?
+
+Permutations are a direct application of the fundamental counting principle to arrangements without replacement. In a permutation of *r* items from *n*, the principle is applied *r* times with a pool that shrinks by one at each step: *n* × (*n* − 1) × … × (*n* − *r* + 1). The principle is the general rule; permutations are a specific case of it.
+
+### When do you add instead of multiply?
+
+Add when the choices are mutually exclusive alternatives — you do option A *or* option B, but not both. Multiply when the tasks are sequential and independent — you do step 1 *and* then step 2. This is sometimes called the **addition rule** (for "or") versus the **multiplication rule** (for "and").
+
+### Does the principle work when items can be reused?
+
+Yes. When repetition is allowed (sampling with replacement), the pool of choices stays the same at every step, and you raise the option count to the power of the number of steps. A 4-digit PIN from digits 0–9 with repetition gives 10⁴ = 10,000. Without repetition, each step reduces the available pool by one, so the factors decrease: 10 × 9 × 8 × 7 = 5,040.
+
+### How does it relate to factorials?
+
+A factorial (*n*!) is the special case where you arrange all *n* items in a sequence with no repetition: *n* choices for position 1, *n* − 1 for position 2, and so on. So *n*! = *n* × (*n* − 1) × (*n* − 2) × … × 1 is the counting principle applied *n* times with a pool shrinking by one each time.
+
+### What is the principle used for in statistics?
+
+In statistics the fundamental counting principle is used to enumerate sample spaces (list all possible outcomes), compute probabilities of compound events, derive the permutation and combination formulas, count the number of treatment combinations in designed experiments, and calculate the size of search or decision spaces in probability models.
+
+### Can the principle handle more than two steps?
+
+Yes — that is its primary strength. With *k* independent steps having *n₁*, *n₂*, …, *nₖ* options respectively, multiply all *k* factors. Five steps with 3 options each give 3⁵ = 243 outcomes. Ten binary choices give 2¹⁰ = 1,024. The principle scales to any finite number of steps.
+
+---
+
+## Summary
+
+The fundamental counting principle reduces every multi-step counting problem to a single multiplication. For any sequence of independent steps, the total number of outcomes equals the product of the number of choices at each step. The principle is foundational to all of combinatorics: permutations apply it with a shrinking pool, combinations correct for ordering by dividing by *r*!, and probability calculations use it to determine the size of sample spaces.
+
+Two rules to carry forward: multiply when you perform tasks together (step 1 **and** step 2), and add when you face mutually exclusive alternatives (option A **or** option B). Handle restricted steps by fixing their option count before multiplying, and always ask whether order matters before deciding whether you need permutations or combinations.
+
+To go further, explore <Link to={routes.article('permutations')}>permutations</Link> and <Link to={routes.article('combinations')}>combinations</Link> — both of which build directly on this principle — and the <Link to={routes.article('binomial-theorem')}>binomial theorem</Link>, which extends combination counting to polynomial expansions. All related tools are available on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
