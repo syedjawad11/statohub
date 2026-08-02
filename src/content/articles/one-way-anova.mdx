@@ -1,0 +1,340 @@
+---
+title: "One-Way ANOVA: When and How to Use It"
+description: "Learn when and how to use one-way ANOVA to compare means across three or more groups. Step-by-step formula, worked example, assumptions, and FAQ."
+category: inferential-statistics
+primaryKeyword: one way anova
+keywords:
+  - one way anova
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**One-way ANOVA** (Analysis of Variance) is a statistical hypothesis test that compares the means of three or more independent groups to determine whether at least one group mean differs significantly from the others. Where a two-sample t-test handles exactly two groups, one-way ANOVA generalises that comparison to any number of groups — in a single test that keeps the Type I error rate at your chosen significance level.
+
+One-way ANOVA works by partitioning the total variation in a dataset into two parts: the variation *between* group means and the variation *within* each group. When the between-group variation is large relative to the within-group variation, the data give evidence that the group means are not all equal.
+
+---
+
+## What Is One-Way ANOVA?
+
+ANOVA stands for **Analysis of Variance**, a method introduced by statistician Ronald A. Fisher in the early twentieth century. The "one-way" prefix means there is exactly one **independent variable** — also called a factor — that defines the groups. Each group is one level of that factor.
+
+For example, if you are studying whether fertiliser type affects crop yield, the factor is "fertiliser type" and the levels are the individual fertilisers being compared. The dependent variable — the measurement you collect — is crop yield. One-way ANOVA tells you whether mean yield differs across fertiliser types; it does not tell you *which* pairs of fertilisers differ (for that you need a post-hoc test, covered below).
+
+The core logic of ANOVA is the **F-statistic**: a ratio of two variance estimates derived from the same dataset. When all group means are truly equal, both estimates should be roughly the same and F ≈ 1. When the group means differ substantially, the between-group estimate grows large and F rises well above 1. A sufficiently large F — compared to the F-distribution with the appropriate degrees of freedom — provides statistical evidence that not all means are equal.
+
+---
+
+## When to Use One-Way ANOVA
+
+Use one-way ANOVA when all three of these conditions are met:
+
+1. **Three or more groups.** You have at least three independent groups (levels of the factor). For exactly two groups, a two-sample t-test is both simpler and equivalent.
+2. **Continuous, approximately normally distributed dependent variable.** Examples: exam scores, blood pressure readings, reaction times, enzyme concentrations.
+3. **Independent observations.** Each subject or experimental unit belongs to exactly one group, and the measurements do not influence one another. Repeated measures on the same subjects require a different design (repeated-measures ANOVA or a mixed model).
+
+One-way ANOVA is the right tool for questions such as:
+
+- Do three different teaching methods produce different mean exam scores?
+- Does drug dose level (low, medium, high) affect mean response time?
+- Is mean customer satisfaction the same across four store locations?
+
+When the data violate the normality assumption and no transformation fixes the problem, the **Kruskal-Wallis test** is the non-parametric alternative. It tests whether the group distributions are the same rather than whether the group means are equal, but it plays the same conceptual role as one-way ANOVA for ordinal or non-normal data. See the full explanation in the <Link to={routes.article('kruskal-wallis-test')}>Kruskal-Wallis test guide</Link>.
+
+---
+
+## Assumptions of One-Way ANOVA
+
+One-way ANOVA rests on three assumptions. Checking them before running the test prevents misleading results.
+
+### Independence
+
+The observations within each group and across groups must be independent. In practice this means random sampling, no repeated measures, and no clustering that would make some observations more similar to each other than to the rest. Violations — such as measuring the same subjects twice and treating the two measurements as independent rows — inflate the Type I error rate.
+
+### Normality
+
+The dependent variable should be approximately normally distributed within each group, especially for small samples. For large samples (roughly n ≥ 30 per group), the central limit theorem means that the sampling distribution of the group mean is approximately normal even when the raw data are not, making ANOVA fairly robust to moderate departures from normality. Use a Q-Q plot or a Shapiro-Wilk test on the *residuals* to check normality; do not test the raw pooled data, because mixing groups with different means distorts the shape of the distribution.
+
+### Homogeneity of Variance (Homoscedasticity)
+
+All groups should have approximately equal population variances. This assumption matters most when sample sizes are unequal. Levene's test or Bartlett's test can check it formally. If variances are substantially unequal, Welch's ANOVA — a variant that does not assume equal variances — is a robust alternative. Most statistical software offers Welch's ANOVA alongside the standard F-test.
+
+<RelatedLink to={routes.article('t-test')} label="T-Test Explained" intro="Worth reading next" />
+
+---
+
+## The One-Way ANOVA Formula
+
+The F-statistic is the ratio of the **mean square between groups (MSB)** to the **mean square within groups (MSW)**:
+
+```
+F = MSB / MSW
+```
+
+Each mean square is a sum of squares divided by its degrees of freedom.
+
+**Between-group sum of squares (SSB)** measures how far each group mean is from the grand mean:
+
+```
+SSB = Σᵢ nᵢ · (x̄ᵢ − x̄)²
+```
+
+where nᵢ is the size of group i, x̄ᵢ is the mean of group i, and x̄ is the grand mean (the mean of all observations combined). The degrees of freedom between groups is:
+
+```
+df_B = k − 1
+```
+
+where k is the number of groups.
+
+**Within-group sum of squares (SSW)** measures the variability of individual observations around their own group mean:
+
+```
+SSW = Σᵢ Σⱼ (xᵢⱼ − x̄ᵢ)²
+```
+
+The degrees of freedom within groups is:
+
+```
+df_W = N − k
+```
+
+where N is the total number of observations across all groups. The mean squares are:
+
+```
+MSB = SSB / (k − 1)
+MSW = SSW / (N − k)
+```
+
+Under the null hypothesis that all group means are equal, F follows an **F-distribution** with (k − 1) numerator degrees of freedom and (N − k) denominator degrees of freedom. A large observed F relative to the critical value from the F-distribution — or an equivalently small p-value — leads to rejecting the null hypothesis.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, Comparison of Several Means (One-Way ANOVA)](https://www.itl.nist.gov/div898/handbook/prc/section4/prc43.htm) provides the theoretical derivation of the F-statistic and a detailed treatment of the one-way ANOVA model.
+
+---
+
+## Step-by-Step Worked Example
+
+**Scenario.** A researcher compares the mean exam scores of students taught by three different methods: lecture only (Group A), lecture with discussion (Group B), and self-paced online (Group C). Five students are randomly assigned to each method.
+
+**Raw data:**
+
+| Group A | Group B | Group C |
+|---------|---------|---------|
+| 84 | 70 | 89 |
+| 86 | 72 | 91 |
+| 88 | 72 | 91 |
+| 90 | 74 | 93 |
+| 92 | 72 | 91 |
+
+### Step 1: Compute Group Means
+
+```
+Mean_A = (84 + 86 + 88 + 90 + 92) / 5 = 440 / 5 = 88.0
+Mean_B = (70 + 72 + 72 + 74 + 72) / 5 = 360 / 5 = 72.0
+Mean_C = (89 + 91 + 91 + 93 + 91) / 5 = 455 / 5 = 91.0
+```
+
+### Step 2: Compute the Grand Mean
+
+```
+x̄ = (440 + 360 + 455) / 15 = 1255 / 15 ≈ 83.67
+```
+
+### Step 3: Compute SSB (Between-Group Sum of Squares)
+
+```
+SSB = 5·(88.0 − 83.67)² + 5·(72.0 − 83.67)² + 5·(91.0 − 83.67)²
+    = 5·(4.33)²           + 5·(−11.67)²         + 5·(7.33)²
+    = 5·18.75             + 5·136.19             + 5·53.73
+    = 93.75 + 680.94 + 268.67
+    ≈ 1043.36
+```
+
+```
+df_B = 3 − 1 = 2
+MSB  = 1043.36 / 2 = 521.68
+```
+
+### Step 4: Compute SSW (Within-Group Sum of Squares)
+
+For Group A (mean = 88.0):
+
+```
+Deviations: 84 − 88 = −4,  86 − 88 = −2,  88 − 88 = 0,  90 − 88 = 2,  92 − 88 = 4
+Squared:    16, 4, 0, 4, 16   →   SS_A = 40
+```
+
+For Group B (mean = 72.0):
+
+```
+Deviations: 70 − 72 = −2,  72 − 72 = 0,  72 − 72 = 0,  74 − 72 = 2,  72 − 72 = 0
+Squared:    4, 0, 0, 4, 0   →   SS_B = 8
+```
+
+For Group C (mean = 91.0):
+
+```
+Deviations: 89 − 91 = −2,  91 − 91 = 0,  91 − 91 = 0,  93 − 91 = 2,  91 − 91 = 0
+Squared:    4, 0, 0, 4, 0   →   SS_C = 8
+```
+
+```
+SSW = 40 + 8 + 8 = 56
+df_W = 15 − 3 = 12
+MSW  = 56 / 12 ≈ 4.67
+```
+
+### Step 5: Compute the F-Statistic
+
+```
+F = MSB / MSW = 521.68 / 4.67 ≈ 111.71
+```
+
+### Step 6: Compare to the Critical Value
+
+At α = 0.05, the critical value from the F-distribution with 2 and 12 degrees of freedom is approximately **3.89**. The observed F = 111.71 far exceeds this threshold.
+
+**ANOVA summary table:**
+
+| Source | SS | df | MS | F |
+|---|---|---|---|---|
+| Between groups | 1043.36 | 2 | 521.68 | 111.71 |
+| Within groups | 56.00 | 12 | 4.67 | — |
+| Total | 1099.36 | 14 | — | — |
+
+**Conclusion:** We reject the null hypothesis (H₀: μ_A = μ_B = μ_C). The data provide overwhelming evidence that at least one teaching method produces a different mean exam score. The p-value for F(2, 12) = 111.71 is far below 0.001.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="For a related calculation" />
+
+---
+
+## Interpreting the F-Statistic and p-Value
+
+The F-statistic on its own does not identify which group or groups differ — it only tests the **omnibus hypothesis** that all means are equal. An F > 1 simply means the between-group variance is larger than the within-group variance, which is consistent with — but not proof of — real group differences. Sampling variability can push F above 1 by chance even when the null hypothesis is true.
+
+The **p-value** is the probability of observing an F-statistic at least as large as yours if the null hypothesis were true. Compare it to your chosen significance level (usually α = 0.05). A small p-value (p < α) means the data are unlikely under the null, and you reject H₀.
+
+A statistically significant F-test tells you that the means are not all equal but not by how much or which specific pairs differ. To answer those follow-up questions you need:
+
+- **Post-hoc tests** (Tukey's HSD, Bonferroni correction) to identify which pairs of group means differ while controlling for multiple comparisons.
+- **Effect size** (η², eta-squared) to quantify how much of the total variance is explained by group membership, independently of sample size.
+
+**Eta-squared** is computed as:
+
+```
+η² = SSB / (SSB + SSW)
+```
+
+In the worked example: η² = 1043.36 / 1099.36 ≈ **0.95**, indicating that roughly 95% of the variance in exam scores is explained by teaching method — a very large effect. A commonly used guideline (Cohen, 1988) treats η² ≈ 0.01 as small, ≈ 0.06 as medium, and ≈ 0.14 as large.
+
+---
+
+## Post-Hoc Tests After a Significant ANOVA
+
+When one-way ANOVA returns a significant result, post-hoc tests compare every pair of group means while correcting for the inflation of Type I error that arises from running multiple comparisons simultaneously.
+
+**Tukey's Honestly Significant Difference (HSD)** is the most widely used post-hoc procedure when comparing all pairs of means with equal or near-equal group sizes. It controls the familywise error rate at exactly α when group sizes are equal, making it more powerful than the Bonferroni correction in that case.
+
+**The Bonferroni correction** divides α by the number of comparisons. For k = 3 groups there are three pairwise comparisons, so Bonferroni uses α / 3 ≈ 0.0167 as the per-test threshold. Bonferroni is more conservative than Tukey's HSD but is easy to compute and general-purpose.
+
+**Scheffé's test** is the most conservative option and is appropriate when you want to test linear contrasts beyond simple pairwise differences. It is rarely needed for straightforward one-way ANOVA but becomes relevant for complex planned comparisons.
+
+In the worked example, the F-statistic is so large that all three pairwise differences (A vs B, A vs C, B vs C) would be declared significant by any post-hoc procedure without adjustment.
+
+<RelatedLink to={routes.article('kruskal-wallis-test')} label="Kruskal-Wallis Test" intro="On a related note" />
+
+---
+
+## One-Way ANOVA vs Other Statistical Tests
+
+Understanding where one-way ANOVA fits relative to related tests helps you choose the right method.
+
+### One-Way ANOVA vs the Two-Sample t-Test
+
+The two-sample t-test compares the means of exactly two groups. For exactly two groups, a t-test is simpler and produces the same result as ANOVA (F = t² for two groups). Use ANOVA when you have three or more groups, because running multiple pairwise t-tests on the same data inflates the Type I error rate above the nominal level. See the <Link to={routes.article('t-test')}>t-test guide</Link> for a full comparison of when each test applies.
+
+### One-Way ANOVA vs Two-Way ANOVA
+
+Two-way ANOVA includes two factors (independent variables) and can also test for an **interaction effect** between them. If your study crosses two categorical variables — for example, both teaching method and student experience level — two-way ANOVA is the appropriate extension. One-way ANOVA is the special case with a single factor.
+
+### One-Way ANOVA vs the Kruskal-Wallis Test
+
+The Kruskal-Wallis test is the non-parametric counterpart to one-way ANOVA. Use it when the normality assumption is seriously violated and no transformation helps, when the data are ordinal rather than continuous, or when sample sizes are very small. Kruskal-Wallis tests whether the group distributions are stochastically equal; it does not directly test group means, which makes the interpretation subtly different from ANOVA. The tradeoff is lower statistical power than ANOVA when the normality assumption does hold.
+
+### One-Way ANOVA vs the Chi-Square Test
+
+The <Link to={routes.article('chi-square-test')}>chi-square test of independence</Link> applies to categorical outcome variables — counts or proportions. If your dependent variable is numerical (exam score, weight, reaction time), use ANOVA. If your outcome is categorical (pass/fail, preference A/B/C), use the chi-square test.
+
+---
+
+## Common Mistakes with One-Way ANOVA
+
+### Running ANOVA with Only Two Groups
+
+For two groups, the two-sample t-test is the conventional and simpler choice. One-way ANOVA on two groups is not incorrect — it gives the same p-value — but the t-test form is easier to report and more familiar to readers.
+
+### Skipping Assumption Checks
+
+Ignoring normality and equal-variance checks can make ANOVA results unreliable, especially with small and unequal sample sizes. Run Levene's test for equal variances and inspect residual Q-Q plots before trusting the F-statistic.
+
+### Treating a Significant F as the Final Answer
+
+A significant omnibus F only confirms that at least one mean differs from the others. Without post-hoc tests and an effect size, you have not identified which groups differ or whether the difference is practically meaningful rather than just statistically detectable.
+
+### Reporting Only the p-Value
+
+A p-value below 0.05 does not convey the magnitude of the effect. Always report η² (or the less biased ω²) alongside F and p so readers can judge practical significance in addition to statistical significance.
+
+### Confusing One-Way and Repeated-Measures ANOVA
+
+If the same subjects are measured under all conditions — for example, before, during, and after a treatment — you need repeated-measures ANOVA, not one-way ANOVA. Treating correlated repeated observations as if they were independent inflates the effective degrees of freedom and can produce spuriously small p-values.
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="You may also find this useful" />
+
+---
+
+## Frequently Asked Questions
+
+### What does one-way ANOVA test?
+
+One-way ANOVA tests whether the means of three or more independent groups are all equal. The null hypothesis is H₀: μ₁ = μ₂ = ... = μₖ. A significant result means at least one group mean differs from the others; it does not identify which group or by how much.
+
+### What is the F-statistic in ANOVA?
+
+The F-statistic is the ratio of the mean square between groups (MSB) to the mean square within groups (MSW): F = MSB / MSW. A large F value, relative to the critical value from the F-distribution for your degrees of freedom, indicates that the variation between group means is greater than can be explained by random within-group variability alone.
+
+### How many groups does one-way ANOVA require?
+
+At least three. For exactly two groups, a two-sample t-test is the standard approach and is equivalent to ANOVA. There is no upper limit on the number of groups, though a large number of groups can reduce power and make post-hoc comparisons unwieldy to interpret.
+
+### What is the difference between SSB and SSW?
+
+SSB (between-group sum of squares) measures how far each group mean deviates from the grand mean, weighted by group size. SSW (within-group sum of squares) measures how much individual observations vary around their own group mean. Together, SSB + SSW = SST (total sum of squares), which represents the total variance in the dataset.
+
+### Can one-way ANOVA tell me which groups differ?
+
+No. A significant ANOVA only establishes that the null hypothesis of equal means is rejected. To identify which specific pairs of group means differ, you must run a post-hoc test — such as Tukey's HSD or Bonferroni correction — after the omnibus F-test.
+
+### What should I do if the ANOVA assumptions are violated?
+
+If normality is violated, consider transforming the data (log, square root) or switching to the non-parametric Kruskal-Wallis test. If variances are unequal, Welch's ANOVA is a robust alternative that adjusts the degrees of freedom without requiring equal variances. ANOVA is fairly robust to mild departures from normality when sample sizes are large and balanced.
+
+### What is eta-squared (η²) in ANOVA?
+
+Eta-squared (η²) is the proportion of the total variance in the dependent variable explained by the grouping factor: η² = SSB / SST. Values range from 0 to 1. A common convention treats η² ≈ 0.01 as a small effect, ≈ 0.06 as medium, and ≈ 0.14 as large. Report η² alongside the F-statistic so readers can evaluate practical as well as statistical significance.
+
+### When should I use Welch's ANOVA instead of standard ANOVA?
+
+Use Welch's ANOVA when Levene's test indicates significantly unequal variances across groups, particularly when group sizes are also unequal. Welch's ANOVA adjusts the degrees of freedom for the F-distribution comparison rather than assuming equal variances. Penn State's [STAT 415 Introduction to Mathematical Statistics — One-Way ANOVA](https://online.stat.psu.edu/stat415/lesson/14) covers Welch's adjustment and its relationship to the standard F-test in detail.
+
+---
+
+## Summary
+
+One-way ANOVA is the standard test for comparing the means of three or more independent groups in a single analysis. The F-statistic compares between-group variance to within-group variance; a large F (and a correspondingly small p-value) provides evidence that not all group means are equal. Before running the test, verify the three assumptions: independence of observations, approximate normality within groups, and homogeneity of variance across groups.
+
+After a significant omnibus result, always run a post-hoc test to identify which pairs of means differ and report η² to convey the practical magnitude of the differences. When the normality assumption is severely violated and cannot be resolved by data transformation, the Kruskal-Wallis test provides a distribution-free alternative. When the study design includes two categorical factors, two-way ANOVA extends the framework to test each factor and their interaction simultaneously.
