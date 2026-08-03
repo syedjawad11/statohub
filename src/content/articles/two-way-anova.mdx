@@ -1,0 +1,381 @@
+---
+title: "Two-Way ANOVA: Main Effects and Interaction Effects"
+description: "Learn two-way ANOVA step by step: test two factors at once, understand main effects and interaction effects, and read a full worked numeric example."
+category: inferential-statistics
+primaryKeyword: two way anova
+keywords:
+  - two way anova
+  - two-way analysis of variance
+  - two-factor anova
+  - anova interaction effect
+  - main effect anova
+  - factorial anova
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **two-way ANOVA** (two-way analysis of variance) tests whether two categorical independent variables — called **factors** — each influence a continuous outcome, and whether the two factors interact. Instead of running two separate experiments, you test both questions at once and gain information that two one-way ANOVAs cannot provide: whether the effect of one factor changes depending on the level of the other.
+
+For example, you might ask whether fertilizer type and irrigation level each affect crop yield, and whether the benefit of a particular fertilizer is larger or smaller depending on how much water the plant receives. Two-way ANOVA gives you a separate F-statistic and p-value for each factor and for their interaction, using a single dataset.
+
+This article covers the hypotheses, assumptions, formulas, and a fully worked numeric example for two-way ANOVA.
+
+---
+
+## What Is a Two-Way ANOVA?
+
+Two-way ANOVA is an extension of one-way ANOVA. Where one-way ANOVA tests one factor (e.g., fertilizer type) across three or more groups, two-way ANOVA introduces a second factor (e.g., irrigation level) and tests three things simultaneously:
+
+1. **Main effect of Factor A** — does Factor A, averaging across all levels of Factor B, affect the outcome?
+2. **Main effect of Factor B** — does Factor B, averaging across all levels of Factor A, affect the outcome?
+3. **A × B interaction** — does the effect of Factor A differ depending on which level of Factor B is present?
+
+The term "factorial ANOVA" is often used as a synonym, because two-way ANOVA involves a factorial design: every combination of factor levels appears in the data. A 2 × 2 factorial design (two levels of each factor) has four cells; a 3 × 4 factorial design has twelve cells.
+
+The outcome variable — yield in the fertilizer example, reaction time in a psychology study, tensile strength in a materials experiment — must be continuous and measured on an interval or ratio scale. Both factors must be categorical. If you have more than two factors, you extend the model to three-way or higher-order ANOVA; the logic is the same but the number of interaction terms multiplies.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Two-Way ANOVA](https://www.itl.nist.gov/div898/handbook/prc/section4/prc43.htm), two-way ANOVA is the standard method for assessing the simultaneous effects of two fixed factors on a response variable while accounting for their potential interaction.
+
+---
+
+## One-Way ANOVA vs. Two-Way ANOVA
+
+| Feature | One-Way ANOVA | Two-Way ANOVA |
+|---------|---------------|---------------|
+| Number of factors | 1 | 2 |
+| Number of null hypotheses | 1 | 3 |
+| Tests interaction? | No | Yes |
+| Efficiency | Lower | Higher |
+| Minimum cells | ≥ 3 groups | 2 × 2 = 4 cells |
+
+One-way ANOVA is the right choice when you have a single categorical predictor and want to know whether the group means differ. Two-way ANOVA is the right choice when you have two categorical predictors and want to understand both their individual effects and whether they work together or independently.
+
+The efficiency advantage is real: a 2 × 2 two-way ANOVA with 40 subjects uses those 40 subjects to estimate two main effects and an interaction, whereas running two separate one-way ANOVAs on the same 40 subjects would split the sample and give less statistical power for each test — and completely miss the interaction.
+
+<RelatedLink to={routes.article('one-way-anova')} label="One-Way ANOVA Explained" intro="Worth reading next" />
+
+---
+
+## The Three Null Hypotheses in Two-Way ANOVA
+
+Two-way ANOVA tests three independent null hypotheses, one for each source of variation.
+
+**H₀ for Factor A (main effect):** The population means of the response variable are equal across all levels of Factor A, averaged over all levels of Factor B.
+
+**H₀ for Factor B (main effect):** The population means of the response variable are equal across all levels of Factor B, averaged over all levels of Factor A.
+
+**H₀ for the A × B interaction:** The effect of Factor A on the response does not depend on which level of Factor B is present (and vice versa).
+
+Each null hypothesis has its own F-statistic, computed by dividing that effect's mean square by the within-group (error) mean square. Each F-statistic has its own degrees of freedom and its own p-value.
+
+Rejecting the interaction null hypothesis has a specific implication: the main effects cannot be interpreted in isolation. If the fertilizer effect is large at high irrigation but negligible at low irrigation, the "average" main effect of fertilizer is a misleading summary. When the interaction is significant, examine the cell means directly — a profile plot (interaction plot) visualises this quickly.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis: Definition & Examples" intro="On a related note" />
+
+---
+
+## Assumptions of Two-Way ANOVA
+
+Two-way ANOVA rests on five assumptions. Violating them does not necessarily invalidate the analysis — the test is robust to mild departures — but serious violations call for remediation.
+
+1. **Independence.** Observations within and across cells must be independent. This comes from the study design: random assignment, no repeated measures on the same subject across conditions (for the standard between-subjects model).
+
+2. **Normality.** The response variable should be approximately normally distributed within each cell. With cell sizes of 20 or more, the central limit theorem means this assumption is rarely a problem in practice. Check with a Q–Q plot or a Shapiro–Wilk test per cell if sample sizes are small.
+
+3. **Homogeneity of variance (homoscedasticity).** The population variance of the response should be equal across all cells. Test with Levene's test. If variances are unequal, use Welch's correction or transform the response variable (log transform is common for right-skewed data).
+
+4. **No significant outliers.** Extreme values inflate the error mean square and reduce power. Identify them with box plots; decide whether they reflect genuine data or recording errors before removing them.
+
+5. **Balanced design (preferred, not required).** Equal cell sizes keep the SS partition clean — the effects are orthogonal, meaning SS_A + SS_B + SS_AB + SS_Within = SS_Total exactly. Unbalanced designs (unequal cell sizes) require Type III sums of squares rather than the default Type I, which matters if you are using software that offers a choice (R's `car::Anova`, SPSS, SAS all use Type III by default for factorial models).
+
+<RelatedLink to={routes.calculator('variance')} label="variance calculator" intro="You may also find this useful" />
+
+---
+
+## The Two-Way ANOVA Formulas
+
+Two-way ANOVA partitions the total variability in the response into four additive components:
+
+```
+SS_Total = SS_A + SS_B + SS_AB + SS_Within
+```
+
+For a balanced design with factor A at *a* levels, factor B at *b* levels, and *n* observations per cell:
+
+**Sum of squares for Factor A (main effect):**
+```
+SS_A = b·n · Σᵢ (ȳᵢ.. − ȳ...)²
+```
+where ȳᵢ.. is the mean for level *i* of Factor A, ȳ... is the grand mean.
+
+**Sum of squares for Factor B (main effect):**
+```
+SS_B = a·n · Σⱼ (ȳ.j. − ȳ...)²
+```
+where ȳ.j. is the mean for level *j* of Factor B.
+
+**Sum of squares for the A × B interaction:**
+```
+SS_AB = n · Σᵢ Σⱼ (ȳᵢⱼ. − ȳᵢ.. − ȳ.j. + ȳ...)²
+```
+where ȳᵢⱼ. is the cell mean for the combination of level *i* and level *j*.
+
+**Sum of squares within groups (error):**
+```
+SS_Within = Σᵢ Σⱼ Σₖ (yᵢⱼₖ − ȳᵢⱼ.)²
+```
+
+**Degrees of freedom:**
+```
+df_A      = a − 1
+df_B      = b − 1
+df_AB     = (a − 1)(b − 1)
+df_Within = ab(n − 1)
+df_Total  = N − 1   (where N = a·b·n)
+```
+
+**Mean squares and F-statistics:**
+```
+MS_A      = SS_A / df_A
+MS_B      = SS_B / df_B
+MS_AB     = SS_AB / df_AB
+MS_Within = SS_Within / df_Within
+
+F_A  = MS_A  / MS_Within
+F_B  = MS_B  / MS_Within
+F_AB = MS_AB / MS_Within
+```
+
+Each F-statistic is compared to the critical value from the F-distribution with the corresponding numerator and denominator degrees of freedom at your chosen significance level (commonly α = 0.05).
+
+---
+
+## Worked Example: Fertilizer Type and Irrigation Level
+
+Suppose an agronomist wants to know whether fertilizer type (Organic vs. Chemical) and irrigation level (Low vs. High) affect crop yield, and whether the two factors interact. She assigns plots randomly to each of the four combinations and measures yield (in kilograms per plot). Each combination is replicated twice (n = 2 per cell, N = 8 total observations).
+
+**Raw data (kg per plot):**
+
+| | Irrigation: Low | Irrigation: High |
+|---|---|---|
+| Fertilizer: Organic | 10, 12 | 18, 20 |
+| Fertilizer: Chemical | 16, 18 | 20, 22 |
+
+### Step 1 — Compute Cell, Row, Column, and Grand Means
+
+Cell means (ȳᵢⱼ.):
+- Organic + Low: (10 + 12) / 2 = **11**
+- Organic + High: (18 + 20) / 2 = **19**
+- Chemical + Low: (16 + 18) / 2 = **17**
+- Chemical + High: (20 + 22) / 2 = **21**
+
+Row means (fertilizer marginal means, ȳᵢ..):
+- Organic: (10 + 12 + 18 + 20) / 4 = 60 / 4 = **15**
+- Chemical: (16 + 18 + 20 + 22) / 4 = 76 / 4 = **19**
+
+Column means (irrigation marginal means, ȳ.j.):
+- Low:  (10 + 12 + 16 + 18) / 4 = 56 / 4 = **14**
+- High: (18 + 20 + 20 + 22) / 4 = 80 / 4 = **20**
+
+Grand mean (ȳ...):
+- (10 + 12 + 18 + 20 + 16 + 18 + 20 + 22) / 8 = 136 / 8 = **17**
+
+### Step 2 — Compute Sums of Squares
+
+**SS_A (Fertilizer):** b = 2 levels of irrigation, n = 2 reps per cell
+
+```
+SS_A = 2·2 · [(15 − 17)² + (19 − 17)²]
+     = 4 · [4 + 4]
+     = 32
+```
+
+**SS_B (Irrigation):** a = 2 levels of fertilizer, n = 2 reps per cell
+
+```
+SS_B = 2·2 · [(14 − 17)² + (20 − 17)²]
+     = 4 · [9 + 9]
+     = 72
+```
+
+**SS_AB (Interaction):** compute the interaction deviation for each cell:
+- Organic + Low:  11 − 15 − 14 + 17 = −1  → (−1)² = 1
+- Organic + High: 19 − 15 − 20 + 17 =  1  → (1)²  = 1
+- Chemical + Low: 17 − 19 − 14 + 17 =  1  → (1)²  = 1
+- Chemical + High:21 − 19 − 20 + 17 = −1  → (−1)² = 1
+
+```
+SS_AB = 2 · (1 + 1 + 1 + 1) = 8
+```
+
+**SS_Total:** sum of squared deviations of all 8 observations from the grand mean (17):
+
+```
+SS_Total = (10−17)² + (12−17)² + (18−17)² + (20−17)²
+         + (16−17)² + (18−17)² + (20−17)² + (22−17)²
+         = 49 + 25 + 1 + 9 + 1 + 1 + 9 + 25
+         = 120
+```
+
+**SS_Within (Error):**
+
+```
+SS_Within = SS_Total − SS_A − SS_B − SS_AB
+           = 120 − 32 − 72 − 8
+           = 8
+```
+
+### Step 3 — Degrees of Freedom
+
+```
+df_A      = 2 − 1 = 1
+df_B      = 2 − 1 = 1
+df_AB     = (2−1)(2−1) = 1
+df_Within = 2·2·(2−1) = 4
+df_Total  = 8 − 1 = 7   (check: 1+1+1+4 = 7 ✓)
+```
+
+### Step 4 — Mean Squares and F-Statistics
+
+```
+MS_A      = 32 / 1 = 32
+MS_B      = 72 / 1 = 72
+MS_AB     =  8 / 1 = 8
+MS_Within =  8 / 4 = 2
+
+F_A  = 32 / 2 = 16
+F_B  = 72 / 2 = 36
+F_AB =  8 / 2 = 4
+```
+
+### Step 5 — Compare to the Critical Value
+
+At α = 0.05, the critical F-value for df₁ = 1 and df₂ = 4 is approximately **7.71** (from the F-distribution table).
+
+- F_A = 16 > 7.71 → **reject H₀ for fertilizer** (significant main effect)
+- F_B = 36 > 7.71 → **reject H₀ for irrigation** (significant main effect)
+- F_AB = 4 < 7.71 → **fail to reject H₀ for interaction** (non-significant)
+
+The two factors each have a significant independent effect on yield, but there is no evidence that they interact with each other.
+
+<RelatedLink to={routes.calculator('p-value')} label="p-value calculator" intro="For a related calculation" />
+
+---
+
+## Reading the ANOVA Results Table
+
+Statistical software presents these results in a standard ANOVA table. The table for the worked example looks like:
+
+| Source | SS | df | MS | F | Significant (α = 0.05)? |
+|--------|----|----|----|----|--------------------------|
+| Fertilizer (A) | 32 | 1 | 32 | 16 | Yes |
+| Irrigation (B) | 72 | 1 | 72 | 36 | Yes |
+| A × B interaction | 8 | 1 | 8 | 4 | No |
+| Within (Error) | 8 | 4 | 2 | — | — |
+| **Total** | **120** | **7** | — | — | — |
+
+Each row represents one source of variation. The "Within" row (also labelled "Error" or "Residual") is the benchmark — it estimates natural variability across observations that share the same cell. All three F-statistics are ratios of their own mean square to this within-group mean square. A large F means that the between-group variance for that source is much larger than the within-group variance, suggesting the factor is responsible for some of the response variability.
+
+The p-value for each F-statistic tells you the probability of observing an F this large (or larger) if the null hypothesis were true. Software packages compute exact p-values; tables give critical values for fixed α levels. The [Penn State STAT 502: Analysis of Variance and Design of Experiments](https://online.stat.psu.edu/stat502/) course materials explain this table format in depth with additional examples.
+
+---
+
+## Understanding Interaction Effects
+
+An **interaction effect** is present when the effect of one factor on the outcome depends on the level of the other factor. This is the unique value of two-way ANOVA — no one-way test can detect it.
+
+Imagine two scenarios for the crop yield example:
+
+**No interaction (our example):** Chemical fertilizer outperforms organic by about 4 kg under low irrigation (17 vs. 11) and by about 2 kg under high irrigation (21 vs. 19). The gap differs slightly, but both conditions show Chemical > Organic, and the ranking does not reverse. The interaction F = 4 is not significant.
+
+**With interaction:** If chemical fertilizer dramatically outperformed organic under low irrigation (say, 20 vs. 10) but performed similarly or worse under high irrigation (19 vs. 20), the lines in an interaction plot would cross. That crossover pattern is a classic sign of a significant interaction.
+
+**Why interaction changes the interpretation:** When the interaction is significant, summarising each main effect with a single number is misleading. You must describe the fertilizer effect separately for each irrigation level (called "simple effects"). Saying "chemical fertilizer increases yield by 4 kg on average" understates reality for one condition and overstates it for another.
+
+When the interaction is not significant (as in our example), you can safely interpret the main effects as general statements: "chemical fertilizer yields 4 kg more than organic, regardless of irrigation level" and "high irrigation yields 6 kg more than low, regardless of fertilizer type."
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="See also" />
+
+---
+
+## Post-Hoc Tests After Significant Results
+
+When a factor has more than two levels and its F-statistic is significant, you know at least one pair of group means differs — but not which pair. Post-hoc tests address this.
+
+**Tukey's Honestly Significant Difference (HSD)** is the most common choice for balanced designs. It controls the family-wise error rate across all pairwise comparisons.
+
+**Bonferroni correction** divides α by the number of comparisons. It is slightly more conservative than Tukey's HSD but works for any set of planned comparisons, not just pairwise ones.
+
+**Fisher's LSD (Least Significant Difference)** is the least conservative; use it only when the overall F-test is significant and you have few comparisons.
+
+In the worked example, each factor has only two levels, so a significant F immediately tells you which two means differ — no post-hoc test is needed. With three levels of fertilizer (Organic, Chemical, Mineral) and a significant fertilizer F, you would need Tukey's HSD to determine whether all three pairs differ or only some.
+
+When the interaction is significant, focus post-hoc tests on simple effects (compare levels of A within each level of B, or vice versa) rather than the marginal means. Testing marginal means after a significant interaction treats the average across conditions as though the interaction does not exist — which contradicts the finding that it does.
+
+---
+
+## Common Mistakes in Two-Way ANOVA
+
+**Ignoring the interaction term before interpreting main effects.** Always inspect the interaction first. If it is significant, main effects must be qualified: "the effect of fertilizer depends on irrigation level." If it is not significant, main effects are straightforward to interpret.
+
+**Using Type I instead of Type III sums of squares with unbalanced data.** Type I SS is sequential — it assigns credit to each factor in the order you enter it, so the order matters. Type III SS tests each factor after adjusting for all others and is the correct choice for unbalanced designs. Most statistical software defaults to Type III for factorial models, but verify the setting.
+
+**Treating a continuous variable as a factor.** If one of your "factors" is actually numeric (e.g., temperature measured in degrees), converting it to a two-level categorical (Low/High) discards information. Use regression or ANCOVA instead.
+
+**Confusing statistical significance with practical significance.** A large dataset can produce a tiny p-value for a trivially small effect. Report effect sizes — **partial η²** (eta-squared) is standard for ANOVA. Partial η² for each term is:
+
+```
+partial η² = SS_effect / (SS_effect + SS_Within)
+```
+
+A value of 0.01 is conventionally small, 0.06 medium, and 0.14 large.
+
+**Failing to check assumptions.** Homogeneity of variance is especially important in two-way ANOVA because unequal variances inflate the Type I error rate. Run Levene's test before interpreting results.
+
+---
+
+## Frequently Asked Questions
+
+### What is a two-way ANOVA?
+
+Two-way ANOVA (two-way analysis of variance) is a statistical test that examines the effect of two categorical independent variables on one continuous dependent variable. It tests three null hypotheses: whether Factor A has a main effect, whether Factor B has a main effect, and whether the two factors interact.
+
+### How is two-way ANOVA different from two separate one-way ANOVAs?
+
+Two separate one-way ANOVAs cannot detect whether the effect of Factor A changes across levels of Factor B — that is, they miss the interaction. Two-way ANOVA tests the interaction explicitly, gives more statistical power by using all the data to estimate each effect, and keeps the overall Type I error rate controlled.
+
+### What does a significant interaction mean?
+
+A significant interaction (significant A × B F-statistic) means the effect of Factor A on the outcome is not the same at every level of Factor B. You cannot summarise the effect of A with a single number; you must describe it separately for each level of B. Examine simple effects and use an interaction plot to visualise the pattern.
+
+### How many levels can each factor have in two-way ANOVA?
+
+Each factor can have two or more levels. Common designs are 2 × 2 (two levels each), 3 × 2, or 3 × 3. The number of cells grows quickly: a 4 × 3 design has 12 cells. Designs with many levels require more observations to maintain adequate power in each cell.
+
+### What if my data violates the normality assumption?
+
+For moderate violations with reasonable cell sizes (n ≥ 10–15), two-way ANOVA is robust. For severe non-normality or ordinal data, consider the aligned-ranks transformation ANOVA (ART-ANOVA) or Scheirer–Ray–Hare test as non-parametric alternatives, though these do not test interaction as cleanly.
+
+### Can I use two-way ANOVA with unequal cell sizes?
+
+Yes, but use Type III sums of squares (not the default Type I). Unbalanced designs lose the clean orthogonal SS partition, but the analysis is still valid provided cell sizes are not extremely unequal and the other assumptions hold.
+
+### What is a balanced design?
+
+A balanced (or orthogonal) design has the same number of observations in every cell. In a 2 × 2 design, all four cells have the same n. Balance is preferred because it maximises power, keeps the SS decomposition clean, and makes the interpretation of main effects straightforward.
+
+### How do I report two-way ANOVA results?
+
+Report the F-statistic, degrees of freedom (numerator and denominator), p-value, and partial η² for each effect. Example: "There was a significant main effect of fertilizer type, F(1, 4) = 16, p = 0.016, partial η² = 0.80, and a significant main effect of irrigation level, F(1, 4) = 36, p = 0.004, partial η² = 0.90. The interaction was not significant, F(1, 4) = 4, p = 0.116, partial η² = 0.50."
+
+---
+
+## Summary
+
+Two-way ANOVA is the standard method for testing the effects of two categorical factors on a continuous outcome within a single analysis. It partitions total variability into four components — Factor A, Factor B, the A × B interaction, and within-group error — and produces a separate F-statistic and p-value for each. The interaction test is the defining feature: only two-way ANOVA reveals whether the effect of one factor changes across levels of the other.
+
+Check the interaction first. When it is significant, interpret simple effects rather than marginal means. When it is not significant, interpret the main effects as general statements. Verify the assumptions of independence, normality, homogeneity of variance, and the absence of outliers before drawing conclusions, and report partial η² alongside p-values to communicate the practical magnitude of each effect.
