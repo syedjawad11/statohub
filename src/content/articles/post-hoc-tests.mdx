@@ -1,0 +1,283 @@
+---
+title: "Post-Hoc Tests: Tukey, Bonferroni & When to Use Them"
+description: "Post-hoc tests identify which group means differ after a significant ANOVA. Compare Tukey HSD, Bonferroni, Scheffé, and Dunnett with worked examples."
+category: inferential-statistics
+primaryKeyword: post hoc tests
+keywords:
+  - post hoc tests
+  - Tukey HSD
+  - Bonferroni correction
+  - post hoc analysis
+  - multiple comparisons
+  - ANOVA post hoc
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Post-hoc tests** answer the question that a significant ANOVA leaves open: *which* specific pairs of group means are actually different? A one-way ANOVA that returns a statistically significant F-ratio tells you that at least one group mean differs from the others, but it does not identify the offending pair. Post-hoc tests — also called multiple comparison procedures — fill that gap by systematically testing every pairwise difference while keeping the probability of a false positive under control.
+
+Understanding post hoc tests means grasping three things: why you cannot simply run a series of ordinary t-tests, how different procedures balance statistical power against conservatism, and how to choose the right test for your study design. This guide covers the most widely used methods — Tukey HSD, Bonferroni, Holm-Bonferroni, Scheffé, and Dunnett — with a fully worked numeric example so you can follow the arithmetic from the ANOVA table to the final conclusion.
+
+---
+
+## Why ANOVA Alone Is Not Enough
+
+A <Link to={routes.article('one-way-anova')}>one-way ANOVA</Link> tests the omnibus null hypothesis that all group means are equal. When the F-ratio is statistically significant, you reject that null hypothesis and conclude that *some* difference exists somewhere among the groups. The ANOVA does not, however, tell you *where* the difference lies.
+
+If you have three groups (A, B, C) and ANOVA returns p = 0.014, the significant result could mean any of the following:
+
+- A differs from B and C, but B and C are not detectably different from each other.
+- Only A and C differ.
+- All three groups differ from each other.
+
+None of those interpretations is more or less valid based solely on the omnibus F-test. You need a post-hoc procedure to examine each pair in turn. Without one, reporting "the groups differ" is an incomplete conclusion that a careful reader or reviewer will question.
+
+<RelatedLink to={routes.article('one-way-anova')} label="one-way ANOVA guide" intro="Worth reading next" />
+
+---
+
+## The Multiple Comparisons Problem
+
+The reason you cannot run ordinary t-tests on every pair of means is the **multiple comparisons problem**, also called the problem of the familywise error rate (FWER).
+
+Each individual t-test conducted at α = 0.05 carries a 5% chance of producing a Type I error — a false positive. When you run several tests on the same dataset, the probability of making *at least one* false positive compounds across tests. For k groups, the number of pairwise comparisons is:
+
+```
+c = k × (k − 1) / 2
+```
+
+For 3 groups: c = 3. For 4 groups: c = 6. For 5 groups: c = 10.
+
+If each test is conducted at α = 0.05, the probability of at least one false positive across all c independent tests is:
+
+```
+FWER = 1 − (1 − α)^c
+```
+
+For three groups (three comparisons): FWER = 1 − 0.95³ = 0.143, or about 14.3%. You have roughly a 1-in-7 chance of declaring at least one pair significant by chance alone, even when all three group means are truly equal.
+
+For five groups (ten comparisons): FWER = 1 − 0.95¹⁰ = 0.401. There is a 40% chance of at least one spurious result — eight times the nominal significance level.
+
+Post-hoc tests address this inflation by either adjusting the comparison threshold (Bonferroni, Holm) or using a distribution that inherently accounts for the number of simultaneous comparisons (Tukey's Studentized Range distribution). The goal is to keep FWER at or below α for the entire family of comparisons, not just for each individual test.
+
+---
+
+## Common Post-Hoc Tests
+
+Five procedures cover the vast majority of real-world use cases. They differ in how conservative they are, and in what kinds of comparisons they are designed to handle.
+
+### Tukey's Honest Significant Difference (HSD)
+
+Tukey HSD is the most widely recommended all-pairwise comparison method. It controls FWER exactly at α for balanced designs (equal group sizes) and approximately for unbalanced designs. The procedure uses the **Studentized Range distribution** rather than the standard t-distribution, which makes it more precise than Bonferroni when all pairs are of interest.
+
+The test statistic for comparing two group means Mᵢ and Mⱼ is:
+
+```
+q = (Mᵢ − Mⱼ) / SE_Tukey
+
+where SE_Tukey = √(MS_within / n)
+```
+
+`MS_within` is the mean square within groups from the ANOVA table, and `n` is the common per-group sample size. The critical value `q_crit` comes from the Studentized Range distribution with two parameters: k (the number of groups) and df_within = N − k.
+
+Two means are significantly different when their absolute difference exceeds the **honest significant difference**:
+
+```
+|Mᵢ − Mⱼ| > HSD
+
+where HSD = q_crit × √(MS_within / n)
+```
+
+Every pair can be assessed against the same HSD value in a balanced design, making the table of results straightforward to interpret.
+
+**When to use Tukey HSD.** It is the default choice when you want to compare all pairs of means after a significant one-way ANOVA, especially with equal or near-equal group sizes. When the only question is "which pairs differ?", Tukey HSD has more power than Bonferroni.
+
+### The Bonferroni Correction
+
+The Bonferroni correction takes a different approach: it divides α by the number of planned comparisons c, then performs each comparison as a standard two-sample t-test at the adjusted threshold.
+
+```
+α_adjusted = α / c
+```
+
+A pair is declared significant when the two-tailed p-value from their t-test falls below α_adjusted.
+
+**When to use Bonferroni.** It is best for a small number of *a priori* (pre-planned) comparisons — ones you specified before collecting data. If you planned only two specific comparisons, Bonferroni at α/2 is sharper than Tukey HSD. When all pairwise comparisons are of interest, however, Bonferroni tends to be overly conservative (it has lower statistical power) compared to Tukey, because it does not exploit the correlation structure among comparisons.
+
+### Holm-Bonferroni Method
+
+The Holm-Bonferroni procedure is a step-down version of the simple Bonferroni correction. It works through the p-values in ascending order:
+
+```
+Step 1  Sort c p-values smallest to largest: p₁ ≤ p₂ ≤ … ≤ p_c
+Step 2  Compare p₁ to α/c, p₂ to α/(c−1), …, p_c to α/1
+Step 3  Stop at the first non-significant comparison;
+        declare it and all remaining ones non-significant
+```
+
+Holm-Bonferroni controls FWER at exactly α but is uniformly more powerful than plain Bonferroni, because later comparisons (larger p-values) use a less stringent threshold. When you would otherwise reach for the simple Bonferroni correction, the Holm-Bonferroni method is the better choice.
+
+### Scheffé Test
+
+The Scheffé test is the most conservative of the commonly used procedures. Unlike Tukey and Bonferroni, which control FWER for pairwise differences, Scheffé controls it for *all possible* contrasts — any weighted linear combination of means where the weights sum to zero. A **contrast** might compare group A to the average of groups B and C, or test a more complex hypothesis such as (A + B) − 2C = 0.
+
+The Scheffé critical value for an F-test on any contrast is:
+
+```
+F_crit_Scheffé = (k − 1) × F_α(k − 1, df_within)
+```
+
+Because it protects against every conceivable contrast, not just simple pairwise ones, its critical value is wider than Tukey's. For straightforward pairwise differences, using Scheffé unnecessarily reduces statistical power. Reserve it for studies where the research questions include complex contrasts defined before data collection.
+
+### Dunnett's Test
+
+Dunnett's test is designed for the specific situation where you have one **control group** and want to compare every other group to the control — but not to each other. With k groups (one control), there are only k − 1 comparisons instead of k(k−1)/2 all-pairwise ones.
+
+Because Dunnett's uses the correlation structure among the control-versus-treatment comparisons, its critical value is smaller than Tukey HSD's, making it the most powerful option when comparing treatments to a control is the only goal.
+
+<RelatedLink to={routes.article('p-value')} label="p-value explained" intro="On a related note" />
+
+---
+
+## Worked Example: Comparing Three Teaching Methods
+
+**Setup.** A researcher evaluates three instructional methods — traditional lecture (A), blended learning (B), and flipped classroom (C) — on a 100-point end-of-term exam. Each group has n = 10 students (N = 30).
+
+| Group | Method             | Mean score | n  |
+|-------|--------------------|------------|----|
+| A     | Traditional lecture | 72        | 10 |
+| B     | Blended learning    | 78        | 10 |
+| C     | Flipped classroom   | 84        | 10 |
+
+Grand mean = (72 + 78 + 84) / 3 = 78.
+
+**ANOVA table (given from a prior one-way ANOVA).**
+
+```
+Source           SS     df    MS       F       p
+Between groups   720     2    360    5.00   0.014
+Within groups   1944    27     72
+Total           2664    29
+```
+
+The F-ratio of 5.00 with 2 and 27 degrees of freedom gives p = 0.014, below α = 0.05. The omnibus ANOVA is significant; post-hoc testing is warranted.
+
+**Applying Tukey HSD.**
+
+First, compute the standard error for the Tukey statistic:
+
+```
+SE_Tukey = √(MS_within / n) = √(72 / 10) = √7.2 ≈ 2.683
+```
+
+Next, find the critical value from the Studentized Range distribution for k = 3 groups and df_within = 27 at α = 0.05:
+
+```
+q_crit(3, 27, 0.05) ≈ 3.51
+```
+
+The honest significant difference is:
+
+```
+HSD = q_crit × SE_Tukey = 3.51 × 2.683 ≈ 9.42
+```
+
+Any pair whose absolute mean difference exceeds 9.42 is significantly different. Tabulating the three pairwise comparisons:
+
+```
+Pair     |Mᵢ − Mⱼ|   vs HSD = 9.42   Decision
+A vs B      6.00        < 9.42         not significant
+A vs C     12.00        > 9.42         SIGNIFICANT ★
+B vs C      6.00        < 9.42         not significant
+```
+
+Only the traditional lecture versus flipped classroom comparison reaches significance. The blended method (B) does not differ detectably from either alternative at this sample size.
+
+**Confirming with Bonferroni.**
+
+For c = k(k − 1)/2 = 3 comparisons at α = 0.05:
+
+```
+α_adjusted = 0.05 / 3 ≈ 0.0167
+```
+
+The per-pair standard error for a two-sample t-test (equal n) is:
+
+```
+SE_pair = √(MS_within × (1/nᵢ + 1/nⱼ)) = √(72 × 0.2) = √14.4 ≈ 3.795
+```
+
+The Bonferroni-adjusted critical t-value for df = 27 and two-tailed α = 0.0167 is approximately 2.48. Computing the t-statistic for each pair:
+
+```
+Pair     t = |Mᵢ − Mⱼ| / SE_pair   vs t_crit ≈ 2.48   Decision
+A vs B   6.00 / 3.795 = 1.58         < 2.48             not significant
+A vs C   12.00 / 3.795 = 3.16        > 2.48             SIGNIFICANT ★
+B vs C   6.00 / 3.795 = 1.58         < 2.48             not significant
+```
+
+Both Tukey HSD and Bonferroni reach the same conclusion: only Method A and Method C produce a statistically detectable difference in exam performance (p < 0.05, adjusted for multiple comparisons). The blended method falls between the other two in mean score but does not differ significantly from either at n = 10 per group.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="null hypothesis guide" intro="You may also find this useful" />
+
+---
+
+## How to Choose the Right Post-Hoc Test
+
+Use the following framework after a significant one-way ANOVA:
+
+| Scenario                                            | Recommended test              |
+|-----------------------------------------------------|-------------------------------|
+| All pairwise comparisons, balanced design           | Tukey HSD                     |
+| All pairwise comparisons, unequal group sizes       | Tukey-Kramer (Tukey extended) |
+| Small number of pre-planned comparisons             | Holm-Bonferroni               |
+| All comparisons, need maximum power over Bonferroni | Holm-Bonferroni               |
+| Complex contrasts beyond simple pairs               | Scheffé                       |
+| Each treatment vs. one control only                 | Dunnett's test                |
+
+**Key principle: match the test to your planned comparisons.** If you intended to compare all pairs before seeing the data, use Tukey. If you had only two or three specific hypotheses in mind before analysis, use Holm-Bonferroni. Choosing the test *after* inspecting the data — for example, picking the one that delivers significant results — inflates your actual error rate well above α, regardless of which procedure you select.
+
+For nearly all all-pairwise analyses in balanced designs, Tukey HSD offers the best balance of power and Type I error control. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.4.7: Comparisons of Many Populations](https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm) provides further technical detail on the Studentized Range distribution and simultaneous inference. A comprehensive treatment of multiple comparisons in the ANOVA setting — including Bonferroni, Holm, Scheffé, and simulation studies comparing their power — can be found in [Penn State STAT 502: Analysis of Variance and Design of Experiments](https://online.stat.psu.edu/stat502/lesson/8).
+
+---
+
+## Frequently Asked Questions
+
+<RelatedLink to={routes.calculatorsHub()} label="statistics calculators" intro="See also" />
+
+### What is the difference between Tukey HSD and Bonferroni?
+
+Tukey HSD is designed specifically for all-pairwise comparisons after ANOVA. It uses the Studentized Range distribution to keep FWER at exactly α across all simultaneous comparisons. Bonferroni is a general-purpose adjustment that divides α by the number of comparisons; it is more versatile — it works for any set of tests, not only post-ANOVA pairwise ones — but it is more conservative than Tukey when all pairwise comparisons are the goal. In all-pairs settings, Tukey HSD has higher statistical power and is the preferred choice.
+
+### When should I run post-hoc tests?
+
+Run post-hoc tests when (1) your ANOVA F-ratio is statistically significant and (2) you have three or more groups. With only two groups, the ANOVA p-value already tells you which pair differs, since there is only one pair. If the omnibus ANOVA is non-significant, post-hoc tests are generally not warranted — the test already indicates that no reliable differences are detectable at the given α level, and running pairwise tests anyway would capitalize on sampling error.
+
+### Can I run post-hoc tests if the omnibus ANOVA is not significant?
+
+The conventional approach — called **protected testing** — requires a significant omnibus F before running post-hoc comparisons. This two-stage procedure controls FWER at α overall. Some statisticians argue that *a priori* (pre-planned) comparisons can be made regardless of the omnibus result, while exploratory post-hoc comparisons should respect the protected-testing rule. In practice, most applied researchers follow the protected approach: a non-significant ANOVA means no post-hoc tests are conducted.
+
+### What is the most conservative post-hoc test?
+
+The Scheffé test is the most conservative of the commonly used procedures. Because it controls FWER for every possible contrast — not just pairwise differences — its critical value is wider than Tukey's. As a result, Scheffé has lower statistical power for straightforward pairwise tests. Use Scheffé only when your research questions involve complex contrasts. For simple pairwise differences, Tukey HSD is both more appropriate and more powerful.
+
+### Do post-hoc tests apply outside of one-way ANOVA?
+
+Post-hoc procedures extend to several other contexts. In a **two-way ANOVA**, Tukey or Bonferroni can be applied to the marginal means of each factor after a significant main effect. In a **repeated-measures ANOVA**, Bonferroni-adjusted paired <Link to={routes.article('t-test')}>t-tests</Link> or Tukey with the appropriate within-subjects error term serve as post-hoc procedures. After a significant <Link to={routes.article('kruskal-wallis-test')}>Kruskal-Wallis test</Link> — the non-parametric counterpart to one-way ANOVA — pairwise Mann-Whitney U tests with Bonferroni or Holm correction are the standard post-hoc approach. Post-hoc multiple comparison procedures are not typically applied after <Link to={routes.article('chi-square-test')}>chi-square tests</Link> or regression models, which use different inferential frameworks.
+
+---
+
+## Summary
+
+Post-hoc tests are the necessary follow-up to a significant ANOVA. They identify *which* pairs of group means differ, not merely that *some* difference exists somewhere. A few key takeaways:
+
+- The **multiple comparisons problem** means that running uncorrected t-tests on every pair inflates the familywise error rate well above α.
+- **Tukey HSD** is the go-to method for all-pairwise comparisons in balanced designs — more powerful than Bonferroni for this task.
+- **Bonferroni** is simple and flexible; prefer **Holm-Bonferroni** when you would otherwise use plain Bonferroni, because it is strictly more powerful.
+- **Scheffé** is reserved for complex contrasts beyond simple pairs, at the cost of reduced power.
+- **Dunnett's** test is optimal when every group is compared only to a single control.
+- Always select your post-hoc method based on your study design and pre-specified research questions — not based on which test happens to return a significant result.
