@@ -1,0 +1,302 @@
+---
+title: "Statistical Power: What It Means and How to Calculate It"
+description: "Learn what statistical power means, how to calculate it, and why 0.80 is the standard target. Includes a fully worked example and power analysis guide."
+category: inferential-statistics
+primaryKeyword: statistical power
+keywords:
+  - statistical power
+  - power of a test
+  - statistical power analysis
+  - power analysis
+  - type II error power
+  - how to calculate statistical power
+  - power in hypothesis testing
+  - minimum detectable effect
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Statistical power** is the probability that a hypothesis test will correctly detect a real effect when one truly exists. If a study has 80% statistical power and the treatment genuinely works, the study will return a statistically significant result roughly 4 times out of 5 — and miss the real effect the remaining 1 time. Understanding power before you collect any data is one of the most practical skills in applied statistics: a study with too little power wastes time and resources, then leaves its own question unanswered.
+
+The core relationship is simple:
+
+```
+Power = 1 − β
+```
+
+where β is the probability of a Type II error (a false negative). High statistical power means a low Type II error rate. The conventional minimum target for a well-designed study is 0.80 — that is, an 80% chance of detecting the effect you are looking for at the significance level you have chosen.
+
+---
+
+## What Statistical Power Measures
+
+Every hypothesis test can go wrong in two distinct ways.
+
+A **Type I error** (false positive) occurs when you reject the null hypothesis even though it is actually true. The significance level α caps this probability. Setting α = 0.05 means you accept a 5% chance of a false alarm.
+
+A **Type II error** (false negative) occurs when you fail to reject the null hypothesis even though the alternative hypothesis is true — you miss a real effect. The probability of this error is called β. It is not fixed by α; it depends on how large the real effect is, how much data you collected, and how noisy your measurements are.
+
+Statistical power is the complement of the Type II error rate:
+
+```
+Power = P(reject H₀ | H₁ is true) = 1 − β
+```
+
+Read this as: given that the alternative hypothesis is actually true, what is the probability that the test returns a significant result?
+
+- **Power = 0.80** — the study has an 80% chance of detection; a 20% chance of a false negative.
+- **Power = 0.50** — coin-flip odds: you are just as likely to miss the effect as to catch it.
+- **Power = 0.99** — near-certain detection, usually requiring a very large sample or a very large effect.
+
+A study with low power is not a failed study in the mechanical sense — it still runs and produces a p-value. But a non-significant result from a low-powered study is almost uninterpretable: you cannot tell whether the null is true or whether the study simply lacked the sensitivity to see the effect.
+
+---
+
+## The Power Formula
+
+For a one-tailed z-test — the cleanest case for building intuition — statistical power is:
+
+```
+Power = Φ( δ × √n / σ  −  z_α )
+```
+
+where:
+- Φ is the cumulative distribution function of the standard normal distribution (the area to the left under the z-curve)
+- δ (delta) is the true difference between the alternative-hypothesis mean and the null-hypothesis mean (μ₁ − μ₀)
+- n is the sample size
+- σ is the population standard deviation
+- z_α is the critical z-value for the chosen one-tailed significance level (z₀.₀₅ = 1.645; z₀.₀₁ = 2.326)
+
+For a two-tailed test with critical value `z_{α/2}` (z₀.₀₂₅ = 1.960 when α = 0.05), the exact formula adds a second term:
+
+```
+Power = Φ( δ×√n/σ − z_{α/2} )  +  Φ( −δ×√n/σ − z_{α/2} )
+```
+
+The second term is negligible for all but the smallest effect sizes, so most textbooks and software use the one-term approximation:
+
+```
+Power ≈ Φ( δ×√n/σ − z_{α/2} )
+```
+
+The quantity δ×√n/σ is called the **non-centrality parameter** — it measures how far the distribution under H₁ is shifted away from the distribution under H₀, in units of the standard error. Larger shift → higher power.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis Explained" intro="Worth reading next" />
+
+---
+
+## Four Factors That Affect Statistical Power
+
+The formula makes the governing quantities explicit. Four factors control how much power a study has.
+
+### Effect Size
+
+Effect size is the magnitude of the real difference relative to natural variability. Large effects are easy to detect; small effects require much more data to notice. For comparing two means, Cohen's d is the most common measure:
+
+```
+d = (μ₁ − μ₀) / σ
+```
+
+Jacob Cohen's widely adopted conventions place d ≈ 0.2 as a small effect, d ≈ 0.5 as medium, and d ≈ 0.8 as large. A study designed to detect a small effect needs far more participants than one designed to detect a large effect at the same power level. Other effect-size metrics — η² (eta squared) for ANOVA, Pearson's r for correlations, odds ratios for logistic regression — play the same role in their respective test families.
+
+### Sample Size
+
+Larger samples reduce the standard error (SE = σ/√n), making the test more sensitive. Because power depends on δ/SE = δ√n/σ, and n appears under a square root, the relationship between n and power is not proportional. To double the non-centrality parameter you need to quadruple n. This is why large effect sizes have an outsized impact on practical sample-size requirements.
+
+### Significance Level (α)
+
+A higher α (less stringent criterion) widens the rejection region, making it easier to reach significance and increasing power — but also increasing the rate of false positives. Moving from α = 0.01 to α = 0.05 increases power. Moving from α = 0.05 to α = 0.10 increases it further. The tradeoff is explicit: you cannot gain power by loosening α without accepting more Type I errors. In practice, α is usually set at 0.05 or lower by convention before you solve for n.
+
+### One-Tailed vs. Two-Tailed Tests
+
+A one-tailed test concentrates the entire rejection region on one side of the distribution. For the same α, it has a less extreme critical value than the two-tailed equivalent (z₀.₀₅ = 1.645 vs. z₀.₀₂₅ = 1.960), yielding higher power when you are certain the effect will fall in that direction. A two-tailed test guards against effects in either direction at the cost of slightly lower power per side. The default in most disciplines is a two-tailed test unless there is a strong prior reason to expect a directional effect.
+
+<RelatedLink to={routes.article('effect-size')} label="Effect Size: Cohen's d and Interpretation" intro="On a related note" />
+
+---
+
+## A Worked Example: Calculating Power for a Z-Test
+
+A researcher wants to know whether a new teaching method raises average exam scores. Historical records show that without the intervention, exam scores follow a roughly normal distribution with population mean μ₀ = 70 and population standard deviation σ = 10. The researcher predicts the new method will raise the true mean to μ₁ = 75.
+
+The study will test this with a one-tailed z-test at α = 0.05 using a sample of n = 25 students.
+
+**Step 1 — Compute the standard error**
+
+```
+SE = σ / √n = 10 / √25 = 10 / 5 = 2
+```
+
+**Step 2 — Compute the non-centrality parameter**
+
+The true shift in units of the standard error:
+
+```
+NCP = δ / SE = (μ₁ − μ₀) / SE = (75 − 70) / 2 = 5 / 2 = 2.5
+```
+
+**Step 3 — Look up the critical value**
+
+For a one-tailed test at α = 0.05, the critical z-value is z_α = 1.645.
+
+**Step 4 — Compute power**
+
+```
+Power = Φ(NCP − z_α) = Φ(2.5 − 1.645) = Φ(0.855) ≈ 0.804
+```
+
+From a standard normal table: Φ(0.85) ≈ 0.8023 and Φ(0.86) ≈ 0.8051, so Φ(0.855) ≈ **0.804**.
+
+**Interpretation:** With 25 students, this study has approximately 80.4% power. If the new teaching method genuinely raises the mean score by 5 points, the study will detect this improvement about 4 times in 5 at the 0.05 significance level. The remaining 20% of the time, random variation in a sample of 25 would mask the real shift — a Type II error.
+
+To improve power without changing α, the researcher could enroll more students, target a setting where the intervention has a larger expected effect, or use a more precise measurement instrument to reduce σ.
+
+---
+
+## Choosing a Target Power Level
+
+The most cited target in the social and behavioral sciences is **0.80 (80%)**, introduced by Jacob Cohen in his 1977 and 1988 textbooks on power analysis. Cohen reasoned that if a 5% Type I error rate is acceptable, a 20% Type II error rate — power of 0.80 — represents a roughly symmetric standard for tolerating error. That benchmark has since propagated across almost every quantitative discipline.
+
+In practice, the right target depends on the cost of each error type:
+
+- **0.80** is the accepted floor for most published research and grant applications.
+- **0.90 or 0.95** is standard in clinical trials and regulatory submissions, where missing a genuinely effective treatment has direct patient consequences. The US Food and Drug Administration typically expects trials to be powered to 0.80 at minimum, and many sponsors target 0.90.
+- **0.70** may be acceptable for a preliminary or pilot study specifically designed to yield an effect-size estimate for a larger, properly powered follow-up trial.
+
+A study with power below 0.50 has less than even odds of detecting the effect it was designed to investigate. Whether the result is significant or not, the study is largely uninformative: a non-significant result cannot reasonably be taken as evidence for the null hypothesis.
+
+<RelatedLink to={routes.calculator('sample-size')} label="sample size calculator" intro="For a related calculation" />
+
+---
+
+## A Priori Power Analysis: Solving for Sample Size
+
+The most productive use of the power formula is **prospective**: specify the power you need and the effect size you want to detect, then solve for the required sample size. This is called an a priori power analysis, and it is a required component of grant applications, registered reports, and clinical trial protocols.
+
+Rearranging the one-tailed z-test formula for n:
+
+```
+Power = Φ( δ×√n/σ − z_α ) = 1 − β
+→ δ×√n/σ − z_α = Φ⁻¹(1 − β) = z_β
+→ δ×√n/σ = z_α + z_β
+→ √n = (z_α + z_β) × σ / δ
+→ n = [ (z_α + z_β) × σ / δ ]²
+```
+
+Common values of z_β (the z-score corresponding to the target power):
+- Power = 0.80 → z_β = Φ⁻¹(0.80) ≈ 0.842
+- Power = 0.90 → z_β = Φ⁻¹(0.90) ≈ 1.282
+- Power = 0.95 → z_β = Φ⁻¹(0.95) ≈ 1.645
+
+**Confirming the worked example:**
+
+Using δ = 5, σ = 10, α = 0.05 (one-tailed, z_α = 1.645), and targeting power = 0.80 (z_β = 0.842):
+
+```
+n = [ (1.645 + 0.842) × 10 / 5 ]²
+  = [ 2.487 × 2 ]²
+  = [ 4.974 ]²
+  ≈ 24.7
+→ round up to n = 25
+```
+
+This matches the worked example exactly: n = 25 gives just over 80% power (0.804) for this configuration.
+
+The general lesson is important: to detect a medium effect (d = 0.5) at 80% power with α = 0.05 (two-tailed) requires approximately 64 participants per group in a two-sample test. For a small effect (d = 0.2) the same goal requires around 394 per group — nearly six times the sample. This is why effect size is often the critical input to power analysis and why inflating the expected effect size leads to chronically underpowered research.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods, 7.2.4 — Sample Sizes Required for Hypothesis Tests](https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm) provides extensive tables of required sample sizes for one- and two-sample z-tests and t-tests across a range of α and power targets.
+
+---
+
+## Statistical Power in Practice
+
+### Software for Power Calculations
+
+Few researchers compute power by hand after the planning stage. Several reliable tools automate the calculation across dozens of test types:
+
+- **G\*Power** (free desktop software from Heinrich Heine Universität Düsseldorf): covers t-tests, ANOVA, regression, chi-square, correlations, and more. Enter effect size, α, and target power; it outputs the required n. It also produces power curves so you can see how power changes with sample size.
+- **R** (`pwr` package): `pwr.t.test(d=0.5, sig.level=0.05, power=0.80, type="two.sample")` returns the required n per group.
+- **Python** (`statsmodels`): `TTestPower().solve_power(effect_size=0.5, alpha=0.05, power=0.80)`.
+- **Online calculators**: many psychology and public-health departments host browser-based tools; the sample-size calculator on this site covers common inferential scenarios.
+
+### Reading a Published Power Analysis
+
+When reviewing a published paper's power justification, check three things:
+
+1. **Which effect size metric was used and how it was justified.** "We powered for a medium effect" (d = 0.5 by convention alone) is weaker than "We powered for d = 0.41, the mean of 12 published studies on this intervention."
+2. **Whether α is stated as one- or two-tailed.** A one-tailed α = 0.05 yields higher power than two-tailed α = 0.05 for the same n; some researchers exploit this without explicit justification.
+3. **Whether attrition was accounted for.** The power analysis gives the number of *analyzable* participants. If 15% dropout is expected, the enrollment target must be n / 0.85.
+
+### Pre-Registration and Registered Reports
+
+Pre-registering a study — specifying the hypothesis, power analysis, and analysis plan before data collection — prevents the post hoc rationalisation of sample sizes. The Open Science Foundation's [Registered Reports format](https://www.cos.io/initiatives/registered-reports) goes a step further: the journal commits to publishing the study based on the quality of the design, regardless of whether results are significant. This format structurally eliminates publication bias and enforces prospective power analysis as a publication requirement.
+
+<RelatedLink to={routes.article('type-i-and-type-ii-errors')} label="Type I and Type II Errors" intro="You may also find this useful" />
+
+---
+
+## Common Mistakes with Statistical Power
+
+### Computing Post Hoc Power After a Non-Significant Result
+
+"We found p = 0.42, so we ran a post hoc power analysis and found only 23% power." This is circular and uninformative. Post hoc power calculated from an observed non-significant effect size is a mathematical transformation of the p-value: a non-significant result will always have low post hoc power by definition. It adds no new information. Use power analysis to plan studies, not to explain away null results after the fact.
+
+### Treating Power as the Probability a Significant Result Is True
+
+A significant finding from an 80%-powered study does not mean there is an 80% probability the effect is real. Power is a conditional probability: it assumes H₁ is true and asks how often the test detects it. The probability that a specific significant result reflects a true effect (positive predictive value) depends additionally on the prior probability that H₁ is true — something power analysis does not assess. This distinction matters when interpreting replications.
+
+### Using an Overly Optimistic Effect Size
+
+Pilot studies often produce inflated effect-size estimates because they are small and because the most extreme results are most likely to reach significance. Designing a main study using a pilot's effect size directly tends to produce a chronically underpowered study. The solution is to use a conservative estimate — based on a meta-analysis of the prior literature, or the smallest effect that would be practically meaningful — rather than the pilot point estimate.
+
+### Ignoring Attrition and Missing Data
+
+A power analysis gives the number of analyzable observations. In longitudinal, clinical, or survey research, some proportion of enrolled participants will drop out, withdraw consent, or produce missing data. If you enroll exactly n participants and 20% are lost to follow-up, you analyze only 0.80n — which may be below the powered threshold. Inflate the enrollment target to account for expected attrition: enroll n / (1 − attrition_rate) participants.
+
+### Treating Statistical Significance as a Substitute for Power
+
+Some researchers argue that obtaining a significant result proves the study was "adequately powered." This is backwards. An underpowered study can obtain a significant result by chance — especially when the true effect is large or the study got lucky. Adequate power is a design property established before data collection, not a property you infer retroactively from the outcome.
+
+---
+
+## Frequently Asked Questions
+
+### What is statistical power in simple terms?
+
+Statistical power is the probability that a study will find a real effect when one exists. If the power is 0.80, the study has an 80% chance of returning a statistically significant result when the alternative hypothesis is true. It measures sensitivity: how good is this study at detecting what it is looking for?
+
+### What is considered good statistical power?
+
+The conventional minimum is **0.80 (80%)**, established by Jacob Cohen as a reasonable floor for social and behavioral research. Many fields — clinical trials, epidemiology, psychology registered reports — now recommend 0.90 or 0.95 for studies where missing a genuine effect would have serious practical consequences.
+
+### How does statistical power relate to sample size?
+
+Larger samples reduce the standard error, which makes it easier to distinguish a real effect from random noise. Power increases with n, but the relationship follows a square-root law: doubling n multiplies the non-centrality parameter by √2, not 2. To detect a fixed effect at higher power you must increase n substantially — often by factors of 4 or more when moving from 70% to 95% power.
+
+### What is a power analysis?
+
+A power analysis (or power calculation) is a computation performed before data collection to answer either of two related questions: (a) What sample size is required to achieve a target power given an expected effect size and α? or (b) What power will a planned study have given its fixed sample size, expected effect size, and α? An a priori power analysis informs the study design; a sensitivity analysis shows what range of effects can be detected with the planned n.
+
+### What is the relationship between power and Type II error?
+
+Power = 1 − β, where β is the Type II error probability (the probability of failing to detect a real effect). Increasing power decreases β proportionally. A study with 80% power has a 20% Type II error rate; a study with 90% power has a 10% Type II error rate.
+
+### Can you have too much statistical power?
+
+In a narrow sense, yes. A study with extremely high power (approaching 1.0) can detect trivially small effects that are statistically significant but practically meaningless. For example, a large enough sample could detect a blood-pressure reduction of 0.05 mm Hg with p < 0.001 — a real effect, but one with no clinical relevance. This is why power analysis requires specifying the minimum clinically (or practically) meaningful difference, not just any non-zero difference.
+
+### Why do published studies often have low power despite reporting significant results?
+
+Publication bias: journals preferentially publish significant results. An underpowered study is unlikely to return a significant result — but if it does (because the observed effect was an overestimate), it gets through. The result is a published literature where effect sizes are inflated and non-significant replications are more common than the nominal power of individual studies would predict. This is a structural contribution to the replication crisis across psychology, medicine, and ecology.
+
+---
+
+## Summary
+
+Statistical power is the probability that a hypothesis test detects a real effect: Power = 1 − β. Four factors govern it — effect size, sample size, significance level, and test type — and the non-centrality parameter δ√n/σ ties them together. The worked example shows that a 5-point mean shift, population σ = 10, and n = 25 gives approximately 80.4% power for a one-tailed z-test at α = 0.05, just clearing the conventional 0.80 floor.
+
+The most important practical lesson is that power analysis belongs before data collection, not after. Specifying the minimum effect size worth detecting, choosing an appropriate α, and solving for the required n is the difference between a study that can answer its question and one that generates an ambiguous result regardless of which way the p-value falls. For comprehensive tables and formulae covering t-tests, proportions, and multi-sample designs, the [NIST/SEMATECH e-Handbook of Statistical Methods, 7.2 — Two-Sample Hypothesis Tests](https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm) is a reliable reference for both theory and worked examples.
