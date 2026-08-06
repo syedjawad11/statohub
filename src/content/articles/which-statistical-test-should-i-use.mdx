@@ -1,0 +1,268 @@
+---
+title: "Which Statistical Test Should You Use? A Decision Guide"
+description: "Learn which statistical test to use based on your data type, research question, and sample size. Covers t-test, ANOVA, chi-square, regression, and more."
+category: inferential-statistics
+primaryKeyword: which statistical test should i use
+keywords:
+  - which statistical test should i use
+  - how to choose a statistical test
+  - statistical test selection guide
+  - types of statistical tests
+  - parametric vs nonparametric tests
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Deciding which statistical test you should use is one of the most important — and most frequently mishandled — steps in any data analysis. The math behind each test is only valid when the test matches your data type, your research question, and the assumptions your data satisfies. Get that match wrong and even a flawlessly computed p-value can lead you to a false conclusion. The encouraging part is that test selection follows a consistent logic: three questions about your data narrow the field from dozens of options down to one or two appropriate tests every time.
+
+This guide walks through those three questions, maps each common research scenario to the correct test, and explains the most important pitfalls so you can choose with confidence.
+
+---
+
+## The Three Questions That Determine Every Test Choice
+
+Every statistical test is designed to answer a specific kind of question about data of a specific type under specific mathematical conditions. Before you run any analysis, answer these three questions in order:
+
+**1. What type of data do you have?**
+
+Data can be continuous (measured on a numerical scale: height, temperature, exam scores), categorical (distinct groups with no numerical order: treatment type, blood type, yes/no), or ordinal (ranked categories with direction but unequal spacing: satisfaction ratings on a 1–5 scale, pain scores). The data type is the single biggest filter on which tests are even appropriate.
+
+**2. What is your research question?**
+
+Are you comparing average outcomes across groups? Testing whether a relationship exists between two variables? Predicting one variable from another? Checking whether observed frequencies match an expected pattern? Each type of question has a dedicated family of tests built for exactly that purpose.
+
+**3. Does your data meet the required assumptions?**
+
+Most classic tests — called parametric tests — assume that the outcome variable is approximately normally distributed in the population and that variances across groups are roughly equal. When those assumptions hold, parametric tests are more powerful. When they do not — because the sample is small, the data is skewed, or extreme outliers are present — nonparametric alternatives provide more reliable results without requiring a distributional assumption.
+
+Work through these three questions and you will identify the right test in the large majority of situations you will encounter.
+
+---
+
+## What Type of Data Do You Have?
+
+Data type is the fastest filter and the one most researchers apply first.
+
+### Continuous or Scale Data
+
+Continuous data is measured on an uninterrupted numerical scale and can, in principle, take any value within a range. Weight in kilograms, blood pressure in mmHg, reaction time in milliseconds, and exam scores on a 100-point scale are all continuous. This data type supports the widest range of tests — t-tests, ANOVA, correlation, and regression all require a continuous outcome variable.
+
+A related sub-type is count data (number of accidents per year, number of events per unit area). Count data often looks continuous and is treated as continuous when totals are large. When counts are small or many values are zero, specialised models such as Poisson regression may be more appropriate, but those are beyond the scope of this introductory guide.
+
+### Categorical Data
+
+Categorical data places observations into distinct groups that carry no meaningful numerical order. Binary outcomes (recovered/not recovered, pass/fail, voted/did not vote) and multi-category groups (preferred brand A, B, or C; blood type A, B, AB, or O) fall here. For categorical outcomes you count how many observations land in each cell of a table and compare those frequencies to what chance alone would predict.
+
+### Ordinal Data
+
+Ordinal data has categories that carry a meaningful direction — first place is better than second, "strongly agree" is more positive than "agree" — but the gaps between adjacent categories are not guaranteed to be equal. You cannot assume that the psychological distance between "disagree" and "neutral" is the same as the distance between "neutral" and "agree." Ordinal data is most safely analysed with nonparametric tests that respect the ranking without making the equal-interval assumption.
+
+<RelatedLink to={routes.article('null-hypothesis')} label="Null Hypothesis Explained" intro="Worth reading next" />
+
+---
+
+## Comparing Groups: Tests for Mean Differences
+
+The most common question in quantitative research is whether two or more groups have different average outcomes. The right test depends on how many groups you are comparing and whether those groups are independent or paired.
+
+### The Independent-Samples T-Test
+
+Use the **independent-samples t-test** when you are comparing the means of **two unrelated groups** on a continuous outcome. "Unrelated" means the people in group A are completely different from those in group B — no matching, no repeated measurement on the same individual.
+
+**Example scenario:** Do students who attend a morning lecture score differently on a statistics exam than students who attend an evening lecture? You measure exam scores for 35 morning students and 35 evening students. The groups are independent (different people), and the outcome is continuous. The independent-samples t-test compares the two sample means and tests whether the observed difference is larger than you would expect from random sampling alone.
+
+The test assumes: both samples come from approximately normal distributions (or sample sizes are large enough that the central limit theorem applies), variances in the two groups are roughly equal (software adjusts automatically when they are not, using Welch's correction), and the observations are independent of each other.
+
+Read the full formula, assumptions, and worked example in the <Link to={routes.article('t-test')}>t-test guide</Link>, or run your numbers directly in the <Link to={routes.calculator('t-test')}>t-test calculator</Link>.
+
+### The Paired-Samples T-Test
+
+Use the **paired-samples t-test** — also called the dependent-samples or related-samples t-test — when you are comparing **two measurements from the same individuals**, or from matched pairs. Pairing removes the variability that comes from individual differences, giving the test substantially more power to detect a real effect.
+
+**Example scenario:** Did a four-week tutoring programme improve students' exam scores? You record each student's score before and after tutoring. Because the same student contributes one score to each condition, the observations are paired. The paired t-test calculates the difference for each individual, then tests whether the average of those differences is significantly different from zero.
+
+For a side-by-side comparison of when to use each form, see the <Link to={routes.article('paired-vs-independent-t-test')}>paired vs. independent t-test guide</Link>.
+
+### One-Way ANOVA
+
+Use **one-way ANOVA** (Analysis of Variance) when you are comparing the means of **three or more independent groups** on a continuous outcome and there is one grouping factor. The reason ANOVA exists is that running multiple t-tests between every pair of groups inflates the probability of a false positive result (Type I error). ANOVA tests all groups simultaneously in a single analysis, keeping the error rate under control.
+
+**Example scenario:** Does a new drug, a placebo, or a lifestyle-change programme produce different average weight loss over twelve weeks? Three independent groups, one continuous outcome (kilograms lost), one factor (treatment). One-way ANOVA tests whether at least one group mean differs from the others.
+
+A significant ANOVA result tells you *something* is different but does not tell you *which* groups drive the difference. You then run post-hoc tests — Tukey's HSD, Bonferroni, or Scheffé — to identify the specific pairs that differ. The <Link to={routes.article('one-way-anova')}>one-way ANOVA guide</Link> covers the formula, the F-ratio, and post-hoc testing in full.
+
+### Two-Way ANOVA
+
+Use **two-way ANOVA** when you want to test the effect of **two categorical factors** on a continuous outcome simultaneously, and you want to know whether the two factors interact. An interaction means that the effect of one factor depends on the level of the other — a pattern that one-way ANOVA cannot detect.
+
+**Example scenario:** Does the effectiveness of a study technique (highlighting vs. summarising) differ between morning and evening students? Two factors: study technique (2 levels) and time-of-day group (2 levels). Two-way ANOVA tests the main effect of each factor separately and whether a combination effect — an interaction — goes beyond what either factor explains on its own. The <Link to={routes.article('two-way-anova')}>two-way ANOVA guide</Link> covers interaction plots and interpretation in depth.
+
+<RelatedLink to={routes.article('p-value')} label="P-Value: What It Means and How to Use It" intro="On a related note" />
+
+---
+
+## Testing Relationships and Associations
+
+Sometimes the question is not about group differences but about whether two variables move together — or whether knowing one variable helps you predict another.
+
+### Chi-Square Test of Independence
+
+Use the **chi-square test of independence** when you have **two categorical variables** and you want to know whether they are associated. The test compares the frequency counts actually observed in each cell of a contingency table to the counts you would expect if the two variables had no relationship at all.
+
+**Example scenario:** Is smoking status (current smoker / never smoker) associated with the presence of hypertension (yes / no)? Both variables are categorical. The chi-square test checks whether the proportion of smokers who have hypertension differs significantly from the proportion of non-smokers who do. A significant result means the two categories are not independent — a relationship exists. It does not tell you the direction of causality, only that the pattern is unlikely to be due to chance.
+
+One important requirement: the expected count in each cell of the table should be at least 5. When expected counts fall below 5 (common in small samples or rare categories), use Fisher's exact test instead.
+
+The <Link to={routes.article('chi-square-test')}>chi-square test guide</Link> covers the formula, degrees of freedom, and how to read the output.
+
+### Pearson Correlation Coefficient
+
+Use the **Pearson correlation coefficient (r)** to measure the **linear relationship between two continuous variables**. The coefficient runs from −1 (perfect negative linear relationship) through 0 (no linear relationship) to +1 (perfect positive linear relationship). A hypothesis test on r tells you whether the relationship is statistically significant.
+
+**Example scenario:** Is height correlated with shoe size across adult women? Both variables are continuous. A Pearson correlation gives you the strength and direction of the linear association (say, r = 0.78, p < 0.001) and a test statistic that evaluates whether the observed correlation is larger than chance alone would produce.
+
+Pearson correlation assumes both variables are continuous and approximately normally distributed, and that the relationship between them is linear rather than curved. When these assumptions are violated — for example, with ordinal variables or a clearly non-linear relationship — use Spearman's rank correlation instead. The <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient guide</Link> explains both versions and their assumptions.
+
+### Linear Regression
+
+Use **simple linear regression** when you want to **predict a continuous outcome variable** from one continuous predictor, or to quantify exactly how much the outcome changes for each unit increase in the predictor. Regression goes further than correlation: it gives you the equation of the best-fit line so you can make specific numerical predictions.
+
+**Example scenario:** Can years of post-secondary education predict annual income? You have income data and education-years for 80 adults. Linear regression produces an equation such as:
+
+```
+Predicted income = 28,500 + 4,200 × (years of education)
+```
+
+This says that each additional year of education is associated with $4,200 more in annual income, on average, holding all else equal. The model's R² value — the coefficient of determination — tells you what fraction of the variance in income is explained by education. The <Link to={routes.article('linear-regression')}>linear regression guide</Link> covers R², slope interpretation, residual diagnostics, and the assumptions of the model.
+
+---
+
+## Nonparametric Tests: When Assumptions Cannot Be Met
+
+Parametric tests (t-test, ANOVA, Pearson correlation) assume that the outcome variable is approximately normally distributed. When that assumption is badly violated — especially with small samples, strongly skewed data, or ordinal outcomes — a **nonparametric test** is the appropriate alternative. Nonparametric tests make no distributional assumption; they work with the ranks of the values rather than the raw values themselves.
+
+The main trade-off: nonparametric tests are more robust to assumption violations but slightly less powerful than their parametric counterparts when the distributional assumptions actually hold. For large samples (roughly n > 30 per group), parametric tests are generally robust to mild departures from normality. The choice between parametric and nonparametric matters most with small samples or obviously non-normal data.
+
+### Mann-Whitney U Test
+
+The **Mann-Whitney U test** is the nonparametric equivalent of the independent-samples t-test. Use it to compare two independent groups when the outcome is ordinal, or when the continuous outcome clearly violates normality and the sample is small. Instead of comparing means directly, it ranks all observations from both groups together and tests whether the ranks are distributed evenly between the groups.
+
+**Example scenario:** Do patients who received a new analgesic report lower pain scores on an ordinal 0–10 scale than patients who received a placebo? Pain ratings are ordinal. The Mann-Whitney U test ranks all the scores and tests whether the drug group tends to have lower-ranked scores than the placebo group. The <Link to={routes.article('mann-whitney-u-test')}>Mann-Whitney U test guide</Link> explains the ranking procedure and the appropriate effect-size measure (rank-biserial correlation).
+
+### Kruskal-Wallis Test
+
+The **Kruskal-Wallis test** is the nonparametric equivalent of one-way ANOVA. Use it when you are comparing three or more independent groups on an ordinal outcome, or on a continuous outcome that strongly violates normality assumptions.
+
+**Example scenario:** Do three different physical-therapy protocols produce different levels of perceived recovery (rated on an ordinal 1–10 scale) after knee surgery? Three groups, ordinal outcome, non-normal distribution. The Kruskal-Wallis test ranks all observations together and tests whether the three groups come from the same population distribution. Like one-way ANOVA, a significant result tells you at least one group differs, but post-hoc pairwise comparisons are needed to find which ones. The <Link to={routes.article('kruskal-wallis-test')}>Kruskal-Wallis test guide</Link> covers the test statistic and follow-up comparisons.
+
+<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="For a related calculation" />
+
+---
+
+## A Practical Decision Framework
+
+The table below maps the most common research scenarios to the appropriate test. Identify your situation in the left column, then follow across.
+
+| Research situation | Outcome data type | Groups / structure | Recommended test |
+|---|---|---|---|
+| Compare 2 independent group means | Continuous | 2 independent groups | Independent-samples t-test |
+| Compare 2 related measurements | Continuous | Paired or repeated | Paired-samples t-test |
+| Compare 3+ independent group means, one factor | Continuous | 3+ independent groups | One-way ANOVA |
+| Compare means across 2 factors simultaneously | Continuous | 2 factors | Two-way ANOVA |
+| Test association between 2 categorical variables | Categorical | — | Chi-square test of independence |
+| Measure strength of linear relationship | Both continuous | — | Pearson correlation |
+| Predict a continuous outcome from a predictor | Continuous (outcome) | — | Simple linear regression |
+| Compare 2 independent groups, non-normal or ordinal | Ordinal or non-normal | 2 independent | Mann-Whitney U test |
+| Compare 3+ groups, non-normal or ordinal | Ordinal or non-normal | 3+ independent | Kruskal-Wallis test |
+
+### A Step-by-Step Decision Path
+
+Work through these four steps in sequence:
+
+**Step 1: Is your outcome variable continuous (or approximately so), or is it categorical?**
+- Categorical → use the chi-square test (independence or goodness-of-fit, depending on whether you have one or two categorical variables).
+- Continuous or ordinal → continue to Step 2.
+
+**Step 2: Are you comparing groups, or measuring a relationship between two variables?**
+- Measuring a relationship between two continuous variables → Pearson correlation or simple linear regression (correlation if you only want the strength of association; regression if you want to predict or quantify the slope).
+- Comparing groups → continue to Step 3.
+
+**Step 3: How many groups are you comparing?**
+- Two groups → continue to Step 4.
+- Three or more groups → one-way ANOVA (if parametric assumptions hold) or Kruskal-Wallis (if they do not).
+
+**Step 4: Are the two groups independent, or are they paired?**
+- Independent (different people in each group) → independent-samples t-test (parametric) or Mann-Whitney U (nonparametric).
+- Paired (same people measured twice, or matched individuals) → paired-samples t-test.
+
+For a comprehensive treatment of statistical test selection across a wider range of designs — including repeated-measures, factorial, and multivariate scenarios — the [NIST/SEMATECH e-Handbook of Statistical Methods, Chapter 7 — Product and Process Comparisons](https://www.itl.nist.gov/div898/handbook/prc/prc.htm) is the authoritative open-access reference used by engineers, scientists, and statisticians worldwide.
+
+---
+
+## Common Mistakes When Choosing a Statistical Test
+
+### Running Multiple T-Tests Instead of ANOVA
+
+A frequent beginner error is comparing three or more groups by running a separate t-test between every possible pair (Group A vs. B, A vs. C, B vs. C). Each test carries its own 5% false-positive rate (at α = 0.05). Run three tests and the overall probability of at least one false positive climbs to roughly 14%; run ten tests and it exceeds 40%. One-way ANOVA controls the family-wise error rate by evaluating all groups in a single analysis. If the ANOVA is significant, use <Link to={routes.article('post-hoc-tests')}>post-hoc tests</Link> — such as Tukey's HSD or Bonferroni correction — to identify specific pairs.
+
+### Ignoring Whether Observations Are Independent or Paired
+
+If the same participant contributes measurements to more than one group — pre/post measurements, crossover designs, matched pairs — the observations are not independent. Using an independent-samples t-test on paired data discards the within-subject correlation, reducing the test's power and potentially distorting the result. Always identify the study design first: repeated measurements → paired test; different participants in each group → independent test.
+
+### Choosing the Test After Looking at the Data
+
+Selecting a test because the data "looks" a certain way — rather than because of your pre-specified research question and design — is a form of outcome-driven analysis that inflates the Type I error rate. The test must be chosen based on the study design, the hypotheses formed before data collection, and the data type. Revising the test after peeking at the results to find significance undermines the entire inferential framework. The <Link to={routes.article('type-i-and-type-ii-errors')}>Type I and Type II errors guide</Link> explains how false-positive and false-negative rates are controlled and what happens when they are not.
+
+### Applying Parametric Tests to Clearly Non-Normal Small Samples
+
+For sample sizes below approximately 30 per group, the central limit theorem does not reliably rescue you from distributional violations. If a histogram reveals heavy skew, or if the data has obvious outliers, the parametric test's assumptions are compromised. Use the nonparametric alternative. Nonparametric tests rank-transform the data before testing, which makes them insensitive to extreme values in the tails.
+
+### Confusing a Correlation or Regression Result with Causation
+
+A statistically significant correlation or regression slope does not establish that one variable causes changes in the other. The association may be driven by a third variable, by reverse causation, or by chance at the aggregate level. Always interpret results within the study design. The <Link to={routes.article('correlation-vs-causation')}>correlation vs. causation guide</Link> explains the distinction with concrete examples.
+
+<RelatedLink to={routes.article('type-i-and-type-ii-errors')} label="Type I and Type II Errors" intro="You may also find this useful" />
+
+---
+
+## Frequently Asked Questions
+
+### What is the most commonly used statistical test?
+
+The **t-test** is the most widely used statistical test in applied research. Its independent-samples and paired-samples forms cover a large proportion of the most common research designs: comparing two groups or measuring change within the same individuals over time. ANOVA is the next most common, extending the logic to three or more groups.
+
+### When should I use a t-test vs. ANOVA?
+
+Use the **t-test** when you are comparing exactly two groups. Use **one-way ANOVA** when you have three or more groups. Running multiple t-tests across three groups inflates the chance of a false-positive result; ANOVA controls this by testing all groups simultaneously in a single F-ratio. If ANOVA is significant, post-hoc tests identify which specific pairs of groups differ.
+
+### What is the difference between parametric and nonparametric tests?
+
+**Parametric tests** (t-test, ANOVA, Pearson correlation, linear regression) make an assumption about the underlying distribution of the data — typically that the outcome variable is normally distributed in the population. They are more powerful when that assumption holds. **Nonparametric tests** (Mann-Whitney U, Kruskal-Wallis, Spearman correlation) require no distributional assumption; they work on the ranks of values rather than the raw numbers. Nonparametric tests are the safer choice with small samples, ordinal data, or clear departures from normality.
+
+### How do I know if my data is normally distributed?
+
+Several approaches exist. Visually, a histogram should show a roughly bell-shaped, symmetrical pattern; a Q-Q plot should show points falling approximately on a straight diagonal line. Statistically, the Shapiro-Wilk test (preferred for n < 50) and the Kolmogorov-Smirnov test both test the null hypothesis that the data follows a normal distribution. A non-significant result (p > 0.05) means normality cannot be rejected. With large samples (n > 100), even trivial departures from normality become statistically significant, so visual inspection and subject-matter judgement matter more at that scale. The <Link to={routes.article('normal-distribution')}>normal distribution guide</Link> covers the properties of the normal curve in detail.
+
+### What test do I use for two categorical variables?
+
+The **chi-square test of independence** is the standard choice. It tests whether two categorical variables are related by comparing the observed cell counts to the expected counts under the assumption of independence. Each expected cell count should be at least 5; use Fisher's exact test when small expected counts occur.
+
+### Which statistical test should I use for a survey?
+
+It depends on how the survey data is measured and what you want to compare:
+- **Likert-scale items** (e.g., 1–5 agreement ratings): treat as ordinal; use Mann-Whitney U (two groups) or Kruskal-Wallis (three or more groups).
+- **Mean composite scores** from multiple Likert items, with n > 30 per group: a t-test or ANOVA is reasonable, treating the composite as approximately continuous.
+- **Proportions** (e.g., percentage who chose "agree" or above): chi-square test.
+- **Predicting a score** from demographic variables: linear or ordinal regression.
+
+### What is a p-value and what does it tell me?
+
+The **p-value** is the probability of obtaining results at least as extreme as your observed data, assuming the null hypothesis is true. A p-value below the significance threshold (typically α = 0.05) means the observed result would be unlikely by chance alone — you reject the null hypothesis. A p-value above 0.05 does not prove the null hypothesis is true; it only means the evidence against it is insufficient. The <Link to={routes.article('p-value')}>p-value guide</Link> walks through interpretation and the most common misconceptions. The [OpenStax *Introductory Statistics*, Chapter 9 — Hypothesis Testing with One Sample](https://openstax.org/books/introductory-statistics/pages/9-introduction) also covers the underlying logic of hypothesis testing and test selection in an accessible, worked-example format.
+
+---
+
+Selecting which statistical test to use becomes a straightforward checklist once you match your data type, your research question, and your distributional assumptions to the available tests. The framework in this guide covers the scenarios you will encounter most often: t-tests and ANOVA for comparing means across groups; chi-square for categorical relationships; correlation and regression for continuous associations; and their nonparametric counterparts when distributional assumptions cannot be satisfied. Decide on the test before looking at the data, verify the assumptions, and you will be in the right test every time.
