@@ -1,0 +1,324 @@
+---
+title: "Poisson Distribution: Formula, Examples & When to Use It"
+description: "Learn the Poisson distribution: its formula, the four conditions, and fully worked examples. Understand when to use it vs binomial and normal distributions."
+category: probability-distributions
+primaryKeyword: poisson distribution
+keywords:
+  - poisson distribution
+  - poisson distribution formula
+  - poisson distribution examples
+  - poisson probability
+  - what is the poisson distribution
+  - poisson distribution mean and variance
+  - poisson vs binomial distribution
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **Poisson distribution** is a discrete probability distribution that counts how many times an event occurs in a fixed interval — such as the number of calls a helpdesk receives per minute, the number of defects per square metre of fabric, or the number of emails arriving in your inbox each day. When events occur independently of each other at a constant average rate over a fixed interval, the Poisson distribution is the right model. It is one of the cornerstones of probability theory and applied statistics, used everywhere from queueing analysis and insurance pricing to particle physics.
+
+Named after the French mathematician Siméon Denis Poisson, who introduced it in his 1837 paper *Recherches sur la probabilité des jugements*, the distribution turns a single number — the average event rate λ (lambda) — into a complete picture of all the probabilities for any count outcome.
+
+---
+
+## What Is the Poisson Distribution?
+
+A **Poisson random variable** X counts the number of events in a fixed interval. It takes non-negative integer values: 0, 1, 2, 3, and so on, with no upper bound. The distribution is fully described by one parameter:
+
+- **λ (lambda)**: the average number of events per interval. λ must be a positive real number (λ > 0).
+
+Some key properties:
+
+- **Discrete**: X can only take whole-number values.
+- **Mean = Variance = λ**: unusually, the distribution's mean and variance are the same number. This is both a defining property and a quick diagnostic — if your data's sample mean and sample variance are very different, the Poisson model may not be appropriate.
+- **Right-skewed for small λ, near-symmetric for large λ**: when λ is small (say, λ = 1), most probability sits at 0 and 1, with a long right tail. When λ is large (say, λ ≥ 10), the distribution starts to look bell-shaped.
+
+---
+
+## The Poisson Distribution Formula
+
+The **probability mass function (PMF)** gives the probability of observing exactly *k* events in one interval:
+
+```
+P(X = k) = ( e^(-λ) × λ^k ) / k!
+```
+
+Where:
+- **k** is the number of events (k = 0, 1, 2, 3, …)
+- **λ** is the average rate (mean number of events per interval)
+- **e** is Euler's number ≈ 2.71828
+- **k!** is the factorial of k (for example, 4! = 4 × 3 × 2 × 1 = 24; by convention 0! = 1)
+
+The formula tells you how much probability to assign to each count. Summing P(X = k) across all non-negative integers k always equals 1, confirming this is a proper probability distribution.
+
+**Cumulative probability** — the probability of *at most* m events — is:
+
+```
+P(X ≤ m) = SUM[ ( e^(-λ) × λ^k ) / k! ]  for k = 0, 1, 2, …, m
+```
+
+And the complementary probability — *at least* one event — is simply:
+
+```
+P(X ≥ 1) = 1 - P(X = 0) = 1 - e^(-λ)
+```
+
+---
+
+## The Four Conditions for Using the Poisson Distribution
+
+Before applying the Poisson model, verify that your situation satisfies these four conditions. Failing any one of them means a different distribution is more appropriate.
+
+1. **Events are countable.** You can count discrete occurrences (0, 1, 2, …), not measure a continuous quantity like length or temperature.
+
+2. **Events are independent.** The occurrence of one event does not affect the probability of another occurring. If events cluster together — one earthquake triggering a series of aftershocks, for instance — independence fails and the Poisson model will underestimate variance.
+
+3. **The average rate λ is constant over the interval.** The expected number of events per unit of time or space does not change. A call centre that gets twice as many calls during lunch should be modelled with a time-varying rate, not a single λ.
+
+4. **Two events cannot occur at exactly the same instant.** In a sufficiently short window, the probability of two simultaneous events is negligible. This rules out "batch arrivals," where multiple events arrive in an indistinguishable clump.
+
+When all four hold, the Poisson distribution is not just a convenient approximation — it is the mathematically exact model for independent events arriving at a constant rate. This is formalised in the theory of **Poisson processes**, which underpins much of modern probability and queueing theory. The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/) provides a rigorous foundation for discrete probability models including the Poisson distribution.
+
+<RelatedLink to={routes.article('probability-formula')} label="Probability: Formula & Expected Value" intro="On a related note" />
+
+---
+
+## Worked Example: Calls per Minute at a Help Desk
+
+A call centre receives an average of **λ = 3 calls per minute**. What is the probability of exactly k calls arriving in the next minute?
+
+**Step 1: Identify λ.**
+
+λ = 3 (given directly as the average rate).
+
+**Step 2: Apply the PMF for each k.**
+
+First, compute e^(-3) = 0.049787 (this multiplier is the same for every k).
+
+| k | λ^k | k! | e^(-λ) × λ^k / k! | P(X = k) |
+|---|-----|----|--------------------|----------|
+| 0 | 1 | 1 | 0.049787 × 1 / 1 | **0.0498** |
+| 1 | 3 | 1 | 0.049787 × 3 / 1 | **0.1494** |
+| 2 | 9 | 2 | 0.049787 × 9 / 2 | **0.2240** |
+| 3 | 27 | 6 | 0.049787 × 27 / 6 | **0.2240** |
+| 4 | 81 | 24 | 0.049787 × 81 / 24 | **0.1680** |
+| 5 | 243 | 120 | 0.049787 × 243 / 120 | **0.1008** |
+
+**Step 3: Interpret the results.**
+
+The most likely outcomes are 2 or 3 calls — each with probability 0.2240 (22.4%). There is only a 4.98% chance of no calls at all. The distribution is slightly right-skewed: notice how the probabilities climb from 0.0498 to 0.2240 as k increases, then taper off.
+
+**Step 4: Compute cumulative probabilities.**
+
+The probability of *at most 3* calls:
+
+```
+P(X ≤ 3) = P(0) + P(1) + P(2) + P(3)
+          = 0.0498 + 0.1494 + 0.2240 + 0.2240
+          = 0.6472
+```
+
+So about 64.7% of the time, you get 3 or fewer calls in a minute.
+
+The probability of *4 or more* calls:
+
+```
+P(X ≥ 4) = 1 - P(X ≤ 3) = 1 - 0.6472 = 0.3528
+```
+
+About 35% of the time the queue runs to 4 or more calls — useful to know for staffing decisions.
+
+The probability of *at least 1* call:
+
+```
+P(X ≥ 1) = 1 - P(X = 0) = 1 - 0.0498 = 0.9502
+```
+
+There is a 95% chance that at least one call arrives in any given minute.
+
+### Rescaling λ for a Different Time Interval
+
+If the rate is given per minute and you want probabilities for a 3-minute window, simply multiply: λ₃ₘᵢₙ = 3 × 3 = 9. The PMF shape and calculation method stay the same, just with λ = 9. This rescaling rule is one of the most practical features of the Poisson distribution — you work in whatever time unit your question asks about.
+
+---
+
+## Mean, Variance, and Standard Deviation
+
+The Poisson distribution's most striking mathematical property is that **its mean and variance are identical**:
+
+```
+Mean(X)   = λ
+Var(X)    = λ
+SD(X)     = sqrt(λ)
+```
+
+For the λ = 3 example:
+
+| Quantity | Formula | Value |
+|----------|---------|-------|
+| Mean | λ | 3.000 |
+| Variance | λ | 3.000 |
+| Standard deviation | sqrt(3) | 1.732 |
+
+This equality between mean and variance is a **diagnostic test**: if you collect count data and find that the sample variance is much larger than the sample mean (a condition called **overdispersion**), the Poisson model is a poor fit. In that case, consider the negative binomial distribution. Conversely, if the sample variance is smaller than the mean (underdispersion), you may need a Conway–Maxwell–Poisson model.
+
+<RelatedLink to={routes.article('sampling-distributions')} label="Sampling Distributions" intro="Worth reading next" />
+
+---
+
+## Shape of the Poisson Distribution
+
+### Small λ: Right-Skewed
+
+When λ is small — say λ = 1 — most of the probability mass sits at 0 and 1:
+
+- P(X = 0) = e^(-1) ≈ 0.368
+- P(X = 1) = e^(-1) ≈ 0.368
+- P(X = 2) ≈ 0.184
+
+The distribution has a long right tail and is noticeably asymmetric. In this regime, using the Poisson formula exactly is important — normal approximations fail badly.
+
+### Large λ: Approximately Normal
+
+As λ grows, the Poisson distribution becomes more and more symmetric and bell-shaped. A common rule of thumb is that the **normal approximation** is acceptable when λ ≥ 10:
+
+```
+X ~ Poisson(λ)  ≈  Normal(mean = λ, SD = sqrt(λ))   when λ ≥ 10
+```
+
+This approximation is a consequence of the **Central Limit Theorem**: many independent Poisson events added together tend toward normality, and a Poisson(λ) random variable can be thought of as the sum of λ independent Poisson(1) variables.
+
+The approximation is useful for quick calculations, but for critical decisions — engineering tolerances, medical thresholds, financial risk — always use the exact Poisson formula for the range of λ you actually encounter.
+
+<RelatedLink to={routes.article('normal-distribution')} label="Normal Distribution: The Bell Curve Explained" intro="You may also find this useful" />
+
+---
+
+## Poisson Distribution vs Binomial Distribution
+
+The Poisson and binomial distributions both model discrete count data, but they arise in different settings. Understanding the distinction helps you choose the right model.
+
+| Feature | Poisson | Binomial |
+|---------|---------|----------|
+| Number of trials | Unlimited (or very large) | Fixed n trials |
+| Probability per trial | Very small | Any p (0 < p < 1) |
+| Parameters | λ only | n and p |
+| Mean | λ | np |
+| Variance | λ | np(1 − p) |
+| Best for | Rare events over a continuous interval | Fixed trials with two outcomes |
+
+**The Poisson as a limit of the binomial.** When n is very large, p is very small, and their product np = λ stays constant, the binomial distribution B(n, p) converges to the Poisson distribution Poisson(λ). This is sometimes called the **law of rare events** or the **Poisson limit theorem**. As a practical rule: if n ≥ 100 and p ≤ 0.01 (so np ≤ 1), the Poisson approximation to the binomial is usually adequate.
+
+**Example:** A factory inspects 500 circuit boards, each with a 0.004 probability of a defect. The number of defects X is binomial B(500, 0.004), mean = 2. Since n is large and p is small, X ≈ Poisson(2), and the Poisson formula gives a close approximation to every binomial probability.
+
+The [OpenStax Introductory Statistics, Section 4.6 — The Poisson Distribution](https://openstax.org/books/introductory-statistics/pages/4-6-poisson-distribution) covers this connection in detail, with additional worked examples suitable for self-study.
+
+<RelatedLink to={routes.article('binomial-distribution')} label="Binomial Distribution: Formula & Examples" intro="For a related calculation" />
+
+---
+
+## Poisson Distribution vs Normal Distribution
+
+| Feature | Poisson | Normal |
+|---------|---------|--------|
+| Type | Discrete | Continuous |
+| Range | Non-negative integers only | All real numbers |
+| Shape | Right-skewed (small λ) to bell-shaped (large λ) | Always symmetric |
+| Parameters | λ | μ and σ |
+| Mean ≠ Variance? | Mean = Variance = λ | Mean and variance independent |
+
+For large λ (≥ 10), the two distributions are close. For practical purposes in that range, you can use normal-distribution tables or software to compute approximate Poisson probabilities. For small λ — the regime where Poisson is most distinctive — the two distributions differ substantially and you must use the exact PMF.
+
+---
+
+## Real-World Applications of the Poisson Distribution
+
+The Poisson distribution appears in any domain where discrete, independent, rare events accumulate over a fixed interval:
+
+**Queueing and service systems.** Call centres, bank teller queues, web-server requests per second, and emergency-room arrivals per hour are all modelled with Poisson arrival rates. The entire field of queueing theory (M/M/1 queues and beyond) is built on Poisson arrivals.
+
+**Reliability and quality engineering.** Number of defects per unit length of wire, manufacturing faults per batch, or failures per machine-hour follow Poisson distributions when defects are rare and independent.
+
+**Biology and medicine.** Radioactive decay events per second follow the Poisson distribution exactly. In genomics, the number of mutations per genome per generation is modelled with Poisson when mutation is rare. Hospital admissions for rare events (stroke, trauma) per shift are Poisson-distributed.
+
+**Astronomy and physics.** Photon counts from a dim star, cosmic-ray hits per detector per second, and Geiger counter clicks per interval are all Poisson.
+
+**Insurance and finance.** The number of insurance claims per day and the number of trades above a threshold in a fixed time window are modelled with Poisson processes in actuarial science.
+
+**Natural hazards.** The number of major earthquakes per decade in a seismic zone, or the number of hundred-year flood events occurring in any given century, is approximated by Poisson when events are rare and independent.
+
+---
+
+## Common Mistakes When Using the Poisson Distribution
+
+### Assuming Independence When Events Cluster
+
+The independence condition is the most frequently violated. If one event makes another more likely in the short term — aftershocks following an earthquake, secondary infections following a disease outbreak, or cascading server failures — the Poisson variance underestimates the true spread. Check your data for overdispersion (variance > mean) before committing to the Poisson model.
+
+### Treating λ as a Probability
+
+λ is a rate (average count per interval), not a probability. It can be any positive real number — 0.1, 2.7, or 30 — not just a number between 0 and 1. Confusing the two leads to misinterpretation of P(X = k) values.
+
+### Forgetting to Rescale for a Different Time Window
+
+The Poisson rate is always tied to a specific interval. If λ = 5 failures per hour, then over 2 hours λ = 10, and over 30 minutes λ = 2.5. Always state the time unit and rescale before calculating.
+
+### Using the Normal Approximation for Small λ
+
+The normal approximation to the Poisson is only reliable for λ ≥ 10. For smaller rates, the exact PMF formula must be used — the approximation can misplace substantial probability in the tail.
+
+### Ignoring the Zero Count
+
+P(X = 0) = e^(-λ) is often the most practically important probability. For λ = 0.1 it is 90.5%; for λ = 5 it is only 0.67%. Failing to include the zero-count case in a sum can lead to systematic underestimation.
+
+---
+
+## Frequently Asked Questions
+
+### What is the Poisson distribution?
+
+The Poisson distribution is a discrete probability distribution that models the number of events occurring in a fixed interval of time or space, given that events occur independently at a constant average rate λ. It is defined by a single parameter λ — both the mean and the variance of the distribution equal λ.
+
+### What is the Poisson distribution formula?
+
+The probability mass function is:
+
+```
+P(X = k) = ( e^(-λ) × λ^k ) / k!
+```
+
+where k is the number of events (0, 1, 2, …), λ is the average rate, and e ≈ 2.71828. The formula gives the exact probability of observing exactly k events in one interval.
+
+### When should I use Poisson instead of the binomial distribution?
+
+Use the Poisson distribution when: (1) the number of trials is very large or effectively unlimited; (2) the probability of each event is very small; and (3) events occur independently at a constant rate. A good rule of thumb: if n ≥ 100 and p ≤ 0.01, use Poisson with λ = np. Use the binomial when you have a fixed, moderate number of trials with a non-trivial success probability.
+
+### What is λ (lambda) in the Poisson distribution?
+
+λ is the average rate — the expected number of events per interval. It is simultaneously the mean and the variance of the distribution. For example, λ = 4 means you expect 4 events per interval on average, with variance also equal to 4 (standard deviation = √4 = 2). λ can be any positive real number; it does not have to be an integer.
+
+### Can the Poisson distribution model more than one type of event?
+
+Yes, with care. If you have two independent Poisson processes with rates λ₁ and λ₂ in the same interval, their combined count also follows a Poisson distribution with rate λ₁ + λ₂. This **superposition property** makes the Poisson distribution convenient for modelling aggregate arrivals from multiple independent sources.
+
+### How do I know if my data follows a Poisson distribution?
+
+Three quick checks: (1) confirm the four conditions (discrete counts, independence, constant rate, no simultaneous events) are plausible; (2) compare the sample mean and sample variance — they should be approximately equal; (3) plot the observed frequencies against the expected Poisson frequencies for the estimated λ and assess the fit visually or with a chi-square goodness-of-fit test.
+
+### What is the Poisson distribution used for in the real world?
+
+Common applications include: queueing theory (customer arrivals, call volumes), reliability engineering (equipment failures per hour), biology (mutations per genome, cell divisions), insurance (claims per day), physics (radioactive decay, photon counts), and network engineering (packet arrivals per millisecond). Any setting where rare, independent, discretely-countable events accumulate over a fixed interval is a candidate for the Poisson model.
+
+---
+
+## Summary
+
+The Poisson distribution is defined by a single parameter λ — the average event rate — and its PMF tells you the exact probability of any count outcome. Its equal mean and variance make it easy to parameterise from data, and its rescaling property means you can adapt a rate from any time unit to any other. For small λ it is strongly right-skewed; for large λ (≥ 10) it approximates a normal distribution, connecting it to the broader family of distributions used throughout inferential statistics.
+
+Before applying the model, verify the four conditions: countable events, independence, constant rate, and no simultaneous occurrences. When those hold, the Poisson distribution is not just convenient — it is the mathematically exact model for independent events arriving at a constant rate, a result grounded in the theory of Poisson processes.
+
+For further reading on discrete probability distributions and how they relate to inferential methods, see the <Link to={routes.article('probability-distribution')}>probability distribution overview</Link> or browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link> for interactive tools across all major statistical models.
