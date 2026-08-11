@@ -1,0 +1,336 @@
+---
+title: "Hypergeometric Distribution: Formula & Examples"
+description: "Learn the hypergeometric distribution formula, see a fully worked example, and understand when to use it instead of the binomial distribution."
+category: probability-distributions
+primaryKeyword: hypergeometric distribution
+keywords:
+  - hypergeometric distribution
+  - hypergeometric distribution formula
+  - hypergeometric probability
+  - hypergeometric distribution example
+  - hypergeometric distribution vs binomial
+  - sampling without replacement probability
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **hypergeometric distribution** describes the probability of getting exactly *k* successes when you draw *n* items from a finite population of size *N* that contains *K* successes — **without replacement**. Because each draw removes one item from the pool, the probabilities shift with every pick, which is the key feature that distinguishes it from the more familiar binomial distribution.
+
+You encounter the hypergeometric distribution whenever you sample from a small, closed group: drawing cards from a deck, selecting defective parts from a production batch, or randomly assigning jury members from a pool of candidates. Anywhere the "sampling without replacement" condition holds, the hypergeometric model applies.
+
+---
+
+## What Is the Hypergeometric Distribution?
+
+The hypergeometric distribution is a discrete probability distribution. Like the binomial, it models a sequence of trials with two outcomes — success or failure — but it adds a critical constraint: **the population is finite, and items are not returned after each draw.**
+
+This "without replacement" condition means that after you draw one item, the composition of the remaining pool changes. If you pull a defective widget from a bin of 50, only 49 widgets remain — and the proportion of defectives has changed. This dependency between draws makes the binomial formula inappropriate and the hypergeometric formula necessary.
+
+Formally, a random variable X follows a hypergeometric distribution when:
+
+- The population contains exactly N items.
+- K of those items are "successes" (the attribute you are counting).
+- You draw n items at random, one at a time, without replacement.
+- X counts the number of successes among the n drawn items.
+
+The possible values of X range from max(0, n + K − N) to min(n, K), because you cannot draw more successes than either the number drawn or the number available.
+
+---
+
+## Hypergeometric vs. Binomial: The Key Difference
+
+The binomial distribution assumes **independent trials with a constant probability of success**. Flipping a fair coin 10 times satisfies this: each flip is independent, and the probability of heads stays at 0.5 on every flip. The coin is never "used up."
+
+The hypergeometric distribution assumes **dependent trials where the probability of success changes with each draw** because items are not replaced. Dealing 5 cards from a standard deck is the classic example: once you have seen the first card, the deck has 51 cards left, and the probability of your next card being, say, a spade has changed.
+
+A practical rule: when the sample is small relative to the population (commonly, n/N < 0.05), the binomial distribution approximates the hypergeometric well enough for most purposes. When n/N ≥ 0.05 — a large fraction of the population is being sampled — the hypergeometric is more accurate.
+
+<RelatedLink to={routes.article('binomial-distribution')} label="Binomial Distribution: Formula, Examples & How to Use It" intro="On a related note" />
+
+---
+
+## The Hypergeometric Distribution Formula
+
+The probability mass function (PMF) of the hypergeometric distribution gives the probability that exactly k of the n drawn items are successes:
+
+```
+P(X = k) = [ C(K, k) × C(N − K, n − k) ] / C(N, n)
+```
+
+where C(a, b) is the binomial coefficient ("a choose b"):
+
+```
+C(a, b) = a! / ( b! × (a − b)! )
+```
+
+### Understanding Each Parameter
+
+| Symbol | Meaning |
+|--------|---------|
+| N | Total population size (all items, successes + failures) |
+| K | Total number of successes in the population |
+| n | Sample size (number of items drawn) |
+| k | Observed successes in the sample (the value you are computing probability for) |
+| C(K, k) | Ways to choose k successes from the K available |
+| C(N−K, n−k) | Ways to choose the remaining (n−k) non-successes |
+| C(N, n) | Total ways to choose n items from N (all possible samples) |
+
+The numerator counts every sample composition that produces exactly k successes; the denominator counts every possible sample. Dividing gives the probability.
+
+---
+
+## Mean and Variance of the Hypergeometric Distribution
+
+Two summary statistics describe the centre and spread of a hypergeometric random variable:
+
+**Mean (expected value):**
+
+```
+E[X] = n × (K / N)
+```
+
+Intuitively, this is the sample size multiplied by the proportion of successes in the population — the same formula you would use for the binomial. The sampling-without-replacement condition does not change the expected count; it changes the spread.
+
+**Variance:**
+
+```
+Var(X) = n × (K/N) × (1 − K/N) × (N − n) / (N − 1)
+```
+
+The first three factors, `n × (K/N) × (1 − K/N)`, are the binomial variance. The final factor, `(N − n) / (N − 1)`, is the **finite population correction (FPC)**. Because the pool shrinks with each draw, outcomes are more predictable than if sampling with replacement — the variance is smaller. When N is very large relative to n, the FPC approaches 1 and the hypergeometric variance converges to the binomial variance.
+
+**Standard deviation:**
+
+```
+SD(X) = √[ n × (K/N) × (1 − K/N) × (N − n) / (N − 1) ]
+```
+
+---
+
+## Fully Worked Example: Drawing Cards from a Deck
+
+A standard deck of 52 playing cards contains 13 hearts. You deal 5 cards at random from the shuffled deck. What is the probability that **exactly 2 of the 5 cards are hearts**?
+
+### Step 1: Identify the Parameters
+
+- N = 52 (total cards in the deck)
+- K = 13 (hearts in the deck)
+- n = 5 (cards dealt)
+- k = 2 (hearts we want to find the probability for)
+
+### Step 2: Compute Each Combination
+
+**C(K, k) = C(13, 2)** — ways to choose 2 hearts from the 13 available:
+
+```
+C(13, 2) = 13! / (2! × 11!) = (13 × 12) / (2 × 1) = 156 / 2 = 78
+```
+
+**C(N − K, n − k) = C(39, 3)** — ways to choose the remaining 3 non-heart cards from the 39 non-hearts:
+
+```
+C(39, 3) = 39! / (3! × 36!) = (39 × 38 × 37) / (3 × 2 × 1)
+         = 54,834 / 6
+         = 9,139
+```
+
+**C(N, n) = C(52, 5)** — total ways to choose any 5 cards from the 52-card deck:
+
+```
+C(52, 5) = 52! / (5! × 47!) = (52 × 51 × 50 × 49 × 48) / (5 × 4 × 3 × 2 × 1)
+          = 311,875,200 / 120
+          = 2,598,960
+```
+
+### Step 3: Apply the Formula
+
+```
+P(X = 2) = [ C(13, 2) × C(39, 3) ] / C(52, 5)
+          = (78 × 9,139) / 2,598,960
+          = 712,842 / 2,598,960
+          ≈ 0.2743
+```
+
+There is approximately a **27.4% chance** that exactly 2 of the 5 dealt cards are hearts.
+
+### Verify the Mean and Variance
+
+With these parameters:
+
+```
+E[X] = 5 × (13 / 52) = 5 × 0.25 = 1.25 hearts expected on average
+```
+
+```
+Var(X) = 5 × (13/52) × (39/52) × (52 − 5) / (52 − 1)
+       = 5 × 0.25 × 0.75 × (47/51)
+       = 0.9375 × 0.9216
+       ≈ 0.864
+```
+
+```
+SD(X) = √0.864 ≈ 0.930
+```
+
+On average you expect 1.25 hearts in a 5-card hand, with a standard deviation of about 0.93.
+
+<RelatedLink to={routes.calculator('combination')} label="combination calculator" intro="For a related calculation" />
+
+---
+
+## The Finite Population Correction Factor
+
+The term `(N − n) / (N − 1)` in the variance formula is called the **finite population correction (FPC)**. It captures the key mathematical difference between sampling with and without replacement.
+
+When you sample *with* replacement, consecutive draws are independent: knowing the outcome of one draw gives you no information about the next. When you sample *without* replacement, draws are negatively correlated: if the first draw was a success, there are now fewer successes left in the pool, so the next draw is *less* likely to be a success. This negative correlation reduces variance below the binomial level.
+
+The correction ranges between 0 and 1:
+
+- **FPC close to 1** (n ≪ N): replacing the small sample barely changes the pool composition; the hypergeometric variance ≈ binomial variance.
+- **FPC = 0** (n = N, the entire population is drawn): there is no randomness left once you have all items, so the variance is 0. You will get exactly K successes, no more, no less.
+
+A common rule of thumb: if the sampling fraction n/N is below 0.05, the correction factor changes the variance by less than 5% and the binomial approximation is adequate. Above that threshold, use the hypergeometric formula.
+
+---
+
+## Real-World Applications
+
+The hypergeometric distribution shows up whenever you sample from a finite, well-defined group without replacement.
+
+### Quality Control and Acceptance Sampling
+
+A manufacturer receives a shipment of 200 components. They inspect a random sample of 20 to decide whether to accept or reject the whole batch. If 10 of the 200 components are defective, the hypergeometric distribution gives the exact probability that the sample contains 0, 1, 2, or more defectives. Statistical acceptance-sampling tables — widely used in manufacturing standards — are built on this model.
+
+### Ecology and Wildlife Management
+
+Ecologists use the **mark-recapture method** (Lincoln–Petersen method) to estimate wildlife populations. A sample of animals is captured, tagged, and released. A second sample is later captured. The hypergeometric distribution models how many tagged animals appear in the second sample, and that count is used to back-calculate the population size. The [NIST/SEMATECH e-Handbook of Statistical Methods, section on the Hypergeometric Distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm), covers this application alongside the formal probability mass function.
+
+### Auditing and Fraud Detection
+
+Auditors examining a ledger of 500 transactions may randomly inspect 50. If 30 of the 500 are suspected irregularities, the hypergeometric PMF tells the auditor the probability of catching k irregularities in the sample of 50 — giving a principled basis for how much confidence to place in a clean sample.
+
+### Genetics and Epidemiology
+
+The hypergeometric test is widely used in bioinformatics to check whether a set of genes of interest contains more members of a particular biological pathway than would be expected by chance. The analysis is a direct application of the hypergeometric PMF: are K pathway members over-represented among n "hit" genes from a genome of size N?
+
+<RelatedLink to={routes.article('probability-distribution')} label="Probability Distributions: Types and Key Properties" intro="Worth reading next" />
+
+---
+
+## Computing Cumulative Probabilities
+
+The PMF gives the probability for a single exact value. Often you need the **cumulative distribution function (CDF)** — the probability that X is at most some threshold.
+
+```
+P(X ≤ x) = Σ P(X = k)   for k = max(0, n+K−N) to x
+```
+
+For example, with the card-dealing setup above, the probability of dealing **at most 2 hearts** is:
+
+```
+P(X ≤ 2) = P(X = 0) + P(X = 1) + P(X = 2)
+```
+
+Computing each:
+
+**P(X = 0):** C(13,0) × C(39,5) / C(52,5) = 1 × 575,757 / 2,598,960 ≈ 0.2215
+
+**P(X = 1):** C(13,1) × C(39,4) / C(52,5) = 13 × 82,251 / 2,598,960 ≈ 0.4114
+
+**P(X = 2):** computed above ≈ 0.2743
+
+```
+P(X ≤ 2) ≈ 0.2215 + 0.4114 + 0.2743 = 0.9072
+```
+
+About **90.7% of 5-card hands contain 2 or fewer hearts** — which makes intuitive sense since the expected number is only 1.25.
+
+For k = 4 or k = 5, the probabilities drop sharply:
+
+```
+P(X = 3) ≈ 0.0815
+P(X = 4) ≈ 0.0107
+P(X = 5) ≈ 0.0005
+```
+
+Sum: 0.2215 + 0.4114 + 0.2743 + 0.0815 + 0.0107 + 0.0005 = 0.9999 ≈ 1 (rounding accounts for the small difference).
+
+---
+
+## Common Mistakes to Avoid
+
+### Using the Binomial When You Should Use the Hypergeometric
+
+The most frequent error is applying the binomial PMF to a finite-population, without-replacement problem. If someone asks "what is the probability of drawing exactly 3 red balls from an urn of 10 balls (6 red, 4 blue) when you draw 4 without replacement?" — that is a hypergeometric problem, not a binomial one. The binomial would overstate the variance because it treats each draw as independent with a fixed p = 0.6.
+
+### Confusing N, K, n, and k
+
+The four parameters look similar. A reliable mnemonic: uppercase letters (N, K) describe the **population**; lowercase letters (n, k) describe the **sample**. Population first, then sample. Always write them out before plugging in numbers.
+
+### Forgetting the Valid Range of k
+
+X cannot take every integer from 0 to n. The lower bound is max(0, n + K − N): if the number of successes in the population plus the sample size exceeds the population size, you *must* draw at least n + K − N successes. For the card example, n + K − N = 5 + 13 − 52 = −34, so the lower bound is max(0, −34) = 0; every value 0–5 is possible. But for very large K or small N, not all values from 0 to n are achievable.
+
+### Treating the FPC as Optional
+
+When the sampling fraction n/N is high — say, drawing 40 items from a population of 60 — the finite population correction is large (FPC = 20/59 ≈ 0.34) and ignoring it leads to a serious overstatement of variance. The hypergeometric model is not a subtle refinement in such cases; it is the correct model.
+
+---
+
+## Frequently Asked Questions
+
+### What is the hypergeometric distribution used for?
+
+The hypergeometric distribution is used to calculate the probability of obtaining a specific number of successes when sampling without replacement from a finite population. Common applications include quality-control acceptance sampling, card games, ecological mark-recapture studies, auditing, and bioinformatics gene-set enrichment tests.
+
+### How does the hypergeometric distribution differ from the binomial?
+
+Both count successes in n trials, but the binomial assumes independent trials with a fixed probability of success (sampling *with* replacement), while the hypergeometric assumes dependent trials where the probability changes with each draw (sampling *without* replacement). When the sample is small relative to the population (n/N < 0.05), the two give nearly identical results.
+
+### What does "without replacement" mean?
+
+Sampling without replacement means each selected item is not returned to the pool before the next draw. Once you deal a card, it stays in your hand — the deck now has one fewer card. Each subsequent draw has different probabilities because the population composition has changed.
+
+### What are the parameters of the hypergeometric distribution?
+
+There are four parameters: N (population size), K (total successes in the population), n (sample size), and k (the number of successes whose probability you want to compute). N and K describe the population; n and k describe the sample.
+
+### How do I compute hypergeometric probabilities by hand?
+
+Evaluate C(K, k), C(N−K, n−k), and C(N, n) using the combination formula C(a, b) = a! / (b! × (a−b)!), then divide: P(X = k) = [C(K, k) × C(N−K, n−k)] / C(N, n). For cumulative probabilities, sum the PMF over each k from the lower bound to your target value.
+
+### When can I use the binomial instead of the hypergeometric?
+
+When the sampling fraction n/N is less than 0.05 (you are drawing fewer than 5% of the population), the binomial distribution approximates the hypergeometric very closely. For example, drawing 10 cards from a population of 10,000 satisfies this rule (10/10,000 = 0.001). The hypergeometric is necessary when n/N ≥ 0.05.
+
+### What is the mean of the hypergeometric distribution?
+
+The expected value (mean) is E[X] = n × (K/N) — the sample size multiplied by the population proportion of successes. For the card example, E[X] = 5 × (13/52) = 1.25 hearts per 5-card hand.
+
+### What is the finite population correction?
+
+The finite population correction (FPC) is the factor (N − n) / (N − 1) in the hypergeometric variance formula. It accounts for the fact that sampling without replacement reduces variability: once some items are drawn, fewer combinations remain, so outcomes are more predictable than they would be if items were replaced. The FPC is always between 0 and 1, and equals 1 only when N → ∞ (recovering the binomial variance).
+
+---
+
+## Summary
+
+The hypergeometric distribution answers a precise question: given a population of N items — K successes and N − K failures — what is the probability of drawing exactly k successes in a sample of n items taken without replacement?
+
+The core formula is:
+
+```
+P(X = k) = [ C(K, k) × C(N − K, n − k) ] / C(N, n)
+```
+
+The mean is `n × (K/N)` — identical to the binomial — but the variance includes the finite population correction `(N − n) / (N − 1)`, which shrinks variance below the binomial level because draws are negatively correlated. When the sampling fraction n/N is below 0.05, the binomial approximation is close enough for most purposes; above that threshold, the hypergeometric formula is the right tool.
+
+From card games to quality audits to ecological surveys, the hypergeometric distribution is the standard model whenever you count successes in a sample drawn from a known, finite group without replacement. Mastering it alongside the <Link to={routes.article('binomial-distribution')}>binomial distribution</Link> covers the two most common discrete probability models for real-world counting problems.
+
+For a deeper treatment of the probability mass function and applications, see [Penn State STAT 414, Lesson 12.2 — The Hypergeometric Distribution](https://online.stat.psu.edu/stat414/lesson/12/12.2).
+
+<RelatedLink to={routes.article('combinations')} label="Combinations: nCr Formula & Examples" intro="See also" />
