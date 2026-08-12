@@ -1,0 +1,285 @@
+---
+title: "Linear Regression Assumptions: What They Are & How to Check"
+description: "Learn the five linear regression assumptions — linearity, independence, homoscedasticity, normality, no multicollinearity — plus how to test each one."
+category: regression-correlation
+primaryKeyword: linear regression assumptions
+keywords:
+  - linear regression assumptions
+  - regression assumptions
+  - OLS assumptions
+  - assumptions of linear regression
+  - homoscedasticity
+  - multicollinearity in regression
+  - residual analysis
+phase: 2
+calculator: linear-regression
+related: []
+draft: false
+---
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import RelatedLink from '../../components/RelatedLink.astro';
+import { routes } from '../../lib/links';
+
+The **linear regression assumptions** are a set of conditions that must hold for ordinary least squares (OLS) regression to produce reliable, unbiased coefficient estimates. When these conditions are satisfied, OLS is the Best Linear Unbiased Estimator (BLUE) — a result called the Gauss-Markov theorem. When they are violated, the estimated slopes may be biased, the standard errors may be wrong, and the significance tests may mislead you entirely.
+
+There are five core assumptions. Statisticians often remember them with the acronym **LINE**: **L**inearity, **I**ndependence, **N**ormality of residuals, and **E**qual variance (homoscedasticity). A fifth assumption — **no problematic multicollinearity** — applies when you move from simple to multiple linear regression with two or more predictors. This guide walks through each assumption, explains what it means, shows how to detect a violation, and describes what to do when one appears.
+
+---
+
+## The Standard OLS Model and Its Error Term
+
+Every linear regression assumption is ultimately an assumption about the **error term** ε in the model:
+
+```
+y = β₀ + β₁x₁ + β₂x₂ + ... + βₖxₖ + ε
+```
+
+Here y is the dependent (outcome) variable, x₁ through xₖ are the predictor (independent) variables, β₀ through βₖ are the true population coefficients, and ε represents everything that influences y but is not captured by the predictors. The five linear regression assumptions describe the statistical behavior that ε — and the predictors — must have for OLS to work correctly.
+
+---
+
+## Assumption 1: Linearity
+
+The relationship between each predictor variable and the outcome variable must be **linear in the parameters**. This means the model correctly describes how y changes as each predictor changes: a one-unit increase in xⱼ produces a constant additive change of βⱼ in y, regardless of where xⱼ starts.
+
+Linearity does not require the raw scatter plot of x versus y to form a perfectly straight line. You can transform variables — using log(x) or x², for example — and still satisfy linearity in the parameters, because the model is linear in the *transformed* predictors. What you cannot do is model a relationship that is inherently non-linear in the parameters (such as exponential growth) with a plain OLS model.
+
+### How to Check Linearity
+
+The most direct diagnostic is a **residual-versus-fitted-values plot**. Plot the model's residuals (ε̂ = y − ŷ) on the y-axis against the fitted values (ŷ) on the x-axis. When linearity holds, the points scatter randomly around the horizontal zero line with no discernible pattern. A U-shape, an inverted U-shape, or any systematic curve signals that the model has missed a non-linear component.
+
+For multiple regression, a **partial residual plot** (also called a component-plus-residual plot) for each predictor is even more informative: it shows the linear relationship between that specific predictor and the outcome after accounting for all the others.
+
+**Fix for non-linearity:** Add a polynomial term (e.g., x₁²), apply a log or square-root transformation to the predictor or the outcome, or use a non-linear model such as a generalized additive model.
+
+<RelatedLink to={routes.calculator('linear-regression')} label="linear regression calculator" intro="For a related calculation" />
+
+---
+
+## Assumption 2: Independence of Errors
+
+Each observation's error term must be **statistically independent** from every other observation's error term. Technically, the errors must be uncorrelated: knowing the error for one observation provides no information about the error for another. This is sometimes written as Cov(εᵢ, εⱼ) = 0 for all i ≠ j.
+
+This assumption is violated most commonly in:
+
+- **Time-series data**, where today's residual predicts tomorrow's (positive autocorrelation). If sales are higher than predicted today, they tend to be higher than predicted tomorrow too.
+- **Clustered data**, where observations within the same school, hospital, or household share unmeasured factors. Students in the same class share a teacher; their errors are correlated.
+- **Spatial data**, where nearby locations influence each other.
+
+Unlike the other assumptions, you cannot detect independence violations from a residual plot alone — you need to think about the data-generating process.
+
+### How to Check Independence
+
+The **Durbin-Watson test** is the standard diagnostic for autocorrelation in time-ordered data. It computes a statistic D that ranges from 0 to 4:
+
+```
+D ≈ 2  →  no autocorrelation (residuals are independent)
+D < 2  →  positive autocorrelation (errors cluster together)
+D > 2  →  negative autocorrelation (errors alternate signs)
+```
+
+Values substantially below 1.5 or above 2.5 warrant concern. For clustered data, the best check is subject-matter knowledge: if observations are naturally grouped (patients within hospitals, students within classrooms), the independence assumption is likely violated by study design.
+
+**Fix:** For time-series autocorrelation, add lagged predictor variables, or use an autoregressive model (ARIMA). For clustered data, use cluster-robust standard errors or fit a multilevel (mixed-effects) model that explicitly models the within-group correlation.
+
+---
+
+## Assumption 3: Homoscedasticity (Equal Variance)
+
+The error terms must have **constant variance** across all values of the predictor variables. Formally: Var(εᵢ) = σ² for all i. This property is called **homoscedasticity** (from Greek: homos = same, skedasis = dispersion). The constant σ² is the single unknown variance that OLS estimates.
+
+The opposite — **heteroscedasticity** — is when the spread of the errors grows or shrinks as a predictor changes. A classic example is income and spending: high-income households vary far more in their discretionary spending than low-income households, so the residual variance expands with income.
+
+Heteroscedasticity does not bias the OLS slope estimates themselves, but it makes the standard errors incorrect — typically underestimated in high-variance regions, overestimated in low-variance regions. The result is unreliable t-statistics and confidence intervals.
+
+### How to Check Homoscedasticity
+
+The **residual-versus-fitted-values plot** is again the primary visual tool. When homoscedasticity holds, the vertical spread of the residuals is roughly constant from left to right. A **funnel shape** — wide on one side, narrow on the other — is the signature of heteroscedasticity.
+
+Two formal statistical tests are available:
+
+- **Breusch-Pagan test**: regresses the squared residuals on the predictors and checks whether any predictor explains residual variance. A significant test result suggests heteroscedasticity.
+- **White test**: a more general version that also includes cross-products of the predictors, so it detects heteroscedasticity even when variance depends on predictor interactions.
+
+**Fix:** Apply a log or square-root transformation to y when variance scales with the mean (common in count data or right-skewed outcomes). Alternatively, use **heteroscedasticity-consistent (HC) standard errors** — often called "robust" or "sandwich" standard errors — which give valid inference without changing the model specification.
+
+<RelatedLink to={routes.article('pearson-correlation-coefficient')} label="Pearson Correlation Coefficient" intro="Worth reading next" />
+
+---
+
+## Assumption 4: Normality of Residuals
+
+The error terms must follow a **normal distribution** with mean zero: ε ~ N(0, σ²). This assumption underlies the t-tests and F-tests that regression software reports: without normally distributed errors, those tests do not have their stated significance levels in small samples.
+
+Two important clarifications:
+
+1. The normality requirement applies to the **residuals** — the unexplained part of y — not to the raw y values or the predictor variables.
+2. This is the **least important** of the five assumptions for large samples. By the Central Limit Theorem, the OLS estimator is approximately normally distributed as n grows, even if the errors are not. For large samples (rough rule: n ≥ 100), mild to moderate non-normality has negligible practical impact on p-values and confidence intervals.
+
+### How to Check Normality
+
+The most widely used visual is a **Q-Q plot** (quantile-quantile plot): plot the quantiles of your residuals against the theoretical quantiles of a standard normal distribution. When normality holds, the points fall close to a 45-degree diagonal line. An S-curve indicates skewness; a pattern where the tails bend away from the line indicates heavy tails (leptokurtosis).
+
+The **Shapiro-Wilk test** provides a formal hypothesis test for normality. Its null hypothesis is that the data come from a normal population; a low p-value rejects normality. Caution: in large samples Shapiro-Wilk often rejects normality for small, practically harmless deviations. Always use it alongside the Q-Q plot, not as a stand-alone decision.
+
+**Fix:** Apply a log or Box-Cox transformation to y to reduce skewness. For heavy-tailed distributions, consider robust regression methods that down-weight outliers, or a generalized linear model that matches the true error distribution (Poisson for counts, logistic for binary outcomes).
+
+<RelatedLink to={routes.article('normal-distribution')} label="Normal Distribution Explained" intro="On a related note" />
+
+---
+
+## Assumption 5: No Problematic Multicollinearity
+
+For **multiple** linear regression, the predictor variables must not be perfectly or near-perfectly correlated with one another. *Perfect* multicollinearity — where one predictor is an exact linear combination of others — makes OLS mathematically unsolvable because the normal equations have no unique solution. *High but imperfect* multicollinearity makes the coefficient estimates unstable: small changes in the data produce large swings in the estimated βs, and the standard errors inflate dramatically.
+
+Multicollinearity does not bias the coefficient estimates themselves. Its damage is to the precision of those estimates: you can still get the right answer on average, but the uncertainty around that answer balloons.
+
+### How to Check Multicollinearity
+
+The **Variance Inflation Factor (VIF)** is the standard diagnostic. For predictor xⱼ:
+
+```
+VIF(xⱼ) = 1 / (1 − Rⱼ²)
+```
+
+where Rⱼ² is the R² from regressing xⱼ on all other predictors. A VIF of 1 means no linear association with the other predictors; above 5 is a soft warning; above 10 indicates a serious problem that affects the reliability of the coefficient estimate for that predictor.
+
+A **correlation matrix** of the predictors is a useful first-pass check: any pair with |r| > 0.85 deserves a closer look. The correlation matrix is fast to compute and easy to read, though it misses multicollinearity that involves three or more predictors simultaneously — that is where VIF is indispensable.
+
+**Fix:** Remove one of the highly correlated predictors if theory and the research question allow it. If both are genuinely needed, center the predictors (subtract the mean) to reduce correlations inflated by interaction terms. For more severe cases, **Ridge regression** adds a small shrinkage penalty to the loss function:
+
+```
+minimize:  Σ(yᵢ − ŷᵢ)² + λ · Σβⱼ²
+```
+
+The regularization term λ · Σβⱼ² pulls the coefficients toward zero, reducing their variance at the cost of a small bias. Cross-validation selects λ.
+
+---
+
+## A Fully Worked Example
+
+Running through a concrete dataset shows how to apply all five assumption checks in sequence. Suppose you model exam score (y) from hours studied (x₁) and practice tests completed (x₂) for eight students.
+
+### The Dataset
+
+| Student | Hours (x₁) | Practice tests (x₂) | Exam score (y) |
+|---------|:----------:|:-------------------:|:--------------:|
+| 1 | 2 | 1 | 58 |
+| 2 | 3 | 2 | 65 |
+| 3 | 4 | 2 | 70 |
+| 4 | 5 | 3 | 76 |
+| 5 | 6 | 3 | 80 |
+| 6 | 7 | 4 | 85 |
+| 7 | 8 | 5 | 91 |
+| 8 | 10 | 5 | 96 |
+
+OLS fits the model: ŷ = β₀ + β₁x₁ + β₂x₂. Walk through each check:
+
+**Linearity.** A scatter plot of hours versus exam score shows a clear positive linear trend with no visible curve. The residual-versus-fitted plot shows random scatter around zero. Linearity holds.
+
+**Independence.** These are eight independent students each tested once — no repeated measurements, no clustering within classrooms for this example. Independence holds.
+
+**Homoscedasticity.** The residuals are small and roughly equally spread across all fitted values — no funnel shape. Homoscedasticity appears satisfied.
+
+**Normality.** With only n = 8, the Q-Q plot is hard to interpret precisely, but the residuals are symmetric and close to zero without extreme outliers. For a sample this small, normality matters, and nothing alarming is visible.
+
+**Multicollinearity.** Hours (x₁) and practice tests (x₂) are correlated — students who study more typically complete more practice tests. Regressing x₁ on x₂ gives R² = 0.91, so:
+
+```
+VIF(x₁) = 1 / (1 − 0.91) = 1 / 0.09 ≈ 11.1
+```
+
+A VIF of 11.1 exceeds the threshold of 10. This is a genuine multicollinearity concern: the two predictors are too similar for the model to reliably separate their individual effects. In practice, you would consider dropping one predictor or applying Ridge regression.
+
+### What the Residuals Look Like
+
+After fitting OLS and computing residuals (ε̂ = y − ŷ), the values cluster close to zero with no systematic pattern — confirming the first four assumptions hold for this dataset. The multicollinearity issue flagged by VIF is about predictor correlation, not residual behavior, which is why it requires a separate diagnostic.
+
+---
+
+## Try the Linear Regression Calculator
+
+Enter your own paired x and y values below to fit a regression line instantly. The calculator returns the slope (β₁), intercept (β₀), correlation coefficient (r), and R-squared. Once you have the fitted values, you can compute residuals manually — and start checking the assumptions above.
+
+<StatCalc slug="linear-regression" variant="embed" />
+
+For the full tool interface, open the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link>. To explore every available statistical tool in one place, visit the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+---
+
+## What Happens When Assumptions Are Violated?
+
+Not every violation carries the same consequence. This table summarises the practical impact:
+
+| Assumption violated | Effect on OLS slopes | Effect on inference |
+|--------------------|:--------------------:|:-----------------:|
+| Linearity | Biased — unreliable | Tests invalid |
+| Independence | Unbiased | SE under/overestimated; tests invalid |
+| Homoscedasticity | Unbiased | SE may be wrong; CIs unreliable |
+| Normality | Unbiased | Small-sample tests unreliable |
+| Multicollinearity | Unbiased but unstable | SE inflated; CIs very wide |
+
+Linearity is the most dangerous violation because it biases the estimated slopes — no amount of corrected standard errors can fix a biased coefficient. Independence violations invalidate every hypothesis test in ways that are easy to miss because the model output looks perfectly normal. Heteroscedasticity and non-normality affect inference but leave the slope estimates unbiased, and both have well-established fixes. Multicollinearity inflates uncertainty without biasing estimates; it is a precision problem, not a bias problem.
+
+According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 4.4 — Assumptions for Linear Regression](https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd44.htm), rigorous residual analysis is the primary tool for validating these assumptions, and the diagnostic plots described above are the recommended first step before any formal statistical test. The [Penn State STAT 501 course on Regression Methods, Lesson 4 — Assumptions](https://online.stat.psu.edu/stat501/lesson/4) provides detailed worked examples of each diagnostic with software output and remedies.
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression Explained" intro="See also" />
+
+---
+
+## A Practical Workflow for Checking All Five Assumptions
+
+A step-by-step workflow keeps assumption checking systematic:
+
+1. **Fit the model.** Run OLS; save the residuals ε̂ = y − ŷ and fitted values ŷ.
+2. **Linearity.** Plot ε̂ versus ŷ. Look for any curve. For multiple regression, also plot partial residuals for each predictor.
+3. **Independence.** If the data are time-ordered, compute the Durbin-Watson statistic. If the data are naturally clustered, plan on using cluster-robust standard errors or a multilevel model.
+4. **Homoscedasticity.** Examine the ε̂ versus ŷ plot for a funnel shape. Run Breusch-Pagan or White if the visual is ambiguous.
+5. **Normality.** Construct a Q-Q plot of ε̂. Run Shapiro-Wilk for n < 50. For n ≥ 100, skip the formal test unless the Q-Q plot shows a severe departure.
+6. **Multicollinearity.** Compute the VIF for every predictor. Flag any VIF above 5 for review; treat VIF above 10 as a problem requiring action.
+7. **Document your findings.** Record what you checked, what you found, and how you addressed any violation. Readers and reviewers need to see this reasoning.
+
+Most statistical software — R, Python/statsmodels, SPSS, and Stata — produces these diagnostics with a few commands. The key is to make assumption checking a routine part of every regression analysis, not an afterthought.
+
+---
+
+## Frequently Asked Questions
+
+### Do all five linear regression assumptions have to hold exactly?
+
+No — violations differ in type and severity, and none needs to hold perfectly. Linearity is the most critical: a violation biases the slope estimates and there is no remedy short of fixing the model. Independence violations invalidate inference regardless of sample size. Homoscedasticity and normality violations primarily affect inference and have good practical fixes (robust standard errors, transformations). Multicollinearity does not bias estimates but makes them unreliable in a precision sense. Identify which assumption is violated, judge the severity against the goals of the analysis, and address it proportionately.
+
+### What does the LINE acronym stand for in regression?
+
+LINE stands for **L**inearity, **I**ndependence, **N**ormality (of residuals), and **E**qual variance (homoscedasticity). It is a memory device covering the four assumptions about the error term. The fifth assumption — no multicollinearity — is sometimes added to make the acronym LINEM or treated separately because it is a property of the predictors rather than the errors.
+
+### Are the regression assumptions the same for simple and multiple linear regression?
+
+Yes, with one addition. Simple linear regression (one predictor) has the same four assumptions about the error term. Multiple linear regression adds the **no multicollinearity** assumption, which is irrelevant when there is only one predictor. Every other assumption — linearity, independence, homoscedasticity, and normality — applies to both.
+
+### What if my residuals fail the normality assumption?
+
+For large samples (n ≥ 100), mild non-normality is rarely a practical problem — the Central Limit Theorem ensures the OLS estimator is approximately normally distributed regardless of the error distribution. For small samples with clearly skewed residuals, try a log or Box-Cox transformation of the outcome. For count outcomes, use Poisson regression; for binary outcomes, use logistic regression. These generalized linear models (GLMs) relax the normality assumption by specifying a different error distribution matched to the data type.
+
+### What is homoscedasticity and why does it matter for regression?
+
+Homoscedasticity means the variance of the regression errors is constant — the same at every combination of predictor values. It matters because OLS uses this constant σ² when computing standard errors. If the variance is not constant (heteroscedasticity), the standard errors are biased, which makes t-statistics and confidence intervals unreliable. The coefficient estimates themselves remain unbiased; only inference about them is affected. Heteroscedasticity-robust standard errors correct for this without requiring any model changes.
+
+### What is the Variance Inflation Factor and how is it interpreted?
+
+The Variance Inflation Factor (VIF) for a predictor xⱼ measures how much its estimated variance is inflated by its correlation with the other predictors. It is computed as 1 / (1 − Rⱼ²), where Rⱼ² is the R² from regressing xⱼ on all other predictors. A VIF of 1 means no correlation at all. A VIF of 5 means the variance of β̂ⱼ is five times what it would be if xⱼ were uncorrelated with the other predictors. A VIF of 10 means tenfold inflation — a widely used threshold for calling multicollinearity problematic. In practice, anything above 5 deserves attention and anything above 10 strongly suggests removing a predictor or applying Ridge regression.
+
+### Can I fix multicollinearity by collecting more data?
+
+More data reduces the standard errors of all estimates but does not reduce the VIF — because VIF measures the *proportion* of variance explained by inter-predictor correlation, which is a property of the predictor space, not the sample size. Collecting more data with the same correlated predictors will give you more precise estimates of collinear coefficients, but the relative imprecision from multicollinearity remains. The real fixes are predictor selection, predictor transformation, or regularized regression.
+
+---
+
+## Summary
+
+The five linear regression assumptions — linearity, independence, homoscedasticity, normality of residuals, and no problematic multicollinearity — determine whether OLS delivers the unbiased, efficient estimates promised by the Gauss-Markov theorem. Violating them does not always produce disaster, but it always affects either the estimates themselves or the inference drawn from them.
+
+Linearity and independence are the two highest-stakes assumptions: linearity violations bias the slopes; independence violations silently corrupt every significance test. Homoscedasticity and normality violations affect inference but leave the slopes unbiased, and both have robust workarounds. Multicollinearity inflates uncertainty without introducing bias — a precision problem you can often mitigate through careful predictor selection or regularization.
+
+The practical takeaway is simple: fit every OLS model, then check every assumption. A residual-versus-fitted plot, a Q-Q plot, the Durbin-Watson statistic (for time-series), and VIFs for each predictor give you a complete picture of assumption compliance. Addressing violations before reporting results is what separates a regression analysis you can trust from one that only appears trustworthy.
