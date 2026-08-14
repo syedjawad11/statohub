@@ -1,0 +1,231 @@
+---
+title: "Simpson's Paradox: Definition, Examples, and Why It Happens"
+description: "Simpson's paradox occurs when a trend in data subgroups reverses when the groups are combined. Learn what causes it, how to spot it, and real-world examples."
+category: regression-correlation
+primaryKeyword: simpson's paradox
+keywords:
+  - simpson's paradox
+  - what is simpson's paradox
+  - simpsons paradox example
+  - simpsons paradox explained
+  - aggregation paradox
+phase: 2
+related: []
+draft: false
+---
+import RelatedLink from '../../components/RelatedLink.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Simpson's paradox** is one of the most counterintuitive results in statistics: a trend or association that appears consistently within every subgroup of a dataset can disappear — or even reverse — when those subgroups are combined into a single analysis. If you have ever seen a headline that says a treatment works, only to read a follow-up study that says it does not, Simpson's paradox may be the culprit. Understanding it helps you read data critically, design better studies, and avoid the kind of aggregation errors that have led to real-world policy mistakes.
+
+The paradox was formally described by British statistician Edward H. Simpson in 1951, though related observations appear in earlier statistical literature. It is sometimes called the **amalgamation paradox** or the **Yule–Simpson effect**, after British statistician George Udny Yule who noticed similar reversals in contingency tables decades before Simpson's paper.
+
+---
+
+## What Is Simpson's Paradox?
+
+Simpson's paradox occurs when a relationship that holds within each sub-group of data reverses direction, or vanishes entirely, when the sub-groups are merged. The word "paradox" is apt because the result feels contradictory: how can A outperform B in every single category while B outperforms A overall?
+
+The answer always involves a **confounding variable** — an unaccounted-for third factor that is correlated with both the grouping variable and the outcome. When the groups are different sizes (because the confounder influences who ends up in which group), the overall average is a weighted mix of the subgroup rates, and the weighting can easily flip the apparent winner.
+
+This is not a rare edge case. Simpson's paradox shows up regularly in medical research, economics, education, sports analytics, and public health data. Whenever you aggregate data across groups, the possibility exists that the aggregate trend misrepresents what is happening within each group.
+
+---
+
+## A Classic Real-World Example: UC Berkeley Graduate Admissions
+
+The most cited demonstration of Simpson's paradox comes from a 1975 study of graduate admissions at the University of California, Berkeley. Looking at aggregate admissions data, men appeared to be admitted at a substantially higher rate than women — roughly 44 percent versus 35 percent — suggesting possible gender bias.
+
+When the researchers broke the data down by department, however, the picture changed entirely. Women had higher admission rates than men in four out of the six largest departments. The overall gender gap had flipped direction.
+
+The explanation was a confounding variable: department choice. Women disproportionately applied to departments with highly competitive admission rates (such as English and the humanities), while men more often applied to departments with higher overall acceptance rates (such as engineering and chemistry). The aggregate figure combined two very different distributions, and the mix distorted the comparison. [Bickel, Hammel, and O'Connell's original study in *Science* (1975)](https://www.science.org/doi/10.1126/science.187.4175.398) remains the standard teaching example of how aggregated data can reverse the apparent story.
+
+This case illustrates the key lesson: a lower overall admission rate for women did not mean individual departments were discriminating against women. It meant women and men were applying to different departments at very different rates.
+
+---
+
+## What Causes Simpson's Paradox?
+
+Simpson's paradox arises from the interplay of three elements:
+
+1. **A grouping variable** (gender, treatment, school, geography) that divides the data into sub-groups.
+2. **An outcome variable** (admission rate, recovery rate, test score) that you are comparing across groups.
+3. **A confounding variable** that is correlated with both the grouping variable and the outcome, and that determines the relative sizes of the groups.
+
+When the confounder determines *how many observations fall in each category*, the group sizes become unequal in a systematic way. The overall average then reflects those unequal weights more than it reflects the per-category relationship.
+
+In the Berkeley example: the confounder was department selectivity. It shaped which departments men and women applied to (grouping), and it directly determined admission rates (outcome). Once the confounder was controlled — by analysing each department separately — the apparent gender gap reversed.
+
+Identifying and measuring confounders is one of the central challenges of observational research. Unlike a randomised controlled experiment, where random assignment distributes confounders evenly across groups, observational data accumulates the confounders that exist in the real world.
+
+<RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
+
+---
+
+## The Mathematics Behind the Reversal
+
+A concrete formula shows precisely how the reversal occurs. Suppose group A has rate `r_A1` in subgroup 1 and `r_A2` in subgroup 2, with `n_A1` and `n_A2` observations respectively. The overall rate for group A is:
+
+```
+overall_A = (n_A1 × r_A1 + n_A2 × r_A2) / (n_A1 + n_A2)
+```
+
+Similarly for group B:
+
+```
+overall_B = (n_B1 × r_B1 + n_B2 × r_B2) / (n_B1 + n_B2)
+```
+
+Even if `r_A1 > r_B1` and `r_A2 > r_B2` (A beats B in every subgroup), it is mathematically possible for `overall_B > overall_A` if the weights `n_A1, n_A2, n_B1, n_B2` are sufficiently different. The overall average is a weighted mean, and the weights are set by the confounder, not by the grouping variable you are actually interested in.
+
+This is not a flaw in arithmetic. It is a property of weighted averages that statisticians call **non-collapsibility**: a rate that holds within every stratum does not necessarily hold after the strata are collapsed.
+
+---
+
+## A Worked Numerical Example
+
+Consider a hospital comparing two treatments for a disease that can present as either mild or severe.
+
+| Group | Mild cases recovered | Severe cases recovered | Overall recovered |
+|-------|---------------------|----------------------|-------------------|
+| Treatment A | 18 / 20 = **90%** | 20 / 80 = **25%** | 38 / 100 = **38%** |
+| Treatment B | 54 / 80 = **67.5%** | 2 / 20 = **10%** | 56 / 100 = **56%** |
+
+Within each disease severity group, Treatment A outperforms Treatment B:
+
+- Mild cases: A recovers 90% vs B's 67.5% — A wins by 22.5 percentage points.
+- Severe cases: A recovers 25% vs B's 10% — A wins by 15 percentage points.
+
+Yet overall, Treatment B appears better: 56% vs 38%. How?
+
+The confounding variable is **disease severity**. Treatment A was mostly assigned to severe patients (80 out of 100), where recovery rates are naturally lower for both treatments. Treatment B was mostly assigned to mild patients (80 out of 100), where recovery rates are higher. When the aggregate is computed, Treatment B's high mild-case rate dominates because it has far more mild-case observations in the mix.
+
+A naive analysis of the overall numbers would lead a hospital to prefer Treatment B. A correct analysis — stratified by disease severity — reveals that Treatment A is superior for every type of patient.
+
+Verify the arithmetic:
+- Treatment A overall: `(18 + 20) / (20 + 80) = 38 / 100 = 38%` ✓
+- Treatment B overall: `(54 + 2) / (80 + 20) = 56 / 100 = 56%` ✓
+
+The numbers are consistent. The paradox is real.
+
+---
+
+## More Real-World Examples of Simpson's Paradox
+
+### Kidney Stone Treatment
+
+A genuine medical example from a 1986 study compared two surgical treatments for kidney stones. Treatment A (open surgery) had an overall success rate of 78%, and Treatment B (minimally invasive procedure) had an overall success rate of 83%. At aggregate level, Treatment B appeared superior.
+
+When cases were split by kidney stone size, Treatment A was better for both small stones (93% vs 87%) and large stones (73% vs 69%). The confounder was stone size: doctors used the more aggressive Treatment A preferentially for large stones (which have lower success rates regardless of treatment), artificially dragging down A's overall average.
+
+### Baseball Batting Averages
+
+In baseball statistics, a player's batting average can be higher against both left-handed and right-handed pitchers than a rival's, yet lower overall, if the player faces a different mix of pitcher handedness across the season.
+
+### Online A/B Testing
+
+In web product analytics, a new feature might increase conversion rates among both new users and returning users in every tested market, yet show a lower overall conversion rate if the feature roll-out happened to reach markets with inherently lower conversion baselines at a higher rate.
+
+### COVID-19 Case Fatality Rates
+
+During the early pandemic, some countries reported lower overall case fatality rates than others, yet had higher rates within every age group. The confound was age distribution: a country with a younger population will have a lower overall rate even if its healthcare system is equally (or less) effective within each age group.
+
+<RelatedLink to={routes.article('correlation-vs-causation')} label="Correlation vs. Causation" intro="Worth reading next" />
+
+---
+
+## Simpson's Paradox and the Correlation–Causation Connection
+
+Simpson's paradox is closely related to the broader problem of confounding in observational data. When researchers observe a correlation — say, between a drug and recovery — they cannot immediately conclude that the drug *causes* recovery. A confounder that influences both who receives the drug and who recovers can produce a spurious correlation, or mask a real one.
+
+In extreme cases, the confounder produces a Simpson's paradox: the apparent causal direction reverses completely depending on whether you stratify by the confounding variable. This is why randomised controlled trials are the gold standard in medicine. Random assignment breaks the link between potential confounders and treatment assignment, so the groups being compared are balanced on every measured and unmeasured variable. Without randomisation, aggregate trends in observational data can point in exactly the wrong direction.
+
+The [Stanford Encyclopedia of Philosophy's entry on *Simpson's Paradox*](https://plato.stanford.edu/entries/paradox-simpson/) provides a thorough philosophical treatment of why the paradox matters for causal inference and what it tells us about the relationship between statistical associations and real-world causes.
+
+The paradox also illustrates why **correlations computed on aggregated populations can be misleading**. A positive correlation between two variables across a whole dataset can become a negative correlation within each subgroup — the so-called **ecological fallacy**. Drawing conclusions about individuals from population-level statistics is dangerous for precisely this reason.
+
+<RelatedLink to={routes.article('what-is-correlation')} label="What Is Correlation?" intro="On a related note" />
+
+---
+
+## How to Detect and Prevent Simpson's Paradox
+
+### Step 1: Identify Potential Confounders Before You Analyse
+
+Before running any aggregate analysis, list the variables that might influence both group membership and the outcome. Disease severity, age, socioeconomic status, and baseline performance are common suspects. If a plausible confounder exists, you must account for it.
+
+### Step 2: Stratify the Analysis
+
+Divide your data by the potential confounder and check whether the relationship holds consistently within every stratum. If the trend reverses or disappears in some strata, you have evidence of Simpson's paradox. Consistent results across strata give you much more confidence than a single aggregate number.
+
+### Step 3: Use Appropriate Statistical Controls
+
+Regression models — particularly linear or logistic regression with the confounder included as a covariate — partial out the confounding effect and give you the relationship between your main variables after holding the confounder constant. This is not a perfect fix (unobserved confounders remain a problem), but it is far better than ignoring known confounders.
+
+### Step 4: Collect Data at the Right Level
+
+If your analysis will ultimately be about individuals, collect and analyse individual-level data. Aggregate data discards the within-group variation that reveals confounding. If you have only aggregate data (counts per region, averages per school), be explicit about the ecological nature of the analysis and the limits it imposes.
+
+### Step 5: Report Subgroup Results Alongside Aggregate Results
+
+In published research and data journalism, always report subgroup-level findings next to the headline aggregate. A single overall number is rarely the full story. Transparency about the structure of the data makes it harder for Simpson's paradox to mislead readers.
+
+<RelatedLink to={routes.article('linear-regression')} label="Linear Regression Explained" intro="You may also find this useful" />
+
+---
+
+## Simpson's Paradox in Practice: A Decision-Making Guide
+
+When you encounter a statistic that seems to support a clear conclusion — "Treatment B is better," "Group X has a higher success rate," "Country A outperforms Country B" — run through this checklist before acting on it:
+
+1. **Are the groups the same size?** If one group has far more observations, the overall average is dominated by that group's rates.
+2. **Are the subgroups comparable?** If groups differ systematically in severity, age, starting point, or any other factor that independently affects the outcome, an aggregate comparison is not apples-to-apples.
+3. **Does the trend hold within every subgroup?** If not, which way does it go in each subgroup, and why do the sizes differ?
+4. **What would a randomised experiment show?** If the data come from an observational study, how confident are you that the confounder distribution is balanced?
+
+No amount of data or statistical sophistication eliminates the need for this kind of careful thinking. Simpson's paradox is not a failure of data quality — it is a property of how weighted averages work, and it can appear in any dataset where groups are formed non-randomly.
+
+---
+
+## Frequently Asked Questions
+
+### What is Simpson's paradox in simple terms?
+
+Simpson's paradox is the phenomenon where a trend that appears in every subgroup of data disappears or reverses when the data are combined. The classic example: Treatment A beats Treatment B in every patient category, but B looks better when all patients are pooled together. The cause is always an unaccounted-for third variable that affects both who is in which group and what the outcome looks like.
+
+### Why is it called Simpson's paradox?
+
+It is named after Edward H. Simpson, who described the phenomenon formally in a 1951 paper in the *Journal of the Royal Statistical Society*. The underlying algebra had been noted earlier by statistician George Udny Yule in 1903, which is why some statisticians call it the Yule–Simpson effect.
+
+### Is Simpson's paradox common?
+
+It is far more common than many people expect. Any time an observational dataset contains a strong confounding variable that affects group sizes, the conditions for Simpson's paradox exist. Medical studies, sports analytics, education data, and web product experiments all regularly encounter it.
+
+### How do you fix Simpson's paradox?
+
+You cannot "fix" it in the sense of making it go away — it is a mathematical property of weighted averages. What you can do is analyse data at the appropriate level of granularity (by subgroup rather than in aggregate), control for confounders in regression models, and interpret results in light of the full stratified picture rather than relying on a single headline number.
+
+### Does Simpson's paradox mean the data is wrong?
+
+No. The data can be completely accurate and Simpson's paradox still appears. The paradox arises from how the data are summarised and interpreted, not from errors in data collection. Both the subgroup trends and the aggregate trend can be numerically correct — they just tell different stories because they answer different questions.
+
+### How does Simpson's paradox relate to confounding variables?
+
+Simpson's paradox is the visible symptom of an uncontrolled confounding variable. The confounder causes unequal weighting across subgroups, which in turn drives the aggregate trend in a different direction from the subgroup trends. Controlling for the confounder — by stratifying or by including it in a regression model — removes the paradox.
+
+### Can Simpson's paradox appear in regression analysis?
+
+Yes. If a confounder is omitted from a regression model, the estimated coefficient on the main predictor can have the wrong sign — the regression-analysis equivalent of the aggregate trend reversing. Adding the confounder to the model corrects this by isolating the predictor's effect after holding the confounder constant.
+
+---
+
+## Summary
+
+Simpson's paradox demonstrates that the story a dataset tells depends critically on how you group and aggregate the data. A relationship that holds in every single subgroup can reverse at the aggregate level, because overall averages are weighted by group sizes — and those weights are controlled by confounding variables, not by the factor you are studying.
+
+The antidote is stratification: always examine subgroup-level data alongside aggregate summaries, identify likely confounders before you begin analysis, and use regression or experimental design to control for them. In randomised experiments the problem largely disappears, because random assignment balances confounders across groups. In observational data, the paradox is an ever-present risk that careful analysis keeps in check.
+
+Understanding Simpson's paradox is a prerequisite for interpreting any comparison that involves aggregated data. Whether you are reading a clinical trial, evaluating a school's test score trends, or interpreting a business metric, the question is always the same: are the groups I am comparing genuinely comparable, and does the aggregate summary reflect what is happening within each subgroup?
+
+Explore related tools and articles on the <Link to={routes.calculatorsHub()}>calculators hub</Link> to deepen your understanding of correlation and regression methods.
