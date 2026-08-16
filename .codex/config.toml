@@ -1,0 +1,9 @@
+# Concurrency only. Roles are NOT registered here -- they auto-discover from
+# .codex/agents/*.toml. Invalid keys in this file do not degrade gracefully:
+# they make Codex refuse to start in this directory at all. Verify any edit
+# with `codex features list` run from the repo root.
+[agents]
+max_threads = 3
+max_depth = 2
+job_max_runtime_seconds = 5400
+interrupt_message = true
