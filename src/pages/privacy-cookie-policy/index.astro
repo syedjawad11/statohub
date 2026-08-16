@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 <BaseLayout
   title="Privacy & Cookies | Statohub"
-  description="Privacy and cookie policy for Statohub, a static statistics education site with no accounts, explaining what data we collect and the cookies we use."
+  description="Privacy and cookie policy for Statohub: what data we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices."
   canonicalPath={routes.privacyCookiePolicy()}
   breadcrumbs={breadcrumbs}
 >
@@ -25,7 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         We do not provide user accounts, sign-in areas, comments, or user
         profiles.
       </p>
-      <p><strong>Last updated:</strong> June 26, 2026</p>
+      <p><strong>Last updated:</strong> August 16, 2026</p>
 
       <h2>Privacy Policy</h2>
 
@@ -34,7 +34,9 @@ const breadcrumbs: BreadcrumbItem[] = [
         Statohub does not ask you to create an account, sign in, or submit
         personal profile information. Calculator inputs are processed in your
         browser by client-side code and are not intentionally sent to Statohub as
-        calculator submissions. We do not sell personal data.
+        calculator submissions. We do not sell personal data. The site does carry
+        third-party advertising, which is described under
+        <a href="#advertising">Advertising</a> below.
       </p>
 
       <h3>Hosting and server logs</h3>
@@ -52,6 +54,70 @@ const breadcrumbs: BreadcrumbItem[] = [
         we use privacy-respecting analytics in the future, we will use it to
         understand aggregate site usage, not to build advertising profiles or
         sell personal data.
+      </p>
+
+      <h3 id="advertising">Advertising</h3>
+      <p>
+        Statohub carries advertising served by Google AdSense. Ad revenue is what
+        pays for the site and keeps every article and calculator free to use.
+      </p>
+      <p>
+        Third-party vendors, including Google, use cookies and similar
+        technologies to serve ads on this site. Google's use of advertising
+        cookies enables it and its partners to serve ads to you based on your
+        visits to Statohub and to other sites on the internet. Google and its
+        ad-technology partners may also process technical data such as your IP
+        address, device and browser type, and the page you are viewing, in order
+        to select an ad, measure whether it was seen, cap how often you see the
+        same one, and detect invalid traffic.
+      </p>
+      <p>
+        Statohub does not send your calculator inputs, or anything else you type
+        into a page, to advertisers. Ad selection happens entirely inside Google's
+        systems: we do not receive, see, or store the personal data those partners
+        process, and we cannot read the cookies they set.
+      </p>
+      <p>
+        Google's own description of how it uses data from sites that use its
+        services is at
+        <a href="https://policies.google.com/technologies/partner-sites"
+          >policies.google.com/technologies/partner-sites</a
+        >.
+      </p>
+
+      <h3>Your advertising choices</h3>
+      <p>
+        You can turn off personalised advertising from Google at
+        <a href="https://adssettings.google.com/">Google Ads Settings</a>. To opt
+        out of personalised advertising from many other vendors at once, use
+        <a href="https://optout.aboutads.info/">optout.aboutads.info</a> or, in
+        Europe,
+        <a href="https://www.youronlinechoices.eu/"
+          >youronlinechoices.eu</a
+        >. You can also block or delete advertising cookies directly in your
+        browser -- see <a href="#control-cookies">How to view and control
+        cookies</a> below.
+      </p>
+      <p>
+        Opting out does not remove ads from the site. It means the ads you see are
+        chosen without using an advertising profile built from your browsing.
+      </p>
+
+      <h3 id="consent">Consent in the EEA, the UK, and Switzerland</h3>
+      <p>
+        If you are in the European Economic Area, the United Kingdom, or
+        Switzerland, advertising and measurement cookies are set only after you
+        agree to them. Consent is collected through a Google-certified consent
+        management platform, which shows a message the first time you visit and
+        records your choice in your browser so you are not asked again on every
+        page.
+      </p>
+      <p>
+        You can change or withdraw that choice at any time using the privacy or
+        consent settings link the message provides, or by clearing this site's
+        data in your browser, which makes the message appear again on your next
+        visit. Withdrawing consent does not affect processing that already
+        happened while consent was in place.
       </p>
 
       <h3>Third-party links</h3>
@@ -78,8 +144,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
       <h3>How to contact us</h3>
       <p>
-        For privacy questions, contact: [CONTACT EMAIL -- to be filled by
-        Claude].
+        For privacy questions, including anything about advertising cookies or
+        your consent choice, email
+        <a href="mailto:privacy@statohub.com">privacy@statohub.com</a>.
       </p>
 
       <h2>Cookie Policy</h2>
@@ -93,10 +160,35 @@ const breadcrumbs: BreadcrumbItem[] = [
 
       <h3>Cookies set by Statohub</h3>
       <p>
-        Statohub itself does not set tracking or advertising cookies. The site's
-        dark-mode preference is stored with browser localStorage under the key
+        Statohub does not set any cookies of its own. The site's dark-mode
+        preference is stored with browser localStorage under the key
         <code>theme</code>. localStorage is not a cookie, and this preference
-        stays on your device unless you clear it in your browser.
+        stays on your device unless you clear it in your browser. The cookies you
+        will actually encounter on Statohub come from Google's advertising stack
+        and from our host, described next.
+      </p>
+
+      <h3>Advertising and consent cookies</h3>
+      <p>
+        Google and its ad-technology partners may set cookies, or use similar
+        browser storage, in order to serve ads, measure whether an ad was seen and
+        acted on, limit how often you see the same ad, and detect fraud and
+        invalid traffic. These are third-party cookies set by domains such as
+        <code>googlesyndication.com</code>, <code>doubleclick.net</code>, and
+        <code>google.com</code> -- not by Statohub -- so we can neither read them
+        nor delete them for you.
+      </p>
+      <p>
+        The consent management platform also stores your consent choice in your
+        browser. That record is what keeps the consent message from reappearing on
+        every page, so clearing it will bring the message back.
+      </p>
+      <p>
+        Where consent is required -- in the EEA, the UK, and Switzerland --
+        advertising cookies are set only after you agree to them. See
+        <a href="#consent">Consent in the EEA, the UK, and Switzerland</a> above
+        for how to change your choice, and
+        <a href="#advertising">Advertising</a> for the opt-out links.
       </p>
 
       <h3>Cookies from hosting and security services</h3>
@@ -106,12 +198,15 @@ const breadcrumbs: BreadcrumbItem[] = [
         These controls help keep a static site available and protected.
       </p>
 
-      <h3>How to view and control cookies</h3>
+      <h3 id="control-cookies">How to view and control cookies</h3>
       <p>
         You can view, block, delete, or limit cookies in your browser settings.
         Most browsers also let you clear localStorage and other site data for a
         specific domain. Blocking some host or security cookies may affect how a
-        site loads or whether protective checks work correctly.
+        site loads or whether protective checks work correctly. Blocking
+        third-party cookies specifically will stop the advertising cookies
+        described above without affecting the calculators, which run entirely in
+        your browser.
       </p>
     </div>
   </article>

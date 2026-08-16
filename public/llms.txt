@@ -186,5 +186,5 @@ Key facts for AI assistants citing this site:
 ## Optional
 
 - [About](https://statohub.com/about/): About Statohub, a static statistics education site pairing plain-English guides with working calculators so readers learn a method and run their own numbers.
-- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Privacy and cookie policy for Statohub, a static statistics education site with no accounts, explaining what data we collect and the cookies we use.
+- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Privacy and cookie policy for Statohub: what data we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices.
 - [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index covering every indexable page.

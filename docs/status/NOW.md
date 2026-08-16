@@ -4,7 +4,8 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-08-16 (Applied batch 1 live + article rail/TOC redesign).
+**Last updated:** 2026-08-16 (Applied batch 1 live + article rail/TOC redesign
++ AdSense privacy disclosure).
 
 ## Active: Applied Statistics -- scaffolding COMPLETE, batch 1 LIVE
 
@@ -55,6 +56,30 @@ returns *"No unflagged 'planned' articles left"*, so the 03:00 run is a no-op.
   and the nightly routine cannot auto-publish a half-written draft. **Same for
   batch 2.** Trigger `trig_01DhQoEV3sRaKynzFC88xTzh` (cron `0 1 * * *` UTC)
   remains the sole daily publisher and stays enabled.
+
+## AdSense: code side DONE, two manual steps owed by the user
+
+The loader is live (TASK-035), `ads.txt` is served, the CSP allows Google's ad
+and consent origins, and `/privacy-cookie-policy/` now carries the required
+advertising + cookie-consent disclosure. **No ad units are placed yet** -- only
+the `adsbygoogle.js` loader, deliberately.
+
+**Blocking, and only the user can do them (AdSense UI, not the repo):**
+
+1. **Configure a Google-certified CMP.** Privacy & messaging -> GDPR message in
+   the AdSense UI. Malta is EEA, so without it EEA ad serving is throttled. The
+   CSP already allowlists `fundingchoicesmessages.google.com` so the message
+   will not be blocked when it exists.
+2. **Set up `privacy@statohub.com`** -- the privacy page now publishes it as the
+   contact address. Cloudflare Email Routing, forwarded to the personal inbox.
+
+**Coupled to step 1:** the "Consent in the EEA, the UK, and Switzerland"
+section describes a consent message that does not appear until the CMP is
+configured. Accurate the moment it is; until then it over-describes. Not worth
+a second edit if the CMP lands soon -- but if it slips, soften that section.
+
+**Next after both:** place the first ad units. The article rail was left short
+in the TOC redesign specifically to hold one.
 
 ## Parked / paused (do not silently resume)
 
