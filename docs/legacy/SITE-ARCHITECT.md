@@ -247,8 +247,9 @@ change -- see section 8). Read [`AGENTS.md`](AGENTS.md) then
   in `BaseLayout`/elsewhere, if any, should be revisited at the same time.
 - **SEO baselines not captured yet.** Run `seo-drift` baseline + `seo-technical`
   mobile/CWV pass against the live URL (their own task).
-- **`CLOUDFLARE_API_TOKEN` rotation.** A working `cfut_...` token was pasted in
-  chat during setup; roll it and re-set the repo secret when convenient.
+- ~~**`CLOUDFLARE_API_TOKEN` rotation.**~~ Done 2026-07-08 — the token pasted in
+  chat during initial setup was revoked and the repo secret re-set with a
+  freshly scoped (Account → Cloudflare Pages → Edit) token.
 
 ---
 
