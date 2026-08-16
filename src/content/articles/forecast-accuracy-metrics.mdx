@@ -1,0 +1,290 @@
+---
+title: "Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads"
+description: "Compare MAE, RMSE, MAPE, and MASE for forecast accuracy, see each metric's real failure modes, and learn to backtest with rolling-origin cross-validation."
+category: time-series-forecasting
+primaryKeyword: forecast accuracy metrics
+keywords:
+  - forecast accuracy metrics
+  - MAE vs RMSE
+  - MAPE forecast accuracy
+  - MASE metric
+  - time series cross validation
+  - rolling-origin cross-validation
+  - forecast error metrics
+  - how to measure forecast accuracy
+  - naive forecast baseline
+  - backtesting time series models
+phase: 1
+related:
+  - mean-absolute-deviation
+  - standard-deviation
+  - confidence-interval
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Callout from '../../components/applied/Callout.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A forecast accuracy metric is a single number that summarizes how far a model's predictions were from what actually happened, computed after the fact from forecast-actual pairs. The metric you pick shapes which model looks "best," so the choice is not cosmetic — a model tuned to minimize RMSE and a model tuned to minimize MAPE can rank differently on the same data. This guide covers the four metrics you will actually use in production forecasting work, the specific way each one breaks, and the backtesting discipline that has to sit underneath any of them before the number means anything.
+
+<KeyTakeaways rows={[
+  { point: 'Scale-dependent metrics', details: 'MAE and RMSE are in the same units as the data. RMSE squares errors first, so it reacts more to a few large misses; MAE treats every unit of error equally.' },
+  { point: 'Percentage metrics break near zero', details: 'MAPE divides by the actual value, so it is undefined at zero and explodes for actuals close to zero — common in intermittent demand and low-volume series.' },
+  { point: 'A metric alone is meaningless', details: 'Always compare the model’s error against a naive baseline (e.g., last-period-repeats) computed on the same data. MASE builds that comparison into the metric itself.' },
+  { point: 'Backtest in time order', details: 'Use rolling-origin (walk-forward) evaluation, never random k-fold, because k-fold lets future observations leak into training.' },
+]} />
+
+## Scale-dependent metrics: MAE and RMSE
+
+Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) are the two most common forecast accuracy metrics, and both report their result in the same units as the thing you are forecasting — dollars, units sold, page views. That makes them directly interpretable ("the model is off by about 7 units a week, on average") but it also means you cannot compare an MAE of 7 on a series that averages 200 units against an MAE of 7 on a series that averages 20,000 units. The first is a large relative miss; the second is nearly perfect.
+
+```
+MAE = (1/n) × Σ |actual_i − forecast_i|
+```
+
+MAE is the mean of the absolute forecast errors. It's conceptually the same operation as <Link to={routes.article('mean-absolute-deviation')}>mean absolute deviation</Link> applied to forecast residuals instead of deviations from a sample mean — both average the absolute size of a set of differences without letting positive and negative errors cancel out.
+
+```
+RMSE = √[ (1/n) × Σ (actual_i − forecast_i)² ]
+```
+
+RMSE squares each error before averaging, then takes the square root to bring the result back to the original units. Squaring is the whole story here: an error twice as large contributes four times as much to the sum before the square root is taken. RMSE is, in effect, close to the <Link to={routes.article('standard-deviation')}>standard deviation</Link> of the forecast errors rather than their mean absolute size — both statistics are built from squared deviations for the same reason (see the next section).
+
+### Why squaring changes outlier sensitivity
+
+Squaring an error before averaging is the mechanism that makes RMSE more sensitive to occasional large misses than MAE is. If nine forecasts are off by 2 units and one is off by 20 units, MAE sees that one bad forecast as ten times worse than a typical one — because absolute value scales linearly. RMSE sees it as a hundred times worse in the sum of squares, and that disproportionate weight survives (attenuated by the square root) in the final number. This is the identical logic behind why <Link to={routes.article('variance')}>variance</Link> and standard deviation are more outlier-sensitive than mean absolute deviation as measures of spread: squaring amplifies large deviations relative to small ones in both contexts.
+
+Practically, this means RMSE is the right choice when large errors are disproportionately costly — a supply chain that stocks out badly once is worse than being mildly off every week — and MAE is the right choice when you want a metric that reflects "typical" error size without a handful of bad weeks dominating the number. If you already suspect your residual series has a few unusually large errors, run it through a check for <Link to={routes.article('how-to-find-outliers')}>how to find outliers</Link> before deciding which metric to lead with; a small number of extreme misses can make RMSE tell a very different story from MAE on the same forecast.
+
+<Callout variant="tip" title="Quick diagnostic">
+  If RMSE is noticeably larger than MAE relative to the data's scale, that gap itself is informative: it tells you the error distribution has a heavier tail than a handful of small, evenly sized misses. A large RMSE/MAE ratio is a cue to go looking for the specific periods driving it before you retrain anything.
+</Callout>
+
+Neither metric is the only option in this family. Median absolute error — the median rather than the mean of the absolute errors — trades some efficiency for even stronger resistance to a handful of extreme misses, since a median barely moves when one value in the set is unusually large. It shows up in most forecasting and machine learning toolkits alongside MAE and RMSE for exactly that reason: when a series has occasional data-quality problems (a bad sensor reading, a miscoded return, a one-off promotional spike that the model was never meant to catch), the median is less likely to be dragged around by that single bad period than either MAE or RMSE. It is worth computing as a sanity check even when MAE or RMSE is the metric you report, since a wide gap between MAE and the median absolute error is another signal that a small number of periods are driving most of the apparent error.
+
+## A worked example: MAE, RMSE, MAPE, and MASE on the same data
+
+The mechanics are easier to trust once you see them computed by hand. This is an illustrative example, not a real dataset: seven weeks of a model's forecasts against actual demand, evaluated one step at a time.
+
+<DataTable
+  caption="Weekly forecast errors for a single illustrative series"
+  headers={['Week', 'Actual', 'Model forecast', 'Error', 'Absolute error', 'Squared error', 'Absolute % error']}
+  align={['left', 'right', 'right', 'right', 'right', 'right', 'right']}
+  rows={[
+    ['2', '210', '205', '5', '5', '25', '2.38%'],
+    ['3', '195', '200', '−5', '5', '25', '2.56%'],
+    ['4', '225', '220', '5', '5', '25', '2.22%'],
+    ['5', '230', '235', '−5', '5', '25', '2.17%'],
+    ['6', '205', '210', '−5', '5', '25', '2.44%'],
+    ['7', '240', '225', '15', '15', '225', '6.25%'],
+    ['8', '235', '245', '−10', '10', '100', '4.26%'],
+  ]}
+/>
+
+Summing the absolute-error column gives 50 across 7 forecasts, so MAE = 50 / 7 ≈ **7.14** units. Summing the squared-error column gives 450, so the mean squared error is 450 / 7 ≈ 64.29, and RMSE = √64.29 ≈ **8.02** units. Notice RMSE lands higher than MAE — that's the one 15-unit miss in week 7 pulling harder on the squared sum than it does on the absolute sum.
+
+Summing the absolute-percentage-error column gives roughly 22.28 percentage points, so MAPE = 22.28 / 7 ≈ **3.18%**. On this well-behaved series, with no actuals anywhere near zero, MAPE reads sensibly: the model missed by a bit over 3% of demand on average.
+
+## Percentage metrics: MAPE and where it breaks
+
+Mean Absolute Percentage Error is popular because it's scale-free — a MAPE of 5% means the same thing whether you're forecasting 50 units a week or 50,000. That portability is genuinely useful when you need to compare accuracy across many different products or regions on one dashboard. The formula is:
+
+```
+MAPE = (1/n) × Σ ( |actual_i − forecast_i| / |actual_i| ) × 100
+```
+
+The catch is in the denominator. MAPE divides every error by the actual value for that period, and that single design choice creates two well-documented failure modes that show up constantly in real forecasting work, particularly with intermittent or low-volume demand.
+
+### The division-by-zero and near-zero explosion problem
+
+If the actual value in any period is exactly zero, the term for that period is undefined — you cannot divide by zero, so a standard MAPE calculation either throws an error or has to silently drop that period, which quietly changes what the average represents. Zero actuals are common: a stockout day, a product that hadn't launched yet, a metric that legitimately hits zero (churned users, defect counts on a clean day).
+
+Even when the actual value is merely close to zero rather than exactly zero, MAPE can produce numbers so large they're not meaningful. Suppose actual demand in one period is 2 units and the forecast was 10 units — a forecast that's off by only 8 units in absolute terms. The absolute percentage error for that single period is |10 − 2| / 2 = 400%. One low-volume period can dominate an averaged MAPE and make an otherwise solid forecast look terrible, or vice versa. This is exactly why demand for a low-count metric — a series that's frequently near zero — tends to have a heavily <Link to={routes.article('skewed-distribution')}>right-skewed distribution</Link> of percentage errors: most periods contribute a small, reasonable percentage, and a few near-zero periods contribute enormous ones that drag the mean upward.
+
+### The asymmetric penalty for over- vs under-forecasting
+
+MAPE also penalizes over-forecasts and under-forecasts differently for what feels like an equivalent-sized miss, because the denominator is always the actual value rather than the forecast. If the actual value is 100 and the forecast under-shoots all the way to 0, the absolute percentage error caps out at 100%. But if the forecast over-shoots to 1,000 — ten times the actual — the absolute percentage error is 900%, and it keeps growing without bound as the forecast grows further. A forecast that's too low is mathematically limited in how much it can inflate MAPE; a forecast that's too high is not. In practice this biases a model selection process that minimizes MAPE toward systematically under-forecasting, since under-forecasts are structurally cheaper on this metric even when they're operationally just as costly as over-forecasts.
+
+<Callout variant="note" title="Interpretation note">
+  A low MAPE on a series with several near-zero actuals is not automatically good news, and a moderate MAPE is not automatically bad. Check the distribution of per-period absolute percentage errors, not just the mean, before trusting the summary number on any series with volatile low values.
+</Callout>
+
+### Symmetric MAPE is a partial fix, not a full one
+
+A commonly proposed patch is symmetric MAPE (sMAPE), which divides by the average of the actual and forecast values instead of the actual value alone:
+
+```
+sMAPE = (1/n) × Σ ( |actual_i − forecast_i| / ((|actual_i| + |forecast_i|) / 2) ) × 100
+```
+
+Averaging the actual and the forecast in the denominator softens the asymmetry problem, because now both an over-forecast and an under-forecast contribute to the same denominator instead of only the actual value doing so. It does not, however, fix the zero problem: if both the actual and the forecast are zero, the denominator is still zero, and sMAPE is undefined in exactly the same degenerate case. sMAPE has also drawn its own criticism in the forecasting literature for being harder to interpret intuitively than a plain percentage error and for still behaving oddly when the forecast and actual have opposite signs. Treat it as one more tool in the percentage-metric family, not a clean substitute that removes the need to check for zero or near-zero actuals before relying on any percentage-based metric.
+
+## Scaled alternatives: MASE and the naive baseline
+
+The Mean Absolute Scaled Error (MASE) was designed specifically to fix MAPE's zero-division problem while keeping a metric that's comparable across series of different scales. Instead of dividing each error by the actual value for that period, MASE divides the model's mean absolute error by the mean absolute error of a naive baseline forecast, computed over the same data.
+
+### The naive forecast baseline
+
+The naive baseline in most time-series work is the simplest forecast that requires no model at all: predict that the next value equals the most recent observed value (or, for seasonal data, the value from the same point in the last cycle). It is deliberately unambitious. Any model you deploy should be judged against how much it improves on doing nothing clever — a lesson that applies as directly to forecasting as it does to judging whether a <Link to={routes.article('linear-regression')}>linear regression</Link> model actually explains variation beyond a flat mean, or whether a <Link to={routes.article('correlation-coefficient')}>correlation coefficient</Link> reflects a real relationship rather than noise.
+
+<DataTable
+  caption="The naive baseline for the same illustrative series (forecast = previous week's actual)"
+  headers={['Week', 'Actual', 'Naive forecast', 'Naive absolute error']}
+  align={['left', 'right', 'right', 'right']}
+  rows={[
+    ['2', '210', '200', '10'],
+    ['3', '195', '210', '15'],
+    ['4', '225', '195', '30'],
+    ['5', '230', '225', '5'],
+    ['6', '205', '230', '25'],
+    ['7', '240', '205', '35'],
+    ['8', '235', '240', '5'],
+  ]}
+/>
+
+### How MASE is computed and interpreted
+
+Summing the naive absolute-error column gives 125, so the naive baseline's MAE is 125 / 7 ≈ 17.86 units — over twice the model's MAE of 7.14 units from the earlier table.
+
+```
+MASE = MAE(model) / MAE(naive baseline)
+```
+
+Here, MASE = 7.14 / 17.86 ≈ **0.40**. A MASE below 1 means the model beats the naive baseline; a MASE of exactly 1 means the model is doing no better than guessing "next period looks like this period"; a MASE above 1 means the model is losing to a forecast that took no modeling effort at all. Unlike MAPE, MASE has no division-by-zero problem, because the denominator is a baseline's aggregate error rather than a single period's actual value — as long as the series isn't perfectly flat (which would make the naive baseline's error zero), MASE is well defined even on intermittent, low-volume series.
+
+<DataTable
+  caption="Choosing among the four metrics"
+  headers={['Metric', 'Units', 'Outlier sensitivity', 'Fails at zero actuals?', 'Comparable across series?']}
+  align={['left', 'left', 'left', 'left', 'left']}
+  rows={[
+    ['MAE', 'Same as data', 'Low — errors weighted linearly', 'No', 'No — depends on data scale'],
+    ['RMSE', 'Same as data', 'High — errors weighted quadratically', 'No', 'No — depends on data scale'],
+    ['MAPE', 'Percentage', 'Moderate, but skewed near zero', 'Yes — undefined at zero', 'Yes, in principle'],
+    ['MASE', 'Ratio to baseline', 'Inherits the base metric’s sensitivity', 'No', 'Yes — designed for it'],
+  ]}
+/>
+
+## A metric is only meaningful next to a baseline
+
+The single most common mistake in reading forecast accuracy numbers is treating a metric as an absolute verdict — "MAE of 12, that seems fine" — without any reference point for what a good or bad value looks like on that specific series. An MAE of 12 is excellent on a series that swings between 500 and 2,000, and it's useless on a series that rarely moves more than 15 units. The fix is always relative: compute the same metric for a naive baseline (and, where one exists, for whatever forecast the business used before this model), on the exact same evaluation periods, and report the ratio or the improvement, not the raw number alone. That's precisely the comparison MASE encodes by construction, and it's worth computing even when you report MAE or RMSE as the headline metric.
+
+<Checklist
+  title="Before you trust a forecast accuracy number"
+  style="check"
+  items={[
+    { text: 'Compute the same metric for a naive baseline', detail: 'Same evaluation windows, same holdout periods — no exceptions.' },
+    { text: 'Check for zero or near-zero actuals', detail: 'If any exist, drop or de-emphasize MAPE and report MAE, RMSE, or MASE instead.' },
+    { text: 'Look at the error distribution, not just the mean', detail: 'A handful of extreme periods can dominate an averaged metric.' },
+    { text: 'Confirm the evaluation set is genuinely out-of-sample', detail: 'The model must never have seen these actual values during fitting or tuning.' },
+    { text: 'State the metric alongside its baseline comparison', detail: 'Report "MASE = 0.4" or "38% better than naive," not a bare error figure.' },
+  ]}
+/>
+
+## In-sample fit versus out-of-sample error
+
+In-sample fit measures how well a model reproduces the data it was trained on; out-of-sample error measures how well it predicts data it never saw. These are not interchangeable, and reporting the wrong one is one of the fastest ways to overstate a forecasting model's real performance. A sufficiently flexible model — extra seasonal terms, higher-order lags, more predictors — can drive in-sample error arbitrarily low simply by fitting noise in the training window, the same overfitting risk that shows up when checking <Link to={routes.article('regression-assumptions')}>regression assumptions</Link> and finding a model that fits training residuals suspiciously well but generalizes poorly.
+
+Out-of-sample error is the number that reflects what will actually happen when the model is used to forecast the future, because the future is by definition data the model hasn't seen yet. Any of the four metrics in this guide can be computed either way, and the gap between the in-sample and out-of-sample versions is itself diagnostic: a model with low in-sample MAE but much higher out-of-sample MAE is overfit, and the model that should ship is usually the one with the smaller gap, not the one with the lowest in-sample number.
+
+<Callout variant="tip" title="Report both numbers">
+  When you hand off a model's performance, report in-sample and out-of-sample error side by side. A stakeholder who only sees the in-sample number has no way to catch overfitting, and a large gap between the two is often more informative than either number alone.
+</Callout>
+
+There is a third number worth separating out from both of these: validation error used during hyperparameter tuning. If you select a lag length, a seasonal period, or a smoothing parameter by minimizing error on a validation window, that validation window has effectively been used to fit the model, even though the model's coefficients were never trained on it directly. Reporting the validation-window error as if it were a clean out-of-sample estimate repeats the same optimism problem as reporting in-sample error, just one step removed. The number that actually estimates how the model will perform in production is the error computed on a final test window that was never touched during either training or tuning — a distinction that matters as much for a seasonal-naive forecasting baseline as it does for a fully tuned regression or machine learning model.
+
+## Backtesting time-ordered data: rolling-origin cross-validation
+
+Because forecast accuracy is meaningless without a genuine out-of-sample test, how you split the data matters as much as which metric you compute on it. The standard approach for time-ordered data is rolling-origin evaluation, also called walk-forward validation or time-series cross-validation: fit the model on an initial chronological window, forecast the next period, record the error, then move the origin forward — either expanding the training window to include the newly observed period or sliding a fixed-size window forward — and repeat.
+
+<Figure number={1} caption="Rolling-origin cross-validation repeats fit-forecast-evaluate across a sequence of expanding training windows, never using a period to train a forecast made for an earlier period.">
+  <ProcessFlow
+    title="Rolling-origin cross-validation"
+    desc="Five sequential steps evaluate a forecasting model by repeatedly expanding the training window and testing on the next unseen period, then averaging error across all origins."
+    steps={[
+      { label: 'Fix initial training window', detail: 'Use only the earliest chronological slice of the series to fit the model.' },
+      { label: 'Forecast the next period', detail: 'Predict the period immediately after the training window, unseen during fitting.' },
+      { label: 'Record the error', detail: 'Compare the forecast to the realized actual and log the chosen metric.' },
+      { label: 'Advance the origin', detail: 'Add the newly observed period to training, or slide a fixed window forward by one step.' },
+      { label: 'Repeat and aggregate', detail: 'Refit, forecast again at the next origin, and average error across all origins.' },
+    ]}
+  />
+</Figure>
+
+Every origin in this scheme produces a forecast for a period the model has genuinely never seen at the time it was fit, and averaging the metric across many origins gives a far more stable read on accuracy than a single train/test split, which can be flattered or punished by whatever happens to sit in that one holdout window.
+
+### Why random k-fold leaks the future
+
+Standard k-fold cross-validation, the default in most general machine learning workflows, shuffles observations randomly into folds and holds each one out in turn. That works when observations are independent, but time-ordered data violates independence by design: each period is related to the periods around it, and a model can be fit on data that includes periods both before and after the one it's being tested on. That's future leakage. A model trained partly on next month's actual values will look artificially accurate at "predicting" this month, because it effectively already knows how the series behaves in the neighborhood of that point — information no real forecast would have had at decision time.
+
+Leakage is especially easy to introduce quietly through feature engineering, not just through the fold split itself: a rolling mean or rolling standard deviation computed once over the full series before splitting will smear future values into features used to predict the past. Any lag, rolling statistic, or normalization step has to be computed using only data available up to each forecast origin, recomputed fresh at every step of the rolling-origin loop — the same discipline that matters when checking <Link to={routes.article('regression-assumptions')}>regression assumptions</Link> or constructing a <Link to={routes.article('confidence-interval')}>confidence interval</Link> around an estimate: the inference is only valid if the data used to produce it genuinely reflects what was knowable at the time.
+
+## Choosing a metric from the business loss function
+
+The mechanically "best" metric doesn't exist in the abstract — it depends on how a forecasting error actually costs the business money or causes harm, which is the business's loss function whether or not anyone has written it down. Ask what a miss actually costs before picking a metric to optimize.
+
+If a large miss is disproportionately expensive — a stockout that costs a lost sale and a customer, versus a small overstock that just ties up some cash — RMSE is the better optimization target, because its quadratic penalty matches a real-world cost structure that also grows faster than linearly with the size of the miss. If every unit of error costs about the same regardless of size — extra staffing hours, say, where each hour over or under costs roughly the same regardless of how far off the forecast was — MAE matches that loss function more directly, since it does not weight a large miss more than proportionally.
+
+If the report needs to compare accuracy across many products, stores, or regions with very different volumes, and none of those series regularly touch zero, MAPE's scale-free percentage is genuinely convenient for a dashboard — as long as you remember its blind spot near zero. If some of those series do include zero or near-zero periods, or if you specifically want a number that answers "is this model worth the effort compared to doing nothing," MASE is the more defensible default, because it's undefined only in the degenerate case of a perfectly flat baseline and it bakes the naive-baseline comparison into the number itself.
+
+<Figure number={2} caption="A simplified decision path for picking a first-pass accuracy metric based on the shape of the data being forecast.">
+  <DecisionTree
+    title="Choosing a forecast accuracy metric"
+    desc="A two-question decision tree: first check whether any actual values sit at or near zero, then check whether the metric needs to be comparable across differently scaled series."
+    root={{
+      label: 'Do any actual values sit at or near zero?',
+      yes: { label: 'Avoid MAPE. Use MAE, RMSE, or MASE instead.' },
+      no: {
+        label: 'Will you compare accuracy across series on different scales?',
+        yes: { label: 'Use MASE, scaled against a naive baseline.' },
+        no: { label: 'Use MAE for typical error size, or RMSE if large misses cost more.' },
+      },
+    }}
+  />
+</Figure>
+
+None of this replaces judgment: it's common practice to report two metrics together, one scale-dependent (MAE or RMSE) for internal engineering tracking and one scaled (MASE) for comparing model quality across a portfolio of series — and to always pair whichever metric you lead with against its naive-baseline value, computed with the same rolling-origin discipline described above, on the same evaluation periods. A metric computed correctly but read in isolation, without that baseline and without a genuinely out-of-sample backtest, tells you very little about whether the forecast is actually good.
+
+The same principle extends to how often you recompute the metric once a model is in production. A single accuracy number measured once at launch tells you how the model performed on that particular backtest; it says nothing about whether the model is still performing that way six months later, after the underlying process has shifted. Recomputing the chosen metric — and its naive-baseline comparison — on a rolling basis against fresh actuals, and watching for a sustained drift away from the launch-time value, turns a one-time evaluation into an ongoing check on whether the forecasting model is still doing its job. A model that quietly degrades from a MASE of 0.6 to a MASE of 1.1 over a few months is no longer earning its complexity over the naive baseline, and that is exactly the kind of change a single backtest run at launch can never catch on its own.
+
+## Sources
+
+<Sources items={[
+  { text: 'Hyndman, R.J. & Athanasopoulos, G. — Evaluating Forecast Accuracy, Forecasting: Principles and Practice', href: 'https://otexts.com/fpp3/accuracy.html', org: 'OTexts' },
+  { text: 'Hyndman, R.J. & Athanasopoulos, G. — Time Series Cross-Validation, Forecasting: Principles and Practice', href: 'https://otexts.com/fpp3/tscv.html', org: 'OTexts' },
+  { text: 'Hyndman, R.J. & Athanasopoulos, G. — Some Simple Forecasting Methods (naive and seasonal naive baselines)', href: 'https://otexts.com/fpp3/simple-methods.html', org: 'OTexts' },
+  { text: 'Nau, R. — Statistical Forecasting: Notes on Regression and Time Series Analysis, comparing MAE, RMSE, and MAPE', href: 'https://people.duke.edu/~rnau/compare.htm', org: 'Duke University, Fuqua School of Business' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Introduction to Time Series Analysis', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm', org: 'NIST' },
+  { text: 'scikit-learn User Guide — Regression Metrics (MAE, MSE, and related definitions)', href: 'https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics', org: 'scikit-learn' },
+  { text: 'scikit-learn API Reference — TimeSeriesSplit (rolling-origin cross-validation implementation)', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html', org: 'scikit-learn' },
+  { text: 'Penn State Department of Statistics — STAT 510: Applied Time Series Analysis', href: 'https://online.stat.psu.edu/stat510/', org: 'Penn State University' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Should I use MAE or RMSE for forecast accuracy?',
+    answer: 'Use MAE when you want every unit of error weighted equally and a metric that represents typical error size. Use RMSE when large misses are disproportionately costly, since squaring errors before averaging makes RMSE react more strongly to a few big misses than to many small ones.',
+  },
+  {
+    question: 'Why is MAPE undefined or misleading sometimes?',
+    answer: 'MAPE divides each error by the actual value for that period. When the actual value is zero, the calculation is undefined; when it is close to zero, a small absolute error produces a huge percentage error, which can dominate the average and make the metric unreliable for intermittent or low-volume series.',
+  },
+  {
+    question: 'What is a good MASE value for a forecasting model?',
+    answer: 'A MASE below 1 means the model beats a naive baseline that simply repeats the last observed value; a MASE at or above 1 means the model is matching or losing to that baseline. There is no universal "good" number beyond that comparison — it depends on how much better than naive the business needs the forecast to be.',
+  },
+  {
+    question: 'Why can’t I use random k-fold cross-validation on time series data?',
+    answer: 'Random k-fold shuffles observations into folds without respecting time order, which lets a model be trained on periods that come after the period it is being tested on. That leaks future information into training and inflates the apparent accuracy. Rolling-origin (walk-forward) validation avoids this by always testing on a period that comes strictly after everything used to fit the model.',
+  },
+]} />

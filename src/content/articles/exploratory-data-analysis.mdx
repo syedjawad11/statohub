@@ -1,0 +1,254 @@
+---
+title: "Exploratory Data Analysis: A Practical Workflow"
+description: "The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop."
+category: data-analysis
+primaryKeyword: exploratory data analysis
+keywords:
+  - exploratory data analysis
+  - EDA workflow
+  - EDA checklist
+  - missing data patterns
+  - MCAR MAR MNAR
+  - outlier detection
+  - univariate analysis
+  - bivariate analysis
+  - data quality checks
+phase: 1
+related:
+  - how-to-find-outliers
+  - skewed-distribution
+  - correlation-coefficient
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Exploratory data analysis (EDA) is the disciplined first pass over a dataset before you model, test, or report anything from it: checking its shape and provenance, assessing quality, profiling each variable on its own, then looking at how variables relate to each other. Done well, it is not a warm-up — it is where most of the decisions that determine whether an analysis is trustworthy actually get made.
+
+<KeyTakeaways rows={[
+  { point: 'Order matters', details: 'Shape and provenance first, then data quality, then univariate profiling, then bivariate exploration — each step changes how you read the next.' },
+  { point: 'Missingness has a mechanism', details: 'MCAR, MAR, and MNAR each license a different fix; guessing wrong biases every downstream estimate.' },
+  { point: 'Outliers are a judgement call', details: 'Keep, transform, or exclude — and write down which one you chose and why, before you model.' },
+  { point: 'EDA ends at a decision', details: 'Stop when you can state the modeling question, the variables that answer it, and the caveats a reviewer would ask about.' },
+]} />
+
+## First contact: shape, types, and provenance
+
+Before computing a single statistic, get oriented. Open the file and answer four questions: how many rows and columns, what type is each column, where did this data come from, and what does one row represent.
+
+Row and column counts sound trivial, but they catch real problems early. A file with 1,000,004 rows instead of 1,000,000 might mean four duplicated header rows leaked into the body, or a concatenation script ran twice on part of the data. Compare the count against what you were told to expect — a data dictionary, a query's `LIMIT`, or a stated sample size — and reconcile any mismatch before moving on.
+
+Column types matter because a wrongly inferred type silently breaks everything downstream. A ZIP code stored as an integer drops leading zeros. A date stored as a string sorts lexically, not chronologically, which changes what "the most recent record" means. A categorical variable encoded as an integer (`1` = male, `2` = female) will happily compute a nonsensical mean if you forget it isn't numeric. Check the declared type against the level of measurement the variable actually has — nominal, ordinal, interval, or ratio — because that decides which statistics and which visual encodings are valid for it. See <Link to={routes.article('levels-of-measurement')}>levels of measurement</Link> and <Link to={routes.article('types-of-variables')}>types of variables</Link> for the full taxonomy; misclassifying a variable here is one of the most common silent errors in applied work.
+
+Provenance is the part analysts skip and regret skipping. Ask: who collected this, how, and over what time window? A customer table pulled from a production database has different failure modes than a table exported from a survey tool or scraped from a public API — production data can contain test accounts and soft-deleted rows; survey data can contain skipped questions and straight-lining; scraped data can contain partial pages and rate-limit artifacts. If you can't answer "how was this collected," treat every downstream statistic as provisional until you can.
+
+Units of measurement belong in this same first pass. A column named `revenue` might be in dollars, thousands of dollars, or a mix of currencies that was never normalized before the export; a `duration` column might silently switch from seconds to milliseconds partway through if two logging systems were merged mid-year. These errors are invisible in a type check — the column is still numeric — and they only surface once a computed statistic looks implausibly large or small, at which point you've already spent time chasing a phantom finding. Confirm units against a data dictionary or the source system directly, rather than inferring them from the numbers alone.
+
+Finally, confirm what a row represents — one customer, one transaction, one customer-month? This single question resolves a huge share of later confusion about why counts don't match expectations or why an aggregate looks wrong. Write it down. You will refer back to it every time a number looks off.
+
+Before running any code, scroll through a plain sample of raw rows — not a summary, the actual records. This surfaces problems no aggregate view will show you: a delimiter character appearing inside a free-text field and shifting every subsequent column, a character-encoding issue turning accented names into garbled symbols, a date column silently mixing two formats (`MM/DD/YYYY` in some rows, `DD-MM-YYYY` in others) because two source systems were merged. These are cheap to catch by eye in the first few minutes and expensive to trace back once they've propagated into a hundred downstream calculations.
+
+<Callout variant="tip" title="Pro tip">
+Keep a running data log from the first minute: file name, row/column count, source, and the date you pulled it. When a stakeholder asks "why does this number differ from last week's report," that log is often the fastest way to answer.
+</Callout>
+
+## Assessing data quality
+
+Data quality checks come before you trust any statistic computed from the data, because a summary statistic computed on dirty data is not wrong in an obvious way — it's wrong in a way that looks plausible. A mean age of 41.6 with a handful of "999" placeholder values baked in still looks like a perfectly reasonable mean; nothing about the number itself flags that it's contaminated. That's what makes data-quality problems more dangerous than an outright crash: the analysis runs, produces a number, and the number is wrong in a way no one downstream has a reason to question.
+
+### Missingness: MCAR, MAR, and MNAR
+
+Missing values are not all the same problem, and the taxonomy developed by statisticians Donald Rubin and Roderick Little for classifying missing-data mechanisms determines which remedies are defensible.
+
+- **Missing Completely at Random (MCAR):** the probability a value is missing is unrelated to any observed or unobserved data. A sensor that randomly drops one reading in a thousand due to network jitter is close to MCAR. Under MCAR, dropping the missing rows (complete-case analysis) does not bias your estimates — it only costs you sample size.
+- **Missing at Random (MAR):** the probability of missingness depends on *observed* variables, but not on the missing value itself once you condition on those observed variables. For example, older survey respondents may be less likely to report income, but within each age group, the reason income is missing has nothing to do with the income amount itself. Under MAR, complete-case analysis can bias estimates, but methods that use the observed variables — such as multiple imputation conditioned on age — can recover unbiased estimates.
+- **Missing Not at Random (MNAR):** the probability of missingness depends on the missing value itself. High earners disproportionately declining to report income is MNAR. This is the hardest case: no adjustment using only the observed data can fully correct for it, because the mechanism is entangled with the very value you don't have. You need either external data, a modeling assumption you can defend, or an explicit caveat that the analysis may be biased in a known direction.
+
+You cannot prove which mechanism generated your missing data from the data alone — MAR and MNAR are observationally similar in many cases. What you can do is build a case: cross-tabulate missingness against other variables (does missingness in `income` correlate with `age`, `region`, `survey_length`?), talk to whoever owns the collection process, and document your working assumption. That assumption is a defensible decision only if you write down what you checked and why you landed where you did — not because the alternative is provably wrong, but because you can show your reasoning held up under scrutiny.
+
+<Figure number={1} caption="A stop-and-decide path for classifying a missingness mechanism before choosing a remedy.">
+  <DecisionTree
+    title="Missing-data mechanism triage"
+    desc="A decision tree asks whether missingness relates to the value itself, then to other observed variables, to classify the mechanism as MCAR, MAR, or MNAR before choosing a remedy."
+    root={{
+      label: 'Does missingness relate to the missing value itself?',
+      yes: { label: 'Likely MNAR — model the mechanism or caveat the bias' },
+      no: {
+        label: 'Does missingness relate to other observed variables?',
+        yes: { label: 'Likely MAR — impute conditioning on those variables' },
+        no: { label: 'Likely MCAR — complete-case analysis is defensible' },
+      },
+    }}
+  />
+</Figure>
+
+### Duplicates and impossible values
+
+Duplicate rows come in two flavors: exact duplicates (every field matches) and logical duplicates (the same real-world entity appears more than once with slight variation, such as a customer with two account IDs from a merged system). Exact duplicates are cheap to find with a row-hash count; logical duplicates require domain judgment — fuzzy-matching names, addresses, or timestamps close enough to suggest the same event recorded twice.
+
+Impossible values are entries that violate a hard constraint of the variable's definition: a negative age, a percentage above 100, a timestamp in the future, a state code that doesn't exist. These are different from outliers — an impossible value is not "unusually large," it is *not a valid instance of the variable at all*, and it should be corrected or removed, not merely flagged. Build the check as an explicit rule (`age >= 0 and age <= 120`) rather than eyeballing it, so the check is reproducible on the next data pull.
+
+<DataTable
+  caption="Common data-quality failure modes and the check that catches each one"
+  headers={['Issue', 'Example', 'Detection method', 'Typical fix']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Exact duplicate rows', 'Same order ID appears twice, identical fields', 'Row-hash / full-row count vs. unique count', 'Drop duplicates, keep one'],
+    ['Logical duplicates', 'Same customer under two account IDs', 'Fuzzy match on name + address + email', 'Merge or flag for review'],
+    ['Impossible values', 'Age = -3, percentage = 140%', 'Explicit range/constraint rule', 'Correct at source or set to missing'],
+    ['Encoding mismatch', 'Category coded as 1/2 read as numeric mean', 'Type audit against data dictionary', 'Recast as categorical before analysis'],
+    ['Placeholder missing values', '"9999" or "N/A" stored as a valid number', 'Frequency table on suspicious round values', 'Recode as true missing (NA)'],
+  ]}
+/>
+
+A related trap: placeholder codes. Legacy systems often encode missing data as `9999`, `-1`, or `"unknown"` rather than a true null. If you don't catch these, they silently inflate your mean and variance. A quick <Link to={routes.article('frequency-table')}>frequency table</Link> on each numeric column, sorted by count, usually surfaces suspicious round-number spikes that a naive `.describe()` call would miss.
+
+When you find logical duplicates, resist the urge to resolve them with a single blanket rule ("keep the most recent row") without checking whether that rule is actually correct for this dataset. Sometimes the most recent row is the accurate one; sometimes it's the incomplete one, written by a process that hadn't finished populating every field yet. Spot-check a handful of the duplicate pairs by hand before deciding on a merge rule, and once you've picked one, apply it consistently and note how many rows it affected.
+
+<Checklist
+  id="data-quality-pass"
+  title="Data quality pass"
+  style="check"
+  items={[
+    { text: 'Row and column counts reconciled', detail: 'Matches the expected extract size or a documented reason for the difference.' },
+    { text: 'Column types audited', detail: 'Each column matches its true level of measurement, not just its stored type.' },
+    { text: 'Missingness mapped by column', detail: 'Percent missing per variable, plus a working MCAR/MAR/MNAR hypothesis.' },
+    { text: 'Duplicate rows checked', detail: 'Exact duplicates counted; logical duplicates spot-checked on a sample.' },
+    { text: 'Range and constraint rules run', detail: 'Impossible values caught by explicit rule, not eyeballing.' },
+    { text: 'Placeholder codes searched for', detail: 'Round numbers and string sentinels like "9999" or "N/A" recoded as true missing.' },
+  ]}
+/>
+
+## Univariate profiling: what shape tells you
+
+Once the data is reasonably clean, look at each variable in isolation. For a numeric variable, that means the five-number summary (minimum, first quartile, median, third quartile, maximum), the mean, the standard deviation, and — critically — a histogram or density plot, because summary statistics alone can hide the shape. Four datasets can share the same mean and standard deviation while looking completely different when plotted; this is the core lesson of Francis Anscombe's 1973 quartet, and it applies just as much to a single variable's distribution as to a bivariate relationship.
+
+Shape tells you what statistics are appropriate. A roughly symmetric, bell-shaped distribution supports using the mean and standard deviation as summaries, and the <Link to={routes.article('empirical-rule')}>empirical rule</Link> gives a quick sanity check — for a genuinely normal variable, about 68% of values sit within one standard deviation of the mean, about 95% within two, and about 99.7% within three. A distribution that visibly departs from that pattern is a signal to reach for the median and interquartile range instead of the mean and standard deviation, because those are far less sensitive to a long tail.
+
+A right-skewed distribution — a long tail toward high values, common in income, wait times, and transaction amounts — pulls the mean above the median. A left-skewed distribution does the reverse. Recognizing <Link to={routes.article('skewed-distribution')}>skewed distributions</Link> matters because reporting "the average customer spends $340" on a right-skewed spend distribution is misleading if a small number of large accounts are dragging that number up; the median might be a much more representative $180. <Link to={routes.article('mean-vs-average')}>Mean vs. average</Link> covers a related confusion worth resolving early, since stakeholders often use "average" loosely to mean whichever central-tendency statistic is on the slide.
+
+For categorical variables, univariate profiling means a frequency table (and its visual counterpart, a bar chart): how many levels does the category have, is one level dominant, are there rare levels that will cause trouble in downstream models (a category with three observations out of 50,000 rows will make any group-by statistic on it unstable). Check for inconsistent labeling too — `"NY"`, `"New York"`, and `"ny"` are the same level to a human and three different levels to a `groupby`.
+
+High-cardinality categoricals — a `product_id` with 40,000 distinct values, a free-text `job_title` field — need a different treatment than a five-level category. Profiling every level individually isn't useful; instead, look at the concentration of the distribution (what share of rows fall under the top 10 or top 20 levels), and decide early whether rare levels should be grouped into an explicit "other" bucket for reporting and modeling, or kept granular because the analysis specifically depends on that detail. Left undecided, high-cardinality fields tend to quietly break downstream group-by operations and inflate the dimensionality of any model that one-hot encodes them.
+
+<Callout variant="note" title="Interpretation note">
+Multimodality — two or more peaks in a histogram — often means you are looking at a mixture of subpopulations that shouldn't be summarized together. A bimodal "time on page" distribution might really be two different user types blended into one column. Splitting by the variable that separates the modes (if you can identify it) is usually more informative than forcing a single summary statistic onto both groups at once.
+</Callout>
+
+Report the <Link to={routes.article('mean-median-mode-range')}>mean, median, mode, and range</Link> for every numeric variable, and pair every number with the shape that produced it. A <Link to={routes.article('percentiles')}>percentile</Link> view — the 5th, 25th, 50th, 75th, and 95th percentiles — is often more useful than the mean and standard deviation alone for skewed operational data, because it directly shows what a "typical" and "extreme" value look like without assuming any particular distribution shape.
+
+## Outlier assessment: keep, transform, or exclude
+
+An outlier is a value that is unusually far from the rest of the data for that variable, and finding candidates is a solved mechanical problem: the interquartile range (IQR) rule flags any point below Q1 − 1.5×IQR or above Q3 + 1.5×IQR, and the z-score method flags any point more than roughly 2 to 3 standard deviations from the mean. The full method with worked examples is in <Link to={routes.article('how-to-find-outliers')}>how to find outliers</Link>, and the IQR mechanics specifically are in <Link to={routes.article('interquartile-range')}>interquartile range</Link>. Neither method tells you what to *do* with a flagged point — that's a separate, harder judgement call, and it's the part of EDA that most determines whether your later modeling is defensible.
+
+Both of those methods check one variable at a time, which misses a real category of outlier: a point that is unremarkable on every single variable but unusual in how those variables combine. A 6-foot-tall adult and a 90-pound adult are each ordinary on their own; a 6-foot-tall adult weighing 90 pounds is not, and neither univariate rule alone would flag either measurement. Multivariate outlier detection — for example, Mahalanobis distance, which measures how far a point sits from the center of the data after accounting for the correlation structure between variables — exists precisely for this case. You don't need to run it on every dataset, but it's worth reaching for whenever the variables you're profiling are known to move together and a univariate sweep alone feels too permissive.
+
+There are three legitimate responses to a genuine outlier, and the choice should be driven by *why* the value is extreme, not by whether it's inconvenient for your model.
+
+**Keep it.** If the value is a real, correctly measured observation and the analysis question concerns the full population including its tails (fraud detection, extreme-event risk, capacity planning), removing it discards the signal you're trying to study. A single $50,000 transaction in a fraud dataset is not noise to filter out — it may be exactly what you're looking for.
+
+**Transform it.** A log transform compresses a long right tail and often turns a skewed variable into something closer to symmetric, which stabilizes variance for models that assume it (many regression diagnostics, for instance). This is appropriate when the extremity is a property of the natural scale of the variable — income, city population, viral post reach — rather than a measurement problem. Winsorizing (capping extreme values at a percentile, such as the 1st and 99th) is a milder alternative that keeps every row but limits the influence of the most extreme ones.
+
+**Exclude it.** Reserve exclusion for values you can show are not valid measurements of the thing you intend to study: a sensor malfunction, a test transaction that leaked into production data, a known one-off event explicitly outside the analysis scope (a stated year excluding a declared emergency period, for example). Exclusion should always come with a written reason and a record of how many rows were dropped — "removed 12 rows (0.03%) where `transaction_type = 'test'`" is defensible; silently dropping "anything that looked weird" is not.
+
+<Callout variant="quote" source="NIST/SEMATECH e-Handbook of Statistical Methods" sourceHref="https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm">
+An outlier is an observation that lies an abnormal distance from other values in a random sample; deciding what to do about a genuine outlier is fundamentally a modeling and subject-matter question, not a purely statistical one.
+</Callout>
+
+Whichever path you choose, the same rule applies as with missing data: write it down. State the detection method, the count of affected rows, the decision, and the reasoning, before you build anything on top of the cleaned data. A reviewer — or your future self — should be able to reconstruct exactly what changed and why without re-deriving it from scratch.
+
+<DataTable
+  caption="Outlier response by likely cause"
+  headers={['Likely cause', 'Recommended response', 'Why']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Genuine extreme value, in scope', 'Keep', 'Removing it discards real signal the analysis needs.'],
+    ['Naturally skewed scale (income, reach)', 'Transform (log or Winsorize)', 'Stabilizes variance without discarding rows.'],
+    ['Data entry or unit error, correctable', 'Correct the value', 'Fixes the record rather than losing the observation.'],
+    ['Sensor fault or known test record', 'Exclude, with a documented count', 'Not a valid measurement of the variable of interest.'],
+  ]}
+/>
+
+## Bivariate exploration and its traps
+
+Once each variable is understood on its own, look at pairs. For two numeric variables, a scatter plot plus a <Link to={routes.article('correlation-coefficient')}>correlation coefficient</Link> is the starting point — but the correlation coefficient (Pearson's r) only measures *linear* association. A scatter plot showing a clear curve, a threshold effect, or two separate clusters can have a correlation near zero while an obviously real relationship sits right there visually. Always plot before you trust the number; this is the same lesson Anscombe's quartet teaches for bivariate data that Anscombe's data teaches for univariate shape.
+
+For a categorical variable against a numeric one, group the numeric variable by category and compare distributions — side-by-side box plots or overlaid histograms — rather than only comparing group means, since two groups can have identical means and very different spreads or shapes. For two categorical variables, a cross-tabulation (contingency table) with row or column percentages shows whether the categories are associated; a chi-square test of independence formalizes that comparison if you need a p-value to report.
+
+<Figure number={2} caption="The order EDA moves through, from first contact to the modeling handoff.">
+  <ProcessFlow
+    title="EDA workflow"
+    desc="A five-step horizontal pipeline moves from first-contact checks through data quality, univariate profiling, bivariate exploration, to the decision of whether EDA is finished."
+    steps={[
+      { label: 'First contact', detail: 'Shape, types, provenance, and what a row represents.' },
+      { label: 'Data quality', detail: 'Missingness mechanism, duplicates, impossible values.' },
+      { label: 'Univariate profiling', detail: 'Distribution shape per variable, central tendency and spread.' },
+      { label: 'Bivariate exploration', detail: 'Relationships between pairs, checked visually and numerically.' },
+      { label: 'Stop or model', detail: 'State the question the data can now defensibly answer.' },
+    ]}
+  />
+</Figure>
+
+Three traps recur constantly in bivariate work. First, **correlation implying causation** — a strong association between two variables never by itself establishes that one causes the other; a third variable can drive both. Second, **Simpson's paradox** — a relationship that holds in each subgroup can reverse when the subgroups are combined, so always check whether an important categorical variable (region, cohort, time period) is hiding inside an aggregate relationship. Third, **restricted range** — computing a correlation on a subset that has already been filtered on one of the two variables (for example, correlating income and spend only among approved loan applicants) will understate or distort the true relationship in the full population, because the filtering itself removes variation.
+
+A fourth trap is specific to any dataset with a time component: two variables that are each trending over time will often show a strong correlation with each other even when neither one directly influences the other, simply because both are moving alongside a shared underlying trend (this is the classic "spurious correlation" pattern). Before reading much into a bivariate relationship in time-stamped data, check whether both variables are drifting in the same direction over the observation window, and consider looking at the relationship within narrower time slices, or in the period-over-period changes rather than the raw levels, to see whether it survives.
+
+<Callout variant="tip" title="Pro tip">
+Before reporting any bivariate relationship, ask whether the sample you're looking at was filtered on a variable connected to either axis of the relationship. If it was, the correlation you compute describes that filtered slice, not the population you probably mean to describe.
+</Callout>
+
+## Knowing when EDA is finished
+
+EDA has no fixed endpoint measured in hours or number of charts produced; it ends when you can state, in one paragraph, the modeling or reporting question, the variables that answer it, the data-quality decisions you made and why, and the caveats a skeptical reviewer would raise. If you can't yet write that paragraph, there's more exploring to do. If you can, further plotting is diminishing returns — move to modeling or the final analysis, and let confirmatory questions be answered on a held-out portion of the data rather than by continuing to mine the same exploratory sample for patterns, which risks confusing an artifact of this particular sample for a real effect.
+
+A practical marker: you're ready to stop when the missingness mechanism has a documented working hypothesis, every numeric variable's shape and outlier treatment is written down, the key bivariate relationships relevant to your question have been checked visually (not just as a single correlation number), and you can name at least one alternative explanation for the pattern you plan to report. That last point — actively looking for the story that would make your finding wrong — is what separates exploratory analysis that holds up under scrutiny from a chart deck built to confirm what you already believed going in.
+
+The habit that makes all of this repeatable is keeping a decisions log alongside the analysis itself, not just in your head. For every non-obvious call — how you classified a missingness mechanism, why a set of rows got excluded, which transform you applied and to what column — write one line: what you did, why, and how many rows it touched. This costs a few minutes per decision and pays for itself the first time someone asks "why does this number not match the raw export," six months from now, and you can answer in thirty seconds instead of re-running the whole exploration from scratch. A defensible analysis is one where every choice has a paper trail, not one where every choice happened to be correct.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Exploratory Data Analysis', href: 'https://www.itl.nist.gov/div898/handbook/eda/eda.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook — Detection of Outliers', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'John W. Tukey, Exploratory Data Analysis (Addison-Wesley, 1977)', href: 'https://www.google.com/books/edition/Exploratory_Data_Analysis/UT9dAAAAIAAJ', org: 'Addison-Wesley' },
+  { text: 'Roderick J. A. Little and Donald B. Rubin, Statistical Analysis with Missing Data', href: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781119482260', org: 'Wiley' },
+  { text: 'Francis J. Anscombe, "Graphs in Statistical Analysis," The American Statistician, 1973', href: 'https://www.jstor.org/stable/2682899', org: 'JSTOR / American Statistical Association' },
+  { text: 'pandas documentation — Working with missing data', href: 'https://pandas.pydata.org/docs/user_guide/missing_data.html', org: 'pandas' },
+  { text: 'van Buuren — Flexible Imputation of Missing Data (2nd ed.)', href: 'https://stefvanbuuren.name/fimd/', org: 'Stef van Buuren' },
+  { text: 'National Center for Education Statistics — Statistical Standards on Outliers', href: 'https://nces.ed.gov/statprog/', org: 'NCES' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between EDA and data cleaning?',
+    answer: 'Data cleaning fixes specific problems — duplicates, impossible values, type errors. EDA is the broader process that includes cleaning but also covers profiling distributions, checking relationships between variables, and forming a defensible read on what the data supports before modeling.',
+  },
+  {
+    question: 'Should I always remove outliers before modeling?',
+    answer: 'No. Whether to keep, transform, or exclude an outlier depends on its cause and your analysis question. A genuine extreme value relevant to the question you are answering should usually stay; only clearly invalid measurements should be excluded, and always with a documented reason.',
+  },
+  {
+    question: 'How do I know if missing data is MCAR, MAR, or MNAR?',
+    answer: 'You cannot prove the mechanism from the data alone. Cross-tabulate missingness against other observed variables to check for MAR patterns, consult whoever collected the data about known causes, and document your working assumption along with what you checked to support it.',
+  },
+  {
+    question: 'How long should EDA take?',
+    answer: 'There is no fixed duration. EDA is finished when you can state your modeling question, the variables that answer it, your data-quality decisions and their reasoning, and at least one caveat a reviewer would raise — not after a fixed number of hours or charts.',
+  },
+  {
+    question: 'Is a correlation coefficient enough to summarize a relationship between two variables?',
+    answer: 'No. Pearson correlation only captures linear association and can miss curves, thresholds, or clustered subgroups entirely. Always pair it with a scatter plot, and check whether a categorical variable hidden in the data could be driving a Simpson’s-paradox-style reversal.',
+  },
+]} />

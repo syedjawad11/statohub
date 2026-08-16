@@ -1,0 +1,245 @@
+---
+title: "How to Design an A/B Test That Answers Your Question"
+description: "Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample."
+category: experiments-causality
+primaryKeyword: how to design an a/b test
+keywords:
+  - how to design an a/b test
+  - a/b test design
+  - minimum detectable effect
+  - a/b test sample size
+  - guardrail metrics
+  - randomization unit
+  - sample ratio mismatch
+  - peeking problem a/b testing
+  - novelty effect
+  - a/b test duration
+phase: 1
+related:
+  - statistical-power
+  - effect-size
+  - null-hypothesis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Scorecard from '../../components/applied/infographics/Scorecard.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Designing an A/B test means deciding, before a single visitor is randomized, what question you're asking, what metric answers it, how big an effect is worth detecting, and how many people you need to see it clearly. Most failed experiments don't fail in the analysis — they fail here, at the design stage, when the team skips straight to "let's just run it and see." This guide walks through the design decisions in the order you should actually make them, with a worked numeric example at each step.
+
+<KeyTakeaways rows={[
+  { point: 'Design comes before launch', details: 'Hypothesis, metric, minimum detectable effect, and sample size are locked before the first visitor is randomized — not decided while watching the dashboard.' },
+  { point: 'The MDE drives everything', details: 'The smallest effect you care about detecting sets the required sample size; picking it after the fact is how underpowered tests happen.' },
+  { point: 'Guardrails prevent a false win', details: 'A primary metric can improve while a guardrail metric quietly breaks something else — check both before calling a result a win.' },
+  { point: 'Validity threats are structural', details: 'Peeking, sample ratio mismatch, novelty effects, and network interference invalidate a test even when the math is done correctly.' },
+]} />
+
+## From a vague business question to a testable hypothesis
+
+"Will the new checkout flow perform better?" is not a hypothesis — it's a hope. A testable hypothesis names the change, the metric it should move, the direction of the expected move, and a mechanism that explains why. A workable template: "Replacing the two-step checkout with a single-page checkout will increase checkout completion rate among mobile users, because it removes a page-load delay that causes drop-off."
+
+That sentence does four jobs at once. It fixes the **population** (mobile users, not everyone), the **intervention** (single-page checkout), the **primary metric** (completion rate), and the **mechanism** (removing a delay that causes drop-off). Each piece matters because it constrains decisions you'll otherwise make on the fly, under pressure, after the data starts arriving — exactly when you're most likely to make them badly.
+
+This is also where the statistical framing enters. A designed experiment tests a <Link to={routes.article('null-hypothesis')}>null hypothesis</Link> — typically "the new flow makes no difference to completion rate" — against an alternative that it does. Everything downstream (the test statistic, the p-value, the power calculation) is built to answer one question: how surprising would this data be if the null hypothesis were actually true? If your hypothesis is vague, the null hypothesis you're testing against is vague too, and a "significant" result won't tell you much about what to do next.
+
+Write the hypothesis down before you write any code. If you can't state it in one sentence with a named metric and a named population, you're not ready to size the test — you're still exploring, and exploration is a different (and equally valid) activity that shouldn't be dressed up as a confirmatory test.
+
+<Figure number={1} caption="The seven-step sequence for designing an A/B test, from a business question to a pre-registered analysis plan.">
+  <ProcessFlow
+    title="A/B test design pipeline"
+    desc="Seven connected steps move from a business question through hypothesis, metrics, minimum detectable effect, sample size, randomization unit, and a pre-registered analysis plan."
+    steps={[
+      { label: 'Frame the question', detail: 'Turn a vague goal into a one-sentence, falsifiable hypothesis.' },
+      { label: 'Pick the primary metric', detail: 'One metric decides the test; it must be measurable and sensitive.' },
+      { label: 'Set guardrail metrics', detail: 'Define the metrics that must not get worse, with thresholds.' },
+      { label: 'Choose the MDE', detail: 'Decide the smallest effect worth detecting, before seeing data.' },
+      { label: 'Calculate sample size', detail: 'Convert the MDE, baseline rate, alpha, and power into a target n.' },
+      { label: 'Choose the randomization unit', detail: 'Pick the unit that avoids leaking treatment into control.' },
+      { label: 'Pre-register the analysis', detail: 'Write down the test, stopping rule, and decision threshold in advance.' },
+    ]}
+  />
+</Figure>
+
+## Choosing a primary metric and guardrail metrics
+
+Pick exactly one **primary metric**. It's the number the test lives or dies on, and it should be the metric closest to the outcome you actually care about — not a proxy three steps removed from it. Click-through rate is a weak primary metric for a checkout redesign; completion rate is a strong one, because it's the outcome you're trying to change.
+
+Conversion-style metrics (completion rate, sign-up rate, click rate) are <Link to={routes.article('proportions-in-statistics')}>proportions</Link>: the number of successes divided by the number of eligible units. That matters because proportions have a known variance formula (p(1-p)), which is exactly what feeds the sample size calculation later in this guide. Continuous metrics (average order value, session duration, latency) need a different variance estimate — typically the sample standard deviation from historical data — and are usually compared with a <Link to={routes.article('t-test')}>t-test</Link> once the data comes in.
+
+Alongside the primary metric, define two to four **guardrail metrics**: things that must not get meaningfully worse, even if the primary metric improves. A checkout redesign's guardrails might be page load time, error rate, and customer support contact rate. Guardrails exist because optimizing one number in isolation is easy to do accidentally at the expense of another — a faster checkout that skips a fraud check will look like a win on completion rate and a disaster on chargebacks.
+
+Set a numeric threshold for each guardrail before launch, not after you see the guardrail move. "We will not ship if support contact rate increases by more than 5% relative" is a guardrail rule. "We'll look at support volume and use our judgment" is not — it's a decision deferred to a moment when you'll have every incentive to rationalize a launch you already want to make.
+
+<Callout variant="note" title="Primary metric discipline">
+  Checking many metrics and reporting whichever moved is a form of multiple comparisons, not evidence. Pick the primary metric first; treat every other metric as either a guardrail with a pre-set threshold or a purely descriptive, hypothesis-generating number.
+</Callout>
+
+## The minimum detectable effect: pick it first
+
+The **minimum detectable effect (MDE)** is the smallest true change in your primary metric that you want the test to have a good chance of catching. It is, in a very real sense, the whole game: every other design decision — sample size, duration, and often the randomization unit — is downstream of this one number, and it's the one number teams most often skip choosing deliberately.
+
+The MDE is not "the effect we expect to see." It's "the smallest effect that would be worth acting on." A 0.1% relative lift in checkout completion might be real, but if it's too small to justify the engineering cost of shipping the change, designing a test sensitive enough to detect it is a waste of traffic and time. A 10% relative lift, on the other hand, would clearly be worth shipping — so that's closer to the number that should drive the sample size calculation.
+
+This connects directly to <Link to={routes.article('statistical-power')}>statistical power</Link> and <Link to={routes.article('effect-size')}>effect size</Link>. Power is the probability of detecting a true effect of a given size if it exists; the MDE is the effect size you're demanding that power apply to. Ask for power against a tiny MDE and the required sample size explodes, because you're asking the test to distinguish an effect from noise when the effect is barely bigger than the noise itself. Ask for power against a large MDE and the test becomes cheap to run — but it will happily report "no significant difference" for real, smaller effects that simply weren't big enough to trigger it. Choosing the MDE is choosing what kind of effect your test is even capable of seeing.
+
+A practical way to set it: start from the smallest lift that would change a business decision (ship or don't ship, given engineering cost), not from what past experiments have typically achieved. If that number makes the sample size impossibly large for your traffic, that's real information — it means the test, as scoped, can't answer the question you're asking, and you need either more traffic, a longer runtime, a less noisy metric, or a bigger swing at the intervention.
+
+## Sample size and test duration
+
+Once you've fixed a primary metric, a baseline rate, an MDE, a significance level (α, conventionally 0.05 two-sided), and a target power (conventionally 80%), sample size follows from a standard formula. For a two-proportion comparison with equal group sizes, the widely used approximation is:
+
+```
+n (per arm) = 2 × (z(α/2) + z(β))² × p̄(1 − p̄) / δ²
+```
+
+where `p̄` is the pooled proportion `(p1 + p2) / 2`, `δ = p1 − p2` is the absolute MDE, `z(α/2)` is the critical z-value for your significance level (1.96 for α = 0.05 two-sided), and `z(β)` is the critical z-value for your power (0.84 for 80% power). This is the same logic behind the NIST/SEMATECH e-Handbook's treatment of sample size for hypothesis tests, applied to the proportion case.
+
+Work an example. Suppose your checkout page converts at a 5% baseline rate (p1 = 0.05), and you decide a 10% relative lift is the smallest change worth shipping — so p2 = 0.055 and the absolute MDE δ = 0.005. With p̄ = 0.0525:
+
+```
+n = 2 × (1.96 + 0.84)² × 0.0525 × 0.9475 / 0.005²
+n = 2 × 7.84 × 0.04974 / 0.000025
+n ≈ 31,200 per arm  (≈ 62,400 total)
+```
+
+Notice how much that number moves if you tighten the MDE. Halving the relative MDE to 5% roughly quadruples the required sample, because the formula divides by δ². That's the practical bite of "pick the MDE first" — small, careful-sounding MDEs are frequently not affordable given real traffic.
+
+<DataTable
+  caption="Required sample size against a 5% baseline conversion rate, at α = 0.05 (two-sided) and 80% power"
+  headers={['Relative MDE', 'Absolute lift', 'n per arm', 'Total sample', 'Days at 5,000 users/day']}
+  rows={[
+    ['20%', '0.010 (5.0% → 6.0%)', '≈ 8,150', '≈ 16,300', '4'],
+    ['10%', '0.005 (5.0% → 5.5%)', '≈ 31,200', '≈ 62,400', '13'],
+    ['5%', '0.0025 (5.0% → 5.125%)', '≈ 122,000', '≈ 244,000', '49'],
+    ['2%', '0.001 (5.0% → 5.05%)', '≈ 751,900', '≈ 1,503,800', '301'],
+  ]}
+  align={['left', 'left', 'right', 'right', 'right']}
+/>
+
+The rightmost column assumes 5,000 eligible visitors per day split evenly between control and treatment (2,500 per arm per day) — divide the required n per arm by the daily per-arm traffic to get calendar days. Two adjustments matter in practice. First, round the runtime up to full weeks even when the raw number is shorter: a 4-day test misses a full weekend and a full weekday cycle, and traffic composition genuinely differs by day of week. Second, treat the calculated n as a floor, not a target to stop at exactly — analyzing the data before the pre-set sample size is reached is its own validity threat, covered below.
+
+## Choosing the randomization unit
+
+The **randomization unit** is whatever gets assigned to control or treatment as a single, indivisible entity — usually a user, a session, or a device, sometimes a larger cluster like a store or a sales region. Get this wrong and the statistical machinery runs fine while answering a question you didn't mean to ask.
+
+The core requirement is the **stable unit treatment value assumption (SUTVA)**: one unit's assignment shouldn't affect another unit's outcome. Randomizing by session when the same person can return in multiple sessions and see both variants breaks this — their behavior in the treatment session can be shaped by having seen the control experience earlier (or vice versa), contaminating the comparison. For most consumer product experiments, randomizing by a persistent user or account ID, rather than by session or by page view, keeps the unit stable across a user's full journey.
+
+The randomization unit also has to match the level at which the primary metric is measured. If completion rate is measured per checkout attempt but you randomize per user, a single user with three attempts contributes three correlated data points to one arm — which understates the true variance in a naive analysis and can make a null result look significant. The fix is either randomizing at the level the metric is measured, or explicitly modeling the clustering (for example, computing the <Link to={routes.article('confidence-interval')}>confidence interval</Link> and <Link to={routes.article('t-test')}>t-test</Link> on a per-user aggregate rather than per-attempt).
+
+Larger-scale interventions — a new pricing policy per store, a marketing campaign per region — often force cluster-level randomization because the treatment physically can't be applied to individual users within a cluster. Cluster randomization needs many more clusters than the equivalent user-level test needs users, because the effective sample size is closer to the number of clusters than the number of people inside them; a five-store pilot with a thousand customers each is a five-observation experiment for sample size purposes, not a five-thousand-observation one.
+
+## Validity threats that quietly invalidate a test
+
+A test can be perfectly powered and still produce a misleading answer if one of these five problems goes unmanaged. Each one is a design decision, not a fix applied after the fact — they need to be decided before launch, alongside the hypothesis and the sample size.
+
+### Peeking and optional stopping
+
+Checking a test's p-value repeatedly and stopping the moment it crosses 0.05 inflates the false positive rate far above the nominal 5%, because you're implicitly running many tests (one per peek) and taking the best result across all of them. This is sometimes called optional stopping, and simulations regularly show that repeated peeking can push the true false-positive rate to well above 20–30% even when the intended α was 5%.
+
+The fix is deciding the stopping rule in advance: either commit to a fixed sample size and don't analyze the primary metric for a decision until it's reached, or use a sequential testing method (such as an always-valid confidence sequence) explicitly designed to control the error rate under continuous monitoring. Watching a dashboard for curiosity is fine; making a ship/no-ship call from an early peek is not.
+
+### Sample ratio mismatch
+
+A **sample ratio mismatch (SRM)** is when the observed split between arms deviates from the intended split — say, 48%/52% instead of a planned 50%/50% — by more than chance would explain. SRM is diagnosed with a simple chi-square goodness-of-fit test comparing observed counts against the expected ratio, and because online experiments often run on very large samples, many practitioners flag SRM only at a stricter threshold than the usual 0.05 (commonly around p < 0.0001), since an ordinary 0.05 threshold triggers false alarms constantly at scale.
+
+SRM matters because it's a symptom, not a cause — it usually means the randomization, the logging, or the eligibility filter is broken in a way correlated with the outcome (a slow-loading variant that causes a subset of assignment events to fail to log, for instance). A test with SRM should be treated as untrustworthy and re-launched after the underlying bug is found, not analyzed and reported anyway.
+
+### Novelty and primacy effects
+
+A new feature can perform differently for the first days or weeks it's live simply because it's new — some users try it out of curiosity and the effect fades (a novelty effect), while others resist a changed experience at first and warm up over time (a primacy effect, sometimes called a change-aversion effect). Either pattern means the effect measured in week one is not the effect you'll see in month three.
+
+The practical guard is running a test long enough to see the effect stabilize, and where feasible checking whether the treatment effect trends over the test's runtime rather than reading only the pooled average. This is a specific reason not to stop a test the moment a fixed sample size is reached if the underlying feature is genuinely novel — duration calculated from statistical power alone doesn't account for behavioral adaptation.
+
+### Network interference
+
+Interference happens when one unit's treatment affects another unit's outcome, breaking SUTVA at the population level rather than the individual level. A marketplace experiment that reduces one seller's prices can pull demand away from sellers in the control group; a social-feed experiment that changes what treated users post can change what their control-group friends see. In both cases, the treatment "leaks" across the randomization boundary, and a standard analysis will typically understate the true effect because the control group is contaminated by exposure to the treatment's consequences.
+
+The design-time fix is choosing a randomization unit that better contains the interference — clustering by market, geography, or social neighborhood instead of by individual user — even though, as noted above, that raises the effective sample size requirement substantially.
+
+### Multiple comparisons
+
+Testing many metrics, many segments, or many variants against one baseline inflates the chance that at least one comparison looks significant by chance alone, even when nothing real is happening anywhere. Five independent metrics each tested at α = 0.05 have roughly a 23% chance that at least one shows a false positive, purely from the multiplicity.
+
+Guard against this at design time by pre-declaring the primary metric (only one comparison decides the launch) and by applying a correction — a Bonferroni adjustment or a false discovery rate procedure — to any secondary or segment-level comparisons you do intend to report as confirmatory rather than exploratory. The same logic underlies the <Link to={routes.article('post-hoc-tests')}>post-hoc tests</Link> used after an ANOVA: once you've run more than one comparison, the per-comparison error rate is no longer the experiment-wise error rate, and the correction exists to put those back in line.
+
+## Reading the result honestly
+
+When the pre-set sample size is reached, compute the <Link to={routes.article('test-statistic')}>test statistic</Link>, the <Link to={routes.article('p-value')}>p-value</Link>, and a <Link to={routes.article('confidence-interval')}>confidence interval</Link> for the effect — report all three, not the p-value alone. The confidence interval tells you the range of effect sizes consistent with the data, which is what a "significant but tiny" result often obscures: a p-value of 0.001 with a 95% CI of [0.05%, 0.3%] is statistically real and may still be too small to justify shipping.
+
+Two errors are common at this stage. The first is reading a low p-value as proof the effect is large or important — it isn't; the p-value speaks only to how compatible the null hypothesis is with the observed data, not to the size of the effect or its practical relevance. Distinguish <Link to={routes.article('effect-size')}>effect size</Link> from significance explicitly before recommending an action.
+
+The second error is treating a non-significant result as proof of no effect. A non-significant p-value means the data didn't provide strong enough evidence to reject the null hypothesis at your chosen α — it does not mean the null hypothesis is true. If the confidence interval for the effect is wide and includes both meaningfully positive and meaningfully negative values, the honest conclusion is "this test was inconclusive at this sample size," not "the change does nothing." That distinction matters for deciding what to do next: run a longer test, accept the ambiguity, or conclude the effect (if any) is too small to matter operationally, which is a different claim from "there is no effect."
+
+Reading the result also means checking the guardrails and the sample ratio before trusting the primary metric at all — a genuinely improved primary metric sitting on top of an SRM or a broken guardrail is not a launch decision, it's a debugging task.
+
+<Figure number={2} caption="An illustrative post-test scorecard: a primary metric that passed, one guardrail in warning territory, one guardrail failure, and a clean sample ratio mismatch check.">
+  <Scorecard
+    title="Illustrative post-test scorecard"
+    desc="Four metrics from a hypothetical checkout experiment: a primary conversion lift that passed its threshold, a page load time increase in warning territory, a failed unsubscribe rate guardrail, and a passing sample ratio mismatch check."
+    metrics={[
+      { label: 'Primary: conversion lift', value: 2.1, max: 5, threshold: 1, status: 'pass', unit: '%' },
+      { label: 'Guardrail: page load time', value: 180, max: 250, threshold: 150, status: 'warn', unit: 'ms' },
+      { label: 'Guardrail: unsubscribe rate', value: 0.9, max: 1, threshold: 0.5, status: 'fail', unit: '%' },
+      { label: 'SRM check (chi-square)', value: 0.42, max: 1, threshold: 0.0001, status: 'pass' },
+    ]}
+  />
+</Figure>
+
+<Callout variant="tip" title="Ship decisions are compound decisions">
+  A ship call is never "was the primary metric significant." It's "was the primary metric significant and practically meaningful, did every guardrail clear its threshold, and did the sample ratio and data quality checks come back clean." Any one failure overrides a passing primary metric.
+</Callout>
+
+## A pre-launch design checklist
+
+Run through this before traffic is allocated. Everything on it should be answerable without looking at any data from the test itself — if an item can only be answered after launch, it isn't a design decision, it's a decision you're deferring to the moment you're least equipped to make it well.
+
+<Checklist
+  id="ab-test-design-checklist"
+  title="Pre-launch A/B test design checklist"
+  style="check"
+  items={[
+    { text: 'Hypothesis is one sentence', detail: 'Names the intervention, the population, the primary metric, and the mechanism.' },
+    { text: 'Primary metric is locked', detail: 'One metric decides the outcome; it is a proportion or a continuous measure with a known variance estimate.' },
+    { text: 'Guardrail metrics have thresholds', detail: 'Two to four metrics that must not worsen, each with a pre-set numeric limit.' },
+    { text: 'The MDE is chosen, not discovered', detail: 'Set from the smallest effect worth shipping, before any sample size math.' },
+    { text: 'Sample size and duration are calculated', detail: 'From the baseline rate, MDE, alpha, power, and real daily eligible traffic.' },
+    { text: 'The randomization unit is confirmed', detail: 'Matches the metric\'s measurement level and contains likely interference.' },
+    { text: 'The stopping rule is written down', detail: 'Fixed-horizon or a named sequential method — decided before, not during, the run.' },
+    { text: 'The sample ratio check is scripted', detail: 'A chi-square goodness-of-fit check runs automatically once data starts arriving.' },
+    { text: 'Secondary comparisons are flagged', detail: 'Any segment or metric beyond the primary is exploratory, or is corrected for multiplicity.' },
+    { text: 'The analysis plan is pre-registered', detail: 'Written and shared with stakeholders before launch, including exactly what result triggers a ship.' },
+  ]}
+/>
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/', org: 'National Institute of Standards and Technology' },
+  { text: 'e-Handbook: Sample Sizes Required to Detect a Difference Between Two Proportions', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm', org: 'NIST/SEMATECH' },
+  { text: 'e-Handbook: Multiple Comparison Procedures', href: 'https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm', org: 'NIST/SEMATECH' },
+  { text: 'Kohavi, Tang & Xu — Trustworthy Online Controlled Experiments', href: 'https://www.cambridge.org/core/books/trustworthy-online-controlled-experiments/D97B26382EB0EB2DC2019A7A710C845A', org: 'Cambridge University Press' },
+  { text: 'Kohavi et al. — Seven Rules of Thumb for Web-Site Experimenters', href: 'https://exp-platform.com/Documents/2014%20experimentersRulesOfThumb.pdf', org: 'exp-platform.com' },
+  { text: 'Johari, Pekelis & Walsh — Always Valid Inference: Bringing Sequential Analysis to A/B Testing', href: 'https://arxiv.org/abs/1512.04922', org: 'arXiv' },
+  { text: 'Fabijan et al. — Diagnosing Sample Ratio Mismatch in Online Controlled Experiments', href: 'https://dl.acm.org/doi/10.1145/3292500.3330722', org: 'ACM KDD 2019' },
+  { text: 'Eckles, Karrer & Ugander — Design and Analysis of Experiments in Networks: Reducing Bias from Interference', href: 'https://arxiv.org/abs/1404.7530', org: 'arXiv' },
+  { text: 'Evan Miller — How Not To Run An A/B Test', href: 'https://www.evanmiller.org/how-not-to-run-an-ab-test.html', org: 'evanmiller.org' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  { question: 'How long should an A/B test run?', answer: 'As long as it takes to reach the pre-calculated sample size given your real daily traffic, rounded up to whole weeks so the test covers a full weekly cycle. Stopping earlier because the result looks significant is optional stopping, and it inflates the false positive rate.' },
+  { question: 'What sample size do I need for an A/B test?', answer: 'It depends on your baseline rate, your minimum detectable effect, your significance level, and your target power. For a two-proportion test, sample size is roughly proportional to 1 divided by the squared absolute MDE — halving the MDE roughly quadruples the required sample.' },
+  { question: 'Is it okay to stop an A/B test early if the result looks significant?', answer: 'Not under a standard fixed-horizon analysis. Checking the p-value repeatedly and stopping at the first significant peek inflates the true false-positive rate well above the nominal 5%. Either commit to the pre-calculated sample size or use a sequential method built for continuous monitoring.' },
+  { question: 'What is a good minimum detectable effect?', answer: 'The smallest effect that would change your decision to ship, not the effect you expect or hope to see. Setting it too small demands an impractically large sample; setting it too large makes the test blind to real, smaller effects that would still be worth shipping.' },
+  { question: 'What does a non-significant A/B test result mean?', answer: 'It means the data did not provide strong enough evidence to reject the null hypothesis at your chosen significance level. It does not prove the treatment has no effect — check the confidence interval width before concluding the effect is genuinely negligible.' },
+]} />
