@@ -6,25 +6,60 @@
 
 **Last updated:** 2026-08-16.
 
-## Active: Applied Statistics restructure -- planned and approved, Stage 0 pending
+## Active: Applied Statistics restructure -- scaffolding COMPLETE, content next
 
 The site is being restructured from one section into three: **Learn**,
 **Calculators**, and a new **Applied Statistics** section (4 new category hubs
 at flat root URLs, `/applied/` landing, 8 first articles), plus a homepage
-rebuild to a supplied mock. Full approved plan, including the 9 Codex handoff
-tasks (TASK-025...033) and the two ADRs it requires (0014 applied URL family,
-0015 wedge scoped to Learn), lives in the session's plan file; promote to ADRs
-before building. Source material: `docs/ideas/statohub-applied-content-style-plan.md`
-(the 2026-08-09 applied-format spec, never implemented -- its `/blog/` URL
-decision is **superseded** by flat root URLs) and
+rebuild to a supplied mock. ADRs 0014 (applied URL family) and 0015 (wedge
+scoped to Learn) are written and committed. Source material:
+`docs/ideas/statohub-applied-content-style-plan.md` (the 2026-08-09
+applied-format spec -- its `/blog/` URL and directory naming are **superseded**;
+`src/components/applied/` is the real path) and
 `docs/ideas/homepage-redesign-mock-2026-08-16.png`.
 
-**Stage 0 is a blocker and needs the user:** Codex is to be driven through
-`codex mcp-server` rather than hand-relayed. Requires
-`claude mcp add codex -s user -- cmd /c codex mcp-server`, a generous
-`MCP_TOOL_TIMEOUT`, and a **Claude Code restart** before the `mcp__codex__*`
-tools exist. Verified available: codex-cli 0.147.0, logged in, statohub already
-`trust_level = "trusted"`. Nothing built yet.
+**Stage 0 DONE.** Codex runs through `codex mcp-server` as native tool calls;
+no more manual relay.
+
+**Done and committed (local, NOT pushed -- see below):**
+- **TASK-025** applied-section schema field, 4 status tokens x 2 themes,
+  `faqPageSchema()`.
+- **Four applied hubs** + **TASK-026** `/learn/` + `/applied/` landings, two new
+  route kinds, section-aware breadcrumbs, `RESERVED_SLUGS` guard.
+- **TASK-027** 3-item section nav (Learn / Applied / Calculators) + 4-column
+  footer whose Learn/Applied lists derive from the `categories` collection.
+  This is what gave the applied hubs sitewide inbound links.
+- **TASK-028A/B** all 8 module components in `src/components/applied/`
+  (`KeyTakeaways`, `Callout`, `Checklist`, `DataTable`, `Sources`, `FAQ`,
+  `Figure`, `TableOfContents`) + the noindex `/dev/preview/` page.
+- **TASK-029A/B** all 6 SVG infographics + the shared `_SvgFrame` accessibility
+  wrapper. Contrast guard extended 13 -> 21 checks.
+
+**Current baseline:** 116 pages, 4296 internal links, 0 link violations,
+0 meta-description violations, 35 test files / 121 tests, `astro check` 36 files
+/ 0 errors, 21/21 contrast checks.
+
+**Next: TASK-030+ (applied article layout) and the 8 first applied articles.**
+The component system is complete and unused -- nothing renders these modules on
+a public page yet.
+
+### Blocker: 10 local commits are unpushed, deliberately
+
+Pushing to `main` triggers the Actions deploy (ADR-0006), which would put 4
+article-less hubs and 2 landings live. They render a proper "guides are being
+added" empty state (combinatorics has shipped that way for months), so nothing
+is broken -- but they would be indexable thin pages until the applied articles
+exist. **Decision pending with the user:** push now, or hold until content
+lands.
+
+### Operational finding: the 900s MCP timeout is real
+
+2 of 5 dispatches this session (TASK-028A, TASK-029B) hit the ceiling. In both
+cases **the implementation was complete** -- the timeout truncated the reply and
+sometimes the final bookkeeping, never the code. The correct response to a
+timeout is to diff the tree and re-run the gates, **never to re-dispatch**.
+Keep tasks at roughly 4-6 files; that is why TASK-028 and TASK-029 were each
+split in two before dispatch.
 
 ## Content pipeline: QUEUE EXHAUSTED -- routine idle since 2026-08-14
 
@@ -50,8 +85,10 @@ without `--flagged`.
 
 ## Baseline verified 2026-08-16
 
-`npm run build` green on the current `origin/main`: 109 pages, 4,066 internal
-links checked, **0 link violations**, **0 meta-description violations**.
+`npm run build` green on `origin/main` at session start: 109 pages, 4,066
+internal links, **0 link violations**, **0 meta-description violations**. The
+local tree is now at 116 pages / 4,296 links, still 0 violations -- see the
+Active section for the full gate set.
 
 ## Recently closed
 
