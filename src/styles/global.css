@@ -78,10 +78,15 @@
     scroll-behavior: smooth;
     background: var(--paper);
     color: var(--ink);
+    /* Full-bleed sections use 100vw, which includes the vertical scrollbar and
+       would otherwise overhang the viewport. `clip` trims that without creating
+       a scroll container, so sticky rails keep working. */
+    overflow-x: clip;
   }
 
   body {
     min-height: 100vh;
+    overflow-x: clip;
     margin: 0;
     background: var(--paper);
     color: var(--ink);
@@ -1719,30 +1724,6 @@
     height: max-content;
   }
 
-  .toc-label {
-    margin-bottom: 14px;
-    color: var(--ink-3);
-    font-family: var(--mono);
-    font-size: .66rem;
-    letter-spacing: .13em;
-    text-transform: uppercase;
-  }
-
-  .article-toc a {
-    display: block;
-    border-left: 2px solid var(--line);
-    color: var(--ink-2);
-    font-size: .86rem;
-    padding: 6px 0 6px 12px;
-    transition: border-color .15s, color .15s;
-  }
-
-  .article-toc a:hover,
-  .article-toc a.active {
-    border-color: var(--clay);
-    color: var(--clay);
-  }
-
   .toc-jump {
     width: 100%;
     margin-top: 22px;
@@ -2504,45 +2485,6 @@
     font-family: var(--serif);
     font-size: 16px;
     font-weight: 600;
-  }
-
-  .aside-label {
-    margin: 0 0 14px;
-    color: var(--ink-3);
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-  }
-
-  .toc {
-    position: sticky;
-    top: 84px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .toc li {
-    margin: 0 0 3px;
-  }
-
-  .toc a,
-  .article-toc a {
-    display: block;
-    border-left: 2px solid var(--line);
-    color: var(--ink-2);
-    font-size: 13.5px;
-    padding: 6px 12px;
-    transition: color .2s, border-color .2s;
-  }
-
-  .toc a:hover,
-  .toc a.active,
-  .article-toc a:hover,
-  .article-toc a.active {
-    border-left-color: var(--pine);
-    color: var(--pine);
   }
 
   .aside-tool {

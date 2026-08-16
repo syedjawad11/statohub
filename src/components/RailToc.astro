@@ -1,0 +1,303 @@
+---
+// Compact sidebar table of contents: shows only the section you are currently
+// reading, expands to the full list on click. Keeps the rail short so the space
+// below it stays free.
+interface TocItem {
+  text: string;
+  href: string;
+  depth?: 2 | 3;
+}
+
+interface NormalizedTocItem {
+  text: string;
+  href: string;
+  depth: 2 | 3;
+}
+
+interface TocGroup {
+  parent: NormalizedTocItem;
+  children: NormalizedTocItem[];
+}
+
+interface Props {
+  items: TocItem[];
+  heading?: string;
+}
+
+const { items, heading = 'On this page' } = Astro.props as Props;
+
+if (items.length === 0) {
+  throw new Error('RailToc: "items" must be a non-empty array.');
+}
+
+const groups: TocGroup[] = [];
+
+items.forEach((item) => {
+  const normalized: NormalizedTocItem = { ...item, depth: item.depth ?? 2 };
+  const precedingGroup = groups[groups.length - 1];
+
+  if (normalized.depth === 3 && precedingGroup) {
+    precedingGroup.children.push(normalized);
+    return;
+  }
+
+  groups.push({ parent: normalized, children: [] });
+});
+---
+
+<nav class="rail-toc" aria-label={heading} data-rail-toc>
+  <div class="rail-toc-bar">
+    <p class="rail-toc-label">{heading}</p>
+    <span class="rail-toc-count" data-rail-toc-count aria-hidden="true">1/{items.length}</span>
+  </div>
+
+  <button
+    type="button"
+    class="rail-toc-current"
+    aria-expanded="true"
+    aria-controls="rail-toc-list"
+    data-rail-toc-toggle
+  >
+    <span class="rail-toc-sr">Table of contents. Current section:</span>
+    <span class="rail-toc-current-text" data-rail-toc-current>{items[0].text}</span>
+    <svg class="rail-toc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <ul class="rail-toc-list" id="rail-toc-list">
+    {
+      groups.map((group) => (
+        <li>
+          <a href={group.parent.href}>{group.parent.text}</a>
+          {group.children.length > 0 && (
+            <ul>
+              {group.children.map((child) => (
+                <li><a href={child.href}>{child.text}</a></li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script is:inline>
+  (() => {
+    const nav = document.querySelector('[data-rail-toc]');
+    if (!nav) return;
+
+    const toggle = nav.querySelector('[data-rail-toc-toggle]');
+    const list = nav.querySelector('#rail-toc-list');
+    const currentText = nav.querySelector('[data-rail-toc-current]');
+    const counter = nav.querySelector('[data-rail-toc-count]');
+    const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+    if (!toggle || !list || !currentText || links.length === 0) return;
+
+    // Rendered expanded so the list is still usable without JS; collapse now.
+    const setExpanded = (expanded) => {
+      toggle.setAttribute('aria-expanded', String(expanded));
+      nav.classList.toggle('is-expanded', expanded);
+      if (expanded) list.removeAttribute('hidden');
+      else list.setAttribute('hidden', '');
+    };
+    setExpanded(false);
+
+    toggle.addEventListener('click', () => {
+      setExpanded(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => setExpanded(false));
+    });
+
+    const sections = links
+      .map((link) => {
+        const id = decodeURIComponent(link.getAttribute('href').slice(1));
+        const section = document.getElementById(id);
+        return section ? { link, section } : null;
+      })
+      .filter(Boolean);
+    if (sections.length === 0) return;
+
+    let activeIndex = -1;
+
+    const setActive = (index) => {
+      if (index === activeIndex) return;
+      activeIndex = index;
+      const entry = sections[index];
+      sections.forEach((item, i) => item.link.classList.toggle('active', i === index));
+      currentText.textContent = entry.link.textContent;
+      if (counter) counter.textContent = `${index + 1}/${sections.length}`;
+    };
+
+    const syncActive = () => {
+      // The heading whose top has most recently passed the reading line.
+      const line = window.innerHeight * 0.28;
+      let index = 0;
+      for (let i = 0; i < sections.length; i += 1) {
+        if (sections[i].section.getBoundingClientRect().top <= line) index = i;
+        else break;
+      }
+      setActive(index);
+    };
+
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        syncActive();
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    syncActive();
+  })();
+</script>
+
+<style>
+  .rail-toc {
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--paper-2);
+    padding: 0.9rem 1rem;
+    color: var(--ink);
+  }
+
+  .rail-toc-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .rail-toc-label {
+    margin: 0;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .rail-toc-count {
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rail-toc-current {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.6rem;
+    width: 100%;
+    margin-top: 0.6rem;
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .rail-toc-current:hover {
+    color: var(--pine);
+  }
+
+  .rail-toc-current:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .rail-toc-chevron {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.15rem;
+    color: var(--ink-3);
+    transition: transform 160ms ease;
+  }
+
+  .rail-toc.is-expanded .rail-toc-chevron {
+    transform: rotate(180deg);
+  }
+
+  .rail-toc-sr {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rail-toc-list,
+  .rail-toc-list ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rail-toc-list {
+    margin-top: 0.85rem;
+    border-top: 1px solid var(--line-2);
+    padding-top: 0.85rem;
+  }
+
+  .rail-toc-list[hidden] {
+    display: none;
+  }
+
+  .rail-toc-list ul {
+    margin-top: 0.5rem;
+    padding-left: 0.85rem;
+    border-left: 1px solid var(--line-2);
+  }
+
+  .rail-toc-list a {
+    display: block;
+    color: var(--ink-2);
+    font-size: 0.84rem;
+    line-height: 1.4;
+    text-decoration: none;
+  }
+
+  .rail-toc-list > li > a {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .rail-toc-list a:hover {
+    color: var(--pine);
+    text-decoration: underline;
+    text-decoration-color: var(--pine);
+    text-underline-offset: 0.16em;
+  }
+
+  .rail-toc-list a.active {
+    color: var(--pine);
+  }
+
+  .rail-toc-list a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rail-toc-chevron {
+      transition: none;
+    }
+  }
+</style>

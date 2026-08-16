@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
-import TableOfContents from '../components/applied/TableOfContents.astro';
+import RailToc from '../components/RailToc.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
 import { articleSchema, organizationSchema, webSiteSchema, type BreadcrumbItem } from '../lib/schema';
 import BaseLayout from './BaseLayout.astro';
@@ -109,7 +109,7 @@ const articleJsonLd = [
       </div>
     </header>
     <aside class="applied-rail" aria-label="Article navigation">
-      {tocItems.length > 0 && <TableOfContents items={tocItems} />}
+      {tocItems.length > 0 && <RailToc items={tocItems} />}
       {hasCalculator && calculatorAnchor && (
         <div class="applied-tool-link">
           <p>Work with the numbers</p>

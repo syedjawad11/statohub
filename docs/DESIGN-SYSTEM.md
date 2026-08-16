@@ -60,6 +60,12 @@ part of expressing [[0001-wedge-model]] visually.
   660px column under 720px viewport width.
 - Two shadow tokens: `--shadow` (resting cards) and `--shadow-lift` (hero
   figures, hover-lifted cards) -- both have light/dark variants.
+- **Full-bleed bands** (`.home-section-alt`, `.home3-applied`) escape the wrap
+  with `margin-inline: calc(50% - 50vw)`. `100vw` includes the vertical
+  scrollbar, so those bands overhang the viewport and raise a horizontal
+  scrollbar. `html`/`body` carry **`overflow-x: clip`** to absorb it -- `clip`,
+  never `hidden`, because `hidden` would make the viewport a scroll container
+  and kill every `position: sticky` rail on the site.
 
 ## Key component patterns
 
@@ -77,9 +83,16 @@ part of expressing [[0001-wedge-model]] visually.
 - **`.article-body h2::before` / drop cap (`::first-letter`)** -- editorial
   flourishes on the article view; the drop cap only applies to the body's
   first paragraph.
-- **`.toc` / `.article-toc`** -- sticky scroll-spy table of contents, active
-  link gets a pine left-border; built from real `entry.render().headings`
-  (depth === 2), not a hand-maintained list.
+- **`.rail-toc`** (`RailToc.astro`) -- the sticky sidebar table of contents used
+  by **both** article shells. Collapsed by default: it shows only the section
+  currently being read plus an `n/total` counter, and swaps as you scroll;
+  clicking the current-section line expands the full list. Built from real
+  `entry.render().headings` (depth 2 in `ArticleLayout`, depth 2+3 in
+  `AppliedArticleLayout`), never a hand-maintained list. It renders **expanded**
+  in the HTML and is collapsed by an inline script, so it still works with JS
+  off. Deliberately short so the rail below it stays free for future ad slots.
+  (`applied/TableOfContents.astro` is the superseded always-open variant, kept
+  only for the `/dev/applied-preview/` gallery.)
 
 ## Accessibility
 
