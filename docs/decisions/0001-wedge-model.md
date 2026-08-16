@@ -38,9 +38,14 @@ combinatorics/inferential silos have calculators outnumbering articles
 ("backwards; the articles are the missing half of the wedge there").
 Homepage treatment of the wedge was later narrowed (no live calculator in the
 hero) -- see [[0011-no-homepage-live-calculator]], which does not reverse this
-decision, only where the fused card appears.
+decision, only where the fused card appears. The *scope* of the required embed
+was later narrowed too: it governs the Learn vertical, and Applied Statistics
+articles are exempt -- see [[0015-wedge-scoped-to-learn]], which likewise does
+not reverse this decision. Read that one before flagging any article for a
+missing `<StatCalc>`.
 
 **Revisit when:** never, absent a full repositioning of the site -- this is
 the founding thesis, not a tactical call.
 
-**Related:** [[0002-flat-url-structure]], [[0011-no-homepage-live-calculator]]
+**Related:** [[0002-flat-url-structure]], [[0011-no-homepage-live-calculator]],
+[[0015-wedge-scoped-to-learn]]
