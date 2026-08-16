@@ -9,6 +9,7 @@ const categories = defineCollection({
   schema: z.object({
     title: z.string(),
     description: metaDescription,
+    section: z.enum(['learn', 'applied']).default('learn'),
     order: z.number().int().default(0),       // nav ordering
     pillar: reference('articles').optional(), // the hub's flagship article
   }),

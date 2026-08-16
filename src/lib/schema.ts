@@ -51,6 +51,30 @@ export function breadcrumbList(items: BreadcrumbItem[], site: URL) {
   };
 }
 
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export function faqPageSchema(items: FaqItem[]) {
+  if (items.length === 0) {
+    throw new Error('FAQPage schema requires at least one item.');
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 export function articleSchema(input: ArticleSchemaInput, site: URL) {
   const organizationRef = { '@id': new URL('#organization', site).href };
   const websiteRef = { '@id': new URL('#website', site).href };

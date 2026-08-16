@@ -209,6 +209,12 @@ concise: what changed, key decisions, verification commands, and reusable lesson
 - **TASK-022 -- trivial fix batch:** removed the article H2 pseudo-element that produced the broken glyph, deleted the obsolete root-segment sitemap noindex filter, removed superseded duplicate `.section-head` / `.article-standfirst` CSS while preserving live computed declarations, and left still-referenced TOC/article-shell rules in place. Verification used `npx astro check`, `npm test` after expected spawn approval, `npm run build`, built CSS U+FFFD byte checks, h2 pseudo-element checks, and root `/normal-distribution/` artifact checks.
 - **TASK-023 -- contrast tokens + CI guard:** adjusted only failing contrast tokens (`--ink-3` light/dark and light `--brass`), added `scripts/check-contrast.mjs` with direct WCAG luminance math reading live CSS tokens, and wired it into GitHub Actions between tests and build. Verification used the contrast script, an intentional temporary failing-token proof, `npx astro check`, `npm test`, and `npm run build`.
 - **TASK-024 -- canonical calculator regression suite:** probed SciPy first (`python3` found SciPy 1.17.1), then added `src/calc/__tests__/canonical-regression.test.ts` covering all 29 live registry engines with sourced typical/edge/larger cases. Distribution cases cite exact SciPy 1.17.1 calls; hand-computable cases show arithmetic inline. No engine files changed and no `// MISMATCH:` cases remained. Verification used focused Vitest, full `npm test`, `npx astro check`, `npm run build`, mismatch grep, and engine-diff scope checks.
+- **TASK-025 -- applied foundations:** added a defaulted `learn`/`applied`
+  section field to categories only, exact light/dark status tokens with eight
+  new contrast checks, and a reusable validated `faqPageSchema()` builder with
+  focused tests. Verification used clean `npx astro check`, `npm test` after
+  expected spawn approval (35 files/120 tests), 13 passing contrast checks,
+  and `npm run build` with 109 pages and 0 link/meta-description violations.
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

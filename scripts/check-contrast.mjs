@@ -9,6 +9,14 @@ const checks = [
   { theme: 'dark', text: '--ink-3', background: '--card' },
   { theme: 'light', text: '--brass', background: '--paper' },
   { theme: 'light', text: '--brass', background: '--card' },
+  { theme: 'light', text: '--status-pass', background: '--card' },
+  { theme: 'light', text: '--status-warn', background: '--card' },
+  { theme: 'light', text: '--status-fail', background: '--card' },
+  { theme: 'light', text: '--status-critical', background: '--card' },
+  { theme: 'dark', text: '--status-pass', background: '--card' },
+  { theme: 'dark', text: '--status-warn', background: '--card' },
+  { theme: 'dark', text: '--status-fail', background: '--card' },
+  { theme: 'dark', text: '--status-critical', background: '--card' },
 ];
 
 function blockFor(theme) {
