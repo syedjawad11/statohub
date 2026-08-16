@@ -371,6 +371,21 @@
     font-size: 13.5px;
   }
 
+  .foot-brand .foot-contact {
+    margin-top: 12px;
+  }
+
+  .foot-brand .foot-contact a {
+    display: inline;
+    margin-bottom: 0;
+    color: var(--ink-2);
+    font-size: inherit;
+  }
+
+  .foot-brand .foot-contact a:hover {
+    color: var(--pine);
+  }
+
   .foot-bottom {
     border-top: 1px solid var(--line);
     padding: 16px 26px;
