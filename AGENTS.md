@@ -299,6 +299,22 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   21/21, and `npm run build` 116 pages/4309 links/0 link or meta violations.
   Browser runtime exposed zero instances, so visual QA used built artifacts and
   local HTTP checks.
+- **TASK-034 -- llms.txt generator + drift gate:** added a Node-built-ins-only
+  post-build generator sourced from the built sitemap/HTML, category YAML, and
+  article BreadcrumbList JSON-LD; added a gate for URL coverage, trailing
+  slashes, byte identity, and pre-generation committed-copy drift; wired both
+  into `npm run build`. The committed file remained byte-identical across two
+  builds, and drafting `/frequency-table/` produced the required URL-specific
+  failure. Verification used clean `npx astro check`, 35 files/121 Vitest tests,
+  repeated `npm run build` runs with 0 integrated violations, and SHA-256 checks.
+- **TASK-035 -- CSP allowances + AdSense loader:** widened the single
+  Cloudflare Pages CSP to the specified Google ad/CMP origins and added one
+  production-only, indexable-page-only loader in `BaseLayout`, backed by a
+  single public publisher-ID constant. Verification used clean Astro check,
+  35 files/121 Vitest tests, a 120-page integrated build, exact built/dev
+  loader-count assertions, and a byte-for-byte CSP response through local
+  Wrangler Pages. Dynamic browser-console and deployed-edge checks were
+  unavailable and are recorded in the Work Log.
 
 ### Reusable verification habits
 

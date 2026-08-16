@@ -69,6 +69,9 @@ const footerCalculators = [
   { label: 'Range', route: routes.calculator('range') },
   { label: 'All tools', route: routes.calculatorsHub() },
 ];
+
+// Public AdSense publisher ID; keep in sync with public/ads.txt.
+const ADSENSE_PUBLISHER_ID = 'ca-pub-4667906964697238';
 ---
 
 <!doctype html>
@@ -89,6 +92,14 @@ const footerCalculators = [
     <Canonical canonicalPath={canonicalPath ? url(canonicalPath) : undefined} />
     {noindex && <meta name="robots" content="noindex,follow" />}
     {schemas.map((schema) => <JsonLd schema={schema} />)}
+    {import.meta.env.PROD && !noindex && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+        crossorigin='anonymous'
+      ></script>
+    )}
     <script is:inline>
       (() => {
         const stored = localStorage.getItem('theme');
