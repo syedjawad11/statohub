@@ -1,0 +1,253 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+interface Branch {
+  label: string;
+  children?: string[];
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  root: string;
+  branches: Branch[];
+}
+
+const {
+  title,
+  desc,
+  root,
+  branches,
+} = Astro.props;
+
+if (branches.length === 0) {
+  throw new Error('TaxonomyTree requires at least one branch.');
+}
+
+const wrapText = (text: string, maxCharacters: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    if (word.length > maxCharacters) {
+      if (line) lines.push(line);
+      for (let offset = 0; offset < word.length; offset += maxCharacters) {
+        lines.push(word.slice(offset, offset + maxCharacters));
+      }
+      line = '';
+      continue;
+    }
+
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length <= maxCharacters) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const padding = 28;
+const rootWidth = 230;
+const branchWidth = 158;
+const leafWidth = 132;
+const leafGap = 14;
+const groupGap = 28;
+const levelGap = 58;
+
+const rootLines = wrapText(root, 27);
+const rootHeight = Math.max(52, 28 + rootLines.length * 16);
+
+const preparedBranches = branches.map((branch) => {
+  const labelLines = wrapText(branch.label, 19);
+  const children = (branch.children ?? []).map((label) => ({
+    label,
+    lines: wrapText(label, 16),
+  }));
+  const childrenSpan = children.length > 0
+    ? children.length * leafWidth + (children.length - 1) * leafGap
+    : 0;
+
+  return {
+    ...branch,
+    labelLines,
+    children,
+    groupWidth: Math.max(branchWidth, childrenSpan),
+  };
+});
+
+const branchHeight = Math.max(
+  52,
+  ...preparedBranches.map((branch) => 28 + branch.labelLines.length * 16),
+);
+const leafHeight = Math.max(
+  48,
+  ...preparedBranches.flatMap((branch) => branch.children.map((child) => 25 + child.lines.length * 15)),
+);
+const hasChildren = preparedBranches.some((branch) => branch.children.length > 0);
+const canvasWidth = Math.max(
+  rootWidth + padding * 2,
+  padding * 2
+    + preparedBranches.reduce((sum, branch) => sum + branch.groupWidth, 0)
+    + (preparedBranches.length - 1) * groupGap,
+);
+const rootX = (canvasWidth - rootWidth) / 2;
+const rootY = padding;
+const branchY = rootY + rootHeight + levelGap;
+const childrenY = branchY + branchHeight + levelGap;
+const canvasHeight = hasChildren
+  ? childrenY + leafHeight + padding
+  : branchY + branchHeight + padding;
+
+let groupOffset = padding;
+const laidOutBranches = preparedBranches.map((branch) => {
+  const groupX = groupOffset;
+  const branchX = groupX + (branch.groupWidth - branchWidth) / 2;
+  const childrenSpan = branch.children.length > 0
+    ? branch.children.length * leafWidth + (branch.children.length - 1) * leafGap
+    : 0;
+  const childStartX = groupX + (branch.groupWidth - childrenSpan) / 2;
+  groupOffset += branch.groupWidth + groupGap;
+
+  return {
+    ...branch,
+    branchX,
+    children: branch.children.map((child, childIndex) => ({
+      ...child,
+      x: childStartX + childIndex * (leafWidth + leafGap),
+    })),
+  };
+});
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  <g class="taxonomy-connectors" aria-hidden="true">
+    {
+      laidOutBranches.map((branch) => {
+        const rootCenterX = rootX + rootWidth / 2;
+        const branchCenterX = branch.branchX + branchWidth / 2;
+        const rootJoinY = rootY + rootHeight + levelGap / 2;
+
+        return (
+          <>
+            <path
+              class="taxonomy-line"
+              d={`M ${rootCenterX} ${rootY + rootHeight} V ${rootJoinY} H ${branchCenterX} V ${branchY}`}
+            />
+            {branch.children.map((child) => {
+              const childCenterX = child.x + leafWidth / 2;
+              const childJoinY = branchY + branchHeight + levelGap / 2;
+              return (
+                <path
+                  class="taxonomy-line"
+                  d={`M ${branchCenterX} ${branchY + branchHeight} V ${childJoinY} H ${childCenterX} V ${childrenY}`}
+                />
+              );
+            })}
+          </>
+        );
+      })
+    }
+  </g>
+
+  <g class="taxonomy-root">
+    <rect class="taxonomy-root-box" x={rootX} y={rootY} width={rootWidth} height={rootHeight} rx="12" />
+    <text class="taxonomy-root-text" text-anchor="middle">
+      {rootLines.map((line, lineIndex) => {
+        const startY = rootY + rootHeight / 2 - ((rootLines.length - 1) * 8) + 5;
+        return <tspan x={rootX + rootWidth / 2} y={startY + lineIndex * 16}>{line}</tspan>;
+      })}
+    </text>
+  </g>
+
+  {
+    laidOutBranches.map((branch) => (
+      <g class="taxonomy-branch-group">
+        <rect
+          class="taxonomy-branch-box"
+          x={branch.branchX}
+          y={branchY}
+          width={branchWidth}
+          height={branchHeight}
+          rx="10"
+        />
+        <text class="taxonomy-branch-text" text-anchor="middle">
+          {branch.labelLines.map((line, lineIndex) => {
+            const startY = branchY + branchHeight / 2 - ((branch.labelLines.length - 1) * 8) + 5;
+            return <tspan x={branch.branchX + branchWidth / 2} y={startY + lineIndex * 16}>{line}</tspan>;
+          })}
+        </text>
+
+        {branch.children.map((child) => (
+          <g class="taxonomy-leaf">
+            <rect class="taxonomy-leaf-box" x={child.x} y={childrenY} width={leafWidth} height={leafHeight} rx="9" />
+            <text class="taxonomy-leaf-text" text-anchor="middle">
+              {child.lines.map((line, lineIndex) => {
+                const startY = childrenY + leafHeight / 2 - ((child.lines.length - 1) * 7.5) + 4;
+                return <tspan x={child.x + leafWidth / 2} y={startY + lineIndex * 15}>{line}</tspan>;
+              })}
+            </text>
+          </g>
+        ))}
+      </g>
+    ))
+  }
+</SvgFrame>
+
+<style>
+  .taxonomy-line {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+  }
+
+  .taxonomy-root-box {
+    fill: var(--pine);
+    stroke: var(--pine);
+    stroke-width: 1.5;
+  }
+
+  .taxonomy-root-text {
+    fill: var(--card);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .taxonomy-branch-box {
+    fill: var(--pine-soft);
+    stroke: var(--pine);
+    stroke-width: 1.5;
+  }
+
+  .taxonomy-branch-text {
+    fill: var(--pine);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .taxonomy-leaf-box {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+  }
+
+  .taxonomy-leaf-text {
+    fill: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 11px;
+  }
+</style>

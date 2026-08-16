@@ -17,6 +17,14 @@ const checks = [
   { theme: 'dark', text: '--status-warn', background: '--card' },
   { theme: 'dark', text: '--status-fail', background: '--card' },
   { theme: 'dark', text: '--status-critical', background: '--card' },
+  { theme: 'light', text: '--status-pass', background: '--paper-2' },
+  { theme: 'light', text: '--status-warn', background: '--paper-2' },
+  { theme: 'light', text: '--status-fail', background: '--paper-2' },
+  { theme: 'light', text: '--status-critical', background: '--paper-2' },
+  { theme: 'dark', text: '--status-pass', background: '--paper-2' },
+  { theme: 'dark', text: '--status-warn', background: '--paper-2' },
+  { theme: 'dark', text: '--status-fail', background: '--paper-2' },
+  { theme: 'dark', text: '--status-critical', background: '--paper-2' },
 ];
 
 function blockFor(theme) {

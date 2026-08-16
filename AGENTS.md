@@ -258,6 +258,15 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   meta-description violations, 13 passing contrast checks, a clean hex-token
   proof, and built HTML extraction showing 3 visible FAQs matching all 3
   FAQPage entities verbatim and in order.
+- **TASK-029A -- SVG infographic frame + core diagrams:** added the unique-id,
+  accessible `_SvgFrame` and token-only `ProcessFlow`, `TaxonomyTree`, and
+  `ComparisonMatrix` components; appended four numbered preview figures and
+  expanded status-token contrast coverage from 13 to 21 pairs. Verification
+  used clean `npx astro check`, a sandbox-safe full Vitest fallback (35
+  files/121 tests) after the exact `npm test` command hit documented
+  `spawn EPERM`, `npm run build` with 116 pages/4296 links/0 violations, all 21
+  contrast checks, a clean SVG colour-attribute proof, 24 total/24 unique
+  built ids, resolved title/description references, and numeric matrix cells.
 
 ### Reusable verification habits
 

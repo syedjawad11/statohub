@@ -1,0 +1,221 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+interface MatrixRow {
+  label: string;
+  values: number[];
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  columns: string[];
+  rows: MatrixRow[];
+  scaleMax?: number;
+}
+
+const {
+  title,
+  desc,
+  columns,
+  rows,
+  scaleMax,
+} = Astro.props;
+
+for (const row of rows) {
+  if (row.values.length !== columns.length) {
+    throw new Error(
+      `ComparisonMatrix row "${row.label}" has ${row.values.length} values; expected ${columns.length}.`,
+    );
+  }
+}
+
+const wrapText = (text: string, maxCharacters: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    if (word.length > maxCharacters) {
+      if (line) lines.push(line);
+      for (let offset = 0; offset < word.length; offset += maxCharacters) {
+        lines.push(word.slice(offset, offset + maxCharacters));
+      }
+      line = '';
+      continue;
+    }
+
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length <= maxCharacters) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const allValues = rows.flatMap((row) => row.values);
+const resolvedScaleMax = scaleMax ?? (allValues.length > 0 ? Math.max(...allValues) : 0);
+const intensityFor = (value: number): number => {
+  if (resolvedScaleMax <= 0) return 0;
+  const ratio = Math.max(0, Math.min(1, value / resolvedScaleMax));
+  return Math.round(ratio * 10);
+};
+const displayValue = (value: number): string => Number.isInteger(value)
+  ? String(value)
+  : String(Number(value.toFixed(2)));
+
+const padding = 28;
+const labelWidth = 150;
+const cellWidth = 94;
+const columnLines = columns.map((column) => wrapText(column, 12));
+const headerHeight = Math.max(58, ...columnLines.map((lines) => 30 + lines.length * 14));
+
+let rowOffset = padding + headerHeight;
+const laidOutRows = rows.map((row) => {
+  const labelLines = wrapText(row.label, 18);
+  const height = Math.max(54, 28 + labelLines.length * 15);
+  const laidOut = {
+    ...row,
+    labelLines,
+    y: rowOffset,
+    height,
+  };
+  rowOffset += height;
+  return laidOut;
+});
+
+const canvasWidth = padding * 2 + labelWidth + columns.length * cellWidth;
+const canvasHeight = rowOffset + padding;
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  <rect
+    class="matrix-corner"
+    x={padding}
+    y={padding}
+    width={labelWidth}
+    height={headerHeight}
+  />
+  <text class="matrix-axis-label" x={padding + 12} y={padding + headerHeight / 2 + 4}>Metric</text>
+
+  {
+    columnLines.map((lines, columnIndex) => {
+      const x = padding + labelWidth + columnIndex * cellWidth;
+      const startY = padding + headerHeight / 2 - ((lines.length - 1) * 7) + 4;
+      return (
+        <g class="matrix-column-header">
+          <rect class="matrix-header-cell" x={x} y={padding} width={cellWidth} height={headerHeight} />
+          <text class="matrix-header-text" text-anchor="middle">
+            {lines.map((line, lineIndex) => (
+              <tspan x={x + cellWidth / 2} y={startY + lineIndex * 14}>{line}</tspan>
+            ))}
+          </text>
+        </g>
+      );
+    })
+  }
+
+  {
+    laidOutRows.map((row) => {
+      const labelStartY = row.y + row.height / 2 - ((row.labelLines.length - 1) * 7.5) + 4;
+      return (
+        <g class="matrix-row">
+          <rect class="matrix-row-label-cell" x={padding} y={row.y} width={labelWidth} height={row.height} />
+          <text class="matrix-row-label">
+            {row.labelLines.map((line, lineIndex) => (
+              <tspan x={padding + 12} y={labelStartY + lineIndex * 15}>{line}</tspan>
+            ))}
+          </text>
+
+          {row.values.map((value, columnIndex) => {
+            const x = padding + labelWidth + columnIndex * cellWidth;
+            const intensity = intensityFor(value);
+            return (
+              <g class="matrix-value-cell">
+                <rect
+                  class={`matrix-cell matrix-intensity-${intensity}`}
+                  x={x}
+                  y={row.y}
+                  width={cellWidth}
+                  height={row.height}
+                />
+                <text
+                  class="matrix-value-text"
+                  x={x + cellWidth / 2}
+                  y={row.y + row.height / 2 + 5}
+                  text-anchor="middle"
+                >
+                  {displayValue(value)}
+                </text>
+              </g>
+            );
+          })}
+        </g>
+      );
+    })
+  }
+</SvgFrame>
+
+<style>
+  .matrix-corner,
+  .matrix-header-cell,
+  .matrix-row-label-cell {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1;
+  }
+
+  .matrix-axis-label,
+  .matrix-header-text {
+    fill: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .matrix-row-label {
+    fill: var(--ink);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .matrix-cell {
+    fill: var(--pine);
+    stroke: var(--card);
+    stroke-width: 2;
+  }
+
+  .matrix-intensity-0 { fill-opacity: 0.08; }
+  .matrix-intensity-1 { fill-opacity: 0.15; }
+  .matrix-intensity-2 { fill-opacity: 0.22; }
+  .matrix-intensity-3 { fill-opacity: 0.29; }
+  .matrix-intensity-4 { fill-opacity: 0.36; }
+  .matrix-intensity-5 { fill-opacity: 0.43; }
+  .matrix-intensity-6 { fill-opacity: 0.50; }
+  .matrix-intensity-7 { fill-opacity: 0.57; }
+  .matrix-intensity-8 { fill-opacity: 0.64; }
+  .matrix-intensity-9 { fill-opacity: 0.71; }
+  .matrix-intensity-10 { fill-opacity: 0.78; }
+
+  .matrix-value-text {
+    fill: var(--ink);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+  }
+</style>

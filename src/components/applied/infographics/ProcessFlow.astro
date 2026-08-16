@@ -1,0 +1,223 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+interface Step {
+  label: string;
+  detail?: string;
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  steps: Step[];
+  direction?: 'horizontal' | 'vertical';
+}
+
+const {
+  title,
+  desc,
+  steps,
+  direction = 'horizontal',
+} = Astro.props;
+
+if (steps.length === 0) {
+  throw new Error('ProcessFlow requires at least one step.');
+}
+
+const wrapText = (text: string, maxCharacters: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    if (word.length > maxCharacters) {
+      if (line) lines.push(line);
+      for (let offset = 0; offset < word.length; offset += maxCharacters) {
+        lines.push(word.slice(offset, offset + maxCharacters));
+      }
+      line = '';
+      continue;
+    }
+
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length <= maxCharacters) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const padding = 28;
+const gap = direction === 'horizontal' ? 48 : 38;
+const boxWidth = direction === 'horizontal' ? 184 : 360;
+const labelCharacters = direction === 'horizontal' ? 18 : 40;
+const detailCharacters = direction === 'horizontal' ? 24 : 48;
+
+const preparedSteps = steps.map((step) => {
+  const labelLines = wrapText(step.label, labelCharacters);
+  const detailLines = step.detail ? wrapText(step.detail, detailCharacters) : [];
+  const labelBottom = 29 + (labelLines.length - 1) * 16;
+  const detailStart = labelBottom + 22;
+  const contentBottom = detailLines.length > 0
+    ? detailStart + (detailLines.length - 1) * 14
+    : labelBottom;
+
+  return {
+    ...step,
+    labelLines,
+    detailLines,
+    detailStart,
+    height: Math.max(78, contentBottom + 21),
+  };
+});
+
+const horizontalHeight = Math.max(...preparedSteps.map((step) => step.height));
+let verticalOffset = padding;
+
+const laidOutSteps = preparedSteps.map((step, index) => {
+  if (direction === 'horizontal') {
+    return {
+      ...step,
+      x: padding + index * (boxWidth + gap),
+      y: padding,
+      height: horizontalHeight,
+    };
+  }
+
+  const laidOut = {
+    ...step,
+    x: padding,
+    y: verticalOffset,
+  };
+  verticalOffset += step.height + gap;
+  return laidOut;
+});
+
+const canvasWidth = direction === 'horizontal'
+  ? padding * 2 + steps.length * boxWidth + (steps.length - 1) * gap
+  : padding * 2 + boxWidth;
+const canvasHeight = direction === 'horizontal'
+  ? padding * 2 + horizontalHeight
+  : verticalOffset - gap + padding;
+
+const connectors = laidOutSteps.slice(0, -1).map((step, index) => {
+  const next = laidOutSteps[index + 1];
+  if (direction === 'horizontal') {
+    const y = step.y + step.height / 2;
+    return {
+      line: `M ${step.x + boxWidth} ${y} H ${next.x - 8}`,
+      arrow: `M ${next.x} ${y} l -9 -6 v 12 z`,
+    };
+  }
+
+  const x = step.x + boxWidth / 2;
+  return {
+    line: `M ${x} ${step.y + step.height} V ${next.y - 8}`,
+    arrow: `M ${x} ${next.y} l -6 -9 h 12 z`,
+  };
+});
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  <g class="process-connectors" aria-hidden="true">
+    {
+      connectors.map((connector) => (
+        <>
+          <path class="process-line" d={connector.line} />
+          <path class="process-arrow" d={connector.arrow} />
+        </>
+      ))
+    }
+  </g>
+
+  {
+    laidOutSteps.map((step, index) => {
+      const labelX = step.x + 47;
+      const labelY = step.y + 29;
+      const detailX = step.x + 18;
+
+      return (
+        <g class="process-step">
+          <rect
+            class="process-box"
+            x={step.x}
+            y={step.y}
+            width={boxWidth}
+            height={step.height}
+            rx="12"
+          />
+          <circle class="process-number" cx={step.x + 24} cy={step.y + 25} r="14" />
+          <text class="process-number-text" x={step.x + 24} y={step.y + 29} text-anchor="middle">
+            {index + 1}
+          </text>
+          <text class="process-label">
+            {step.labelLines.map((line, lineIndex) => (
+              <tspan x={labelX} y={labelY + lineIndex * 16}>{line}</tspan>
+            ))}
+          </text>
+          {step.detailLines.length > 0 && (
+            <text class="process-detail">
+              {step.detailLines.map((line, lineIndex) => (
+                <tspan x={detailX} y={step.y + step.detailStart + lineIndex * 14}>{line}</tspan>
+              ))}
+            </text>
+          )}
+        </g>
+      );
+    })
+  }
+</SvgFrame>
+
+<style>
+  .process-box {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+  }
+
+  .process-number {
+    fill: var(--pine);
+  }
+
+  .process-number-text {
+    fill: var(--card);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .process-label {
+    fill: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .process-detail {
+    fill: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 11px;
+  }
+
+  .process-line {
+    fill: none;
+    stroke: var(--pine);
+    stroke-width: 2;
+  }
+
+  .process-arrow {
+    fill: var(--pine);
+  }
+</style>

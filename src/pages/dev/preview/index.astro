@@ -8,6 +8,9 @@ import Figure from '../../../components/applied/Figure.astro';
 import KeyTakeaways from '../../../components/applied/KeyTakeaways.astro';
 import Sources from '../../../components/applied/Sources.astro';
 import TableOfContents from '../../../components/applied/TableOfContents.astro';
+import ComparisonMatrix from '../../../components/applied/infographics/ComparisonMatrix.astro';
+import ProcessFlow from '../../../components/applied/infographics/ProcessFlow.astro';
+import TaxonomyTree from '../../../components/applied/infographics/TaxonomyTree.astro';
 
 const description = 'Internal preview of the Applied Statistics module components. Not part of the public site and excluded from search indexing.';
 ---
@@ -227,6 +230,83 @@ const description = 'Internal preview of the Applied Statistics module component
             { text: 'Frequently asked questions', href: '#preview-faq', depth: 2 },
           ]}
         />
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-process-flow">
+      <div class="preview-section-heading">
+        <p>09</p>
+        <h2 id="preview-process-flow">ProcessFlow</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={2} caption="A horizontal drift-detection pipeline from monitoring through response.">
+          <ProcessFlow
+            title="Drift-detection pipeline"
+            desc="Four connected steps move from collecting production data to measuring drift, reviewing impact, and choosing a response."
+            steps={[
+              { label: 'Collect data', detail: 'Freeze the reference and comparison windows.' },
+              { label: 'Measure drift', detail: 'Calculate the agreed feature-level statistics.' },
+              { label: 'Review impact', detail: 'Check affected segments and decision outcomes.' },
+              { label: 'Choose response', detail: 'Monitor, repair data, or retrain the model.' },
+            ]}
+          />
+        </Figure>
+
+        <Figure number={3} caption="The same process rendered vertically for a narrow editorial layout.">
+          <ProcessFlow
+            title="Vertical incident review"
+            desc="Three connected vertical steps show how an alert is validated, investigated, and resolved."
+            direction="vertical"
+            steps={[
+              { label: 'Validate alert', detail: 'Reproduce the signal on a fixed evaluation window.' },
+              { label: 'Investigate cause', detail: 'Inspect schema changes, missingness, and segment movement.' },
+              { label: 'Record decision', detail: 'Document the owner, action, and next review date.' },
+            ]}
+          />
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-taxonomy-tree">
+      <div class="preview-section-heading">
+        <p>10</p>
+        <h2 id="preview-taxonomy-tree">TaxonomyTree</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={4} caption="A monitoring taxonomy that separates data, prediction, and outcome signals.">
+          <TaxonomyTree
+            title="Production monitoring taxonomy"
+            desc="Production monitoring divides into data quality, prediction behaviour, and outcome performance, with example signals under each branch."
+            root="Production monitoring"
+            branches={[
+              { label: 'Data quality', children: ['Schema validity', 'Missing values'] },
+              { label: 'Prediction behaviour', children: ['Score drift', 'Segment coverage'] },
+              { label: 'Outcome performance', children: ['Calibration', 'Error rate'] },
+            ]}
+          />
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-comparison-matrix">
+      <div class="preview-section-heading">
+        <p>11</p>
+        <h2 id="preview-comparison-matrix">ComparisonMatrix</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={5} caption="Monitoring methods scored from 0 to 100, with every intensity-coded cell retaining its numeric value.">
+          <ComparisonMatrix
+            title="Monitoring method comparison"
+            desc="A matrix compares three monitoring methods on sensitivity, interpretability, and implementation effort using numeric scores from zero to one hundred."
+            columns={['PSI', 'KS test', 'Classifier']}
+            rows={[
+              { label: 'Sensitivity', values: [72, 88, 94] },
+              { label: 'Interpretability', values: [91, 76, 58] },
+              { label: 'Low implementation effort', values: [86, 79, 43] },
+            ]}
+            scaleMax={100}
+          />
+        </Figure>
       </div>
     </section>
   </div>

@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;
+  desc: string;
+  viewBox: string;
+  maxWidth?: string;
+}
+
+const {
+  title,
+  desc,
+  viewBox,
+  maxWidth = '100%',
+} = Astro.props;
+
+const instanceId = globalThis.crypto.randomUUID();
+const titleId = `infographic-title-${instanceId}`;
+const descId = `infographic-desc-${instanceId}`;
+---
+
+<svg
+  class="svg-frame"
+  role="img"
+  viewBox={viewBox}
+  aria-labelledby={`${titleId} ${descId}`}
+  style={`--svg-frame-max-width: ${maxWidth}`}
+>
+  <title id={titleId}>{title}</title>
+  <desc id={descId}>{desc}</desc>
+  <slot />
+</svg>
+
+<style>
+  .svg-frame {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: var(--svg-frame-max-width);
+    margin-inline: auto;
+    background: var(--card);
+  }
+</style>
