@@ -35,4 +35,21 @@ describe('faqPageSchema', () => {
   it('throws for an empty FAQ item list', () => {
     expect(() => faqPageSchema([])).toThrow('FAQPage schema requires at least one item.');
   });
+
+  it('preserves the input count and maps the Nth question to the Nth answer', () => {
+    const items = [
+      { question: 'First question?', answer: 'First answer.' },
+      { question: 'Second question?', answer: 'Second answer.' },
+      { question: 'Third question?', answer: 'Third answer.' },
+    ];
+
+    const schema = faqPageSchema(items);
+    const nthItem = 1;
+
+    expect(schema.mainEntity).toHaveLength(items.length);
+    expect(schema.mainEntity[nthItem]).toMatchObject({
+      name: items[nthItem].question,
+      acceptedAnswer: { text: items[nthItem].answer },
+    });
+  });
 });

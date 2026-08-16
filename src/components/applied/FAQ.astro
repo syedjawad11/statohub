@@ -1,0 +1,76 @@
+---
+import JsonLd from '../seo/JsonLd.astro';
+import { faqPageSchema, type FaqItem } from '../../lib/schema';
+
+interface Props {
+  items: FaqItem[];
+  heading?: string;
+}
+
+const {
+  items,
+  heading = 'Frequently asked questions',
+} = Astro.props;
+
+const schema = faqPageSchema(items);
+---
+
+<section class="faq">
+  <h3>{heading}</h3>
+  <dl>
+    {
+      items.map((item) => (
+        <div class="faq-item">
+          <dt>{item.question}</dt>
+          <dd>{item.answer}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  <JsonLd schema={schema} />
+</section>
+
+<style>
+  .faq {
+    padding: 1.25rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+  }
+
+  .faq h3 {
+    margin: 0 0 1rem;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .faq dl {
+    display: grid;
+    gap: 0;
+    margin: 0;
+  }
+
+  .faq-item {
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .faq dt {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .faq dd {
+    margin: 0.35rem 0 0;
+    color: var(--ink-2);
+  }
+</style>

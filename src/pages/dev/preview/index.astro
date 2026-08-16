@@ -3,7 +3,11 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Callout from '../../../components/applied/Callout.astro';
 import Checklist from '../../../components/applied/Checklist.astro';
 import DataTable from '../../../components/applied/DataTable.astro';
+import FAQ from '../../../components/applied/FAQ.astro';
+import Figure from '../../../components/applied/Figure.astro';
 import KeyTakeaways from '../../../components/applied/KeyTakeaways.astro';
+import Sources from '../../../components/applied/Sources.astro';
+import TableOfContents from '../../../components/applied/TableOfContents.astro';
 
 const description = 'Internal preview of the Applied Statistics module components. Not part of the public site and excluded from search indexing.';
 ---
@@ -135,6 +139,96 @@ const description = 'Internal preview of the Applied Statistics module component
         </DataTable>
       </div>
     </section>
+
+    <section class="preview-section" aria-labelledby="preview-sources">
+      <div class="preview-section-heading">
+        <p>05</p>
+        <h2 id="preview-sources">Sources</h2>
+      </div>
+      <div class="preview-stack">
+        <Sources
+          heading="References used in this analysis"
+          items={[
+            {
+              text: 'NIST/SEMATECH e-Handbook of Statistical Methods',
+              href: 'https://www.itl.nist.gov/div898/handbook/',
+              org: 'National Institute of Standards and Technology',
+            },
+            {
+              text: 'Trustworthy Online Controlled Experiments',
+              href: 'https://www.cambridge.org/core/books/trustworthy-online-controlled-experiments/D97B26382EB0EB2DC2019A7A710C845A',
+              org: 'Cambridge University Press',
+            },
+          ]}
+        />
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-faq">
+      <div class="preview-section-heading">
+        <p>06</p>
+        <h2 id="preview-faq">FAQ</h2>
+      </div>
+      <div class="preview-stack">
+        <FAQ
+          items={[
+            {
+              question: 'What is model drift?',
+              answer: 'Model drift is a measurable change in the data, relationships, or outcomes that a model encounters after deployment.',
+            },
+            {
+              question: 'How often should drift be checked?',
+              answer: 'Check often enough to match the decision cycle and the speed at which the underlying process can change.',
+            },
+            {
+              question: 'Does a statistically significant shift require retraining?',
+              answer: 'No. First confirm data quality and practical impact, then retrain only when the evidence supports an operational change.',
+            },
+          ]}
+        />
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-figure">
+      <div class="preview-section-heading">
+        <p>07</p>
+        <h2 id="preview-figure">Figure</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure
+          id="preview-monitoring-cycle"
+          number={1}
+          caption="Reserved space showing how a future monitoring-cycle infographic will sit inside the caption wrapper."
+        >
+          <div class="preview-figure-placeholder">
+            Future infographic slot
+          </div>
+        </Figure>
+        <Figure caption="An unnumbered caption renders without an automatic prefix.">
+          <div class="preview-figure-placeholder">
+            Presentation-only child content
+          </div>
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-table-of-contents">
+      <div class="preview-section-heading">
+        <p>08</p>
+        <h2 id="preview-table-of-contents">TableOfContents</h2>
+      </div>
+      <div class="preview-stack">
+        <TableOfContents
+          items={[
+            { text: 'Key takeaways', href: '#preview-key-takeaways' },
+            { text: 'Callout variants', href: '#preview-callout', depth: 3 },
+            { text: 'Operational checklist', href: '#preview-checklist', depth: 2 },
+            { text: 'Evaluation tables', href: '#preview-data-table', depth: 3 },
+            { text: 'Frequently asked questions', href: '#preview-faq', depth: 2 },
+          ]}
+        />
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
@@ -199,6 +293,21 @@ const description = 'Internal preview of the Applied Statistics module component
   .preview-stack {
     display: grid;
     gap: 1.25rem;
+  }
+
+  .preview-figure-placeholder {
+    display: grid;
+    min-height: 10rem;
+    place-items: center;
+    padding: 1.5rem;
+    background: var(--pine-soft);
+    color: var(--pine);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-align: center;
+    text-transform: uppercase;
   }
 
   @media (max-width: 640px) {

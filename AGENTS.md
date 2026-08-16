@@ -247,6 +247,17 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   checks, clean six-digit-hex and `/blog/` source proofs, and built artifact
   checks for noindex, sitemap exclusion, component variants, and visible
   status-badge labels.
+- **TASK-028B -- applied module components structural:** added token-only,
+  scoped `Sources`, `FAQ`, `Figure`, and interim hand-authored
+  `TableOfContents` components under `src/components/applied/`; `FAQ` renders
+  its visible Q&A and `faqPageSchema()` JSON-LD from one items array. Appended
+  all four to the existing preview and added one schema ordering/count test.
+  Verification used clean `npx astro check`, a sandbox-safe full Vitest
+  fallback (35 files/121 tests) after the exact `npm test` command hit
+  documented `spawn EPERM`, `npm run build` with 116 pages/4296 links/0 link or
+  meta-description violations, 13 passing contrast checks, a clean hex-token
+  proof, and built HTML extraction showing 3 visible FAQs matching all 3
+  FAQPage entities verbatim and in order.
 
 ### Reusable verification habits
 

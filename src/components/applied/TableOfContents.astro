@@ -1,0 +1,129 @@
+---
+// Interim hand-authored TOC; a later phase will derive it automatically from MDX headings.
+interface TocItem {
+  text: string;
+  href: string;
+  depth?: 2 | 3;
+}
+
+interface NormalizedTocItem {
+  text: string;
+  href: string;
+  depth: 2 | 3;
+}
+
+interface TocGroup {
+  parent: NormalizedTocItem;
+  children: NormalizedTocItem[];
+}
+
+interface Props {
+  items: TocItem[];
+  heading?: string;
+}
+
+const {
+  items,
+  heading = 'On this page',
+} = Astro.props;
+
+if (items.length === 0) {
+  throw new Error('TableOfContents: "items" must be a non-empty array.');
+}
+
+const groups: TocGroup[] = [];
+
+items.forEach((item) => {
+  const normalized: NormalizedTocItem = {
+    ...item,
+    depth: item.depth ?? 2,
+  };
+  const precedingGroup = groups[groups.length - 1];
+
+  if (normalized.depth === 3 && precedingGroup) {
+    precedingGroup.children.push(normalized);
+    return;
+  }
+
+  groups.push({ parent: normalized, children: [] });
+});
+---
+
+<nav class="applied-toc" aria-label={heading}>
+  <p class="applied-toc-heading">{heading}</p>
+  <ul class="applied-toc-list">
+    {
+      groups.map((group) => (
+        <li>
+          <a href={group.parent.href}>{group.parent.text}</a>
+          {
+            group.children.length > 0 && (
+              <ul>
+                {group.children.map((child) => (
+                  <li><a href={child.href}>{child.text}</a></li>
+                ))}
+              </ul>
+            )
+          }
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .applied-toc {
+    padding: 1.25rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+
+  .applied-toc-heading {
+    margin: 0 0 0.85rem;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .applied-toc-list,
+  .applied-toc-list ul {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .applied-toc-list ul {
+    margin-top: 0.55rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--line-2);
+  }
+
+  .applied-toc a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+
+  .applied-toc a:hover {
+    color: var(--pine);
+    text-decoration: underline;
+    text-decoration-color: var(--pine);
+    text-underline-offset: 0.16em;
+  }
+
+  .applied-toc a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .applied-toc-list > li > a {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>
