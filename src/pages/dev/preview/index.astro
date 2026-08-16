@@ -1,0 +1,213 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Callout from '../../../components/applied/Callout.astro';
+import Checklist from '../../../components/applied/Checklist.astro';
+import DataTable from '../../../components/applied/DataTable.astro';
+import KeyTakeaways from '../../../components/applied/KeyTakeaways.astro';
+
+const description = 'Internal preview of the Applied Statistics module components. Not part of the public site and excluded from search indexing.';
+---
+
+<BaseLayout
+  title="Component preview"
+  description={description}
+  noindex={true}
+  showBreadcrumbs={false}
+>
+  <div class="preview-page">
+    <header class="preview-header">
+      <p class="preview-kicker">Internal preview</p>
+      <h1>Component preview</h1>
+      <p class="preview-note">
+        This page is internal and unlisted. It collects Applied Statistics modules for light and dark mode review.
+      </p>
+    </header>
+
+    <section class="preview-section" aria-labelledby="preview-key-takeaways">
+      <div class="preview-section-heading">
+        <p>01</p>
+        <h2 id="preview-key-takeaways">KeyTakeaways</h2>
+      </div>
+      <div class="preview-stack">
+        <KeyTakeaways
+          rows={[
+            { point: 'Signal', details: 'A stable metric should move within its expected operating range.' },
+            { point: 'Threshold', details: 'Escalate only after the shift persists across two evaluation windows.' },
+            { point: 'Response', details: 'Confirm data quality before retraining or changing a production model.' },
+          ]}
+        />
+        <KeyTakeaways
+          variant="bullets"
+          heading="Before you investigate"
+          bullets={[
+            'Freeze the reference window used for comparison.',
+            'Check whether a pipeline or schema change explains the shift.',
+            'Record the decision threshold before reviewing the result.',
+          ]}
+        />
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-callout">
+      <div class="preview-section-heading">
+        <p>02</p>
+        <h2 id="preview-callout">Callout</h2>
+      </div>
+      <div class="preview-stack">
+        <Callout title="Pro tip">
+          Compare the same day of the week when seasonality is stronger than the drift signal.
+        </Callout>
+        <Callout variant="note" title="Interpretation note">
+          Statistical significance indicates evidence of a shift, not whether the shift matters operationally.
+        </Callout>
+        <Callout
+          variant="quote"
+          source="NIST/SEMATECH e-Handbook of Statistical Methods"
+          sourceHref="https://www.itl.nist.gov/div898/handbook/"
+        >
+          Process monitoring works best when the measurement system is stable and the decision rule is defined in advance.
+        </Callout>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-checklist">
+      <div class="preview-section-heading">
+        <p>03</p>
+        <h2 id="preview-checklist">Checklist</h2>
+      </div>
+      <div class="preview-stack">
+        <Checklist
+          id="preview-investigation-runbook"
+          title="Drift investigation runbook"
+          items={[
+            'Confirm the alert reproduces on a fixed window.',
+            { text: 'Inspect upstream changes', detail: 'Review schema, units, missingness, and category levels.' },
+            { text: 'Measure user impact', detail: 'Separate statistically visible movement from operational harm.' },
+          ]}
+        />
+        <Checklist
+          title="Release readiness"
+          style="check"
+          items={[
+            'Reference and comparison windows are documented.',
+            { text: 'Thresholds are approved', detail: 'Owners know which values warn, fail, and stop the release.' },
+            'The rollback path has been tested.',
+          ]}
+        />
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-data-table">
+      <div class="preview-section-heading">
+        <p>04</p>
+        <h2 id="preview-data-table">DataTable</h2>
+      </div>
+      <div class="preview-stack">
+        <DataTable
+          caption="Production signal review"
+          headers={['Signal', 'Status', 'Owner', 'Score']}
+          rows={[
+            ['Schema contract', 'Pass', 'Data platform', 98],
+            ['Feature drift', 'Warning', 'Model team', 73],
+            ['Missing values', 'Fail', 'Analytics', 41],
+            ['Prediction stability', 'Severe', 'ML operations', 18],
+            ['Segment coverage', 'Monitor', 'Research', 67],
+          ]}
+          align={['left', 'center', 'left', 'right']}
+          badgeColumns={[1]}
+        />
+
+        <DataTable
+          caption="Evaluation windows"
+          headers={['Window', 'Mean error', 'Action']}
+          align={['left', 'right', 'left']}
+        >
+          <tr>
+            <td>Previous 7 days</td>
+            <td class="data-align-right">0.18</td>
+            <td>Continue monitoring</td>
+          </tr>
+          <tr>
+            <td>Previous 30 days</td>
+            <td class="data-align-right">0.24</td>
+            <td>Review affected segments</td>
+          </tr>
+        </DataTable>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .preview-page {
+    width: min(100%, 860px);
+    margin-inline: auto;
+    padding-block: 3.5rem 5rem;
+    color: var(--ink);
+  }
+
+  .preview-header {
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .preview-kicker,
+  .preview-section-heading p {
+    margin: 0 0 0.45rem;
+    color: var(--clay);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .preview-header h1 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(2.35rem, 7vw, 4.4rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+
+  .preview-note {
+    max-width: 42rem;
+    margin: 1rem 0 0;
+    color: var(--ink-2);
+  }
+
+  .preview-section {
+    padding-block: 2.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .preview-section-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .preview-section-heading h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.85rem;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .preview-stack {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .preview-page {
+      padding-block: 2.5rem 4rem;
+    }
+
+    .preview-section {
+      padding-block: 2.2rem;
+    }
+  }
+</style>

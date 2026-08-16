@@ -237,6 +237,16 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   with 115 pages/4268 links/0 violations, 13 passing contrast checks,
   and built HTML nav/footer/order/inbound-link inspection. Browser visual QA
   was unavailable because no in-app browser backend was connected.
+- **TASK-028A -- applied module components core:** added token-only, scoped
+  `KeyTakeaways`, `Callout`, `Checklist`, and `DataTable` components under
+  `src/components/applied/`, plus a noindex `/dev/preview/` consumer excluded
+  from sitemap and robots. Verification used clean `npx astro check`, a
+  sandbox-safe full Vitest fallback (35 files/120 tests) after the exact
+  `npm test` command hit documented `spawn EPERM`, `npm run build` with 116
+  pages/4296 links/0 link or meta-description violations, 13 passing contrast
+  checks, clean six-digit-hex and `/blog/` source proofs, and built artifact
+  checks for noindex, sitemap exclusion, component variants, and visible
+  status-badge labels.
 
 ### Reusable verification habits
 

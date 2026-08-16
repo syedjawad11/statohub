@@ -1,0 +1,109 @@
+---
+interface Props {
+  variant?: 'tip' | 'note' | 'quote';
+  title?: string;
+  source?: string;
+  sourceHref?: string;
+}
+
+const {
+  variant = 'tip',
+  title,
+  source,
+  sourceHref,
+} = Astro.props;
+---
+
+{
+  variant === 'quote' ? (
+    <blockquote class="callout callout--quote">
+      <div class="callout-body"><slot /></div>
+      <cite>
+        {
+          sourceHref ? (
+            <a href={sourceHref} rel="noopener">{source ?? sourceHref}</a>
+          ) : (
+            source
+          )
+        }
+      </cite>
+    </blockquote>
+  ) : (
+    <aside class:list={['callout', `callout--${variant}`]}>
+      {title && <p class="callout-title">{title}</p>}
+      <div class="callout-body"><slot /></div>
+    </aside>
+  )
+}
+
+<style>
+  .callout {
+    margin: 0;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--line-2);
+    border-left: 4px solid var(--pine);
+    border-radius: var(--r);
+    background: var(--pine-soft);
+    color: var(--ink);
+  }
+
+  .callout--note {
+    border-left-color: var(--clay);
+    background: var(--clay-soft);
+  }
+
+  .callout--quote {
+    border-left-color: var(--brass);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    font-family: var(--serif);
+    font-size: 1.12rem;
+    font-style: italic;
+  }
+
+  .callout-title {
+    margin: 0 0 0.35rem;
+    color: var(--pine);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .callout--note .callout-title {
+    color: var(--clay);
+  }
+
+  .callout-body {
+    color: var(--ink-2);
+  }
+
+  .callout-body :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  .callout-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  cite {
+    display: block;
+    margin-top: 0.8rem;
+    color: var(--ink-3);
+    font-family: var(--sans);
+    font-size: 0.86rem;
+    font-style: normal;
+  }
+
+  cite::before {
+    content: "Source: ";
+  }
+
+  cite a {
+    color: var(--pine);
+    text-decoration: underline;
+    text-decoration-color: var(--pine);
+    text-underline-offset: 0.16em;
+  }
+</style>

@@ -8,6 +8,6 @@ export default defineConfig({
   build: { format: 'directory' },
   integrations: [
     mdx(),
-    sitemap(),
+    sitemap({ filter: (page) => !page.includes('/dev/') }),
   ],
 });

@@ -1,0 +1,182 @@
+---
+type Alignment = 'left' | 'center' | 'right';
+type Cell = string | number;
+type BadgeTone = 'pass' | 'warn' | 'fail' | 'critical';
+
+interface Props {
+  headers: string[];
+  rows?: Cell[][];
+  caption?: string;
+  align?: Alignment[];
+  badgeColumns?: number[];
+}
+
+const {
+  headers,
+  rows,
+  caption,
+  align = [],
+  badgeColumns = [],
+} = Astro.props;
+
+const alignmentFor = (columnIndex: number): Alignment => align[columnIndex] ?? 'left';
+
+const badgeToneFor = (value: Cell): BadgeTone | undefined => {
+  const normalized = String(value).trim().toLowerCase();
+
+  if (['pass', 'good', 'ok'].includes(normalized)) return 'pass';
+  if (['warn', 'warning', 'caution'].includes(normalized)) return 'warn';
+  if (['fail', 'bad', 'poor'].includes(normalized)) return 'fail';
+  if (['critical', 'severe'].includes(normalized)) return 'critical';
+
+  return undefined;
+};
+---
+
+<div
+  class="data-table-scroll"
+  role="region"
+  aria-label={caption ? `${caption} table` : 'Data table'}
+  tabindex="0"
+>
+  <table class="data-table">
+    {caption && <caption>{caption}</caption>}
+    <thead>
+      <tr>
+        {
+          headers.map((header, columnIndex) => (
+            <th scope="col" class={`data-align-${alignmentFor(columnIndex)}`}>
+              {header}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows === undefined ? (
+          <slot />
+        ) : (
+          rows.map((row) => (
+            <tr>
+              {row.map((cell, columnIndex) => {
+                const badgeTone = badgeColumns.includes(columnIndex)
+                  ? badgeToneFor(cell)
+                  : undefined;
+
+                return (
+                  <td class={`data-align-${alignmentFor(columnIndex)}`}>
+                    {badgeTone ? (
+                      <span class:list={['status-badge', `status-badge--${badgeTone}`]}>
+                        {cell}
+                      </span>
+                    ) : (
+                      cell
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))
+        )
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .data-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .data-table {
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: collapse;
+    background: var(--card);
+    color: var(--ink);
+  }
+
+  caption {
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--line-2);
+    background: var(--paper-2);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .data-table :global(th),
+  .data-table :global(td) {
+    padding: 0.78rem 1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+
+  .data-table :global(thead th) {
+    background: var(--paper-2);
+    color: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .data-table :global(tbody tr:last-child > *) {
+    border-bottom: 0;
+  }
+
+  .data-table :global(tbody tr:hover > *) {
+    background: var(--paper-2);
+  }
+
+  .data-table :global(.data-align-left) {
+    text-align: left;
+  }
+
+  .data-table :global(.data-align-center) {
+    text-align: center;
+  }
+
+  .data-table :global(.data-align-right) {
+    text-align: right;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--status-pass);
+    border-radius: 999px;
+    background: var(--paper-2);
+    color: var(--status-pass);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .status-badge--warn {
+    border-color: var(--status-warn);
+    color: var(--status-warn);
+  }
+
+  .status-badge--fail {
+    border-color: var(--status-fail);
+    color: var(--status-fail);
+  }
+
+  .status-badge--critical {
+    border-color: var(--status-critical);
+    color: var(--status-critical);
+  }
+</style>

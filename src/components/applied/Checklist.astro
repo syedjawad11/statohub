@@ -1,0 +1,137 @@
+---
+interface ChecklistItem {
+  text: string;
+  detail?: string;
+}
+
+interface Props {
+  title: string;
+  items: (string | ChecklistItem)[];
+  style?: 'numbered' | 'check';
+  id?: string;
+}
+
+const {
+  title,
+  items,
+  style = 'numbered',
+  id,
+} = Astro.props;
+
+const normalizedItems = items.map((item): ChecklistItem => (
+  typeof item === 'string' ? { text: item } : item
+));
+---
+
+<section class:list={['checklist', `checklist--${style}`]} id={id}>
+  <h2>{title}</h2>
+
+  {
+    style === 'numbered' ? (
+      <ol class="checklist-list">
+        {normalizedItems.map((item) => (
+          <li>
+            <div>
+              <span class="checklist-text">{item.text}</span>
+              {item.detail && <span class="checklist-detail">{item.detail}</span>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <ul class="checklist-list">
+        {normalizedItems.map((item) => (
+          <li>
+            <div>
+              <span class="checklist-text">{item.text}</span>
+              {item.detail && <span class="checklist-detail">{item.detail}</span>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .checklist {
+    padding: 1.25rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+  }
+
+  .checklist h2 {
+    margin: 0 0 1rem;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .checklist-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist-list li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  .checklist--numbered ol {
+    counter-reset: checklist-step;
+  }
+
+  .checklist--numbered li {
+    counter-increment: checklist-step;
+  }
+
+  .checklist--numbered li::before {
+    content: counter(checklist-step);
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    background: var(--pine-soft);
+    color: var(--pine);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .checklist--check li::before {
+    content: '';
+    width: 0.6rem;
+    height: 1rem;
+    margin: 0.15rem 0 0 0.55rem;
+    border-right: 2px solid var(--pine);
+    border-bottom: 2px solid var(--pine);
+    transform: rotate(45deg);
+  }
+
+  .checklist-text {
+    display: block;
+    padding-top: 0.18rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .checklist-detail {
+    display: block;
+    margin-top: 0.18rem;
+    color: var(--ink-2);
+    font-size: 0.94rem;
+  }
+</style>
