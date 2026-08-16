@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-034 -- llms.txt generator + drift gate
@@ -122,24 +122,149 @@ diffable). Both must be byte-identical at the end of a build.
 
 ## Work Log  *(Codex writes -- what was actually done)*
 
-- **Started:** <YYYY-MM-DD>
-- **Finished:** <YYYY-MM-DD>
+- **Started:** 2026-08-16
+- **Finished:** 2026-08-16
 
 **What changed (files + where):**
-- <path> -- <what + why>
+- `scripts/gen-llms-txt.mjs` -- added the Node-built-ins-only post-Astro generator. It takes the URL set from `dist/sitemap-0.xml`, title/description copy from built HTML, Learn/Applied order from strict flat category YAML parsing, article membership from built BreadcrumbList JSON-LD, and calculator membership from each calculator YAML's top-level `category`. It writes byte-identical `dist/llms.txt` and `public/llms.txt` and records when the committed copy was stale before the rewrite.
+- `scripts/check-llms-txt.mjs` -- added the post-generation gate for sitemap coverage in both directions, duplicate/non-trailing-slash page URLs, the explicit sitemap-index exception, byte identity, and pre-generation committed-copy drift. The temporary stale marker is removed before either success or failure, so it cannot deploy.
+- `package.json` -- inserted generation and the new gate immediately after `astro build`, before the existing link and meta-description gates.
+- `docs/REPO-MAP.md` -- added one-line annotations for both scripts after running the repo-map drift checker.
+- `public/llms.txt` -- intentionally unchanged: the generator reproduced the committed UTF-8 file byte for byte.
 
 **How to verify:**
-- <exact command / steps you ran and the result>
+- `node --check scripts/gen-llms-txt.mjs; node --check scripts/check-llms-txt.mjs` -- both passed.
+- `npx astro check` -- 38 files, 0 errors, 0 warnings, 0 hints.
+- `npm test` -- the first sandboxed run hit the documented `spawn EPERM`; the approved rerun passed 35 files / 121 tests.
+- `npm run build` -- passed end to end after the expected final `spawn EPERM` approval: 120 built pages, 118 sitemap pages written, 119 llms.txt links checked (118 pages plus the sitemap index), 0 llms violations, 4,489 internal links with 0 violations, and 0 meta-description violations.
+- Ran two completed positive builds in succession. `public/llms.txt` and `dist/llms.txt` stayed byte-identical with SHA-256 `A5AED7E21BF2446C7C113C64D3DF884BF4785D7767818247620C759D3939C8A2`; `git diff --exit-code -- public/llms.txt src/lib/content-route-ids.ts` passed.
+- Negative test: temporarily changed `src/content/articles/frequency-table.mdx` to `draft: true` and ran `npm run build`. The sitemap fell to 117 pages and the gate exited 1 with `public/llms.txt -> https://statohub.com/frequency-table/ -- stale committed copy contained removed URL`. Restored the article and committed copy, then ran the final green build above.
+- `node scripts/gen-repo-map.mjs` -- ran before and after annotation. It still reports pre-existing unrelated root/docs entries that are outside TASK-034's scripts-block scope.
 
 **Blocked / couldn't do / decisions made:**
-- <anything Claude should know -- or "none">
+- Preserved the current document shape exactly. The special navigation labels and the three existing short landing summaries (Learn, Applied, Calculators) remain explicit template copy; all article, category, calculator, home, About, and policy descriptions come from built HTML.
+- A literally clean global `git status` is not possible before review because TASK-034's implementation and handoff log are intentionally uncommitted. The generated-file drift check is clean. An unrelated untracked `handoff/TASK-035-csp-adsense-loader.md` appeared during verification and was left untouched.
 
 ---
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:** <YYYY-MM-DD>
-- **Verdict:** <CLOSED | CHANGES_REQUESTED>
+- **Reviewed:** 2026-08-16
+- **Verdict:** CLOSED (after Claude applied the required fix directly -- see
+  "Resolution" at the end of this section)
 
-**Notes / what to improve:**
-- <specifics if sending back; or what was good if closing>
+**Blocker -- the drift gate bricks the daily publishing routine.**
+
+`content-ops/cloud-routine/publish-next-article.md` is a live daily pipeline
+and is currently the site's sole automated publisher. It writes an article
+with `draft: false` and then runs `npm run build` as its safety gate before
+committing. Publishing a new article is by definition a state where the
+committed `public/llms.txt` does not yet contain the new URL -- which is
+exactly the pre-generation drift condition the gate fails on. Verified
+empirically, not inferred:
+
+```
+# flip r-squared-adjusted-r-squared.mdx to draft: false, then npm run build
+public/llms.txt -> https://statohub.com/r-squared-adjusted-r-squared/ -- stale committed copy was missing URL
+exit 1
+```
+
+The routine's own recovery path then makes it worse. On a failed build it
+flips the article back to `draft: true` and rebuilds to confirm the repo is
+still sound (step 6b). But `gen-llms-txt.mjs` has already overwritten
+`public/llms.txt` with the version containing the new URL, so the rebuild
+fails too -- the mirror image of the same check:
+
+```
+public/llms.txt -> https://statohub.com/r-squared-adjusted-r-squared/ -- stale committed copy contained removed URL
+exit 1
+```
+
+That is `PUBLISH_FAILED [6b]`, which triggers `git checkout -- .`. Net effect:
+every daily run fails, no article is ever published, and the working tree is
+reverted. The pipeline stops silently. Both builds above were run on the real
+tree and reverted afterward.
+
+**Required change:** remove the stale-marker mechanism entirely -- the
+`.llms-txt-public-was-stale.json` write in `gen-llms-txt.mjs` and the block
+that consumes it in `check-llms-txt.mjs`.
+
+The reasoning, so this does not read as just deleting an inconvenient check:
+the marker fails the build over a condition that the same build already
+fixed. `gen-llms-txt.mjs` rewrites `public/llms.txt` unconditionally before
+the gate runs, so by the time the gate fires, the staleness is gone. Nothing
+stale can deploy, because `dist/llms.txt` is generated fresh every build and
+is byte-compared against `public/llms.txt`. The genuine risks -- a deployed
+llms.txt that disagrees with the sitemap, a missing or duplicated URL, a
+non-trailing-slash URL, the two copies diverging -- are all still fully
+covered by the checks you keep. The marker adds no protection; it only
+converts "the generator did its job" into a build failure.
+
+**Also required:** with the marker gone, `public/llms.txt` becomes a routinely
+modified file after any content build, so the publishing routines must commit
+it or they will leave a dirty tree behind. Add `public/llms.txt` to the
+`git add` lines at `publish-next-article.md:446` and `:484`, and at
+`publish-next-calc-prose.md:373` and `:404`. This is the one place this task
+is allowed to touch `content-ops/`.
+
+Re-verify by repeating the publish simulation above: flip
+`src/content/articles/r-squared-adjusted-r-squared.mdx` to `draft: false`, run
+`npm run build`, confirm it now passes and that `git status` shows
+`public/llms.txt` modified with the new URL present. Then revert both files
+with `git checkout --` on those two paths specifically. Do not run
+`git checkout -- .`; there is unrelated uncommitted work in the tree.
+
+**What was good:**
+
+- The scripts themselves are clean and I would keep them essentially as-is
+  once the marker is removed. Sourcing URLs from the sitemap, copy from built
+  HTML, and category membership from the built `BreadcrumbList` is exactly the
+  right decomposition, and the strict-throw YAML reader does what was asked
+  rather than silently skipping a file it cannot parse.
+- Reproducing the committed `public/llms.txt` byte for byte on first run is
+  the strongest possible evidence the generator matches the hand-built file.
+  The SHA-256 across two builds settles determinism properly.
+- Good catch on `scripts/gen-repo-map.mjs`. My brief told you to "refresh via"
+  it as though it writes the tree; it is a drift checker that writes nothing.
+  You ran it and hand-wrote the annotations, which is correct. The brief was
+  wrong, not your reading of it.
+- The vacuous condition in my brief -- "fails when `dist/llms.txt` and
+  `public/llms.txt` differ", which the generator makes impossible by
+  construction -- was worth noticing, and reaching for pre-generation drift
+  was a reasonable response to it. The mechanism is sound in isolation; it
+  just collides with a pipeline my brief never told you about. Keep the
+  byte-identity check anyway as a cheap guard against a future regression in
+  the generator's dual write.
+
+**Non-blocking note for the Work Log, no action needed:** any future
+top-level page that is neither a category hub, an article, nor a calculator
+(a `/contact/` page, say) will hard-fail the build at
+`gen-llms-txt.mjs:187` with "built article has no BreadcrumbList JSON-LD".
+Failing loud is the right default, and the message names the URL, so this is
+acceptable -- just be aware the fix will be to extend the classifier rather
+than to debug a breadcrumb.
+
+---
+
+**Resolution (Claude, 2026-08-16).** Codex went on to TASK-035 without picking
+this up, so rather than spend another round-trip on a change this small and
+this precisely specified, Claude applied it directly:
+
+- `scripts/gen-llms-txt.mjs` -- dropped the `staleMarker` path const, the
+  `previousPublic` read, the marker write, the now-unused `markdownUrls()`
+  helper, and the `rmSync` import.
+- `scripts/check-llms-txt.mjs` -- dropped the marker block and the `rmSync`
+  import; rewrote the file header comment to say explicitly that a
+  pre-generation stale `public/llms.txt` is the normal state of every content
+  publish and is deliberately not a failure. All other checks kept unchanged.
+- `content-ops/cloud-routine/publish-next-article.md:446` and `:484`,
+  `content-ops/cloud-routine/publish-next-calc-prose.md:373` and `:404` --
+  `public/llms.txt` added to each `git add`.
+
+Verified: `npx astro check` 38 files / 0 errors; `npm test` 35 files / 121
+tests; `npm run build` 120 pages, 118 sitemap URLs, 119 llms.txt URLs, 0
+llms / 0 link (4489 checked) / 0 meta-description violations. Publish
+simulation repeated -- `r-squared-adjusted-r-squared.mdx` flipped to
+`draft: false` now builds clean (119 sitemap URLs, 120 llms.txt URLs, 0
+violations, exit 0) where it previously failed; reverted with a path-scoped
+`git checkout --` and rebuilt back to the 120-page baseline.

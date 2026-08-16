@@ -370,7 +370,7 @@ for line in lines:
 p.write_text("\n".join(out) + "\n", encoding="utf-8"); print("QUEUE.md marked done for", slug)
 PY
 
-git add "src/content/calculator-content/$SLUG.mdx" content-ops/calc-prose/QUEUE.md
+git add "src/content/calculator-content/$SLUG.mdx" content-ops/calc-prose/QUEUE.md public/llms.txt
 git -c user.email=routine@statohub.com -c user.name="statohub calc-prose publisher" \
     commit -m "content: add teaching block for $SLUG calculator [cloud-routine]"
 LOCAL_SHA=$(git rev-parse HEAD); echo "LOCAL_SHA=$LOCAL_SHA"
@@ -401,7 +401,7 @@ npm run build; SAFE=$?
 if [ $SAFE -ne 0 ]; then
   echo "PUBLISH_FAILED [6b]: repo does not build even with block drafted -- reverting"; git checkout -- . ; exit 1
 fi
-git add "src/content/calculator-content/$SLUG.mdx"
+git add "src/content/calculator-content/$SLUG.mdx" public/llms.txt
 git -c user.email=routine@statohub.com -c user.name="statohub calc-prose publisher" \
     commit -m "content: defer $SLUG teaching block (draft, needs human review) [cloud-routine]"
 git push origin HEAD:main

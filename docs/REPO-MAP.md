@@ -73,8 +73,10 @@ statohub/
 |
 |-- scripts/
 |   |-- gen-route-ids.mjs    # Regenerates content-route-ids.ts from src/content/** (predev + build)
+|   |-- gen-llms-txt.mjs     # Generates dist/public llms.txt from built sitemap + page metadata
 |   |-- gen-repo-map.mjs     # DRIFT CHECKER for this file -- lists undocumented dirs/root
 |   |                        #   files; it does NOT write. Annotations are hand-written.
+|   |-- check-llms-txt.mjs   # BUILD GATE: sitemap coverage + committed/deployed llms.txt drift
 |   `-- check-links.mjs      # BUILD GATE: crawls dist/**, fails on any internal redirect/404
 |
 |-- public/                  # robots.txt, _headers (security headers), favicons, og-default.png

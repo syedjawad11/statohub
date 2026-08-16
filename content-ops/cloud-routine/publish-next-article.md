@@ -443,7 +443,7 @@ PY
 python content-ops/content_db.py log-review "$SLUG" 90 pass "automated routine self-review + green build gate (astro check + vitest + build + link gate)"
 python content-ops/content_db.py set-status "$SLUG" published
 
-git add "src/content/articles/$SLUG.mdx" content-ops/content.db src/lib/content-route-ids.ts
+git add "src/content/articles/$SLUG.mdx" content-ops/content.db src/lib/content-route-ids.ts public/llms.txt
 git -c user.email=routine@statohub.com -c user.name="statohub publisher" \
     commit -m "content: publish $SLUG [cloud-routine]"
 LOCAL_SHA=$(git rev-parse HEAD); echo "LOCAL_SHA=$LOCAL_SHA"
@@ -481,7 +481,7 @@ if [ $SAFE -ne 0 ]; then
   git checkout -- . ; exit 1
 fi
 python content-ops/content_db.py log-review "$SLUG" 50 fail "deferred by cloud routine: QA/build gate not met; left as draft for human review"
-git add "src/content/articles/$SLUG.mdx" content-ops/content.db src/lib/content-route-ids.ts
+git add "src/content/articles/$SLUG.mdx" content-ops/content.db src/lib/content-route-ids.ts public/llms.txt
 git -c user.email=routine@statohub.com -c user.name="statohub publisher" \
     commit -m "content: defer $SLUG (draft, needs human review) [cloud-routine]"
 git push origin HEAD:main
