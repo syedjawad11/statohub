@@ -1,4 +1,4 @@
-Status: DONE
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-031 -- Homepage three-section redesign
@@ -94,8 +94,21 @@ Status: DONE
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:**
-- **Verdict:**
+- **Reviewed:** 2026-08-16 (Claude)
+- **Verdict:** PASS, with one DoD item recorded as unmet
 
 **Notes / what to improve:**
-- pending
+- Independently verified: 0 raw internal `href="/` in `src/pages/index.astro`;
+  0 matches for `finance|economics|newsletter`; counts derived from
+  `getCollection` (built HTML shows "73 published guides", "25 calculators",
+  "4 applied hubs" -- no hardcoded marketing numbers).
+- **No-JS fallback confirmed by the reviewer against `dist/index.html`:** all four
+  `data-applied-card` values render, and all 10 `hidden` occurrences in the page are
+  `aria-hidden` on decorative arrows/icons. No Applied card is hidden without JS.
+- **Unmet DoD item:** "Desktop and mobile layouts are visually checked, filter
+  buttons work" was never actually performed -- the browser runtime exposed zero
+  instances. Codex flagged this honestly rather than claiming it. Static-artifact
+  checks are a good proxy but are not the same thing. Re-dispatching to Codex would
+  not help (same missing browser), so this is carried forward as a manual eyeball
+  pass against `docs/ideas/homepage-redesign-mock-2026-08-16.png` now that the page
+  is live.

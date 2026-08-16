@@ -1,4 +1,4 @@
-Status: DONE
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-032 -- Applied section content-ops support
@@ -80,8 +80,24 @@ Status: DONE
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:**
-- **Verdict:**
+- **Reviewed:** 2026-08-16 (Claude)
+- **Verdict:** CHANGES_REQUESTED at review -> fixed by the reviewer -> CLOSED
 
 **Notes / what to improve:**
-- pending
+- **Defect found: the code was correct but was never applied to the real database.**
+  `content-ops/content.db` is git-tracked and its `categories` table still had only
+  `slug, title, description, nav_order`. Because `cmd_show` and `cmd_brief` now run
+  `SELECT title,section FROM categories`, both commands **crashed on the live DB**:
+  `sqlite3.OperationalError: no such column: section`.
+- **Root cause worth remembering:** verification ran exclusively against temporary
+  databases, and the real `content.db` was deliberately left untouched. That is why
+  every gate passed while the shipped tool was broken in practice. A migration is
+  not done until it has been run against the artifact that is actually committed.
+- **Fix applied by the reviewer** (backup taken first): `content_db.py init` then
+  `seed`. Result: `section` column present; categories 7 -> 11 with exactly 4
+  `applied`; articles unchanged at 75 with statuses preserved (73 published,
+  1 changes_requested, 1 research_pending). `show simpsons-paradox` now exits 0 and
+  prints `section: learn`, and the Learn `brief` branch still emits the SEO playbook
+  rules -- no regression from the branch.
+- The `.claude/applied-playbook.md` that `brief` points at did not exist either;
+  written separately as part of this session rather than as a change to this task.

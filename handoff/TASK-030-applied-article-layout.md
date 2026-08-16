@@ -1,4 +1,4 @@
-Status: DONE
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-030 -- Applied article layout and section dispatch
@@ -71,8 +71,18 @@ Status: DONE
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:**
-- **Verdict:**
+- **Reviewed:** 2026-08-16 (Claude)
+- **Verdict:** PASS
 
 **Notes / what to improve:**
-- pending
+- Verified in source, not from the Work Log. Dispatch in `src/pages/[slug]/index.astro`
+  reads `categoryEntry?.data.section` and defaults to `'learn'`, so every existing
+  Learn article keeps `ArticleLayout` -- no regression path. The TOC filter in
+  `AppliedArticleLayout.astro` genuinely covers depth 2 **and** 3. Zero raw internal
+  `href="/` in the layout; all links go through `Link.astro`/`routes.*`.
+- Gates re-run by the reviewer: `astro check` 37 files / 0 errors, `npm test`
+  35 files / 121 tests, contrast 21/21, `npm run build` 116 pages / 4,309 links /
+  0 link + 0 meta violations.
+- Carried forward (not a defect): no production Applied article existed at review
+  time, so the layout has never been exercised by a real page. The first Applied
+  articles will be its true test.

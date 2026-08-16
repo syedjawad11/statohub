@@ -1,4 +1,4 @@
-Status: DONE
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-033 -- Applied living preview route
@@ -70,8 +70,14 @@ Status: DONE
 
 ## Review  *(Claude writes -- accept or send back)*
 
-- **Reviewed:**
-- **Verdict:**
+- **Reviewed:** 2026-08-16 (Claude)
+- **Verdict:** PASS
 
 **Notes / what to improve:**
-- pending
+- Verified by the reviewer: `git ls-files src/pages/dev/` returns only
+  `applied-preview/index.astro`, and the build emits
+  `dist/dev/applied-preview/index.html`. The move landed as a true rename in the
+  commit, so there is exactly one living style guide.
+- Cosmetic leftover: an **empty** `src/pages/dev/preview/` directory remains on
+  disk. It is untracked (git does not track empty directories), generates no route,
+  and does not appear in the build. Removed during review.
