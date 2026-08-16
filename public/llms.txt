@@ -1,85 +1,190 @@
 # Statohub
 
-> Statohub (https://statohub.com) is a statistics education site that pairs deep, interactive calculators with plain-English teaching on the same page. Each calculator computes real results in the browser and is accompanied by a short lesson (how-to, worked example, and FAQ), while longer articles explain the underlying concepts.
+> Statohub (https://statohub.com/) is a statistics education site. It pairs interactive calculators that compute real results in the browser with plain-English teaching on the same page: a how-to, a worked example, and an FAQ beside every tool, plus longer articles that explain the underlying concepts. Content spans two tracks — Learn (core statistics theory and method) and Applied Statistics (how those methods are used in real analysis, experiments, forecasting, and machine learning).
 
 Key facts for AI assistants citing this site:
 
-- All content is original teaching material aimed at students and self-learners.
-- Calculators run client-side and show step-by-step results plus a worked example.
+- All content is original teaching material written for students, self-learners, and working analysts.
+- Calculators run entirely client-side and show step-by-step results alongside a worked example. No sign-up, no account, no data leaves the browser.
 - URLs are flat and always end in a trailing slash. Articles live at `/{slug}/`, category hubs at `/{category}/`, and standalone calculators at `/calculators/{slug}/`.
+- Contact: admin@statohub.com
+
+- [Statohub home](https://statohub.com/): Learn statistics through clear guides, run focused calculators, and explore practical data analysis, experimentation, forecasting, and machine learning topics.
+
+## Learn
+
+- [Learn hub](https://statohub.com/learn/): Index of the core statistics topics below.
+
+### Descriptive Statistics
+
+- [Descriptive Statistics hub](https://statohub.com/descriptive-statistics/): Core summaries for describing datasets: mean, median, and mode for center; variance, standard deviation, and range for spread; and skewness for shape.
+- [Frequency Tables: How to Build & Read Them](https://statohub.com/frequency-table/): A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions.
+- [How to Calculate Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Learn to calculate standard deviation in Excel using STDEV.S and STDEV.P. Step-by-step tutorial, worked example, formula tips, and common mistakes.
+- [How to Find Frequency in Statistics](https://statohub.com/how-to-find-frequency-statistics/): Learn what frequency in statistics means and how to find class frequency, frequency distributions, and grouped frequency tables with a worked example.
+- [How to Find Outliers: The 1.5×IQR Rule & Formula](https://statohub.com/how-to-find-outliers/): Learn how to find outliers using the 1.5×IQR rule. Covers the outlier formula, step-by-step calculation, and a fully worked example with real numbers.
+- [How to Find the Mean: Average Formula and Examples](https://statohub.com/how-to-find-the-mean/): Learn how to find the mean with the step-by-step average formula. Covers the mean formula, worked examples, and how to calculate average in math.
+- [How to Find the Median: Formula & Steps](https://statohub.com/how-to-find-the-median/): Learn how to find the median step by step: sort values, apply the median formula, and handle both odd and even data sets with worked examples.
+- [How to Find the Range in Statistics](https://statohub.com/how-to-find-the-range/): Learn how to find the range in statistics: subtract the minimum value from the maximum. Step-by-step examples, formula, and a free range calculator.
+- [Interquartile Range (IQR): Formula & How to Find It](https://statohub.com/interquartile-range/): Learn what the interquartile range is, the IQR formula, and how to find it step by step. Includes a worked example, outlier detection, and IQR vs range.
+- [Mean Absolute Deviation & Coefficient of Variation](https://statohub.com/mean-absolute-deviation/): Learn what mean absolute deviation is, how to calculate it step by step, and how the coefficient of variation lets you compare data sets on any scale.
+- [Mean vs Average - Are They the Same Thing?](https://statohub.com/mean-vs-average/): Mean vs average — are they the same? In most cases yes, but formally 'average' also covers the median and mode. Learn when they differ and how to use each.
+- [Mean, Median, Mode & Range: The Complete Guide](https://statohub.com/mean-median-mode-range/): Learn how to find mean, median, mode, and range with step-by-step examples. Covers what mode means in math, how to calculate each measure, and when to use them.
+- [Median vs Average: What Does Median Mean in Math?](https://statohub.com/median-vs-average/): Median vs average explained: learn what median means in math, how to calculate it, and when to use median instead of the mean with clear examples.
+- [Percentiles: Meaning, Definition & How to Calculate](https://statohub.com/percentiles/): Understand the percentile meaning and definition: the value below which p% of data falls. Covers the formula, a fully worked example, and a free calculator.
+- [Sample Variance Formula: Definition, Equation & Examples](https://statohub.com/sample-variance-formula/): Learn the sample variance formula s² = Σ(xᵢ − x̄)² ÷ (n − 1), step by step. Covers the equation, a fully worked example, and common mistakes to avoid.
+- [Standard Deviation: Meaning, Formula & How to Calculate](https://statohub.com/standard-deviation/): Learn what standard deviation means, see the full formula, and follow a worked example to find it for any dataset — sample or population.
+- [The Empirical Rule in Statistics: A 68-95-99.7 Guide](https://statohub.com/empirical-rule/): Learn the empirical rule in statistics: 68%, 95%, and 99.7% of normal data fall within 1, 2, and 3 standard deviations of the mean. Worked examples included.
+- [The Standard Deviation Symbol (Sigma): Signs & Notation](https://statohub.com/standard-deviation-symbol/): Learn the standard deviation symbol: σ for population, s for sample. Understand every sign for standard deviation and which symbol identifies each.
+- [Variance: Definition, Formula & vs Standard Deviation](https://statohub.com/variance/): Variance measures how spread out data values are from the mean. Learn the variance formula and how variance differs from standard deviation.
+- [Weighted Average: Definition, Formula & Calculator](https://statohub.com/weighted-average/): A weighted average gives each value a different importance. Learn the weighted average formula, how to calculate it step by step, and when to use it.
+- [What Is an Average? Mean Definition, Types & Meaning](https://statohub.com/what-is-an-average/): An average is a single number that represents a set of values. Learn the average definition, mean formula, and when to use mean, median, or mode.
+
+### Probability & Distributions
+
+- [Probability & Distributions hub](https://statohub.com/probability-distributions/): Probability rules, from single events to conditional probability, plus the normal, binomial, and Poisson distributions that model random outcomes.
+- [Bayes' Theorem (Bayes' Rule): Formula & Examples](https://statohub.com/bayes-theorem/): Learn Bayes' rule — the formula for updating probability with new evidence. Worked medical and spam examples, the prior and posterior explained.
+- [Binomial Distribution: Formula, Examples & How to Use It](https://statohub.com/binomial-distribution/): Understand the binomial distribution formula with worked examples. Calculate exact and cumulative binomial probabilities step by step.
+- [Central Limit Theorem: Definition & Examples](https://statohub.com/central-limit-theorem/): The central limit theorem explains why sample means become normally distributed. Covers the formula, key assumptions, and a fully worked numeric example.
+- [Continuous Distributions: Exponential, Uniform, Gamma & Lognormal](https://statohub.com/exponential-distribution/): Learn the exponential distribution formula, worked examples, and how the exponential probability distribution compares to uniform, gamma, and lognormal.
+- [Hypergeometric Distribution: Formula & Examples](https://statohub.com/hypergeometric-distribution/): Learn the hypergeometric distribution formula, see a fully worked example, and understand when to use it instead of the binomial distribution.
+- [Independent, Dependent & Mutually Exclusive Events](https://statohub.com/independent-dependent-mutually-exclusive-events/): Understand independent, dependent, and mutually exclusive events in probability. Worked examples, formulas, and the key distinction explained clearly.
+- [Normal Distribution: The Bell Curve Explained](https://statohub.com/normal-distribution/): Understand the normal distribution and its bell curve: the formula, the 68-95-99.7 rule, worked examples, and how to calculate probabilities.
+- [Poisson Distribution: Formula, Examples & When to Use It](https://statohub.com/poisson-distribution/): Learn the Poisson distribution: its formula, the four conditions, and fully worked examples. Understand when to use it vs binomial and normal distributions.
+- [Probability Distributions Explained: Types, Mean & Examples](https://statohub.com/probability-distribution/): A probability distribution maps every outcome to its probability. Learn types, how to calculate the distribution mean, marginal distributions, and Bayesian use.
+- [Probability Formula: How to Calculate Probability Step by Step](https://statohub.com/probability-formula/): Learn the probability formula, conditional probability formula, binomial probability formula, and expected value formula with clear worked examples.
+- [Sampling Distributions: What They Are and Why They Matter](https://statohub.com/sampling-distributions/): Understand sampling distributions: what they are, how standard error works, the Central Limit Theorem connection, and a fully worked numeric example.
+- [Skewed Distributions: Left Skew, Right Skew & Shape](https://statohub.com/skewed-distribution/): Learn what a left skewed distribution means, how it compares to a right-skewed distribution, how to measure skewness, and how to identify distribution shape.
+- [What Is the F-Test and F-Distribution in Statistics?](https://statohub.com/f-test-f-distribution/): Learn what the F-test and F-distribution are, how the F statistic formula works, and walk through a step-by-step worked ANOVA example.
+- [Z Score Table: How to Read the Normal Distribution Table](https://statohub.com/z-table/): Use the z score table to look up cumulative normal probabilities. Step-by-step guide with worked examples, negative z-scores, and an interactive calculator.
+
+### Combinatorics
+
+- [Combinatorics hub](https://statohub.com/combinatorics/): Counting methods for probability and statistics: permutations, combinations, factorials, and binomial coefficients for tallying outcomes systematically.
+- [Binomial Theorem and Binomial Coefficient Explained](https://statohub.com/binomial-theorem/): Learn the binomial theorem formula, how to expand binomial expressions, and how binomial coefficients and Pascal's triangle connect to give every term.
+- [Combination Formula: Definition, Examples & Method](https://statohub.com/combinations/): Learn the combination formula C(n,r) = n! / (r!(n-r)!), work through fully worked examples, and know when to use combinations instead of permutations.
+- [Permutations vs. Combinations: What's the Difference?](https://statohub.com/permutations-and-combinations/): Learn the key difference between permutations and combinations, when to use each, and how to apply their formulas with fully worked step-by-step examples.
+- [Permutations: Formula & Examples](https://statohub.com/permutations/): A permutation is an ordered arrangement of items. Learn the permutation formula, work through examples, and avoid the most common calculation mistakes.
+- [The Fundamental Counting Principle Explained: With Examples](https://statohub.com/fundamental-counting-principle/): The fundamental counting principle lets you count all possible outcomes of a multi-step process by multiplying the number of choices at each step.
+
+### Regression & Correlation
+
+- [Regression & Correlation hub](https://statohub.com/regression-correlation/): How variables relate to each other: correlation coefficients, lines of best fit, and linear regression for measuring an association's strength.
+- [Correlation Coefficient (r): Formula & How to Interpret r Values](https://statohub.com/correlation-coefficient/): Learn what a correlation coefficient is, how to use the formula, and how to interpret r values — from the strongest to the weakest correlation.
+- [Correlation Definition: Positive, Negative & Types Explained](https://statohub.com/what-is-correlation/): Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained.
+- [Correlation vs Causation: Why Correlation Doesn't Imply Causation](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
+- [Linear Regression Assumptions: What They Are & How to Check](https://statohub.com/regression-assumptions/): Learn the five linear regression assumptions — linearity, independence, homoscedasticity, normality, no multicollinearity — plus how to test each one.
+- [Linear Regression: Equation, Formula & How It Works](https://statohub.com/linear-regression/): Understand linear regression: the regression equation, slope and intercept formula, and how to fit a least-squares line with a fully worked numeric example.
+- [Multicollinearity & Variance Inflation Factor (VIF) Explained](https://statohub.com/multicollinearity-vif/): Learn what multicollinearity is, why it distorts regression results, and how the Variance Inflation Factor (VIF) detects and measures it, with a worked example.
+- [Pearson Correlation Coefficient: Formula, Covariance & Spearman](https://statohub.com/pearson-correlation-coefficient/): Learn the Pearson correlation coefficient formula, how it relates to covariance, how to interpret r values, and when to use Spearman rank correlation instead.
+- [Regression to the Mean: Definition & Real-World Examples](https://statohub.com/regression-to-the-mean/): Learn what regression to the mean is, how Galton discovered it, the key formula, and real-world examples from sports, medicine, and education.
+- [Simpson's Paradox: Definition, Examples, and Why It Happens](https://statohub.com/simpsons-paradox/): Simpson's paradox occurs when a trend in data subgroups reverses when the groups are combined. Learn what causes it, how to spot it, and real-world examples.
+
+### Inferential Statistics
+
+- [Inferential Statistics hub](https://statohub.com/inferential-statistics/): Hypothesis tests, confidence intervals, p-values, and the reasoning for drawing conclusions about a population from a limited sample.
+- [Chi-Square Distribution: Shape, Table & Probability Density](https://statohub.com/chi-square-distribution/): The chi-square distribution explained: shape, formula, and how to read the chi square value table. Covers the chi squared probability density function.
+- [Chi-Square Test: Formula, Equation & How to Use It](https://statohub.com/chi-square-test/): Learn the chi-square test formula, chi squared equation, and step-by-step worked examples to test independence or goodness-of-fit with categorical data.
+- [Confidence Interval: Formula & How to Calculate a 95% CI](https://statohub.com/confidence-interval/): Learn the confidence interval formula and how to calculate a 95% CI step by step, with a fully worked example, calculator embed, and common-mistake guide.
+- [Effect Size: What It Means & How to Interpret It](https://statohub.com/effect-size/): Understand what effect size means in statistics, how to calculate Cohen's d for group comparisons, and how to interpret effect sizes in statistical research.
+- [Kruskal-Wallis Analysis of Variance: Formula & Uses](https://statohub.com/kruskal-wallis-test/): Learn the Kruskal-Wallis analysis of variance: formula, step-by-step example, assumptions, and when to use it over one-way ANOVA.
+- [Mann-Whitney U Test: Formula & When to Use It](https://statohub.com/mann-whitney-u-test/): Learn the Mann-Whitney U test formula, how it ranks values to compare two independent groups, and when to use this Wilcoxon rank-sum alternative to the t-test.
+- [Null Hypothesis: Definition, Examples & How to State It](https://statohub.com/null-hypothesis/): A null hypothesis states there is no effect or difference. Learn what is a null hypothesis, see null hypothesis examples, and how to state one.
+- [One-Way ANOVA: When and How to Use It](https://statohub.com/one-way-anova/): Learn when and how to use one-way ANOVA to compare means across three or more groups. Step-by-step formula, worked example, assumptions, and FAQ.
+- [P-Value: What It Is & How to Calculate It](https://statohub.com/p-value/): Learn what a p-value is in statistics, how to calculate it with a z-test or t-test, and how to interpret it against a significance level.
+- [Paired vs. Independent T-Test: Which One Do You Need?](https://statohub.com/paired-vs-independent-t-test/): Learn when to use a t-test and paired t-test vs. an independent t-test, with worked examples, the decision rule, and step-by-step formulas for each.
+- [Post-Hoc Tests: Tukey, Bonferroni & When to Use Them](https://statohub.com/post-hoc-tests/): Post-hoc tests identify which group means differ after a significant ANOVA. Compare Tukey HSD, Bonferroni, Scheffé, and Dunnett with worked examples.
+- [Statistical Power: What It Means and How to Calculate It](https://statohub.com/statistical-power/): Learn what statistical power means, how to calculate it, and why 0.80 is the standard target. Includes a fully worked example and power analysis guide.
+- [T-Test: Formula, Paired & Two-Sample T-Tests Explained](https://statohub.com/t-test/): Learn the paired t-test and two-sample t-test formulas. Covers the student t-test equation, worked examples, assumptions, and how to interpret results.
+- [Test Statistic: Formula, Degrees of Freedom & t-Table](https://statohub.com/test-statistic/): A test statistic measures how far a sample result falls from the null hypothesis. Learn the formula, critical values, degrees of freedom, and the t-table.
+- [Two-Way ANOVA: Main Effects and Interaction Effects](https://statohub.com/two-way-anova/): Learn two-way ANOVA step by step: test two factors at once, understand main effects and interaction effects, and read a full worked numeric example.
+- [Type I and Type II Errors: Definition and Examples](https://statohub.com/type-i-and-type-ii-errors/): Learn what type I and type II errors are in hypothesis testing, how they differ, and how to reduce them. Includes worked examples and a comparison table.
+- [Which Statistical Test Should You Use? A Decision Guide](https://statohub.com/which-statistical-test-should-i-use/): Learn which statistical test to use based on your data type, research question, and sample size. Covers t-test, ANOVA, chi-square, regression, and more.
+- [Z-Score: Formula, How to Calculate & What It Means](https://statohub.com/z-score/): A z score measures standard deviations from the mean. Learn the z score formula, how to calculate z score step-by-step, and how to read a z-score chart.
+
+### Foundations
+
+- [Foundations hub](https://statohub.com/foundations/): Core notation, vocabulary, and concepts for learning statistics, covering populations versus samples, variable types, and summation notation.
+- [Fundamental Statistics: What Statistics Is & Why It Matters](https://statohub.com/fundamental-statistics/): Understand fundamental statistics: definition, descriptive vs inferential branches, statistics math, and a fully worked example to build a solid foundation.
+- [Levels of Measurement: Nominal, Ordinal, Interval & Ratio](https://statohub.com/levels-of-measurement/): Learn the four levels of measurement — nominal, ordinal, interval, and ratio — and understand the ordinal variable vs nominal distinction with clear examples.
+- [Parameter vs Statistic in Statistics: Definitions & Symbols](https://statohub.com/parameter-vs-statistic/): Learn the difference between a parameter and a statistic in statistics, including their symbols (μ vs x̄, σ vs s) and a fully worked example.
+- [Proportions in Statistics: Meaning, Formula & How to Solve Them](https://statohub.com/proportions-in-statistics/): Learn what a proportion in statistics is, how to use the sample proportion formula, build confidence intervals, and run hypothesis tests with worked examples.
+- [Reliability in Statistics: Cronbach's Alpha & Cohen's Kappa](https://statohub.com/reliability-cronbachs-alpha-cohens-kappa/): Learn what Cronbach's alpha and Cohen's kappa measure, how to calculate and interpret both, and when to use each reliability statistic in research.
+- [Statistics Symbols Cheat Sheet: All 40+ Signs Explained](https://statohub.com/statistics-symbols-cheatsheet/): A complete statistics symbols cheat sheet: Greek letters, sample vs. population notation, hypothesis testing signs, and probability symbols — all explained.
+- [Types of Variables: Qualitative vs. Quantitative](https://statohub.com/types-of-variables/): Learn to classify types of variables in statistics: qualitative vs quantitative, discrete vs continuous, and how each type shapes your research and analysis.
+
+## Applied Statistics
+
+- [Applied Statistics hub](https://statohub.com/applied/): How statistics gets used in practice: analysis workflows, experiment design, forecasting, and the statistics behind machine learning.
+
+### Data Analysis
+
+- [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
+- [Exploratory Data Analysis: A Practical Workflow](https://statohub.com/exploratory-data-analysis/): The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop.
+
+### Experiments & Causality
+
+- [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
+- [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
+
+### Forecasting & Time Series
+
+- [Forecasting & Time Series hub](https://statohub.com/time-series-forecasting/): Building and validating forecasts from time-ordered data: trend, seasonality, backtesting, and recognising when a model has quietly stopped working.
+- [Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads](https://statohub.com/forecast-accuracy-metrics/): Compare MAE, RMSE, MAPE, and MASE for forecast accuracy, see each metric's real failure modes, and learn to backtest with rolling-origin cross-validation.
+
+### Machine Learning Statistics
+
+- [Machine Learning Statistics hub](https://statohub.com/machine-learning-statistics/): The statistical thinking behind machine learning: validation, overfitting, class imbalance, and reading model metrics without fooling yourself.
+- [Data Drift Detection: A Practical Guide for Production ML Systems](https://statohub.com/data-drift-detection/): Learn how to detect data drift in production with PSI, KS tests, and chi-square methods, plus how to set thresholds and respond to alerts.
 
 ## Calculators
 
+- [All calculators](https://statohub.com/calculators/): Full index of every Statohub calculator.
+
 ### Descriptive Statistics
-- [Standard Deviation Calculator](https://statohub.com/calculators/standard-deviation/): Sample and population standard deviation with a worked example.
-- [Mean Calculator](https://statohub.com/calculators/mean/): Arithmetic mean of a data set.
-- [Average Calculator](https://statohub.com/calculators/average/): Average (mean) of a list of numbers.
-- [Weighted Average Calculator](https://statohub.com/calculators/weighted-average/): Weighted mean from values and weights.
-- [Variance Calculator](https://statohub.com/calculators/variance/): Sample and population variance.
-- [Mean Absolute Deviation Calculator](https://statohub.com/calculators/mean-absolute-deviation/): Average absolute distance from the mean.
-- [Percentile Calculator](https://statohub.com/calculators/percentile/): Percentiles and quartiles for a data set.
-- [Range Calculator](https://statohub.com/calculators/range/): Range (max minus min) of a data set.
-- [Frequency Distribution Table Generator](https://statohub.com/calculators/frequency-table/): Builds a frequency and relative-frequency table.
+
+- [Average Calculator](https://statohub.com/calculators/average/): Calculate the average of a data set using the arithmetic mean formula, entering any list of numbers to get an instant, step-by-step result.
+- [Frequency Distribution Table Generator](https://statohub.com/calculators/frequency-table/): Build a sorted frequency table from raw data, showing relative and cumulative frequency for each distinct value automatically.
+- [Mean Absolute Deviation Calculator](https://statohub.com/calculators/mean-absolute-deviation/): Calculate the mean absolute deviation of a data set, measuring the average distance of each value from the mean without squaring.
+- [Mean Calculator](https://statohub.com/calculators/mean/): Calculate the mean (average) of any set of numbers, see the sum and count used, and get the result instantly with no sign-up required.
+- [Percentile Calculator](https://statohub.com/calculators/percentile/): Calculate a percentile value and the quartiles (Q1, Q2, Q3) for any data set, showing the interquartile range in the same result.
+- [Range Calculator](https://statohub.com/calculators/range/): Find the range of a data set along with its minimum and maximum values, calculated instantly from any list of numbers you enter.
+- [Standard Deviation Calculator](https://statohub.com/calculators/standard-deviation/): Calculate sample or population standard deviation for any data set and see how far values typically spread from the mean, step by step.
+- [Variance Calculator](https://statohub.com/calculators/variance/): Calculate both sample and population variance for a data set, showing the sum of squared deviations used behind each formula.
+- [Weighted Average Calculator](https://statohub.com/calculators/weighted-average/): Calculate a weighted average from matching lists of values and weights, useful for course grades, investment portfolios, and survey scoring.
 
 ### Probability & Distributions
-- [Normal Distribution Calculator](https://statohub.com/calculators/normal-distribution/): Probabilities and z-values for a normal distribution.
-- [Z Table Calculator](https://statohub.com/calculators/z-table/): Cumulative normal (z-table) probabilities.
-- [Binomial Distribution Calculator](https://statohub.com/calculators/binomial-distribution/): Binomial probabilities for n trials and probability p.
-- [Probability Calculator](https://statohub.com/calculators/probability/): Basic probability of an event and its complement.
 
-### Inferential Statistics
-- [Z-Score Calculator](https://statohub.com/calculators/z-score/): Standardizes a value into a z-score.
-- [P Value Calculator](https://statohub.com/calculators/p-value/): P-values from a test statistic.
-- [T-Test Calculator](https://statohub.com/calculators/t-test/): t-test for comparing means.
-- [T Table Calculator](https://statohub.com/calculators/t-table/): Critical t-values by degrees of freedom.
-- [Chi Square Calculator](https://statohub.com/calculators/chi-square/): Chi-square test statistic and p-value.
-- [Confidence Interval Calculator](https://statohub.com/calculators/confidence-interval/): Confidence interval for a mean or proportion.
-- [Sample Size Calculator](https://statohub.com/calculators/sample-size/): Required sample size for a survey or study.
-- [Proportion Calculator](https://statohub.com/calculators/proportion/): Proportions and proportion comparisons.
-
-### Regression & Correlation
-- [Correlation Coefficient Calculator](https://statohub.com/calculators/correlation-coefficient/): Pearson correlation coefficient for paired data.
-- [Linear Regression Calculator](https://statohub.com/calculators/linear-regression/): Line of best fit (slope and intercept) from paired data.
+- [Binomial Distribution Calculator](https://statohub.com/calculators/binomial-distribution/): Calculate exact and cumulative binomial probabilities for a chosen number of trials, success probability, and outcome count.
+- [Normal Distribution Calculator](https://statohub.com/calculators/normal-distribution/): Calculate normal distribution probabilities for one bound or an interval, using the mean and standard deviation that you enter.
+- [Probability Calculator](https://statohub.com/calculators/probability/): Calculate simple probability from the number of favorable and total outcomes, and see the complement probability at the same time.
+- [Z Table Calculator](https://statohub.com/calculators/z-table/): Calculate the standard normal left-tail probability for any z-score, along with the right-tail and between-zero-and-z values.
 
 ### Combinatorics
-- [Combination Calculator](https://statohub.com/calculators/combination/): Combinations (nCr) of items.
-- [Factorial Calculator](https://statohub.com/calculators/factorial/): Factorial (n!) of a number.
 
-## Articles
+- [Combination Calculator](https://statohub.com/calculators/combination/): Calculate combinations (nCr) or permutations (nPr) from n and r, useful for probability problems and counting arrangements.
+- [Factorial Calculator](https://statohub.com/calculators/factorial/): Calculate n! (n factorial) for any non-negative integer, showing the multiplication steps used to reach the final result.
 
-- [What Is an Average?](https://statohub.com/what-is-an-average/): Mean definition, types, and meaning.
-- [Mean vs Average](https://statohub.com/mean-vs-average/): Whether mean and average are the same thing.
-- [Median vs Average](https://statohub.com/median-vs-average/): What "median" means and how it differs from the average.
-- [Weighted Average](https://statohub.com/weighted-average/): Definition, formula, and calculator.
-- [Mean Absolute Deviation](https://statohub.com/mean-absolute-deviation/): MAD and the coefficient of variation.
-- [How to Find the Range](https://statohub.com/how-to-find-the-range/): Calculating the range step by step.
-- [Frequency Tables](https://statohub.com/frequency-table/): How to build and read frequency tables.
-- [Fundamental Statistics](https://statohub.com/fundamental-statistics/): What statistics is and why it matters.
-- [Parameter vs Statistic](https://statohub.com/parameter-vs-statistic/): Definitions and symbols compared.
-- [The Standard Deviation Symbol (Sigma)](https://statohub.com/standard-deviation-symbol/): Signs and notation for standard deviation.
-- [Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Calculating standard deviation in Excel.
-- [Z-Score](https://statohub.com/z-score/): Formula, calculation, and meaning.
-- [Z Score Table](https://statohub.com/z-table/): How to read the normal distribution table.
-- [Test Statistic](https://statohub.com/test-statistic/): Formula, degrees of freedom, and the t-table.
-- [Probability Distributions](https://statohub.com/probability-distribution/): Types, mean, and examples.
-- [Probability Formula](https://statohub.com/probability-formula/): Calculating probability step by step.
-- [Skewed Distributions](https://statohub.com/skewed-distribution/): Left skew, right skew, and shape.
-- [Correlation Definition](https://statohub.com/what-is-correlation/): Positive, negative, and types of correlation.
-- [Correlation vs Causation](https://statohub.com/correlation-vs-causation/): Why correlation does not imply causation.
-- [Linear Regression](https://statohub.com/linear-regression/): Equation, formula, and how it works.
+### Regression & Correlation
 
-## Categories
+- [Correlation Coefficient Calculator](https://statohub.com/calculators/correlation-coefficient/): Calculate Pearson's correlation coefficient for paired x and y values, showing r-squared and the strength of the relationship.
+- [Linear Regression Calculator](https://statohub.com/calculators/linear-regression/): Fit a least-squares regression line for paired x and y values, returning the slope, intercept, and correlation coefficient.
 
-- [Descriptive Statistics](https://statohub.com/descriptive-statistics/): Core summaries of center, spread, and shape.
-- [Probability & Distributions](https://statohub.com/probability-distributions/): Probability rules and common distributions.
-- [Inferential Statistics](https://statohub.com/inferential-statistics/): Hypothesis tests, confidence intervals, and p-values.
-- [Regression & Correlation](https://statohub.com/regression-correlation/): Relationships between variables and lines of best fit.
-- [Combinatorics](https://statohub.com/combinatorics/): Permutations, combinations, and factorials.
-- [Foundations](https://statohub.com/foundations/): Core notation, vocabulary, and concepts.
+### Inferential Statistics
+
+- [Chi Square Calculator](https://statohub.com/calculators/chi-square/): Calculate a chi-square goodness-of-fit statistic and its upper-tail p-value from the observed and expected counts that you enter.
+- [Confidence Interval Calculator](https://statohub.com/calculators/confidence-interval/): Calculate a z-based confidence interval for a population mean, showing the margin of error and the lower and upper bounds.
+- [P Value Calculator](https://statohub.com/calculators/p-value/): Calculate left-tail, right-tail, or two-sided p-values from a z or Student-t test statistic, with support for degrees of freedom.
+- [Sample Size Calculator](https://statohub.com/calculators/sample-size/): Estimate the sample size needed to estimate a population proportion at a chosen confidence level and margin of error.
+- [T Table Calculator](https://statohub.com/calculators/t-table/): Look up critical t values by confidence level, degrees of freedom, and one- or two-tailed test, replacing a printed t table.
+- [T-Test Calculator](https://statohub.com/calculators/t-test/): Run a one-sample t-test from a sample mean, hypothesized mean, sample standard deviation, and sample size, with the p-value shown.
+- [Z-Score Calculator](https://statohub.com/calculators/z-score/): Calculate a z-score from a raw value, mean, and standard deviation to see how many standard deviations it falls from average.
+
+### Foundations
+
+- [Proportion Calculator](https://statohub.com/calculators/proportion/): Solve the missing fourth term in a proportion of the form a/b = c/d, useful for scaling recipes, rates, and ratio problems.
 
 ## Optional
 
-- [All Calculators](https://statohub.com/calculators/): Full index of Statohub calculators.
-- [About](https://statohub.com/about/): About Statohub.
-- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Combined privacy and cookie policy.
-- [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index.
+- [About](https://statohub.com/about/): About Statohub, a static statistics education site pairing plain-English guides with working calculators so readers learn a method and run their own numbers.
+- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Privacy and cookie policy for Statohub, a static statistics education site with no accounts, explaining what data we collect and the cookies we use.
+- [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index covering every indexable page.
