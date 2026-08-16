@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS categories (
   slug        TEXT PRIMARY KEY,
   title       TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
+  section     TEXT NOT NULL DEFAULT 'learn',
   nav_order   INTEGER NOT NULL DEFAULT 0
 );
 

@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import AppliedArticleLayout from '../../layouts/AppliedArticleLayout.astro';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import CategoryLayout from '../../layouts/CategoryLayout.astro';
 import type { ArticleId, CalculatorId, CategoryId } from '../../lib/links';
@@ -66,6 +67,7 @@ let category:
 let hasCalculator = false;
 let calculatorAnchor: string | undefined;
 let readingTime: string | undefined;
+let articleSection: 'learn' | 'applied' = 'learn';
 let relatedArticles:
   | {
       id: ArticleId;
@@ -97,6 +99,7 @@ if (props.kind === 'article') {
   hasCalculator = Boolean(props.entry.data.calculator);
   calculatorAnchor = calculatorHeading?.slug;
   readingTime = `${minutes} min read`;
+  articleSection = categoryEntry?.data.section ?? 'learn';
   relatedArticles = (
     await Promise.all((props.entry.data.related ?? []).map((ref: RelatedRef) => getEntry(ref)))
   )
@@ -123,11 +126,13 @@ if (props.kind === 'article') {
     }
   }
 }
+
+const ArticleShell = articleSection === 'applied' ? AppliedArticleLayout : ArticleLayout;
 ---
 
 {
   props.kind === 'article' && Content && category ? (
-    <ArticleLayout
+    <ArticleShell
       article={props.entry.data}
       slug={props.slug}
       category={category}
@@ -139,7 +144,7 @@ if (props.kind === 'article') {
       relatedCalculator={relatedCalculator}
     >
       <Content />
-    </ArticleLayout>
+    </ArticleShell>
   ) : (
     <CategoryLayout category={(props as Extract<Props, { kind: 'category' }>).entry.data} slug={(props as Extract<Props, { kind: 'category' }>).slug} />
   )

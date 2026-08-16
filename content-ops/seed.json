@@ -42,6 +42,34 @@
       "title": "Calculators",
       "description": "Standalone statistics calculators and tools.",
       "nav_order": 7
+    },
+    {
+      "slug": "data-analysis",
+      "title": "Data Analysis",
+      "description": "Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.",
+      "section": "applied",
+      "nav_order": 7
+    },
+    {
+      "slug": "experiments-causality",
+      "title": "Experiments & Causality",
+      "description": "How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.",
+      "section": "applied",
+      "nav_order": 8
+    },
+    {
+      "slug": "time-series-forecasting",
+      "title": "Forecasting & Time Series",
+      "description": "Building and validating forecasts from time-ordered data: trend, seasonality, backtesting, and recognising when a model has quietly stopped working.",
+      "section": "applied",
+      "nav_order": 9
+    },
+    {
+      "slug": "machine-learning-statistics",
+      "title": "Machine Learning Statistics",
+      "description": "The statistical thinking behind machine learning: validation, overfitting, class imbalance, and reading model metrics without fooling yourself.",
+      "section": "applied",
+      "nav_order": 10
     }
   ],
   "calculators": [

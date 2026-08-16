@@ -30,11 +30,13 @@ DB_PATH = HERE / "content.db"
 SCHEMA_PATH = HERE / "schema.sql"
 SEED_PATH = HERE / "seed.json"
 PLAYBOOK = ".claude/seo-playbook.md"  # repo-root relative
+APPLIED_PLAYBOOK = ".claude/applied-playbook.md"  # repo-root relative
 
 STATUSES = [
     "planned", "briefed", "drafting", "in_review",
     "changes_requested", "approved", "published", "research_pending",
 ]
+SECTIONS = ["learn", "applied"]
 
 
 def connect():
@@ -48,26 +50,52 @@ def norm(kw):
     return " ".join(kw.strip().lower().split())
 
 
+def validate_section(section, context):
+    if section not in SECTIONS:
+        sys.exit(
+            f"Invalid section '{section}' for {context}. "
+            f"One of: {', '.join(SECTIONS)}"
+        )
+    return section
+
+
 # ---------------------------------------------------------------- init / seed
 def cmd_init(args):
     conn = connect()
-    conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
-    conn.commit()
-    conn.close()
+    try:
+        conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+        columns = {
+            row["name"] for row in conn.execute("PRAGMA table_info(categories)").fetchall()
+        }
+        if "section" not in columns:
+            conn.execute(
+                "ALTER TABLE categories "
+                "ADD COLUMN section TEXT NOT NULL DEFAULT 'learn'"
+            )
+        for row in conn.execute("SELECT slug,section FROM categories"):
+            validate_section(row["section"], f"category '{row['slug']}'")
+        conn.commit()
+    finally:
+        conn.close()
     print(f"Schema applied to {DB_PATH.name}")
 
 
 def cmd_seed(args):
     data = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    for c in data["categories"]:
+        validate_section(c.get("section", "learn"), f"category '{c['slug']}'")
     conn = connect()
     cur = conn.cursor()
     try:
         for c in data["categories"]:
             cur.execute(
-                "INSERT INTO categories(slug,title,description,nav_order) VALUES(?,?,?,?) "
+                "INSERT INTO categories(slug,title,description,section,nav_order) "
+                "VALUES(?,?,?,?,?) "
                 "ON CONFLICT(slug) DO UPDATE SET title=excluded.title,"
-                "description=excluded.description,nav_order=excluded.nav_order",
-                (c["slug"], c["title"], c.get("description", ""), c.get("nav_order", 0)),
+                "description=excluded.description,section=excluded.section,"
+                "nav_order=excluded.nav_order",
+                (c["slug"], c["title"], c.get("description", ""),
+                 c.get("section", "learn"), c.get("nav_order", 0)),
             )
         for k in data["calculators"]:
             cur.execute(
@@ -176,9 +204,13 @@ def cmd_show(args):
     a = cur.execute("SELECT * FROM articles WHERE slug=?", (args.slug,)).fetchone()
     if not a:
         sys.exit(f"No article '{args.slug}'")
+    cat = cur.execute(
+        "SELECT title,section FROM categories WHERE slug=?", (a["category_slug"],)
+    ).fetchone()
     print(f"# {a['title']}")
     print(f"slug:            {a['slug']}  (URL: /{a['slug']}/)")
     print(f"category:        {a['category_slug']}")
+    print(f"section:         {cat['section'] if cat else '?'}")
     print(f"primary keyword: {a['primary_keyword']}")
     print(f"phase:           {a['phase']}   KD {a['kd_min']}-{a['kd_max']}   "
           f"combined US vol ~{a['combined_volume']}/mo")
@@ -210,7 +242,12 @@ def cmd_brief(args):
     a = cur.execute("SELECT * FROM articles WHERE slug=?", (args.slug,)).fetchone()
     if not a:
         sys.exit(f"No article '{args.slug}'")
-    cat = cur.execute("SELECT title FROM categories WHERE slug=?", (a["category_slug"],)).fetchone()
+    cat = cur.execute(
+        "SELECT title,section FROM categories WHERE slug=?", (a["category_slug"],)
+    ).fetchone()
+    section = validate_section(
+        cat["section"] if cat else "learn", f"category '{a['category_slug']}'"
+    )
     kws = _kw_list(cur, args.slug)
     calc = None
     if a["embed_calculator"]:
@@ -254,8 +291,21 @@ def cmd_brief(args):
             out.append(f"- [{r['title']}](/{r['slug']}/)")
         out.append("")
     out.append("## Rules")
-    out.append(f"- Follow **`{PLAYBOOK}`** in full (>=2000 words, >=1 authoritative external "
-               "link, active voice, educational tone, all keywords natural, semantic headings).")
+    if section == "applied":
+        out.append(
+            f"- Follow **`{APPLIED_PLAYBOOK}`** in full (3,000-4,500 words, "
+            "practitioner-focused, evidence-backed, and no fabricated claims)."
+        )
+        out.append("- **Required modules checklist:**")
+        out.append("  - [ ] `<KeyTakeaways>` before the first H2")
+        out.append("  - [ ] At least one `<DataTable>`")
+        out.append("  - [ ] At least one `<Checklist>`")
+        out.append("  - [ ] At least one `<Figure>`-wrapped infographic")
+        out.append("  - [ ] Literal `## Sources` with at least 6 resolving external links")
+        out.append("  - [ ] Literal `## FAQ` with at least 3 `<FAQ>` entries")
+    else:
+        out.append(f"- Follow **`{PLAYBOOK}`** in full (>=2000 words, >=1 authoritative external "
+                   "link, active voice, educational tone, all keywords natural, semantic headings).")
     out.append("- Frontmatter must satisfy `src/content/config.ts`. Write with `draft: true`.")
     out.append("- Internal links ONLY via the typed `Link`/`url(id)` registry - never hand-typed hrefs.")
     print("\n".join(out))

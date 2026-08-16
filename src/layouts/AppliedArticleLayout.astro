@@ -1,0 +1,422 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Link from '../components/Link.astro';
+import TableOfContents from '../components/applied/TableOfContents.astro';
+import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
+import { articleSchema, organizationSchema, webSiteSchema, type BreadcrumbItem } from '../lib/schema';
+import BaseLayout from './BaseLayout.astro';
+
+type ArticleData = CollectionEntry<'articles'>['data'];
+interface Heading { depth: number; slug: string; text: string }
+interface RelatedArticle { id: ArticleId; title: string; description: string }
+interface RelatedCalculator {
+  id: CalculatorId;
+  title: string;
+  description: string;
+  standalone: boolean;
+}
+interface Props {
+  article: ArticleData;
+  slug: ArticleId;
+  category: { id: CategoryId; title: string };
+  headings: Heading[];
+  hasCalculator: boolean;
+  calculatorAnchor?: string;
+  readingTime?: string;
+  level?: string;
+  relatedArticles?: RelatedArticle[];
+  relatedCalculator?: RelatedCalculator;
+}
+
+const {
+  article, slug, category, headings, hasCalculator, calculatorAnchor, readingTime,
+  level = 'Practitioner guide', relatedArticles = [], relatedCalculator,
+} = Astro.props as Props;
+const tocItems = headings
+  .filter((heading): heading is Heading & { depth: 2 | 3 } => heading.depth === 2 || heading.depth === 3)
+  .map((heading) => ({ text: heading.text, href: `#${heading.slug}`, depth: heading.depth }));
+const updatedDate = article.updatedDate ?? article.pubDate;
+const formattedDate = updatedDate
+  ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(updatedDate)
+  : undefined;
+const metaItems: string[] = [];
+if (readingTime) metaItems.push(readingTime);
+if (formattedDate) metaItems.push(`Updated ${formattedDate}`);
+if (hasCalculator) metaItems.push('Includes a calculator');
+const relatedItems = [
+  ...relatedArticles.map((item) => ({
+    kind: 'Guide' as const, title: item.title, description: item.description, route: routes.article(item.id),
+  })),
+  ...(relatedCalculator?.standalone ? [{
+    kind: 'Calculator' as const,
+    title: relatedCalculator.title,
+    description: relatedCalculator.description,
+    route: routes.calculator(relatedCalculator.id),
+  }] : []),
+];
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Applied Statistics', route: routes.appliedLanding() },
+  { label: category.title, route: routes.categoryHub(category.id) },
+  { label: article.title, route: routes.article(slug) },
+];
+const site = Astro.site ?? Astro.url;
+const articleJsonLd = [
+  articleSchema({
+    id: slug,
+    headline: article.title,
+    description: article.description,
+    datePublished: article.pubDate,
+    dateModified: article.updatedDate ?? article.pubDate,
+    image: article.ogImage,
+  }, site),
+  webSiteSchema(site),
+  organizationSchema(site, { logo: '/apple-touch-icon.png' }),
+];
+---
+
+<BaseLayout
+  title={`${article.title} | Statohub`}
+  description={article.description}
+  canonicalPath={routes.article(slug)}
+  ogType="article"
+  ogImage={article.ogImage}
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={false}
+  jsonLd={articleJsonLd}
+>
+  <nav class="applied-breadcrumb" aria-label="Breadcrumb">
+    <Link to={routes.home()}>Home</Link>
+    <span aria-hidden="true">/</span>
+    <Link to={routes.appliedLanding()}>Applied Statistics</Link>
+    <span aria-hidden="true">/</span>
+    <Link to={routes.categoryHub(category.id)}>{category.title}</Link>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{article.title}</span>
+  </nav>
+
+  <div class="applied-shell">
+    <header class="applied-header">
+      <div class="applied-kicker">
+        <span>{category.title}</span>
+        <span aria-hidden="true">/</span>
+        <span>{level}</span>
+      </div>
+      <h1>{article.h1 || article.title}</h1>
+      <p class="applied-standfirst">{article.description}</p>
+      <div class="applied-meta" aria-label="Article details">
+        {metaItems.map((item) => <span>{item}</span>)}
+      </div>
+    </header>
+    <aside class="applied-rail" aria-label="Article navigation">
+      {tocItems.length > 0 && <TableOfContents items={tocItems} />}
+      {hasCalculator && calculatorAnchor && (
+        <div class="applied-tool-link">
+          <p>Work with the numbers</p>
+          <span>This guide includes an interactive calculator.</span>
+          <a href={`#${calculatorAnchor}`}>Jump to calculator</a>
+        </div>
+      )}
+    </aside>
+    <article class="applied-article">
+      <div class="applied-prose article-prose"><slot /></div>
+      {relatedItems.length > 0 && (
+        <section class="applied-related" aria-labelledby="applied-related-heading">
+          <div class="applied-related-heading">
+            <p>Continue exploring</p>
+            <h2 id="applied-related-heading">Build on this guide</h2>
+          </div>
+          <div class="applied-related-grid">
+            {relatedItems.map((item) => (
+              <Link class="applied-related-card" to={item.route}>
+                <span>{item.kind}</span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .applied-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+    padding-top: 1.5rem;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .applied-breadcrumb a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+
+  .applied-breadcrumb a:hover {
+    color: var(--pine);
+  }
+
+  .applied-breadcrumb [aria-current="page"] {
+    overflow: hidden;
+    max-width: 24rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .applied-shell {
+    display: grid;
+    grid-template-areas:
+      'header rail'
+      'article rail';
+    grid-template-columns: minmax(0, 48rem) minmax(14rem, 17rem);
+    gap: 0 3.5rem;
+    justify-content: center;
+    padding: 1.75rem 0 4rem;
+  }
+
+  .applied-header {
+    grid-area: header;
+    padding: 0 0 2rem;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .applied-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.9rem;
+    color: var(--brass);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .applied-header h1 {
+    max-width: 46rem;
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(2.35rem, 5vw, 4.15rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+
+  .applied-standfirst {
+    max-width: 43rem;
+    margin: 1.2rem 0 0;
+    color: var(--ink-2);
+    font-family: var(--serif);
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    line-height: 1.55;
+  }
+
+  .applied-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.25rem;
+    margin-top: 1.25rem;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  .applied-meta span {
+    position: relative;
+    padding-left: 0.9rem;
+  }
+
+  .applied-meta span::before {
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: var(--brass);
+    content: '';
+  }
+
+  .applied-rail {
+    position: sticky;
+    top: 5.5rem;
+    grid-area: rail;
+    align-self: start;
+    display: grid;
+    gap: 1rem;
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+
+  .applied-tool-link {
+    padding: 1rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .applied-tool-link p {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .applied-tool-link span {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--ink-2);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .applied-tool-link a {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--pine);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-underline-offset: 0.16em;
+  }
+
+  .applied-article {
+    grid-area: article;
+    min-width: 0;
+  }
+
+  .applied-prose {
+    padding-top: 1.75rem;
+  }
+
+  .applied-related {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line-2);
+  }
+
+  .applied-related-heading > p {
+    margin: 0 0 0.35rem;
+    color: var(--brass);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .applied-related-heading h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+
+  .applied-related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .applied-related-card {
+    display: block;
+    min-width: 0;
+    padding: 1.15rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    transition: border-color 160ms ease, transform 160ms ease;
+  }
+
+  .applied-related-card:hover {
+    border-color: var(--brass);
+    transform: translateY(-2px);
+  }
+
+  .applied-related-card > span {
+    color: var(--brass);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .applied-related-card h3 {
+    margin: 0.45rem 0 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .applied-related-card p {
+    margin: 0.55rem 0 0;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 980px) {
+    .applied-shell {
+      grid-template-areas: 'header' 'rail' 'article';
+      grid-template-columns: minmax(0, 46rem);
+      gap: 0;
+    }
+
+    .applied-rail {
+      position: static;
+      display: block;
+      max-height: none;
+      overflow: visible;
+      margin-top: 1.5rem;
+      padding: 0;
+    }
+
+    .applied-tool-link {
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .applied-breadcrumb [aria-current="page"],
+    .applied-breadcrumb span:nth-last-child(2) {
+      display: none;
+    }
+
+    .applied-shell {
+      padding-top: 1.25rem;
+    }
+
+    .applied-header h1 {
+      font-size: clamp(2.15rem, 12vw, 3rem);
+    }
+
+    .applied-related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .applied-related-card {
+      transition: none;
+    }
+  }
+</style>

@@ -281,6 +281,25 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   21 contrast checks, a clean SVG colour-attribute proof, 35 total/35 unique
   built ids, and 8/8 framed diagrams with resolving `aria-labelledby`.
 
+- **TASK-030 -- Applied article layout:** added `AppliedArticleLayout` with an
+  H2/H3 table of contents and section-aware root-route dispatch, while keeping
+  the existing Learn article layout unchanged.
+- **TASK-031 -- three-section homepage:** rebuilt the hero and route finder
+  around Learn / Calculate / Apply, with 5 Learn topics, 8 calculators, and
+  exactly the 4 approved Applied hubs plus progressive-enhancement filters. No
+  Applied articles, newsletter, fabricated content, or fifth category was added.
+- **TASK-032 -- Applied content ops:** added the additive/idempotent category
+  `section` migration, seeded exactly 4 Applied categories with no Applied
+  articles, and branched Learn/Applied briefs. Temporary-database verification
+  covered both schema paths and confirmed the real `content.db` stayed unchanged.
+- **TASK-033 -- Applied preview route:** moved the component showcase from
+  `/dev/preview/` to noindex `/dev/applied-preview/`, kept it out of the sitemap,
+  and verified 8 SVG frames with 35 unique ids. Integrated gates passed:
+  `npx astro check` 37 files/0 diagnostics, Vitest 35 files/121 tests, contrast
+  21/21, and `npm run build` 116 pages/4309 links/0 link or meta violations.
+  Browser runtime exposed zero instances, so visual QA used built artifacts and
+  local HTTP checks.
+
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

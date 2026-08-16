@@ -3,10 +3,17 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { routes, type ArticleId, type CategoryId } from '../lib/links';
+import {
+  routes,
+  type CalculatorId,
+  type CategoryId,
+  type RouteRef,
+} from '../lib/links';
 import { organizationSchema, webSiteSchema } from '../lib/schema';
 
 type CategoryEntry = CollectionEntry<'categories'>;
+type ArticleEntry = CollectionEntry<'articles'>;
+type CalculatorEntry = CollectionEntry<'calculators'>;
 
 const site = Astro.site ?? Astro.url;
 const homeJsonLd = [
@@ -14,186 +21,303 @@ const homeJsonLd = [
   organizationSchema(site, { logo: '/apple-touch-icon.png' }),
 ];
 
-const categoryEntries = await getCollection('categories');
-const categoryById = new Map<CategoryId, CategoryEntry>(
-  categoryEntries.map((entry: CategoryEntry) => [
-    entry.id.replace(/\.[^.]+$/, '') as CategoryId,
-    entry,
-  ]),
+const categories: CategoryEntry[] = await getCollection('categories');
+const publishedGuides: ArticleEntry[] = (await getCollection('articles')).filter(
+  (entry: ArticleEntry) => !entry.data.draft,
+);
+const standaloneCalculators: CalculatorEntry[] = (await getCollection('calculators')).filter(
+  (entry: CalculatorEntry) => entry.data.standalone !== false,
 );
 
-const categoryCards = [
+const categoryId = (entry: CategoryEntry) => entry.id.replace(/\.[^.]+$/, '') as CategoryId;
+const categoryById = new Map<CategoryId, CategoryEntry>(
+  categories.map((entry: CategoryEntry) => [categoryId(entry), entry]),
+);
+
+const getCategory = (id: CategoryId) => {
+  const entry = categoryById.get(id);
+  if (!entry) throw new Error(`Homepage category is missing: ${id}`);
+  return entry;
+};
+
+const guideCount = (id: CategoryId) => publishedGuides.filter(
+  (entry: ArticleEntry) => entry.data.category.id === id,
+).length;
+const calculatorCount = (id: CategoryId) => standaloneCalculators.filter(
+  (entry: CalculatorEntry) => entry.data.category?.id === id,
+).length;
+
+const learnCategoryIds = [
+  'foundations',
+  'descriptive-statistics',
+  'probability-distributions',
+  'regression-correlation',
+  'inferential-statistics',
+] satisfies CategoryId[];
+
+const learnTopics = learnCategoryIds.map((id, index) => ({
+  id,
+  entry: getCategory(id),
+  number: String(index + 1).padStart(2, '0'),
+  guides: guideCount(id),
+  calculators: calculatorCount(id),
+}));
+
+const appliedCategoryIds = [
+  'data-analysis',
+  'experiments-causality',
+  'time-series-forecasting',
+  'machine-learning-statistics',
+] satisfies CategoryId[];
+
+const appliedTopics = appliedCategoryIds.map((id, index) => ({
+  id,
+  entry: getCategory(id),
+  number: String(index + 1).padStart(2, '0'),
+  guides: guideCount(id),
+}));
+
+const learnCategorySet = new Set(
+  categories
+    .filter((entry: CategoryEntry) => entry.data.section === 'learn')
+    .map((entry: CategoryEntry) => categoryId(entry)),
+);
+const learnGuideCount = publishedGuides.filter((entry: ArticleEntry) => (
+  learnCategorySet.has(entry.data.category.id as CategoryId)
+)).length;
+
+const popularCalculatorIds = [
+  'mean',
+  'standard-deviation',
+  'z-score',
+  'confidence-interval',
+  'linear-regression',
+  'sample-size',
+  'frequency-table',
+  'probability',
+] satisfies CalculatorId[];
+const calculatorById = new Map<CalculatorId, CalculatorEntry>(
+  standaloneCalculators.map((entry: CalculatorEntry) => [entry.id as CalculatorId, entry]),
+);
+const popularCalculators = popularCalculatorIds.map((id) => {
+  const entry = calculatorById.get(id);
+  if (!entry) throw new Error(`Homepage calculator is missing or not standalone: ${id}`);
+  return { id, entry };
+});
+
+const pathways = [
   {
-    id: 'descriptive-statistics',
-    fallbackTitle: 'Descriptive',
-    fallbackDescription: 'Summarise and describe data: averages, spread, frequency, and shape.',
-    guides: 24,
-    calculators: 11,
-    glyph: 'bars',
+    label: 'Learn',
+    routerTitle: 'Learn a concept',
+    description: 'Build understanding with clear, connected lessons.',
+    meta: `${learnGuideCount} published guides`,
+    route: routes.learnLanding(),
+    tone: 'learn',
   },
   {
-    id: 'probability-distributions',
-    fallbackTitle: 'Probability',
-    fallbackDescription: 'Distributions, expected value, and the rules of chance from the ground up.',
-    guides: 19,
-    calculators: 9,
-    glyph: 'curve',
+    label: 'Calculate',
+    routerTitle: 'Run a calculation',
+    description: 'Use focused tools that keep the method close by.',
+    meta: `${standaloneCalculators.length} standalone tools`,
+    route: routes.calculatorsHub(),
+    tone: 'calculate',
   },
   {
-    id: 'regression-correlation',
-    fallbackTitle: 'Regression',
-    fallbackDescription: 'Correlation, lines of best fit, and reading relationships between variables.',
-    guides: 14,
-    calculators: 6,
-    glyph: 'scatter',
-  },
-  {
-    id: 'inferential-statistics',
-    fallbackTitle: 'Inferential',
-    fallbackDescription: 'Confidence intervals, hypothesis tests, and reasoning from sample to population.',
-    guides: 21,
-    calculators: 10,
-    glyph: 'inference',
-  },
-  {
-    id: 'foundations',
-    fallbackTitle: 'Foundations',
-    fallbackDescription: 'Notation, variables, and the vocabulary every other topic builds on.',
-    guides: 12,
-    calculators: 4,
-    glyph: 'document',
+    label: 'Apply',
+    routerTitle: 'Solve a real problem',
+    description: 'Move from statistical ideas to practical decisions.',
+    meta: `${appliedTopics.length} practical topic hubs`,
+    route: routes.appliedLanding(),
+    tone: 'apply',
   },
 ] satisfies Array<{
-  id: CategoryId;
-  fallbackTitle: string;
-  fallbackDescription: string;
-  guides: number;
-  calculators: number;
-  glyph: 'bars' | 'curve' | 'scatter' | 'inference' | 'document';
+  label: string;
+  routerTitle: string;
+  description: string;
+  meta: string;
+  route: RouteRef;
+  tone: 'learn' | 'calculate' | 'apply';
 }>;
-
-const calculatorTools = [
-  { mark: 'xbar', title: 'Mean', detail: 'average of a dataset', route: routes.calculator('mean') },
-  { mark: 'SD', title: 'Standard deviation', detail: 'spread around the mean', route: routes.calculator('standard-deviation') },
-  { mark: 'f', title: 'Frequency table', detail: 'counts and proportions', route: routes.calculator('frequency-table') },
-  { mark: '%', title: 'Percentile', detail: 'rank within data', route: routes.calculator('percentile') },
-] satisfies Array<{ mark: string; title: string; detail: string; route: ReturnType<typeof routes.calculator> }>;
-
-const recentGuides = [
-  { id: 'frequency-table', category: 'Descriptive', title: 'Frequency Tables: How to Build & Read Them', meta: '15 min - Beginner - includes calculator' },
-  { id: 'z-score', category: 'Inferential', title: 'What Is a Z-Score?', meta: '12 min - Beginner - includes calculator' },
-  { id: 'probability-distribution', category: 'Probability', title: 'Probability Distribution, Plainly Explained', meta: '12 min - Beginner - includes calculator' },
-  { id: 'correlation-vs-causation', category: 'Regression', title: 'Correlation vs Causation, Made Concrete', meta: '10 min - Beginner' },
-] satisfies Array<{ id: ArticleId; category: string; title: string; meta: string }>;
 ---
 
 <BaseLayout
-  title="Statohub - Statistics Calculators & Plain-English Lessons"
-  description="Statohub pairs plain-English statistics guides with working calculators, so you can learn the method and run your own numbers in one place."
+  title="Statohub - Learn, Calculate, and Apply Statistics"
+  description="Learn statistics through clear guides, run focused calculators, and explore practical data analysis, experimentation, forecasting, and machine learning topics."
   canonicalPath={routes.home()}
   jsonLd={homeJsonLd}
 >
-  <section class="hero">
-    <div>
-      <div class="kicker"><span class="pill">Statistics, clearly</span><span class="eyebrow">Foundations -> Inference</span></div>
-      <h1>Learn the concept.<br /><em>Run</em> the numbers.</h1>
-      <p class="sub">
-        Statohub is a study companion for statistics: plain-spoken guides, paired with a working calculator wherever a calculation helps, so the method and the answer stay close together.
+  <section class="home3-hero" aria-labelledby="home3-title">
+    <div class="home3-hero-copy">
+      <p class="home3-kicker">Statistics, made usable</p>
+      <h1 id="home3-title">Learn statistics.<br /><em>Use</em> it with confidence.</h1>
+      <p class="home3-lede">
+        Clear lessons, reliable calculators, and practical guides that help you understand the method, check the numbers, and make a defensible decision.
       </p>
-      <div class="hero-cta">
-        <Link to={routes.categoryHub('descriptive-statistics')} class="btn btn-pine">Browse the guides</Link>
-        <Link to={routes.calculatorsHub()} class="btn btn-ghost">Open the calculators</Link>
+      <div class="home3-hero-actions">
+        <Link to={routes.learnLanding()} class="btn btn-pine">Start learning</Link>
+        <Link to={routes.calculatorsHub()} class="btn btn-ghost">Open calculators</Link>
       </div>
-      <div class="wedge-chips">
-        <span class="wchip teach"><span class="b" aria-hidden="true"></span>Plain-English guides</span>
-        <span class="wchip compute"><span class="b" aria-hidden="true"></span>Hands-on calculators</span>
-      </div>
+      <p class="home3-proof">
+        <span>{learnGuideCount} published guides</span>
+        <span aria-hidden="true">·</span>
+        <span>{standaloneCalculators.length} calculators</span>
+        <span aria-hidden="true">·</span>
+        <span>{appliedTopics.length} applied hubs</span>
+      </p>
     </div>
-    <div class="hero-fig">
-      <div class="cap"><span>Normal distribution</span><span>mu = 0 - sigma = 1</span></div>
-      <svg viewBox="0 0 380 200" fill="none" aria-hidden="true">
-        <line x1="20" y1="170" x2="360" y2="170" stroke="var(--line-2)" stroke-width="1"></line>
-        <g stroke="var(--line)" stroke-width="1">
-          <line x1="20" y1="40" x2="360" y2="40"></line><line x1="20" y1="90" x2="360" y2="90"></line><line x1="20" y1="130" x2="360" y2="130"></line>
-        </g>
-        <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168" stroke="var(--pine)" stroke-width="2.5"></path>
-        <path d="M20 168 C 110 168, 150 30, 190 30 S 270 168, 360 168 L360 170 L20 170 Z" fill="var(--pine)" opacity=".10"></path>
-        <line x1="190" y1="30" x2="190" y2="170" stroke="var(--clay)" stroke-width="1.5" stroke-dasharray="4 4"></line>
-        <circle cx="190" cy="30" r="3.5" fill="var(--clay)"></circle>
-      </svg>
-      <div class="legend">
-        <span><i style="background:var(--pine)"></i>density</span>
-        <span><i style="background:var(--clay)"></i>mean</span>
+
+    <aside class="home3-router" aria-labelledby="home3-router-title">
+      <div class="home3-router-head">
+        <p>Choose your route</p>
+        <h2 id="home3-router-title">What do you need today?</h2>
       </div>
-    </div>
+      <div class="home3-router-list">
+        {pathways.map((path, index) => (
+          <Link class={`home3-router-link is-${path.tone}`} to={path.route}>
+            <span class="home3-router-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <span>
+              <strong>{path.routerTitle}</strong>
+              <small>{path.description}</small>
+            </span>
+            <span class="home3-arrow" aria-hidden="true">→</span>
+          </Link>
+        ))}
+      </div>
+    </aside>
   </section>
 
-  <section class="home-section handbook-section">
-    <div class="section-head">
-      <div>
-        <h2>The handbook</h2>
-        <p class="lead">Six areas of statistics, each a growing shelf of guides with the tools to apply them.</p>
-      </div>
-      <Link to={routes.categoryHub('descriptive-statistics')} class="section-link">All topics -></Link>
-    </div>
-    <div class="catalog">
-      {
-        categoryCards.map((card) => {
-          const entry = categoryById.get(card.id);
-          const title = entry?.data.title ?? card.fallbackTitle;
-          const description = entry?.data.description ?? card.fallbackDescription;
-
-          return (
-            <Link class="cat" to={routes.categoryHub(card.id)}>
-              <span class="ico" aria-hidden="true">
-                {card.glyph === 'bars' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-10" /></svg>}
-                {card.glyph === 'curve' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c4-9 14-9 18 0" /><circle cx="12" cy="6" r="2" /></svg>}
-                {card.glyph === 'scatter' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 20 4" /><circle cx="7" cy="17" r="1.6" /><circle cx="12" cy="13" r="1.6" /><circle cx="16" cy="8" r="1.6" /></svg>}
-                {card.glyph === 'inference' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 12l7-4 7 4" /><circle cx="12" cy="3" r="1.5" /></svg>}
-                {card.glyph === 'document' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z" /><path d="M9 9h6M9 13h6M9 17h3" /></svg>}
-              </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-              <div class="meta"><span><b>{card.guides}</b> guides</span><span><b>{card.calculators}</b> tools</span></div>
-            </Link>
-          );
-        })
-      }
-      <Link class="cat" to={routes.calculatorsHub()}>
-        <span class="ico calc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2" /></svg></span>
-        <h3>Calculators</h3>
-        <p>Every tool on the site in one hub: fast, free, and explained.</p>
-        <div class="meta"><span><b>40+</b> tools</span><span><b>all</b> free</span></div>
+  <section class="home3-pathways" aria-labelledby="home3-pathways-title">
+    <h2 id="home3-pathways-title" class="sr-only">Learn, calculate, and apply</h2>
+    {pathways.map((path) => (
+      <Link class={`home3-pathway is-${path.tone}`} to={path.route}>
+        <span class="home3-pathway-label">{path.label}</span>
+        <h3>{path.routerTitle}</h3>
+        <p>{path.description}</p>
+        <span class="home3-pathway-meta">{path.meta} <span aria-hidden="true">→</span></span>
       </Link>
-    </div>
+    ))}
   </section>
 
-  <section class="band">
-    <div>
-      <span class="eyebrow">The Statohub difference</span>
-      <h2>Tools that show their working</h2>
-      <p>Most calculators give you a number and nothing else. Ours sit beside the explanation, so you can check the method as you go.</p>
-      <Link to={routes.calculatorsHub()} class="btn btn-pine">Browse calculators</Link>
-    </div>
-    <div class="tool-grid">
-      {calculatorTools.map((tool) => (
-        <Link class="tool" to={tool.route}>
-          <span class="t-ico" aria-hidden="true">{tool.mark}</span>
-          <span><span class="t-name">{tool.title}</span><br /><span class="t-sub">{tool.detail}</span></span>
+  <section class="home3-section" aria-labelledby="home3-learn-title">
+    <header class="home3-section-head">
+      <div>
+        <p class="home3-kicker">Learn by topic</p>
+        <h2 id="home3-learn-title">Build a strong statistical foundation</h2>
+        <p>Start with the idea you need, then follow the connected guides and tools at your own pace.</p>
+      </div>
+      <Link to={routes.learnLanding()} class="home3-section-link">Explore all Learn topics <span aria-hidden="true">→</span></Link>
+    </header>
+
+    <div class="home3-topic-grid">
+      {learnTopics.map((topic) => (
+        <Link class="home3-topic-card" to={routes.categoryHub(topic.id)}>
+          <span class="home3-card-number" aria-hidden="true">{topic.number}</span>
+          <h3>{topic.entry.data.title}</h3>
+          <p>{topic.entry.data.description}</p>
+          <span class="home3-card-meta">
+            <span><b>{topic.guides}</b> guides</span>
+            <span><b>{topic.calculators}</b> tools</span>
+          </span>
         </Link>
       ))}
     </div>
   </section>
 
-  <section class="home-section recent-section">
-    <div class="section-head"><div><h2>Recently published</h2></div><Link class="section-link" to={routes.article('frequency-table')}>All guides -></Link></div>
-    <div class="pub-list">
-      {recentGuides.map((guide, index) => (
-        <Link class="pub" to={routes.article(guide.id)}>
-          <span class="idx">{String(index + 1).padStart(2, '0')}</span>
-          <div><span class="p-cat">{guide.category}</span><h4>{guide.title}</h4><span class="p-meta">{guide.meta}</span></div>
-        </Link>
+  <section class="home3-section home3-applied" aria-labelledby="home3-applied-title" data-applied-section>
+    <header class="home3-section-head">
+      <div>
+        <p class="home3-kicker">Applied statistics</p>
+        <h2 id="home3-applied-title">Use statistics where decisions get made</h2>
+        <p>Explore practical topic hubs now; in-depth Applied guides will appear here as they are published.</p>
+      </div>
+      <Link to={routes.appliedLanding()} class="home3-section-link">Browse Applied Statistics <span aria-hidden="true">→</span></Link>
+    </header>
+
+    <div class="home3-filters" role="group" aria-label="Filter Applied Statistics topics">
+      <button type="button" class="home3-filter" data-applied-filter="all" aria-pressed="true">All topics</button>
+      {appliedTopics.map((topic) => (
+        <button type="button" class="home3-filter" data-applied-filter={topic.id} aria-pressed="false">
+          {topic.entry.data.title}
+        </button>
+      ))}
+    </div>
+    <p class="sr-only" aria-live="polite" data-applied-filter-status>
+      Showing all {appliedTopics.length} Applied Statistics topics.
+    </p>
+
+    <div class="home3-applied-grid" id="home3-applied-grid">
+      {appliedTopics.map((topic) => (
+        <article class="home3-applied-card" data-applied-card={topic.id}>
+          <div class="home3-applied-card-top">
+            <span class="home3-card-number" aria-hidden="true">A{topic.number}</span>
+            <span class="home3-coming-soon">{topic.guides} published guides</span>
+          </div>
+          <h3><Link to={routes.categoryHub(topic.id)}>{topic.entry.data.title}</Link></h3>
+          <p>{topic.entry.data.description}</p>
+          <Link class="home3-card-link" to={routes.categoryHub(topic.id)}>
+            Visit the topic hub <span aria-hidden="true">→</span>
+          </Link>
+        </article>
       ))}
     </div>
   </section>
+
+  <section class="home3-section home3-tools" aria-labelledby="home3-tools-title">
+    <header class="home3-section-head">
+      <div>
+        <p class="home3-kicker">Popular calculators</p>
+        <h2 id="home3-tools-title">Run the numbers, then understand them</h2>
+        <p>Each focused calculator is free to use and paired with enough context to make the result meaningful.</p>
+      </div>
+      <Link to={routes.calculatorsHub()} class="home3-section-link">See all {standaloneCalculators.length} calculators <span aria-hidden="true">→</span></Link>
+    </header>
+
+    <ol class="home3-tool-list">
+      {popularCalculators.map((tool, index) => (
+        <li>
+          <Link class="home3-tool-link" to={routes.calculator(tool.id)}>
+            <span class="home3-tool-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <span class="home3-tool-copy">
+              <strong>{tool.entry.data.title}</strong>
+              <small>{tool.entry.data.description}</small>
+            </span>
+            <span class="home3-arrow" aria-hidden="true">→</span>
+          </Link>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const section = document.querySelector('[data-applied-section]');
+      if (!section) return;
+
+      section.classList.add('filters-active');
+      const buttons = section.querySelectorAll('[data-applied-filter]');
+      const cards = section.querySelectorAll('[data-applied-card]');
+      const status = section.querySelector('[data-applied-filter-status]');
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.getAttribute('data-applied-filter') ?? 'all';
+          const label = button.textContent?.trim() ?? 'all topics';
+          let visibleCount = 0;
+
+          buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+          cards.forEach((card) => {
+            const visible = filter === 'all' || card.getAttribute('data-applied-card') === filter;
+            card.toggleAttribute('hidden', !visible);
+            if (visible) visibleCount += 1;
+          });
+
+          if (status) {
+            status.textContent = filter === 'all'
+              ? `Showing all ${visibleCount} Applied Statistics topics.`
+              : `Showing ${visibleCount} topic: ${label}.`;
+          }
+        });
+      });
+    })();
+  </script>
 </BaseLayout>
