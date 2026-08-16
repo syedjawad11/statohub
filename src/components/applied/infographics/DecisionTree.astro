@@ -1,0 +1,244 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+interface DecisionNode {
+  label: string;
+  yes?: DecisionNode;
+  no?: DecisionNode;
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  root: DecisionNode;
+  maxDepth?: number;
+}
+
+interface LayoutEdge {
+  answer: 'yes' | 'no';
+  child: LayoutNode;
+}
+
+interface LayoutNode {
+  labelLines: string[];
+  depth: number;
+  children: LayoutEdge[];
+  x: number;
+  y: number;
+  height: number;
+}
+
+const {
+  title,
+  desc,
+  root,
+  maxDepth = 3,
+} = Astro.props;
+
+if (!Number.isInteger(maxDepth) || maxDepth < 0) {
+  throw new Error('DecisionTree maxDepth must be a non-negative integer.');
+}
+
+const wrapText = (text: string, maxCharacters: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    if (word.length > maxCharacters) {
+      if (line) lines.push(line);
+      for (let offset = 0; offset < word.length; offset += maxCharacters) {
+        lines.push(word.slice(offset, offset + maxCharacters));
+      }
+      line = '';
+      continue;
+    }
+
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length <= maxCharacters) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const buildLayout = (node: DecisionNode, depth: number): LayoutNode => {
+  const layoutNode: LayoutNode = {
+    labelLines: wrapText(node.label, 20),
+    depth,
+    children: [],
+    x: 0,
+    y: 0,
+    height: 0,
+  };
+
+  if (depth < maxDepth) {
+    if (node.yes) {
+      layoutNode.children.push({ answer: 'yes', child: buildLayout(node.yes, depth + 1) });
+    }
+    if (node.no) {
+      layoutNode.children.push({ answer: 'no', child: buildLayout(node.no, depth + 1) });
+    }
+  }
+
+  return layoutNode;
+};
+
+const layoutRoot = buildLayout(root, 0);
+const levels: LayoutNode[][] = [];
+const collectNodes = (node: LayoutNode): void => {
+  levels[node.depth] ??= [];
+  levels[node.depth].push(node);
+  node.children.forEach(({ child }) => collectNodes(child));
+};
+collectNodes(layoutRoot);
+
+const padding = 28;
+const nodeWidth = 168;
+const horizontalGap = 34;
+const verticalGap = 72;
+const slotPitch = nodeWidth + horizontalGap;
+let nextLeafSlot = 0;
+
+const assignHorizontalPositions = (node: LayoutNode): void => {
+  node.children.forEach(({ child }) => assignHorizontalPositions(child));
+
+  if (node.children.length === 0) {
+    node.x = padding + nodeWidth / 2 + nextLeafSlot * slotPitch;
+    nextLeafSlot += 1;
+    return;
+  }
+
+  const firstChildX = node.children[0].child.x;
+  const lastChildX = node.children[node.children.length - 1].child.x;
+  node.x = (firstChildX + lastChildX) / 2;
+};
+assignHorizontalPositions(layoutRoot);
+
+let verticalOffset = padding;
+levels.forEach((level) => {
+  const levelHeight = Math.max(58, ...level.map((node) => 28 + node.labelLines.length * 16));
+  level.forEach((node) => {
+    node.y = verticalOffset;
+    node.height = levelHeight;
+  });
+  verticalOffset += levelHeight + verticalGap;
+});
+
+const canvasWidth = padding * 2 + nodeWidth + Math.max(0, nextLeafSlot - 1) * slotPitch;
+const canvasHeight = verticalOffset - verticalGap + padding;
+const allNodes = levels.flat();
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  <g class="decision-edges">
+    {
+      allNodes.flatMap((node) => node.children.map(({ answer, child }) => {
+        const parentBottom = node.y + node.height;
+        const joinY = parentBottom + (child.y - parentBottom) / 2;
+        const sameColumn = Math.abs(node.x - child.x) < 1;
+        const labelX = sameColumn ? node.x + 20 : (node.x + child.x) / 2;
+        return (
+          <g class="decision-edge">
+            <path
+              class="decision-line"
+              d={`M ${node.x} ${parentBottom} V ${joinY} H ${child.x} V ${child.y}`}
+            />
+            <text
+              class:list={['decision-answer', `decision-answer-${answer}`]}
+              x={labelX}
+              y={joinY - 6}
+              text-anchor="middle"
+            >
+              {answer}
+            </text>
+          </g>
+        );
+      }))
+    }
+  </g>
+
+  {
+    allNodes.map((node) => {
+      const textStartY = node.y + node.height / 2 - ((node.labelLines.length - 1) * 8) + 5;
+      return (
+        <g class="decision-node">
+          <rect
+            class:list={['decision-box', { 'decision-root-box': node.depth === 0 }]}
+            x={node.x - nodeWidth / 2}
+            y={node.y}
+            width={nodeWidth}
+            height={node.height}
+            rx="11"
+          />
+          <text
+            class:list={['decision-text', { 'decision-root-text': node.depth === 0 }]}
+            text-anchor="middle"
+          >
+            {node.labelLines.map((line, lineIndex) => (
+              <tspan x={node.x} y={textStartY + lineIndex * 16}>{line}</tspan>
+            ))}
+          </text>
+        </g>
+      );
+    })
+  }
+</SvgFrame>
+
+<style>
+  .decision-line {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+  }
+
+  .decision-answer {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .decision-answer-yes {
+    fill: var(--pine);
+  }
+
+  .decision-answer-no {
+    fill: var(--clay);
+  }
+
+  .decision-box {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+  }
+
+  .decision-root-box {
+    fill: var(--pine);
+    stroke: var(--pine);
+  }
+
+  .decision-text {
+    fill: var(--ink);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .decision-root-text {
+    fill: var(--card);
+  }
+</style>

@@ -8,8 +8,11 @@ import Figure from '../../../components/applied/Figure.astro';
 import KeyTakeaways from '../../../components/applied/KeyTakeaways.astro';
 import Sources from '../../../components/applied/Sources.astro';
 import TableOfContents from '../../../components/applied/TableOfContents.astro';
+import AnnotatedChart from '../../../components/applied/infographics/AnnotatedChart.astro';
 import ComparisonMatrix from '../../../components/applied/infographics/ComparisonMatrix.astro';
+import DecisionTree from '../../../components/applied/infographics/DecisionTree.astro';
 import ProcessFlow from '../../../components/applied/infographics/ProcessFlow.astro';
+import Scorecard from '../../../components/applied/infographics/Scorecard.astro';
 import TaxonomyTree from '../../../components/applied/infographics/TaxonomyTree.astro';
 
 const description = 'Internal preview of the Applied Statistics module components. Not part of the public site and excluded from search indexing.';
@@ -305,6 +308,97 @@ const description = 'Internal preview of the Applied Statistics module component
               { label: 'Low implementation effort', values: [86, 79, 43] },
             ]}
             scaleMax={100}
+          />
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-decision-tree">
+      <div class="preview-section-heading">
+        <p>12</p>
+        <h2 id="preview-decision-tree">DecisionTree</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={6} caption="A yes/no triage path for deciding whether a production drift alert needs intervention.">
+          <DecisionTree
+            title="Production drift alert triage"
+            desc="A yes or no decision tree checks whether an alert is reproducible, whether data quality is intact, and whether outcomes are affected before choosing a response."
+            root={{
+              label: 'Is the alert reproducible?',
+              yes: {
+                label: 'Is data quality intact?',
+                yes: {
+                  label: 'Are outcomes affected?',
+                  yes: { label: 'Escalate and intervene' },
+                  no: { label: 'Monitor next window' },
+                },
+                no: { label: 'Repair the data pipeline' },
+              },
+              no: { label: 'Record and continue monitoring' },
+            }}
+          />
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-scorecard">
+      <div class="preview-section-heading">
+        <p>13</p>
+        <h2 id="preview-scorecard">Scorecard</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={7} caption="A release scorecard showing pass, warning, fail, and critical states with explicit values and status labels.">
+          <Scorecard
+            title="Model release scorecard"
+            desc="Four horizontal metrics show their measured values, thresholds, and written pass, warning, fail, or critical statuses."
+            metrics={[
+              { label: 'Schema validity', value: 99, max: 100, threshold: 95, status: 'pass', unit: '%' },
+              { label: 'Segment coverage', value: 82, max: 100, threshold: 85, status: 'warn', unit: '%' },
+              { label: 'Calibration score', value: 61, max: 100, threshold: 75, status: 'fail', unit: '%' },
+              { label: 'Severe error rate', value: 18, max: 25, threshold: 10, status: 'critical', unit: '%' },
+            ]}
+          />
+        </Figure>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-annotated-chart">
+      <div class="preview-section-heading">
+        <p>14</p>
+        <h2 id="preview-annotated-chart">AnnotatedChart</h2>
+      </div>
+      <div class="preview-stack">
+        <Figure number={8} caption="Weekly mean error as bars, including a negative correction and written annotations at notable points.">
+          <AnnotatedChart
+            title="Weekly mean error changes"
+            desc="A bar chart shows five weekly changes, including a negative correction, with values and annotations rendered as text."
+            type="bar"
+            xLabel="Evaluation week"
+            yLabel="Mean error change"
+            points={[
+              { label: 'Week 1', value: 4 },
+              { label: 'Week 2', value: 7, annotation: 'Schema update' },
+              { label: 'Week 3', value: -3, annotation: 'Backfill applied' },
+              { label: 'Week 4', value: 6 },
+              { label: 'Week 5', value: 9, annotation: 'Review opened' },
+            ]}
+          />
+        </Figure>
+
+        <Figure number={9} caption="The same observation series as a line chart, retaining numeric values and event annotations.">
+          <AnnotatedChart
+            title="Weekly mean error trend"
+            desc="A line chart connects five weekly changes, including a negative correction, with values and annotations rendered as text."
+            type="line"
+            xLabel="Evaluation week"
+            yLabel="Mean error change"
+            points={[
+              { label: 'Week 1', value: 4 },
+              { label: 'Week 2', value: 7, annotation: 'Schema update' },
+              { label: 'Week 3', value: -3, annotation: 'Backfill applied' },
+              { label: 'Week 4', value: 6 },
+              { label: 'Week 5', value: 9, annotation: 'Review opened' },
+            ]}
           />
         </Figure>
       </div>

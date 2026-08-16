@@ -1,0 +1,171 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+type MetricStatus = 'pass' | 'warn' | 'fail' | 'critical';
+
+interface Metric {
+  label: string;
+  value: number;
+  max: number;
+  threshold?: number;
+  status: MetricStatus;
+  unit?: string;
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  metrics: Metric[];
+}
+
+const {
+  title,
+  desc,
+  metrics,
+} = Astro.props;
+
+if (metrics.length === 0) {
+  throw new Error('Scorecard requires at least one metric.');
+}
+
+for (const metric of metrics) {
+  if (metric.max === 0) {
+    throw new Error(`Scorecard metric "${metric.label}" must have a non-zero max.`);
+  }
+}
+
+const statusClass: Record<MetricStatus, string> = {
+  pass: 'score-status-pass',
+  warn: 'score-status-warn',
+  fail: 'score-status-fail',
+  critical: 'score-status-critical',
+};
+const displayNumber = (value: number): string => Number.isInteger(value)
+  ? String(value)
+  : String(Number(value.toFixed(2)));
+const displayStatus = (status: MetricStatus): string => `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+
+const padding = 28;
+const labelWidth = 176;
+const barWidth = 336;
+const detailsWidth = 132;
+const rowHeight = 72;
+const barHeight = 18;
+const barX = padding + labelWidth;
+const detailsX = barX + barWidth + 18;
+const canvasWidth = padding * 2 + labelWidth + barWidth + detailsWidth;
+const canvasHeight = padding * 2 + metrics.length * rowHeight;
+
+const laidOutMetrics = metrics.map((metric, index) => {
+  const ratio = Math.max(0, Math.min(1, metric.value / metric.max));
+  const thresholdRatio = metric.threshold === undefined
+    ? undefined
+    : Math.max(0, Math.min(1, metric.threshold / metric.max));
+  return {
+    ...metric,
+    y: padding + index * rowHeight,
+    fillWidth: ratio * barWidth,
+    thresholdX: thresholdRatio === undefined ? undefined : barX + thresholdRatio * barWidth,
+    valueText: `${displayNumber(metric.value)}${metric.unit ? ` ${metric.unit}` : ''}`,
+  };
+});
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  {
+    laidOutMetrics.map((metric) => {
+      const barY = metric.y + 30;
+      return (
+        <g class="score-row">
+          <text class="score-label" x={padding} y={metric.y + 18}>{metric.label}</text>
+          <rect class="score-track" x={barX} y={barY} width={barWidth} height={barHeight} rx="9" />
+          <rect
+            class:list={['score-fill', statusClass[metric.status]]}
+            x={barX}
+            y={barY}
+            width={metric.fillWidth}
+            height={barHeight}
+            rx="9"
+          />
+          {metric.thresholdX !== undefined && (
+            <line
+              class="score-threshold"
+              x1={metric.thresholdX}
+              x2={metric.thresholdX}
+              y1={barY - 5}
+              y2={barY + barHeight + 5}
+            />
+          )}
+          <text class="score-value" x={detailsX} y={metric.y + 18}>{metric.valueText}</text>
+          <text
+            class:list={['score-status', statusClass[metric.status]]}
+            x={detailsX}
+            y={metric.y + 43}
+          >
+            {displayStatus(metric.status)}
+          </text>
+        </g>
+      );
+    })
+  }
+</SvgFrame>
+
+<style>
+  .score-label {
+    fill: var(--ink);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .score-track {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1;
+  }
+
+  .score-fill {
+    stroke: none;
+  }
+
+  .score-status-pass {
+    fill: var(--status-pass);
+  }
+
+  .score-status-warn {
+    fill: var(--status-warn);
+  }
+
+  .score-status-fail {
+    fill: var(--status-fail);
+  }
+
+  .score-status-critical {
+    fill: var(--status-critical);
+  }
+
+  .score-threshold {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .score-value {
+    fill: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .score-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+</style>

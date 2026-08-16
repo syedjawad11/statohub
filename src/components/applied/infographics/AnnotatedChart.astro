@@ -1,0 +1,281 @@
+---
+import SvgFrame from './_SvgFrame.astro';
+
+interface ChartPoint {
+  label: string;
+  value: number;
+  annotation?: string;
+}
+
+interface Props {
+  title: string;
+  desc: string;
+  type?: 'bar' | 'line';
+  points: ChartPoint[];
+  xLabel?: string;
+  yLabel?: string;
+}
+
+const {
+  title,
+  desc,
+  type = 'bar',
+  points,
+  xLabel,
+  yLabel,
+} = Astro.props;
+
+if (points.length === 0) {
+  throw new Error('AnnotatedChart requires at least one point.');
+}
+
+const wrapText = (text: string, maxCharacters: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    if (word.length > maxCharacters) {
+      if (line) lines.push(line);
+      for (let offset = 0; offset < word.length; offset += maxCharacters) {
+        lines.push(word.slice(offset, offset + maxCharacters));
+      }
+      line = '';
+      continue;
+    }
+
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length <= maxCharacters) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const displayNumber = (value: number): string => Number.isInteger(value)
+  ? String(value)
+  : String(Number(value.toFixed(2)));
+const rawMin = Math.min(...points.map((point) => point.value));
+const rawMax = Math.max(...points.map((point) => point.value));
+
+let scaleMin: number;
+let scaleMax: number;
+if (rawMin === 0 && rawMax === 0) {
+  scaleMin = -1;
+  scaleMax = 1;
+} else if (rawMin >= 0) {
+  scaleMin = 0;
+  scaleMax = rawMax * 1.3;
+} else if (rawMax <= 0) {
+  scaleMin = rawMin * 1.3;
+  scaleMax = 0;
+} else {
+  const paddingValue = (rawMax - rawMin) * 0.2;
+  scaleMin = rawMin - paddingValue;
+  scaleMax = rawMax + paddingValue;
+}
+
+const padding = 28;
+const plotLeft = 78;
+const plotTop = 48;
+const pointBandWidth = 120;
+const plotWidth = Math.max(440, points.length * pointBandWidth);
+const plotHeight = 240;
+const plotRight = plotLeft + plotWidth;
+const plotBottom = plotTop + plotHeight;
+const canvasWidth = plotRight + padding;
+const preparedPoints = points.map((point, index) => ({
+  ...point,
+  labelLines: wrapText(point.label, 13),
+  annotationLines: point.annotation ? wrapText(point.annotation, 18) : [],
+  x: plotLeft + (index + 0.5) * (plotWidth / points.length),
+}));
+const maxLabelLines = Math.max(...preparedPoints.map((point) => point.labelLines.length));
+const axisLabelY = plotBottom + 29 + (maxLabelLines - 1) * 14;
+const canvasHeight = axisLabelY + (xLabel ? 48 : 28);
+const yFor = (value: number): number => plotTop
+  + ((scaleMax - value) / (scaleMax - scaleMin)) * plotHeight;
+const zeroY = yFor(0);
+const barWidth = Math.min(64, (plotWidth / points.length) * 0.56);
+const yTicks = Array.from({ length: 5 }, (_, index) => {
+  const value = scaleMin + ((scaleMax - scaleMin) * index) / 4;
+  return { value, y: yFor(value) };
+});
+const linePath = preparedPoints
+  .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${yFor(point.value)}`)
+  .join(' ');
+---
+
+<SvgFrame
+  title={title}
+  desc={desc}
+  viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+  maxWidth={`${canvasWidth}px`}
+>
+  <g class="chart-grid" aria-hidden="true">
+    {
+      yTicks.map((tick) => (
+        <line class="chart-grid-line" x1={plotLeft} x2={plotRight} y1={tick.y} y2={tick.y} />
+      ))
+    }
+  </g>
+
+  <line class="chart-axis" x1={plotLeft} x2={plotLeft} y1={plotTop} y2={plotBottom} />
+  <line class="chart-zero-axis" x1={plotLeft} x2={plotRight} y1={zeroY} y2={zeroY} />
+
+  {
+    yTicks.map((tick) => (
+      <text class="chart-tick" x={plotLeft - 10} y={tick.y + 4} text-anchor="end">
+        {displayNumber(tick.value)}
+      </text>
+    ))
+  }
+
+  {type === 'line' && <path class="chart-line" d={linePath} />}
+
+  {
+    preparedPoints.map((point) => {
+      const pointY = yFor(point.value);
+      const valueDirection = point.value >= 0 ? -1 : 1;
+      const valueY = pointY + (valueDirection < 0 ? -9 : 17);
+      const annotationY = pointY - 31;
+      const labelStartY = plotBottom + 20;
+      const barY = point.value >= 0 ? pointY : zeroY;
+      const barHeight = Math.max(1, Math.abs(zeroY - pointY));
+
+      return (
+        <g class="chart-point-group">
+          {type === 'bar' ? (
+            <rect
+              class="chart-bar"
+              x={point.x - barWidth / 2}
+              y={point.value === 0 ? zeroY - 0.5 : barY}
+              width={barWidth}
+              height={barHeight}
+              rx="5"
+            />
+          ) : (
+            <circle class="chart-point" cx={point.x} cy={pointY} r="5" />
+          )}
+
+          <text class="chart-value" x={point.x} y={valueY} text-anchor="middle">
+            {displayNumber(point.value)}
+          </text>
+
+          {point.annotation && (
+            <g class="chart-annotation">
+              <circle class="chart-annotation-marker" cx={point.x} cy={annotationY} r="3.5" />
+              <text class="chart-annotation-text" text-anchor="middle">
+                {point.annotationLines.map((line, lineIndex) => (
+                  <tspan
+                    x={point.x}
+                    y={annotationY - 8 - (point.annotationLines.length - 1 - lineIndex) * 12}
+                  >
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          )}
+
+          <text class="chart-category" text-anchor="middle">
+            {point.labelLines.map((line, lineIndex) => (
+              <tspan x={point.x} y={labelStartY + lineIndex * 14}>{line}</tspan>
+            ))}
+          </text>
+        </g>
+      );
+    })
+  }
+
+  {xLabel && (
+    <text class="chart-axis-label" x={(plotLeft + plotRight) / 2} y={axisLabelY + 25} text-anchor="middle">
+      {xLabel}
+    </text>
+  )}
+  {yLabel && (
+    <text
+      class="chart-axis-label"
+      x={19}
+      y={(plotTop + plotBottom) / 2}
+      text-anchor="middle"
+      transform={`rotate(-90 19 ${(plotTop + plotBottom) / 2})`}
+    >
+      {yLabel}
+    </text>
+  )}
+</SvgFrame>
+
+<style>
+  .chart-grid-line {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .chart-axis,
+  .chart-zero-axis {
+    stroke: var(--ink-3);
+    stroke-width: 1.5;
+  }
+
+  .chart-zero-axis {
+    stroke: var(--ink-2);
+  }
+
+  .chart-tick,
+  .chart-category {
+    fill: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 10px;
+  }
+
+  .chart-axis-label {
+    fill: var(--ink);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .chart-bar {
+    fill: var(--pine);
+  }
+
+  .chart-line {
+    fill: none;
+    stroke: var(--pine);
+    stroke-width: 2.5;
+  }
+
+  .chart-point {
+    fill: var(--card);
+    stroke: var(--pine);
+    stroke-width: 2.5;
+  }
+
+  .chart-value {
+    fill: var(--ink);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .chart-annotation-marker {
+    fill: var(--brass);
+  }
+
+  .chart-annotation-text {
+    fill: var(--brass);
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 600;
+  }
+</style>

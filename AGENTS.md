@@ -267,6 +267,19 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   `spawn EPERM`, `npm run build` with 116 pages/4296 links/0 violations, all 21
   contrast checks, a clean SVG colour-attribute proof, 24 total/24 unique
   built ids, resolved title/description references, and numeric matrix cells.
+- **TASK-029B -- SVG infographic decision/score/chart set:** added token-only
+  `DecisionTree` (truncates past `maxDepth` rather than throwing), `Scorecard`
+  (second consumer of the `--status-*` tokens; renders value and status word as
+  text), and `AnnotatedChart` (bar and line modes, real negative-value support
+  via a computed zero axis), completing the 6-infographic set. Appended four
+  numbered preview figures. **This entry was written by the Orchestrator, not
+  Codex** -- the MCP transport hit its 900s timeout before Codex wrote its Work
+  Log or this entry, though the implementation itself was complete and correct.
+  Every result here was produced by the Orchestrator re-running the gates:
+  clean `npx astro check` (36 files), `npm test` 35 files/121 tests passing as
+  the exact command, `npm run build` with 116 pages/4296 links/0 violations, all
+  21 contrast checks, a clean SVG colour-attribute proof, 35 total/35 unique
+  built ids, and 8/8 framed diagrams with resolving `aria-labelledby`.
 
 ### Reusable verification habits
 
