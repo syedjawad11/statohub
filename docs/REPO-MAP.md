@@ -3,7 +3,8 @@
 > Annotated directory map. Regenerate with `node scripts/gen-repo-map.mjs` after any
 > structural change (new top-level dir, new src/ subsystem) -- do not hand-edit the
 > tree below without also updating the script's source comments if it drifts.
-> Last generated: 2026-07-05.
+> Last updated: 2026-08-16 (Applied subsystems annotated by hand; the script is a
+> drift CHECKER, not a generator -- it lists undocumented entries, it does not write).
 
 ```
 statohub/
@@ -21,6 +22,9 @@ statohub/
 |   |   |-- [slug]/index.astro          # Root [slug]: articles + category hubs (discriminated union)
 |   |   |-- about/index.astro
 |   |   |-- privacy-cookie-policy/index.astro   # Combined legal page
+|   |   |-- learn/index.astro           # /learn/ section landing (ADR-0014)
+|   |   |-- applied/index.astro         # /applied/ section landing (ADR-0014)
+|   |   |-- dev/applied-preview/        # noindex living style guide: all modules + infographics
 |   |   `-- calculators/
 |   |       |-- index.astro             # Calculators hub
 |   |       `-- [slug]/index.astro      # Standalone /calculators/{slug}/ pages
@@ -40,18 +44,22 @@ statohub/
 |   |   |-- Breadcrumbs.astro
 |   |   |-- RelatedLink.astro            # Blue accent-bar "related link" callout
 |   |   |-- statcalc/                    # client.ts (island) + format.ts (+ test)
+|   |   |-- applied/                     # Applied-article modules: KeyTakeaways, Callout,
+|   |   |   |                            #   Checklist, DataTable, Sources, FAQ, Figure, TableOfContents
+|   |   |   `-- infographics/            # 6 static SSG SVGs + _SvgFrame a11y wrapper
 |   |   `-- seo/                         # Meta.astro, Canonical.astro, JsonLd.astro
 |   |
 |   |-- layouts/
 |   |   |-- BaseLayout.astro             # head/SEO/JSON-LD/dark-mode chrome
-|   |   |-- ArticleLayout.astro          # Article shell: TOC, scroll-spy, prose, related grid
+|   |   |-- ArticleLayout.astro          # Learn article shell: TOC (H2), scroll-spy, prose, related grid
+|   |   |-- AppliedArticleLayout.astro   # Applied article shell: H2+H3 TOC, "Build on this guide" grid
 |   |   `-- CategoryLayout.astro         # Category-hub shell
 |   |
 |   |-- content/             # Astro content collections (Zod-validated)
 |   |   |-- config.ts                    # Schemas: categories, articles, calculators, calculator-content
-|   |   |-- categories/    (6 yaml)
+|   |   |-- categories/    (11 yaml -- 7 learn + 4 applied, `section` field)
 |   |   |-- calculators/   (29 yaml -- one config drives page + embed)
-|   |   |-- articles/      (21+ mdx)
+|   |   |-- articles/      (78 mdx -- Learn + Applied share this flat collection)
 |   |   `-- calculator-content/ (22+ mdx -- short teaching blocks under each calc)
 |   |
 |   |-- lib/
@@ -65,7 +73,8 @@ statohub/
 |
 |-- scripts/
 |   |-- gen-route-ids.mjs    # Regenerates content-route-ids.ts from src/content/** (predev + build)
-|   |-- gen-repo-map.mjs     # Regenerates this file
+|   |-- gen-repo-map.mjs     # DRIFT CHECKER for this file -- lists undocumented dirs/root
+|   |                        #   files; it does NOT write. Annotations are hand-written.
 |   `-- check-links.mjs      # BUILD GATE: crawls dist/**, fails on any internal redirect/404
 |
 |-- public/                  # robots.txt, _headers (security headers), favicons, og-default.png
@@ -77,15 +86,16 @@ statohub/
 |   |-- cloud-routine/        # publish-next-article.md, publish-next-calc-prose.md, README.md
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)
 |
-|-- handoff/                 # Codex task box (5-state loop) -- TASK-001...TASK-024+ + TEMPLATE.md + README.md
+|-- handoff/                 # Codex task box (5-state loop) -- TASK-001...TASK-033 + TEMPLATE.md + README.md
 |
 |-- docs/                    # THIS documentation tree -- see docs/ARCHITECTURE.md for the layout
 |-- doc/                     # Legacy: BUILD-PLAN.md (still authoritative build spec), SITE-ARCHITECT.md, theme mockups
 |
 |-- .claude/                 # Project agents + skills + SEO playbook
 |   |-- agents/               # stats-article-writer.md, stats-article-reviewer.md
-|   |-- skills/               # write-article/SKILL.md
-|   `-- seo-playbook.md
+|   |-- skills/               # write-article/SKILL.md, session-close/SKILL.md
+|   |-- seo-playbook.md       # governs LEARN articles
+|   `-- applied-playbook.md   # governs APPLIED articles (modules, 3-4.5k words, ADR-0015 exemption)
 |
 |-- .github/workflows/deploy.yml   # CI/CD: gates -> Cloudflare deploy on push to main
 `-- .codex/                  # Codex skills/config
