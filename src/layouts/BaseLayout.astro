@@ -1,12 +1,16 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Canonical from '../components/seo/Canonical.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import Meta from '../components/seo/Meta.astro';
-import { routes, url, type RouteRef } from '../lib/links';
+import { routes, url, type CategoryId, type RouteRef } from '../lib/links';
 import { breadcrumbList, type BreadcrumbItem } from '../lib/schema';
+
+type CategoryEntry = CollectionEntry<'categories'>;
 
 interface Props {
   title?: string;
@@ -46,21 +50,18 @@ const schemas = breadcrumbs
   : jsonLd;
 
 const navLinks = [
-  { label: 'Foundations', route: routes.categoryHub('foundations') },
-  { label: 'Descriptive', route: routes.categoryHub('descriptive-statistics') },
-  { label: 'Probability', route: routes.categoryHub('probability-distributions') },
-  { label: 'Regression', route: routes.categoryHub('regression-correlation') },
-  { label: 'Inferential', route: routes.categoryHub('inferential-statistics') },
+  { label: 'Learn', route: routes.learnLanding() },
+  { label: 'Applied', route: routes.appliedLanding() },
   { label: 'Calculators', route: routes.calculatorsHub() },
 ];
 
-const footerTopics = [
-  { label: 'Descriptive', route: routes.categoryHub('descriptive-statistics') },
-  { label: 'Probability', route: routes.categoryHub('probability-distributions') },
-  { label: 'Regression', route: routes.categoryHub('regression-correlation') },
-  { label: 'Inferential', route: routes.categoryHub('inferential-statistics') },
-  { label: 'Foundations', route: routes.categoryHub('foundations') },
-];
+const footerLearnCategories = (await getCollection('categories'))
+  .filter((entry: CategoryEntry) => entry.data.section === 'learn')
+  .sort((a: CategoryEntry, b: CategoryEntry) => a.data.order - b.data.order);
+const footerAppliedCategories = (await getCollection('categories'))
+  .filter((entry: CategoryEntry) => entry.data.section === 'applied')
+  .sort((a: CategoryEntry, b: CategoryEntry) => a.data.order - b.data.order);
+const categoryId = (entry: CategoryEntry) => entry.id.replace(/\.[^.]+$/, '') as CategoryId;
 
 const footerCalculators = [
   { label: 'Standard deviation', route: routes.calculator('standard-deviation') },
@@ -162,8 +163,18 @@ const footerCalculators = [
             <p>Statistics education and calculator tools for clear, practical learning.</p>
           </div>
           <div>
-            <h5>Topics</h5>
-            {footerTopics.map((item) => <Link to={item.route}>{item.label}</Link>)}
+            <h5>Learn</h5>
+            {footerLearnCategories.map((entry: CategoryEntry) => (
+              <Link to={routes.categoryHub(categoryId(entry))}>{entry.data.title}</Link>
+            ))}
+            <Link to={routes.learnLanding()}>All Learn topics</Link>
+          </div>
+          <div>
+            <h5>Applied</h5>
+            {footerAppliedCategories.map((entry: CategoryEntry) => (
+              <Link to={routes.categoryHub(categoryId(entry))}>{entry.data.title}</Link>
+            ))}
+            <Link to={routes.appliedLanding()}>All Applied topics</Link>
           </div>
           <div>
             <h5>Calculators</h5>
@@ -173,7 +184,6 @@ const footerCalculators = [
             <h5>Site</h5>
             <Link to={routes.about()}>About</Link>
             <Link to={routes.privacyCookiePolicy()}>Privacy & Cookies</Link>
-            <Link to={routes.categoryHub('foundations')}>Foundations</Link>
             <a href="/sitemap-index.xml">Sitemap</a>
           </div>
         </div>

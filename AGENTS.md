@@ -227,6 +227,17 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   a guard proof run in both directions. **Entry written by Claude, not Codex:
   the MCP call hit the 900s timeout after the code was complete but before the
   work log or this entry were written.**
+- **TASK-027 -- section-aware nav/footer chrome:** replaced the six-category
+  header with Learn / Applied / Calculators and rebuilt the footer as brand +
+  Learn + Applied + Calculators + Site, deriving both category columns from the
+  collection in `data.order`; expanded only the desktop footer grid template
+  while retaining existing responsive breakpoints. Verification used clean
+  `npx astro check`, a sandbox-safe full Vitest fallback (35 files/120 tests)
+  after the exact `npm test` command hit documented `spawn EPERM`, `npm run build`
+  with 115 pages/4268 links/0 violations, 13 passing contrast checks,
+  and built HTML nav/footer/order/inbound-link inspection. Browser visual QA
+  was unavailable because no in-app browser backend was connected.
+
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and
