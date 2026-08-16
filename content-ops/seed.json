@@ -1929,6 +1929,66 @@
       "standalone_calc": 0,
       "notes": "Phase-2 batch (brief #30/B04). Two independent seed rounds returned only noise (TV-show contamination) -- no real keyword data, do not fabricate figures. Companion to correlation-vs-causation.",
       "keywords": []
+    },
+    {
+      "slug": "data-drift-detection",
+      "title": "Data Drift Detection: A Practical Guide for Production ML Systems",
+      "category_slug": "machine-learning-statistics",
+      "primary_keyword": "data drift detection",
+      "phase": 70,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
+      "embed_calculator": null,
+      "standalone_calc": 0,
+      "flagged": true,
+      "notes": "Applied batch 1 (phase 70). Gold-standard demo article named in the applied style plan sec.8. Flagged so the nightly cloud routine cannot auto-publish it; published manually 2026-08-16.",
+      "keywords": []
+    },
+    {
+      "slug": "how-to-design-an-ab-test",
+      "title": "How to Design an A/B Test That Answers Your Question",
+      "category_slug": "experiments-causality",
+      "primary_keyword": "a/b test design",
+      "phase": 70,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
+      "embed_calculator": null,
+      "standalone_calc": 0,
+      "flagged": true,
+      "notes": "Applied batch 1 (phase 70). Flagged so the nightly cloud routine cannot auto-publish it; published manually 2026-08-16.",
+      "keywords": []
+    },
+    {
+      "slug": "exploratory-data-analysis",
+      "title": "Exploratory Data Analysis: A Practical Workflow",
+      "category_slug": "data-analysis",
+      "primary_keyword": "exploratory data analysis",
+      "phase": 70,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
+      "embed_calculator": null,
+      "standalone_calc": 0,
+      "flagged": true,
+      "notes": "Applied batch 1 (phase 70). Flagged so the nightly cloud routine cannot auto-publish it; published manually 2026-08-16.",
+      "keywords": []
+    },
+    {
+      "slug": "forecast-accuracy-metrics",
+      "title": "Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads",
+      "category_slug": "time-series-forecasting",
+      "primary_keyword": "forecast accuracy metrics",
+      "phase": 70,
+      "kd_min": null,
+      "kd_max": null,
+      "combined_volume": null,
+      "embed_calculator": null,
+      "standalone_calc": 0,
+      "flagged": true,
+      "notes": "Applied batch 1 (phase 70). Flagged so the nightly cloud routine cannot auto-publish it; published manually 2026-08-16.",
+      "keywords": []
     }
   ]
 }

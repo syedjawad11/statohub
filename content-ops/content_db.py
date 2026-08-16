@@ -25,6 +25,15 @@ import sqlite3
 import sys
 from pathlib import Path
 
+# `brief` emits non-ASCII (e.g. the FLAGGED marker), which raises
+# UnicodeEncodeError on a Windows console defaulting to cp1252. Force UTF-8 on
+# our own streams rather than stripping the characters.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):  # already-wrapped or redirected stream
+        pass
+
 HERE = Path(__file__).resolve().parent
 DB_PATH = HERE / "content.db"
 SCHEMA_PATH = HERE / "schema.sql"
