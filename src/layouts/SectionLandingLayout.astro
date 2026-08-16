@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Link from '../components/Link.astro';
+import { routes, type CategoryId, type RouteRef } from '../lib/links';
+import type { BreadcrumbItem } from '../lib/schema';
+
+type CategoryEntry = CollectionEntry<'categories'>;
+
+interface Props {
+  section: 'learn' | 'applied';
+  title: string;
+  description: string;
+  canonicalPath: RouteRef;
+}
+
+const { section, title, description, canonicalPath } = Astro.props as Props;
+const categories = (await getCollection('categories'))
+  .filter((entry: CategoryEntry) => entry.data.section === section)
+  .sort((a: CategoryEntry, b: CategoryEntry) => a.data.order - b.data.order);
+const categoryId = (entry: CategoryEntry) => entry.id.replace(/\.[^.]+$/, '') as CategoryId;
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: title, route: canonicalPath },
+];
+---
+
+<BaseLayout
+  title={`${title} | Statohub`}
+  description={description}
+  canonicalPath={canonicalPath}
+  breadcrumbs={breadcrumbs}
+>
+  <section class="max-w-3xl">
+    <p class="page-kicker">Topics</p>
+    <h1 class="page-title">{title}</h1>
+    <p class="page-lede">{description}</p>
+
+    <ul class="catalog mt-8">
+      {categories.map((entry: CategoryEntry) => (
+        <li>
+          <Link class="cat h-full" to={routes.categoryHub(categoryId(entry))}>
+            <h2 class="m-0 mb-[6px] font-serif text-xl font-semibold text-ink">{entry.data.title}</h2>
+            <p>{entry.data.description}</p>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

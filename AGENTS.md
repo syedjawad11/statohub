@@ -215,6 +215,18 @@ concise: what changed, key decisions, verification commands, and reusable lesson
   focused tests. Verification used clean `npx astro check`, `npm test` after
   expected spawn approval (35 files/120 tests), 13 passing contrast checks,
   and `npm run build` with 109 pages and 0 link/meta-description violations.
+- **TASK-026 -- section landings + reserved-slug guard:** added `learnLanding`
+  and `appliedLanding` route kinds, a props-driven `SectionLandingLayout`
+  serving both `/learn/` and `/applied/`, section-aware category breadcrumbs
+  read from the category's own `section` field, and a `RESERVED_SLUGS` guard
+  closing the root-route hole where a slug matching a static segment was
+  silently shadowed with a green build. `ArticleLayout` and the nav/footer were
+  deliberately left untouched (TASK-030 and TASK-027 own those). Verification:
+  `npx astro check` clean, `npm test` 35 files/120 tests, `npm run build` 115
+  pages with 0 link/meta-description violations, catalog isolation checks, and
+  a guard proof run in both directions. **Entry written by Claude, not Codex:
+  the MCP call hit the 900s timeout after the code was complete but before the
+  work log or this entry were written.**
 ### Reusable verification habits
 
 - Preferred gates before handing off: `npx astro check`, `npm test`, and

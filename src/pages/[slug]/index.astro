@@ -11,6 +11,7 @@ type ArticleHeading = Awaited<ReturnType<ArticleEntry['render']>>['headings'][nu
 type RelatedRef = ArticleEntry['data']['related'][number];
 
 export async function getStaticPaths() {
+  const RESERVED_SLUGS = ['about', 'calculators', 'privacy-cookie-policy', 'learn', 'applied'];
   const articleId = (entry: ArticleEntry) => entry.id.replace(/\.[^.]+$/, '') as ArticleId;
   const categoryId = (entry: CategoryEntry) => entry.id.replace(/\.[^.]+$/, '') as CategoryId;
   const articles = (await getCollection('articles')).filter((entry: ArticleEntry) => !entry.data.draft);
@@ -23,6 +24,15 @@ export async function getStaticPaths() {
 
   if (collisions.length > 0) {
     throw new Error(`Root route slug collision between articles and categories: ${collisions.join(', ')}`);
+  }
+
+  const reservedCollisions = [
+    ...articles.map(articleId),
+    ...categories.map(categoryId),
+  ].filter((id) => RESERVED_SLUGS.includes(id));
+
+  if (reservedCollisions.length > 0) {
+    throw new Error(`Root route slug collision with reserved static segments: ${reservedCollisions.join(', ')}`);
   }
 
   // Articles and category hubs share the flat /{slug}/ URL space, so this

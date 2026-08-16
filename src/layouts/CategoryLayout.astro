@@ -20,8 +20,12 @@ interface Props {
 }
 
 const { category, slug } = Astro.props as Props;
+const sectionBreadcrumb = category.section === 'applied'
+  ? { label: 'Applied Statistics', route: routes.appliedLanding() }
+  : { label: 'Learn Statistics', route: routes.learnLanding() };
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
+  sectionBreadcrumb,
   { label: category.title, route: routes.categoryHub(slug) },
 ];
 
