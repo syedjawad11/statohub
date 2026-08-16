@@ -4,7 +4,7 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-08-16.
+**Last updated:** 2026-08-16 (Applied batch 1 live).
 
 ## Active: Applied Statistics restructure -- scaffolding COMPLETE, content next
 
@@ -21,7 +21,7 @@ applied-format spec -- its `/blog/` URL and directory naming are **superseded**;
 **Stage 0 DONE.** Codex runs through `codex mcp-server` as native tool calls;
 no more manual relay.
 
-**Done and committed (local, NOT pushed -- see below):**
+**Done, committed, pushed, and live:**
 - **TASK-025** applied-section schema field, 4 status tokens x 2 themes,
   `faqPageSchema()`.
 - **Four applied hubs** + **TASK-026** `/learn/` + `/applied/` landings, two new
@@ -31,26 +31,51 @@ no more manual relay.
   This is what gave the applied hubs sitewide inbound links.
 - **TASK-028A/B** all 8 module components in `src/components/applied/`
   (`KeyTakeaways`, `Callout`, `Checklist`, `DataTable`, `Sources`, `FAQ`,
-  `Figure`, `TableOfContents`) + the noindex `/dev/preview/` page.
+  `Figure`, `TableOfContents`) + the noindex preview page (now
+  `/dev/applied-preview/`, moved by TASK-033).
 - **TASK-029A/B** all 6 SVG infographics + the shared `_SvgFrame` accessibility
   wrapper. Contrast guard extended 13 -> 21 checks.
 
-**Current baseline:** 116 pages, 4296 internal links, 0 link violations,
-0 meta-description violations, 35 test files / 121 tests, `astro check` 36 files
-/ 0 errors, 21/21 contrast checks.
+- **TASK-030/031/032/033** applied article layout + section dispatch, three-section
+  homepage rebuild, content-ops `section` support, and the `/dev/applied-preview/`
+  living style guide. All four reviewed and **CLOSED** 2026-08-16.
+- **Applied batch 1: 4 articles published and live** (one per hub) --
+  `data-drift-detection`, `how-to-design-an-ab-test`, `exploratory-data-analysis`,
+  `forecast-accuracy-metrics`. Drafted by four parallel sonnet subagents against
+  `.claude/applied-playbook.md`, reviewed, and published in one gated commit.
+  This is the first content ever rendered by `AppliedArticleLayout`; the layout,
+  the H2+H3 TOC, FAQPage JSON-LD, and the module/infographic system are now all
+  verified on real public pages rather than only in the preview route.
 
-**Next: TASK-030+ (applied article layout) and the 8 first applied articles.**
-The component system is complete and unused -- nothing renders these modules on
-a public page yet.
+**Current baseline (on `origin/main`, deployed 2026-08-16):** 120 pages, 4,489
+internal links, 0 link violations, 0 meta-description violations, 35 test files
+/ 121 tests, `astro check` 37 files / 0 errors, 21/21 contrast checks.
 
-### Blocker: 10 local commits are unpushed, deliberately
+**Next: Applied batch 2 -- the remaining 4 articles**, planned for 2026-08-17.
+One per hub again, so each hub reaches 2 articles. Topics not yet chosen.
 
-Pushing to `main` triggers the Actions deploy (ADR-0006), which would put 4
-article-less hubs and 2 landings live. They render a proper "guides are being
-added" empty state (combinatorics has shipped that way for months), so nothing
-is broken -- but they would be indexable thin pages until the applied articles
-exist. **Decision pending with the user:** push now, or hold until content
-lands.
+### Two defects found during the TASK-030..033 review (both fixed)
+
+1. **`content.db` was never migrated.** TASK-032 shipped the category `section`
+   migration but only ever ran it against temporary databases, so the tracked
+   `content-ops/content.db` had no `section` column and `content_db.py show` /
+   `brief` **crashed** (`no such column: section`). Every gate passed while the
+   committed tool was broken. Fixed by running `init` + `seed`. **Lesson: a
+   migration is not done until it has run against the artifact that is committed.**
+2. **`brief` crashed on any flagged article** with `UnicodeEncodeError` -- the
+   `⚠ FLAGGED` marker is U+26A0 and the Windows console is cp1252. Pre-existing
+   latent bug, never fired because no flagged article had been briefed. Fixed by
+   forcing UTF-8 on stdout/stderr.
+
+Also written this session: **`.claude/applied-playbook.md`** (275 lines), which
+`content_db.py` already pointed every Applied brief at but which did not exist.
+
+### Carried forward: homepage visual QA never ran
+
+TASK-031's DoD required a desktop/mobile visual check against
+`docs/ideas/homepage-redesign-mock-2026-08-16.png`; the browser runtime exposed
+zero instances, so it was verified through built artifacts only. The homepage is
+live now -- a manual eyeball pass is still owed.
 
 ### Operational finding: the 900s MCP timeout is real
 
@@ -69,26 +94,22 @@ commit `73ba4cd`), then nothing. `content_db.py next` returns *"No unflagged
 'planned' articles left"*, and `list --status planned` returns **0** with or
 without `--flagged`.
 
-- **75 rows in `content.db`**; the only non-published one is
-  **`validity-in-statistics`** -- status `research_pending`, **flagged**,
-  KD 6-11, ~16,500 combined volume. It needs keyword research before it can be
-  written.
-- **On disk: 74 article files** (73 `draft: false`, 1 draft). Build produces
-  **109 pages**.
-- **Decision needed:** either queue a new Learn batch, or leave the routine idle
-  through the Applied restructure. Leaving it idle has a real upside -- no cloud
-  routine committing to `origin/main` while the restructure lands, so no
-  contention with the one-agent-on-the-repo gate.
+- **79 rows in `content.db`** (77 published after Applied batch 1). The two
+  non-published are **`validity-in-statistics`** (`research_pending`, **flagged**,
+  KD 6-11, ~16,500 combined volume -- needs keyword research first) and one
+  `changes_requested` row.
+- **On disk: 78 article files**, all `draft: false`. Build produces **120 pages**.
+- **Decision taken 2026-08-16:** leave the routine idle through the Applied
+  restructure. No cloud routine committing to `origin/main` while the restructure
+  lands means no contention with the one-agent-on-the-repo gate.
+- **Applied rows are deliberately `flagged`.** The four batch-1 articles were
+  seeded as phase 70 with `flagged: 1` so `next` skips them and the nightly
+  routine could not auto-publish a half-written draft; they were published
+  manually instead. **Do the same for batch 2.** `next` currently returns
+  "No unflagged 'planned' articles left", so the 03:00 run stays a no-op.
 - Trigger `trig_01DhQoEV3sRaKynzFC88xTzh` ("statohub publish 03:00 Malta", cron
   `0 1 * * *` UTC) is still the sole daily publisher and remains enabled -- it is
   simply a no-op each night while the queue is empty.
-
-## Baseline verified 2026-08-16
-
-`npm run build` green on `origin/main` at session start: 109 pages, 4,066
-internal links, **0 link violations**, **0 meta-description violations**. The
-local tree is now at 116 pages / 4,296 links, still 0 violations -- see the
-Active section for the full gate set.
 
 ## Recently closed
 
