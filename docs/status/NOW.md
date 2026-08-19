@@ -57,46 +57,48 @@ returns *"No unflagged 'planned' articles left"*, so the 03:00 run is a no-op.
   batch 2.** Trigger `trig_01DhQoEV3sRaKynzFC88xTzh` (cron `0 1 * * *` UTC)
   remains the sole daily publisher and stays enabled.
 
-## AdSense: PAUSED mid-setup, resume 2026-08-17
+## AdSense: consent banner (CMP) now wired into the code, resume ad units next
 
 Code side is done. Loader is live (TASK-035), `ads.txt` is served, the CSP
 allows Google's ad + consent origins, and `/privacy-cookie-policy/` carries the
 advertising and cookie-consent disclosure (commit `8387b15`). **No ad units are
 placed yet** -- only the `adsbygoogle.js` loader, deliberately.
 
-**Done 2026-08-16:** the CMP exists. "European regulations message -
-statohub.com" is **Published**, toggle on, English + 31 languages. Messages
-shown 0, consent rate 0% -- nothing had triggered it yet at the time of writing.
+**Done 2026-08-16:** the CMP exists in the AdSense UI. "European regulations
+message - statohub.com" is **Published**, toggle on, English + 31 languages.
+
+**Done 2026-08-19:** the Funding Choices messaging tag is now emitted directly
+by `BaseLayout.astro` (same `PROD && !noindex` gate as the AdSense loader, and
+loaded *before* it, per Google's manual-tag instructions) instead of relying
+solely on the AdSense auto-integration. This means the banner no longer depends
+on an ad slot actually firing a request to trigger it -- it shows on its own.
+Also closed the CSP gap flagged below: `public/_headers` now allows
+`fundingchoicesmessages.google.com` under `connect-src` and `frame-src` too
+(previously `script-src` only), and `lh3.googleusercontent.com` under `img-src`
+for consent-dialog logos. Verified: `astro check` 0 errors, 121/121 tests,
+clean `npm run build` (120 pages, 0 link/meta violations), and
+`wrangler pages dev` returns the new CSP byte-for-byte.
 
 **Resume here, in this order:**
 
-1. **Test the CMP on the live site.** The user is in Malta, so an incognito
-   visit to statohub.com is a real EEA test. Does the consent message appear?
-2. **If it does not appear, suspect our own CSP first.** `public/_headers`
-   allowlists `fundingchoicesmessages.google.com` under `script-src` **only**.
-   The message also posts the consent choice back (needs `connect-src`) and may
-   render in an iframe (needs `frame-src`); dialog logos can come from
-   `lh3.googleusercontent.com` (needs `img-src`). None of those are allowed
-   today. Deliberately not widened on speculation -- widen it against real
-   console errors, not guesses.
-3. **AdSense UI leftovers:** Privacy & messaging -> European regulations ->
+1. **Test the CMP on the live site after this deploys.** The user is in Malta,
+   so an incognito visit to statohub.com is a real EEA test. Confirm the
+   message appears and check devtools for any remaining CSP violations --
+   widen only the specific origin/directive named in the console, same
+   discipline as TASK-035.
+2. **AdSense UI leftovers:** Privacy & messaging -> European regulations ->
    **Settings** tab, to pick ad technology providers (take Google's recommended
    set). Open the message and confirm its privacy-policy URL points at
    `https://statohub.com/privacy-cookie-policy/` (a `#consent` anchor exists if
    a deep link is wanted) and that a reject option sits at equal prominence.
-4. **Set up `privacy@statohub.com`** -- the privacy page publishes it as the
+3. **Set up `privacy@statohub.com`** -- the privacy page publishes it as the
    contact address *now*, so this is live-but-dead until done. Cloudflare Email
    Routing, forwarded to the personal inbox.
-5. **Optional, not blocking:** a US states (CCPA/CPRA) message. Skip ad
+4. **Optional, not blocking:** a US states (CCPA/CPRA) message. Skip ad
    blocking recovery -- too aggressive for a site this young.
 
 **Then:** place the first ad units. The article rail was left short in the TOC
 redesign specifically to hold one.
-
-**Watch item:** the privacy page's "Consent in the EEA, the UK, and
-Switzerland" section describes a message users must actually see. The CMP is
-published, so this is accurate *provided* step 1 confirms it renders. If step 2
-turns up a CSP block that takes time to fix, soften that section meanwhile.
 
 ## Parked / paused (do not silently resume)
 

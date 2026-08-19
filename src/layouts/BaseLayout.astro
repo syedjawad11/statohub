@@ -72,6 +72,8 @@ const footerCalculators = [
 
 // Public AdSense publisher ID; keep in sync with public/ads.txt.
 const ADSENSE_PUBLISHER_ID = 'ca-pub-4667906964697238';
+// Bare form (no "ca-" prefix), used by the Funding Choices messaging tag.
+const FUNDING_CHOICES_PUBLISHER_ID = 'pub-4667906964697238';
 ---
 
 <!doctype html>
@@ -93,12 +95,38 @@ const ADSENSE_PUBLISHER_ID = 'ca-pub-4667906964697238';
     {noindex && <meta name="robots" content="noindex,follow" />}
     {schemas.map((schema) => <JsonLd schema={schema} />)}
     {import.meta.env.PROD && !noindex && (
-      <script
-        is:inline
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
-        crossorigin='anonymous'
-      ></script>
+      <>
+        {/* Google Funding Choices: certified CMP for EEA/UK consent, must load before the ad loader. */}
+        <script
+          is:inline
+          async
+          src={`https://fundingchoicesmessages.google.com/i/${FUNDING_CHOICES_PUBLISHER_ID}?ers=1`}
+        ></script>
+        <script is:inline>
+          (function () {
+            function signalGooglefcPresent() {
+              if (!window.frames['googlefcPresent']) {
+                if (document.body) {
+                  const iframe = document.createElement('iframe');
+                  iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;';
+                  iframe.style.display = 'none';
+                  iframe.name = 'googlefcPresent';
+                  document.body.appendChild(iframe);
+                } else {
+                  setTimeout(signalGooglefcPresent, 0);
+                }
+              }
+            }
+            signalGooglefcPresent();
+          })();
+        </script>
+        <script
+          is:inline
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+          crossorigin='anonymous'
+        ></script>
+      </>
     )}
     <script is:inline>
       (() => {
