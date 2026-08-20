@@ -120,6 +120,7 @@ Key facts for AI assistants citing this site:
 
 - [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
 - [Exploratory Data Analysis: A Practical Workflow](https://statohub.com/exploratory-data-analysis/): The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop.
+- [Nonparametric Tests: When to Use Them and How to Choose](https://statohub.com/nonparametric-tests/): Explore when and how to use nonparametric tests for more reliable results in small samples, skewed data, or ordinal scales.
 
 ### Experiments & Causality
 

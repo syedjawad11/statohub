@@ -1,0 +1,24 @@
+{
+  "articles": [
+    { "queue_position": 1,  "day_label": "18", "title": "Nonparametric Tests: When to Use Them",     "slug": "nonparametric-tests",                    "category_slug": "data-analysis" },
+    { "queue_position": 2,  "day_label": "19", "title": "Bonferroni Correction: A Practical Guide",   "slug": "bonferroni-correction",                  "category_slug": "experiments-causality" },
+    { "queue_position": 3,  "day_label": "20", "title": "Mediation Analysis",                         "slug": "mediation-analysis",                     "category_slug": "experiments-causality" },
+    { "queue_position": 4,  "day_label": "21", "title": "Randomized Controlled Trial",                "slug": "randomized-controlled-trial",            "category_slug": "experiments-causality" },
+    { "queue_position": 5,  "day_label": "22", "title": "Intention to Treat",                         "slug": "intention-to-treat",                     "category_slug": "experiments-causality" },
+    { "queue_position": 6,  "day_label": "23", "title": "Multiple Comparisons Problem",                "slug": "multiple-comparisons-problem",           "category_slug": "experiments-causality" },
+    { "queue_position": 7,  "day_label": "24", "title": "Normality Tests",                             "slug": "normality-tests",                        "category_slug": "data-analysis" },
+    { "queue_position": 8,  "day_label": "25", "title": "Holt-Winters",                                "slug": "holt-winters",                           "category_slug": "time-series-forecasting" },
+    { "queue_position": 9,  "day_label": "26", "title": "Pearson vs Spearman",                         "slug": "pearson-vs-spearman",                    "category_slug": "data-analysis" },
+    { "queue_position": 10, "day_label": "27", "title": "Log Transform Data",                          "slug": "log-transform-data",                     "category_slug": "data-analysis" },
+    { "queue_position": 11, "day_label": "28", "title": "Scatter Plot Interpretation",                 "slug": "scatter-plot-interpretation",            "category_slug": "data-analysis" },
+    { "queue_position": 12, "day_label": "29", "title": "Propensity Score Matching",                   "slug": "propensity-score-matching",              "category_slug": "experiments-causality" },
+    { "queue_position": 13, "day_label": "30", "title": "Confidence Level vs Significance Level",      "slug": "confidence-level-vs-significance-level", "category_slug": "data-analysis" },
+    { "queue_position": 14, "day_label": "31", "title": "Sequential Testing",                          "slug": "sequential-testing",                     "category_slug": "experiments-causality" },
+    { "queue_position": 15, "day_label": "1",  "title": "Heteroscedasticity Test",                     "slug": "heteroscedasticity-test",                "category_slug": "data-analysis" },
+    { "queue_position": 16, "day_label": "2",  "title": "Data Visualization Best Practices",           "slug": "data-visualization-best-practices",      "category_slug": "data-analysis" },
+    { "queue_position": 17, "day_label": "3",  "title": "Confusion Matrix Explained",                  "slug": "confusion-matrix-explained",             "category_slug": "machine-learning-statistics" },
+    { "queue_position": 18, "day_label": "4",  "title": "F1 Score Explained",                          "slug": "f1-score-explained",                     "category_slug": "machine-learning-statistics" },
+    { "queue_position": 19, "day_label": "5",  "title": "SARIMA Model",                                "slug": "sarima-model",                           "category_slug": "time-series-forecasting" },
+    { "queue_position": 20, "day_label": "6",  "title": "Granger Causality",                           "slug": "granger-causality",                      "category_slug": "time-series-forecasting" }
+  ]
+}

@@ -1,0 +1,246 @@
+---
+title: "Nonparametric Tests: When to Use Them and How to Choose"
+description: "Explore when and how to use nonparametric tests for more reliable results in small samples, skewed data, or ordinal scales."
+category: data-analysis
+primaryKeyword: nonparametric tests
+keywords:
+  - nonparametric tests
+  - when to use nonparametric tests
+  - nonparametric tests and how to choose
+  - nonparametric tests for small samples
+  - nonparametric tests for skewed data
+  - nonparametric tests for ordinal scales
+phase: 1
+related:
+  - mann-whitney-u-test
+  - kruskal-wallis-test
+  - post-hoc-tests
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Nonparametric tests are statistical procedures that compare groups or measure association without assuming your data follow a normal (or any specific) distribution. Use them when your sample is small, your data are ordinal, or your distribution is badly skewed and the mean would be a misleading summary anyway. The tradeoff is real: parametric tests usually win on statistical power when their assumptions actually hold, according to a PMC review of nonparametric methods.
+
+<KeyTakeaways rows={[
+  { point: 'Nonparametric means fewer assumptions, not none', details: 'Independence and, for many tests, similar distribution shapes still apply.' },
+  { point: 'Power tradeoff is real but often modest', details: 'Nonparametric tests can retain most of a parametric test’s efficiency under normality.' },
+  { point: 'Match design to test', details: 'Use the decision map to pair your data type and study design with the correct test.' },
+  { point: 'Report ties and effect size', details: 'Always state how ties were handled and include a rank-based effect size with your p-value.' },
+  { point: 'Statohub supports the full workflow', details: 'Use Statohub’s calculators and Learn guides to compute and interpret these tests.' },
+]} />
+
+Choosing between nonparametric and parametric tests depends on sample size, data scale, and whether your research question centers on the median or the mean.
+
+## What Nonparametric Tests Actually Are
+
+Two workhorses illustrate the idea. The Mann-Whitney U test compares two independent groups by ranking all observations together rather than comparing raw means. The Wilcoxon signed-rank test does the same job for paired data, like before-and-after measurements on the same subjects.
+
+- Nonparametric tests trade some statistical power for fewer distributional assumptions.
+- They typically test medians or overall distribution shape, not means.
+- They remain the safer default for small samples (often cited as n below 30) or heavily skewed data.
+
+Don’t default to a nonparametric test out of caution alone. If your sample is large enough for the central limit theorem to kick in, a parametric test may give you more power without sacrificing validity.
+
+The label “nonparametric” causes more confusion than it should. It does not mean “no assumptions.” It means the test doesn’t require you to estimate distribution parameters, like the mean and standard deviation, before drawing a conclusion. A Wikipedia overview of nonparametric statistics makes the distinction clear: these methods still assume independence between observations, and many of them assume similar distribution shapes across groups if you want to interpret the result as a comparison of medians.
+
+Parametric tests, by contrast, assume your data (or your sampling distribution) follow a known shape, usually the normal curve. In exchange for that assumption, you get richer output: parameter estimates, means, standard deviations, and confidence intervals you can report and interpret directly. A Mayo Clinic explainer on parametric and nonparametric methods frames this as the central tradeoff: nonparametric procedures sidestep distributional requirements, but the results are often harder to translate into plain language than “the average difference was 4.2 units.”
+
+Three tests show the range of what “nonparametric” covers in practice:
+
+- The **Kolmogorov-Smirnov test** compares an entire distribution shape against a reference distribution, or compares two samples to each other.
+- The **chi-square test** evaluates categorical data, either testing whether observed frequencies match an expected pattern (goodness-of-fit) or whether two categorical variables are related (test of independence).
+- The **Wilcoxon signed-rank test** handles paired numeric or ordinal data without assuming normality of the differences.
+
+None of these tests are assumption-free. They just relocate the assumptions from “the data are normal” to “the observations are independent” and, for some tests, “the groups have comparable spread and shape.”
+
+## When Should You Actually Use a Nonparametric Test?
+
+Five conditions push the decision toward nonparametric methods, and none of them alone is a hard rule. Weigh them together.
+
+- **Small sample size.** When sample sizes are small, checking normality reliably becomes difficult, and nonparametric tests avoid betting the analysis on an assumption you can’t verify.
+- **Ordinal data.** Likert-scale responses, rankings, and satisfaction ratings don’t have a true numeric mean in any meaningful sense, so rank-based methods fit the measurement scale better.
+- **Strong skew or outliers.** A handful of extreme values can drag a mean far from where most of your data sit; a median, and the tests built around it, resist that distortion.
+- **Tied or censored values.** Data with many repeated values or with some observations only known to exceed a threshold often violate parametric assumptions outright.
+- **The research question itself is about the median or about which group tends to score higher, not about the mean difference.**
+
+Before you commit, run a few quick diagnostics. Plot a histogram and a Q-Q plot; if the points hug the diagonal line, normality is plausible. Check skewness, and if you want a formal test, know its limits: normality tests like Shapiro-Wilk are notoriously underpowered in small samples, meaning they may fail to flag a genuine departure from normality simply because you don’t have enough data to detect it, and overly sensitive in large ones, flagging trivial deviations as significant.
+
+Sample size cuts both ways here. When you have a large number of observations, the central limit theorem often lets you use parametric tests safely even when the raw data are non-normal, since the sampling distribution of the mean approaches normal regardless, a point the PMC review makes explicitly. But extreme skew, heavy censoring, or a research question anchored on the median can still justify a nonparametric choice even with a large dataset.
+
+If you’re torn between a t-test and a Mann-Whitney U test, run both. When they agree on significance, you’ve confirmed your conclusion is robust to the choice of assumptions. When they disagree, that disagreement itself is information worth reporting.
+
+## Common Nonparametric Tests Grouped by Study Design
+
+Matching your study design to the right test is the single most useful skill in this entire guide. Here’s how the standard toolkit breaks down, organized the way you’ll actually encounter these decisions in practice.
+
+<Figure number={1} caption="The standard nonparametric toolkit grouped by study design, from one-sample tests through goodness-of-fit tests.">
+  <TaxonomyTree
+    title="Nonparametric tests by design"
+    desc="A taxonomy groups the standard nonparametric tests into six study-design categories: one-sample tests, two independent groups, paired data, three or more independent groups, association and correlation, and goodness-of-fit tests, each paired with its specific test names."
+    root="Nonparametric tests by design"
+    branches={[
+      { label: 'One-sample tests', children: ['Sign test', 'Wilcoxon signed-rank'] },
+      { label: 'Two independent groups', children: ['Mann-Whitney U (Wilcoxon rank-sum)'] },
+      { label: 'Paired data', children: ['Wilcoxon signed-rank', 'Sign test'] },
+      { label: 'Three or more independent groups', children: ['Kruskal-Wallis test'] },
+      { label: 'Association / correlation', children: ["Spearman's rho", "Kendall's tau"] },
+      { label: 'Goodness-of-fit tests', children: ['Chi-square GOF', 'Kolmogorov-Smirnov'] },
+    ]}
+  />
+</Figure>
+
+### One-sample and median tests
+
+The **sign test** asks a simple question: does a single sample’s median differ from a hypothesized value? It only looks at whether each observation falls above or below that value, ignoring magnitude entirely, which makes it crude but nearly assumption-free. The **one-sample Wilcoxon test** improves on this by incorporating the magnitude of each deviation through ranks, giving it more power when the underlying distribution is roughly symmetric.
+
+### Two independent groups
+
+The <Link to={routes.article('mann-whitney-u-test')}>Mann-Whitney U test</Link>, also called the Wilcoxon rank-sum test, is probably the most-used nonparametric procedure in applied research. It ranks all observations from both groups together, then checks whether one group’s ranks tend to be systematically higher. It answers a subtly different question than a t-test: rather than “do the means differ,” it asks “is one group stochastically larger than the other,” which is closer to “if you picked one observation from each group at random, which one would likely be bigger.”
+
+### Paired or matched data
+
+The Wilcoxon signed-rank test handles before-and-after designs, matched pairs, and repeated measures on the same subject. It ranks the absolute differences between pairs, then weights those ranks by the sign of the difference. The sign test can also apply here in its simpler, cruder form when you only care about direction, not magnitude.
+
+### Three or more independent groups
+
+The <Link to={routes.article('kruskal-wallis-test')}>Kruskal-Wallis test</Link> extends the Mann-Whitney logic to three or more groups, serving as the nonparametric counterpart to a one-way ANOVA. It ranks all observations across every group combined, then tests whether the average rank differs meaningfully between groups. A significant Kruskal-Wallis result tells you at least one group differs, but not which ones, so it’s typically followed by <Link to={routes.article('post-hoc-tests')}>pairwise post-hoc comparisons</Link> with a correction for multiple testing.
+
+### Association and correlation
+
+**Spearman rank correlation** measures monotonic association between two variables by correlating their ranks instead of their raw values, making it far less sensitive to outliers than Pearson’s correlation. **Kendall’s tau** answers a related but distinct question: for every possible pair of observations, how often do the two variables agree on which one ranks higher? Kendall’s tau tends to be preferred with smaller samples or when the data contain many tied ranks.
+
+### Goodness-of-fit and categorical association
+
+The chi-square test covers two common scenarios: goodness-of-fit, checking whether observed category counts match an expected pattern, and test of independence, checking whether two categorical variables are related. The Kolmogorov-Smirnov test compares an observed distribution against a theoretical one, or compares two samples directly, based on the maximum distance between their cumulative distribution functions.
+
+A few specialized tests round out the toolkit: the **Friedman test** handles repeated measures across three or more conditions on the same subjects, functioning as a nonparametric repeated-measures ANOVA, and the **log-rank test** compares survival curves between groups in time-to-event studies, according to the Wikipedia summary of nonparametric methods.
+
+## How Do Nonparametric Tests Actually Work?
+
+Most nonparametric tests replace raw values with ranks before doing anything else. Sort every observation from smallest to largest, assign rank 1 to the smallest, rank 2 to the next, and so on. When two values are tied, each gets the average of the ranks they would have occupied. That single substitution, ranks instead of raw numbers, is what makes these tests resistant to outliers: an extreme value only ever contributes one rank position, no matter how far it sits from the rest of the data, a mechanic laid out clearly in an introductory statistics chapter on nonparametric methods.
+
+Sign-based tests work even more simply. The sign test discards magnitude entirely and only records whether each observation lands above or below a reference point. That simplicity is also its weakness: throwing away magnitude information costs power compared to rank-based alternatives.
+
+A third family, permutation and exact tests, takes a different route. Instead of relying on an approximate (asymptotic) distribution for the test statistic, these methods enumerate every possible way the group labels could have been shuffled among the observed values, then see how extreme your actual result is relative to that full set of rearrangements. For very small samples, this can yield an exact p-value rather than an approximation, per the Wikipedia entry on nonparametric statistics.
+
+What you generally don’t get from any of these approaches is a parameter estimate. A Mann-Whitney U test tells you groups differ; it doesn’t hand you a mean difference with a standard error attached the way a t-test does.
+
+If you need an effect size alongside your p-value, don’t stop at the test statistic. Pair a rank-based test with a bootstrap confidence interval on the median difference to get both a distribution-free test and an interpretable estimate.
+
+## Choosing the Right Test: A Decision Map
+
+Matching data type and design to the correct test is faster with a reference table than with a rulebook.
+
+<DataTable
+  caption="Nonparametric tests and their parametric counterparts, matched to study design and data type"
+  headers={['Design / Data Type', 'Nonparametric Test', 'Parametric Counterpart', 'Prefer Parametric When']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['One sample vs. hypothesized median', 'Sign test, one-sample Wilcoxon', 'One-sample t-test', 'Data are roughly normal and n is moderate to large'],
+    ['Two independent groups', 'Mann-Whitney U (Wilcoxon rank-sum)', 'Independent samples t-test', 'Both groups are approximately normal with similar variance'],
+    ['Two paired/matched groups', 'Wilcoxon signed-rank, sign test', 'Paired t-test', 'Differences are approximately normally distributed'],
+    ['Three or more independent groups', 'Kruskal-Wallis', 'One-way ANOVA', 'Groups are normal with roughly equal variances'],
+    ['Repeated measures, 3+ conditions', 'Friedman test', 'Repeated-measures ANOVA', 'Sphericity and normality assumptions are reasonably met'],
+    ['Association between two ranked variables', 'Spearman, Kendall’s tau', 'Pearson correlation', 'Both variables are continuous and linearly related'],
+    ['Categorical frequency data', 'Chi-square (goodness-of-fit/independence)', '(No direct parametric analog)', 'N/A, chi-square is the standard approach'],
+  ]}
+/>
+
+A few rules of thumb make this table easier to apply on the fly. Ordinal data almost always points to a nonparametric test, since means on a five-point scale rarely mean much. Small samples combined with visible skew push the same direction. Large samples with roughly symmetric data open the door to parametric tests through the central limit theorem, even when a formal normality test raises a flag. And unequal variances across groups deserve a second look regardless of your choice, since several rank tests, including Kruskal-Wallis, assume similarly shaped distributions if you want the result interpreted as a median comparison rather than just “the distributions differ somehow.”
+
+When you write up results, name the exact test, state whether you used an exact or asymptotic p-value, note how ties were handled, and report an effect size, such as rank-biserial correlation for Mann-Whitney or rho for Spearman, alongside your <Link to={routes.article('p-value')}>p-value</Link>. A bare “p = 0.03” without those details is close to unreportable in a peer-reviewed setting.
+
+## Two Worked Examples You Can Follow Step by Step
+
+**Example 1: Mann-Whitney U for two independent groups.** Suppose you’re comparing recovery times (in days) between two treatment protocols, with five patients per group, and one group has an outlier that would badly skew a t-test. Pool all ten values, rank them from smallest to largest, and sum the ranks for each group separately. The test statistic (U) compares each group’s rank sum against what you’d expect under the null hypothesis of no difference. A small p-value here (say, p = 0.02) tells you patients in one protocol tend to recover faster, ranked against the other group, not that the mean recovery time differs by some specific number of days.
+
+**Example 2: Spearman rank correlation.** Say you want to know whether hours studied correlates with exam rank in a class of 20 students, but the exam-rank variable is ordinal by nature. Convert both variables to ranks, then correlate those ranks the same way you’d correlate raw Pearson values. A Spearman’s rho of 0.65 indicates a fairly strong monotonic relationship: as study hours increase, rank tends to improve, though not necessarily in a straight line.
+
+When you write these results up, run through a short checklist:
+
+<Checklist
+  id="writeup-checklist"
+  title="Writing up a nonparametric test result"
+  style="numbered"
+  items={[
+    'Name the test explicitly (Mann-Whitney U, not just “a nonparametric test”).',
+    'State both sample sizes and whether the p-value is exact or asymptotic.',
+    'Note how tied values were handled, since ties affect the test statistic.',
+    'Report an effect size, rank-biserial correlation for Mann-Whitney, rho for Spearman, alongside the p-value.',
+    'Close with a plain-language conclusion tied to what the test actually measures (median or rank difference, not mean difference).',
+  ]}
+/>
+
+## Where Nonparametric Tests Fall Short
+
+The most important limitation is power. When parametric assumptions genuinely hold, nonparametric tests are more likely to miss a real effect at the same sample size, according to the PMC review of nonparametric methods. That power loss is often smaller than people assume, since rank-based tests can retain roughly 95% of a parametric test’s efficiency under normality and can even outperform it under heavy-tailed or skewed conditions, but it’s not zero, and it compounds with small samples.
+
+The second limitation is interpretability. A rank test tells you which group tends to score higher, not by how much, and it sacrifices the parameter estimates (means, standard deviations, confidence intervals) that make parametric results easy to communicate to a non-statistical audience, a tradeoff the Statistics By Jim comparison of parametric and nonparametric tests lays out clearly. Several rank tests also carry a quieter assumption: that group distributions share a similar shape, which matters if you want to interpret a significant result strictly as a median difference.
+
+A few remedies exist short of defaulting to a rank test. Log or square-root transformations can pull a skewed variable close enough too normal to justify a parametric approach. Robust parametric methods (trimmed means, Welch’s t-test for unequal variances) handle some violations without abandoning parameter estimation. Permutation tests and bootstrap confidence intervals give you distribution-free inference while still producing an interpretable estimate. And generalized linear models can model non-normal outcomes, like counts or binary data, directly rather than forcing them into a rank-based framework.
+
+The best time to decide between parametric and nonparametric approaches is before you collect data, not after you see the results. A statistician consulted at the planning stage can help you size your sample correctly for whichever test you’ll actually run.
+
+## A Practical Checklist for Applying These Tests Correctly
+
+Work through these steps in order, and you’ll avoid most of the mistakes that show up in student projects and early-career research alike.
+
+1. Define your research question precisely: are you comparing medians, testing association, or checking a distribution against an expected shape?
+2. Inspect your data with a histogram and Q-Q plot before running any formal test.
+3. Run diagnostics for normality and skew, but treat small-sample normality tests with skepticism.
+4. Choose your test using the decision map above, matching data type and design.
+5. Run the test, and check ties explicitly, since heavily tied data changes how the statistic is calculated.
+6. Report the test name, sample sizes, p-value type, and an effect size, not just a p-value in isolation.
+7. Consider a sensitivity check: rerun the analysis parametrically or via permutation to see if your conclusion holds up.
+
+Statohub’s <Link to={routes.categoryHub('inferential-statistics')}>inferential statistics guide</Link> covers how these tests fit into the broader hypothesis-testing framework, and the <Link to={routes.calculator('chi-square')}>chi-square calculator</Link> can run goodness-of-fit or independence tests on categorical data directly.
+
+If the outcome of your analysis affects a thesis defense, a publication, or a business decision with real stakes, loop in a statistician before you finalize your design, not after your data are already collected.
+
+## Why These Distinctions Matter More Than Students Realize
+
+Most statistics courses teach nonparametric tests as an afterthought, a backup plan for when the “real” tests don’t apply. That framing does students a disservice. The choice between a Mann-Whitney U and a t-test isn’t a consolation prize; it’s a decision about what claim you’re actually entitled to make from your data. A significant rank test tells you something true and useful, that one group tends to outscore another, even when a mean comparison would be actively misleading because of a skewed distribution or a handful of outliers.
+
+The bigger mistake I see in applied work isn’t choosing the wrong test category. It’s treating “nonparametric” as synonymous with “assumption-free” and skipping the diagnostic step entirely. Independence still has to hold. Distribution shape still matters for several of these tests if you want a median interpretation. Teaching students to check those conditions, rather than treating nonparametric tests as a safe default, is what separates a defensible analysis from one that merely looks cautious.
+
+## Put These Tests to Work With Statohub’s Calculators
+
+Reading about ranks and test statistics only gets you so far. At some point you need to run the actual numbers, whether that’s a Mann-Whitney U for a two-group comparison or a chi-square test on survey data, and Statohub’s calculators let you do that without writing a line of code. Enter your data, and the calculator handles rank conversion, tie correction, and p-value output so you can focus on interpretation instead of arithmetic.
+
+Statohub’s Learn Statistics hub pairs those calculators with plain-English guides on everything from the Kruskal-Wallis test to post-hoc comparisons, so you can move from “which test do I need” to “here’s my result and here’s what it means” in one sitting. If you’re working through a class project or a real dataset right now, start with the chi-square calculator or the p-value calculator and check your work against the decision map above.
+
+## Sources
+
+<Sources items={[
+  { text: 'Nonparametric statistical tests: friend or foe?', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8979661/', org: 'PMC, National Library of Medicine' },
+  { text: 'Nonparametric statistics', href: 'https://en.wikipedia.org/wiki/Nonparametric_statistics', org: 'Wikipedia' },
+  { text: 'Mann-Whitney U test — Efficiency', href: 'https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test', org: 'Wikipedia' },
+  { text: 'Nonparametric Tests vs. Parametric Tests', href: 'https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/', org: 'Statistics By Jim' },
+  { text: 'Introductory Statistics — Chapter 21: Nonparametric Methods: When Assumptions Fail', href: 'https://datafield.dev/introductory-statistics/part-06/chapter-21/', org: 'datafield.dev' },
+  { text: 'Vrbin, C.M. — Parametric or Nonparametric Statistical Tests: Considerations When Choosing the Most Appropriate Option for Your Data, Cytopathology (2022)', href: 'https://onlinelibrary.wiley.com/doi/10.1111/cyt.13174', org: 'Wiley' },
+  { text: 'NIST/SEMATECH e-Handbook — Anderson-Darling and Shapiro-Wilk Tests', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc213.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook — Kolmogorov-Smirnov Goodness-of-Fit Test', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35g.htm', org: 'National Institute of Standards and Technology' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  { question: 'What is the main difference between parametric and nonparametric tests?', answer: 'Parametric tests assume your data follow a known distribution, usually normal, and estimate parameters like the mean and standard deviation. Nonparametric tests skip that distributional assumption and typically compare medians or overall rank order instead, at some cost to statistical power when the parametric assumptions actually hold.' },
+  { question: 'When should I use a nonparametric test instead of a t-test?', answer: 'Reach for a nonparametric test like Mann-Whitney U when your sample is small (often under 30 per group), your data are ordinal, or your distribution shows strong skew or outliers that would distort a mean comparison. If your sample is large and roughly symmetric, a t-test may still be the better choice.' },
+  { question: 'Is Mann-Whitney U the same as a t-test?', answer: 'No. Mann-Whitney U compares ranks between two independent groups to test whether one tends to score higher than the other. A t-test compares means directly and requires (or assumes reasonable robustness to) approximately normal data. They can agree on significance, but they answer subtly different questions.' },
+]} />
+
+**What’s the nonparametric equivalent of ANOVA?** The Kruskal-Wallis test serves as the nonparametric counterpart to a one-way ANOVA for comparing three or more independent groups. It ranks all observations across groups and tests whether the average rank differs, but a significant result requires post-hoc tests to identify which specific groups differ.
+
+**Do nonparametric tests have less statistical power?** Generally yes, when parametric assumptions hold, nonparametric tests are somewhat less likely to detect a true effect at the same sample size. That power gap is often smaller than expected and can reverse in favor of nonparametric tests when data are heavily skewed or contain outliers.
+
+**How do you handle tied values in a rank-based test?** Tied observations are typically assigned the average of the ranks they would occupy if no tie existed. This adjustment affects the test statistic and p-value calculation, so it should always be reported when ties are present in your dataset.

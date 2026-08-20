@@ -2,6 +2,8 @@
 node_modules/
 .pnp
 .pnp.js
+__pycache__/
+*.pyc
 
 # build output
 dist/
@@ -13,6 +15,7 @@ dist/
 .env
 .env.*
 !.env.example
+outsource-content/raw/_article-list-cache.json
 
 # logs
 npm-debug.log*
