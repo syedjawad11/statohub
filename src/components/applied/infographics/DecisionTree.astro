@@ -69,9 +69,39 @@ const wrapText = (text: string, maxCharacters: number): string[] => {
   return lines;
 };
 
+const countLeaves = (node: DecisionNode, depth: number): number => {
+  if (depth >= maxDepth) return 1;
+  const children = [node.yes, node.no].filter((child): child is DecisionNode => Boolean(child));
+  if (children.length === 0) return 1;
+  return children.reduce((sum, child) => sum + countLeaves(child, depth + 1), 0);
+};
+const totalLeaves = countLeaves(root, 0);
+
+// Wider trees (more leaves) get narrower nodes and tighter spacing so the
+// canvas stays close to the article column instead of growing past it and
+// getting scaled down hard enough to shrink the text past legibility — the
+// same rule TaxonomyTree.astro and ProcessFlow.astro use, applied here as a
+// width budget instead of row-wrapping (a decision tree can't wrap into a
+// grid without breaking its branch structure).
+const maxCanvasWidth = 720;
+const baseNodeWidth = 168;
+const baseGap = 34;
+const minNodeWidth = 132;
+const minGap = 16;
+const basePadding = 28;
+
+const naturalContentWidth = totalLeaves * baseNodeWidth + Math.max(0, totalLeaves - 1) * baseGap;
+const availableWidth = maxCanvasWidth - basePadding * 2;
+const idealScale = naturalContentWidth > 0 ? availableWidth / naturalContentWidth : 1;
+const nodeScale = Math.min(1, Math.max(minNodeWidth / baseNodeWidth, idealScale));
+
+const nodeWidth = Math.round(baseNodeWidth * nodeScale);
+const horizontalGap = Math.max(minGap, Math.round(baseGap * nodeScale));
+const labelMaxCharacters = Math.max(10, Math.round(20 * nodeScale));
+
 const buildLayout = (node: DecisionNode, depth: number): LayoutNode => {
   const layoutNode: LayoutNode = {
-    labelLines: wrapText(node.label, 20),
+    labelLines: wrapText(node.label, labelMaxCharacters),
     depth,
     children: [],
     x: 0,
@@ -100,9 +130,7 @@ const collectNodes = (node: LayoutNode): void => {
 };
 collectNodes(layoutRoot);
 
-const padding = 28;
-const nodeWidth = 168;
-const horizontalGap = 34;
+const padding = basePadding;
 const verticalGap = 72;
 const slotPitch = nodeWidth + horizontalGap;
 let nextLeafSlot = 0;

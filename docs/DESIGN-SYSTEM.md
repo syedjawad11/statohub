@@ -94,6 +94,43 @@ part of expressing [[0001-wedge-model]] visually.
   (`applied/TableOfContents.astro` is the superseded always-open variant, kept
   only for the `/dev/applied-preview/` gallery.)
 
+### Applied-statistics infographics (`src/components/applied/infographics/`)
+
+All infographics render as an SVG with a `viewBox` (`_SvgFrame.astro`) inside
+`Figure.astro`, whose `.applied-figure-content { overflow: hidden }` forbids a
+horizontal-scroll fallback. Because SVG text lives in the same coordinate
+space as the shapes, if a component's natural canvas width exceeds the
+article column (`.article-prose { max-width: 46rem }`, ~736px), the browser
+scales the *whole diagram down to fit* -- including the text -- and even a
+30-40% overshoot makes the labels borderline illegible.
+
+**The rule: every infographic component must keep its own natural canvas
+width at or below roughly 720-740px, regardless of how much content is
+passed in.** Never let width grow unbounded with item count and rely on
+`_SvgFrame`'s shrink-to-fit; that shrink is exactly what breaks legibility.
+Two established techniques, pick whichever fits the shape of the data:
+
+- **Wrap into rows/columns** (`TaxonomyTree.astro`, `ProcessFlow.astro`
+  horizontal mode) -- once a single row would exceed the width budget, wrap
+  items into a grid (`columns = n <= 3 ? n : n === 4 ? 2 : 3` is the pattern
+  used so far) and connect rows with a bus/elbow line instead of one long row.
+  Text size never changes; only the row count grows.
+- **Compress the layout, not the text** (`DecisionTree.astro`) -- when the
+  shape is inherently hierarchical and can't wrap into a grid without
+  breaking the branch structure, scale node width/gaps down (with a floor,
+  e.g. 132px node / 16px gap) as leaf count grows, and scale the `wrapText`
+  character budget with it. Font sizes stay fixed either way.
+
+`ComparisonMatrix.astro` and `Scorecard.astro` are currently safe by
+construction (their width depends on column/row count in ways that stay
+under budget for realistic content) but were not restructured -- if a future
+article pushes column count high enough to threaten the budget, apply the
+same rule. `AnnotatedChart.astro` is unused in any published article (only
+`/dev/applied-preview/`); it has the same latent risk and should get the
+same treatment before its first real use. See
+`docs/status/sessions/2026-08-23-infographic-readability.md` for the
+readability incident that established this rule.
+
 ## Accessibility
 
 - All interactive elements get a 2px `--focus`-colored outline via

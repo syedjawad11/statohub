@@ -4,9 +4,11 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-08-23 (AdSense CSP `font-src` bug fixed + deployed;
-consent banner still not confirmed rendering, likely blocked on AdSense site
-review, not code).
+**Last updated:** 2026-08-23 (applied-statistics infographic readability fix
+sitewide -- `ProcessFlow`/`DecisionTree` no longer overflow the article
+column and shrink text; standard documented in `docs/DESIGN-SYSTEM.md`.
+Also: AdSense CSP `font-src` bug fixed + deployed; consent banner still not
+confirmed rendering, likely blocked on AdSense site review, not code).
 
 ## Active: Applied Statistics -- batch 2 still not started
 

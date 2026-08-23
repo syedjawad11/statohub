@@ -59,6 +59,7 @@ const gap = direction === 'horizontal' ? 48 : 38;
 const boxWidth = direction === 'horizontal' ? 184 : 360;
 const labelCharacters = direction === 'horizontal' ? 18 : 40;
 const detailCharacters = direction === 'horizontal' ? 24 : 48;
+const rowGap = 56;
 
 const preparedSteps = steps.map((step) => {
   const labelLines = wrapText(step.label, labelCharacters);
@@ -79,37 +80,62 @@ const preparedSteps = steps.map((step) => {
 });
 
 const horizontalHeight = Math.max(...preparedSteps.map((step) => step.height));
-let verticalOffset = padding;
 
-const laidOutSteps = preparedSteps.map((step, index) => {
-  if (direction === 'horizontal') {
-    return {
-      ...step,
-      x: padding + index * (boxWidth + gap),
-      y: padding,
-      height: horizontalHeight,
-    };
+// Horizontal flows wrap into rows of up to 3 steps instead of one wide row,
+// so the canvas stays close to the article column and never has to be
+// scaled down hard enough to shrink the text past legibility — the same
+// card-grid rule used in TaxonomyTree.astro.
+const columns = steps.length <= 3 ? steps.length : steps.length === 4 ? 2 : 3;
+
+let canvasWidth: number;
+let canvasHeight: number;
+let laidOutSteps: (typeof preparedSteps[number] & { x: number; y: number })[];
+
+if (direction === 'horizontal') {
+  const rowsOfSteps: (typeof preparedSteps)[] = [];
+  for (let i = 0; i < preparedSteps.length; i += columns) {
+    rowsOfSteps.push(preparedSteps.slice(i, i + columns));
   }
 
-  const laidOut = {
-    ...step,
-    x: padding,
-    y: verticalOffset,
-  };
-  verticalOffset += step.height + gap;
-  return laidOut;
-});
+  const fullRowWidth = columns * boxWidth + (columns - 1) * gap;
+  canvasWidth = padding * 2 + fullRowWidth;
 
-const canvasWidth = direction === 'horizontal'
-  ? padding * 2 + steps.length * boxWidth + (steps.length - 1) * gap
-  : padding * 2 + boxWidth;
-const canvasHeight = direction === 'horizontal'
-  ? padding * 2 + horizontalHeight
-  : verticalOffset - gap + padding;
+  laidOutSteps = rowsOfSteps.flatMap((rowSteps, rowIndex) => {
+    const rowWidth = rowSteps.length * boxWidth + (rowSteps.length - 1) * gap;
+    const startX = (canvasWidth - rowWidth) / 2;
+    const y = padding + rowIndex * (horizontalHeight + rowGap);
+    return rowSteps.map((step, colIndex) => ({
+      ...step,
+      x: startX + colIndex * (boxWidth + gap),
+      y,
+      height: horizontalHeight,
+    }));
+  });
+
+  canvasHeight = padding * 2 + rowsOfSteps.length * horizontalHeight + (rowsOfSteps.length - 1) * rowGap;
+} else {
+  let verticalOffset = padding;
+  laidOutSteps = preparedSteps.map((step) => {
+    const laidOut = { ...step, x: padding, y: verticalOffset };
+    verticalOffset += step.height + gap;
+    return laidOut;
+  });
+  canvasWidth = padding * 2 + boxWidth;
+  canvasHeight = verticalOffset - gap + padding;
+}
 
 const connectors = laidOutSteps.slice(0, -1).map((step, index) => {
   const next = laidOutSteps[index + 1];
-  if (direction === 'horizontal') {
+
+  if (direction === 'vertical') {
+    const x = step.x + boxWidth / 2;
+    return {
+      line: `M ${x} ${step.y + step.height} V ${next.y - 8}`,
+      arrow: `M ${x} ${next.y} l -6 -9 h 12 z`,
+    };
+  }
+
+  if (step.y === next.y) {
     const y = step.y + step.height / 2;
     return {
       line: `M ${step.x + boxWidth} ${y} H ${next.x - 8}`,
@@ -117,10 +143,13 @@ const connectors = laidOutSteps.slice(0, -1).map((step, index) => {
     };
   }
 
-  const x = step.x + boxWidth / 2;
+  const startX = step.x + boxWidth / 2;
+  const endX = next.x + boxWidth / 2;
+  const startY = step.y + step.height;
+  const midY = startY + rowGap / 2;
   return {
-    line: `M ${x} ${step.y + step.height} V ${next.y - 8}`,
-    arrow: `M ${x} ${next.y} l -6 -9 h 12 z`,
+    line: `M ${startX} ${startY} V ${midY} H ${endX} V ${next.y - 8}`,
+    arrow: `M ${endX} ${next.y} l -6 -9 h 12 z`,
   };
 });
 ---
