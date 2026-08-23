@@ -54,77 +54,90 @@ const wrapText = (text: string, maxCharacters: number): string[] => {
   return lines;
 };
 
-const padding = 28;
-const rootWidth = 230;
-const branchWidth = 158;
-const leafWidth = 132;
-const leafGap = 14;
-const groupGap = 28;
-const levelGap = 58;
+// Card-grid layout: the diagram wraps branches into rows of cards instead of
+// one wide row, so the SVG's natural width stays close to the article's
+// content column and never has to be scaled down hard enough to shrink the
+// text past legibility. See docs/status/sessions for the readability fix.
+const padding = 32;
+const cardWidth = 216;
+const colGap = 20;
+const rowGap = 30;
+const dropGap = 20;
+const cardPaddingX = 16;
+const cardPaddingY = 16;
+const titleLineHeight = 19;
+const titleBottomGap = 10;
+const chipLineHeight = 16;
+const chipPaddingY = 12;
+const chipGap = 6;
+const rootWidth = 240;
+const rootPaddingY = 16;
+const rootLineHeight = 19;
 
-const rootLines = wrapText(root, 27);
-const rootHeight = Math.max(52, 28 + rootLines.length * 16);
+const cardInnerWidth = cardWidth - cardPaddingX * 2;
+const rootInnerWidth = rootWidth - 32;
+
+const rootLines = wrapText(root, Math.max(6, Math.floor(rootInnerWidth / 7.6)));
+const rootHeight = Math.max(56, rootPaddingY * 2 + rootLines.length * rootLineHeight);
+const rootY = padding;
+
+const columns = branches.length <= 3 ? branches.length : branches.length === 4 ? 2 : 3;
 
 const preparedBranches = branches.map((branch) => {
-  const labelLines = wrapText(branch.label, 19);
-  const children = (branch.children ?? []).map((label) => ({
-    label,
-    lines: wrapText(label, 16),
-  }));
-  const childrenSpan = children.length > 0
-    ? children.length * leafWidth + (children.length - 1) * leafGap
-    : 0;
+  const titleLines = wrapText(branch.label, Math.max(6, Math.floor(cardInnerWidth / 7.2)));
+  const children = (branch.children ?? []).map((label) => {
+    const lines = wrapText(label, Math.max(6, Math.floor(cardInnerWidth / 6.3)));
+    return { label, lines, chipHeight: lines.length * chipLineHeight + chipPaddingY };
+  });
 
-  return {
-    ...branch,
-    labelLines,
-    children,
-    groupWidth: Math.max(branchWidth, childrenSpan),
-  };
+  const contentHeight =
+    titleLines.length * titleLineHeight +
+    titleBottomGap +
+    children.reduce((sum, child) => sum + child.chipHeight, 0) +
+    Math.max(0, children.length - 1) * chipGap;
+
+  return { ...branch, titleLines, children, contentHeight };
 });
 
-const branchHeight = Math.max(
-  52,
-  ...preparedBranches.map((branch) => 28 + branch.labelLines.length * 16),
-);
-const leafHeight = Math.max(
-  48,
-  ...preparedBranches.flatMap((branch) => branch.children.map((child) => 25 + child.lines.length * 15)),
-);
-const hasChildren = preparedBranches.some((branch) => branch.children.length > 0);
-const canvasWidth = Math.max(
-  rootWidth + padding * 2,
-  padding * 2
-    + preparedBranches.reduce((sum, branch) => sum + branch.groupWidth, 0)
-    + (preparedBranches.length - 1) * groupGap,
-);
-const rootX = (canvasWidth - rootWidth) / 2;
-const rootY = padding;
-const branchY = rootY + rootHeight + levelGap;
-const childrenY = branchY + branchHeight + levelGap;
-const canvasHeight = hasChildren
-  ? childrenY + leafHeight + padding
-  : branchY + branchHeight + padding;
+const cardContentHeight = Math.max(...preparedBranches.map((b) => b.contentHeight));
+const cardHeight = cardContentHeight + cardPaddingY * 2;
 
-let groupOffset = padding;
-const laidOutBranches = preparedBranches.map((branch) => {
-  const groupX = groupOffset;
-  const branchX = groupX + (branch.groupWidth - branchWidth) / 2;
-  const childrenSpan = branch.children.length > 0
-    ? branch.children.length * leafWidth + (branch.children.length - 1) * leafGap
-    : 0;
-  const childStartX = groupX + (branch.groupWidth - childrenSpan) / 2;
-  groupOffset += branch.groupWidth + groupGap;
+const fullRowWidth = columns * cardWidth + (columns - 1) * colGap;
+const canvasWidth = Math.max(rootWidth + padding * 2, fullRowWidth + padding * 2);
+const resolvedRootX = (canvasWidth - rootWidth) / 2;
 
-  return {
-    ...branch,
-    branchX,
-    children: branch.children.map((child, childIndex) => ({
-      ...child,
-      x: childStartX + childIndex * (leafWidth + leafGap),
-    })),
-  };
+const rowsOfBranches: (typeof preparedBranches)[] = [];
+for (let i = 0; i < preparedBranches.length; i += columns) {
+  rowsOfBranches.push(preparedBranches.slice(i, i + columns));
+}
+
+let cursorY = rootY + rootHeight + rowGap;
+const laidOutRows = rowsOfBranches.map((rowBranches) => {
+  const busY = cursorY;
+  const cardY = busY + dropGap;
+  const rowWidth = rowBranches.length * cardWidth + (rowBranches.length - 1) * colGap;
+  const startX = (canvasWidth - rowWidth) / 2;
+
+  const cards = rowBranches.map((branch, index) => {
+    const cardX = startX + index * (cardWidth + colGap);
+    let chipY = cardY + cardPaddingY + branch.titleLines.length * titleLineHeight + titleBottomGap;
+    const chips = branch.children.map((child) => {
+      const chip = { ...child, x: cardX, y: chipY, width: cardWidth };
+      chipY += child.chipHeight + chipGap;
+      return chip;
+    });
+    return { ...branch, cardX, cardY, chips };
+  });
+
+  const rowBottom = cardY + cardHeight;
+  cursorY = rowBottom + rowGap;
+
+  return { busY, cardY, rowBottom, cards };
 });
+
+const canvasHeight = laidOutRows[laidOutRows.length - 1].rowBottom + padding;
+const trunkBottomY = laidOutRows[laidOutRows.length - 1].busY;
+const centerX = canvasWidth / 2;
 ---
 
 <SvgFrame
@@ -134,28 +147,26 @@ const laidOutBranches = preparedBranches.map((branch) => {
   maxWidth={`${canvasWidth}px`}
 >
   <g class="taxonomy-connectors" aria-hidden="true">
+    <path
+      class="taxonomy-line"
+      d={`M ${centerX} ${rootY + rootHeight} V ${trunkBottomY}`}
+    />
     {
-      laidOutBranches.map((branch) => {
-        const rootCenterX = rootX + rootWidth / 2;
-        const branchCenterX = branch.branchX + branchWidth / 2;
-        const rootJoinY = rootY + rootHeight + levelGap / 2;
-
+      laidOutRows.map((row) => {
+        const cardCenters = row.cards.map((c) => c.cardX + cardWidth / 2);
+        const left = Math.min(...cardCenters);
+        const right = Math.max(...cardCenters);
         return (
           <>
-            <path
-              class="taxonomy-line"
-              d={`M ${rootCenterX} ${rootY + rootHeight} V ${rootJoinY} H ${branchCenterX} V ${branchY}`}
-            />
-            {branch.children.map((child) => {
-              const childCenterX = child.x + leafWidth / 2;
-              const childJoinY = branchY + branchHeight + levelGap / 2;
-              return (
-                <path
-                  class="taxonomy-line"
-                  d={`M ${branchCenterX} ${branchY + branchHeight} V ${childJoinY} H ${childCenterX} V ${childrenY}`}
-                />
-              );
-            })}
+            {cardCenters.length > 1 && (
+              <path class="taxonomy-line" d={`M ${left} ${row.busY} H ${right}`} />
+            )}
+            {row.cards.map((card) => (
+              <path
+                class="taxonomy-line"
+                d={`M ${card.cardX + cardWidth / 2} ${row.busY} V ${row.cardY}`}
+              />
+            ))}
           </>
         );
       })
@@ -163,46 +174,69 @@ const laidOutBranches = preparedBranches.map((branch) => {
   </g>
 
   <g class="taxonomy-root">
-    <rect class="taxonomy-root-box" x={rootX} y={rootY} width={rootWidth} height={rootHeight} rx="12" />
+    <rect class="taxonomy-root-box" x={resolvedRootX} y={rootY} width={rootWidth} height={rootHeight} rx="12" />
     <text class="taxonomy-root-text" text-anchor="middle">
       {rootLines.map((line, lineIndex) => {
-        const startY = rootY + rootHeight / 2 - ((rootLines.length - 1) * 8) + 5;
-        return <tspan x={rootX + rootWidth / 2} y={startY + lineIndex * 16}>{line}</tspan>;
+        const startY = rootY + rootHeight / 2 - ((rootLines.length - 1) * rootLineHeight) / 2 + 5;
+        return <tspan x={resolvedRootX + rootWidth / 2} y={startY + lineIndex * rootLineHeight}>{line}</tspan>;
       })}
     </text>
   </g>
 
   {
-    laidOutBranches.map((branch) => (
-      <g class="taxonomy-branch-group">
-        <rect
-          class="taxonomy-branch-box"
-          x={branch.branchX}
-          y={branchY}
-          width={branchWidth}
-          height={branchHeight}
-          rx="10"
-        />
-        <text class="taxonomy-branch-text" text-anchor="middle">
-          {branch.labelLines.map((line, lineIndex) => {
-            const startY = branchY + branchHeight / 2 - ((branch.labelLines.length - 1) * 8) + 5;
-            return <tspan x={branch.branchX + branchWidth / 2} y={startY + lineIndex * 16}>{line}</tspan>;
-          })}
-        </text>
-
-        {branch.children.map((child) => (
-          <g class="taxonomy-leaf">
-            <rect class="taxonomy-leaf-box" x={child.x} y={childrenY} width={leafWidth} height={leafHeight} rx="9" />
-            <text class="taxonomy-leaf-text" text-anchor="middle">
-              {child.lines.map((line, lineIndex) => {
-                const startY = childrenY + leafHeight / 2 - ((child.lines.length - 1) * 7.5) + 4;
-                return <tspan x={child.x + leafWidth / 2} y={startY + lineIndex * 15}>{line}</tspan>;
-              })}
-            </text>
-          </g>
-        ))}
-      </g>
-    ))
+    laidOutRows.map((row) =>
+      row.cards.map((card) => (
+        <g class="taxonomy-card">
+          <rect
+            class="taxonomy-card-box"
+            x={card.cardX}
+            y={card.cardY}
+            width={cardWidth}
+            height={cardHeight}
+            rx="12"
+          />
+          <text class="taxonomy-card-title" text-anchor="middle">
+            {card.titleLines.map((line, lineIndex) => (
+              <tspan
+                x={card.cardX + cardWidth / 2}
+                y={card.cardY + cardPaddingY + (lineIndex + 1) * titleLineHeight - 5}
+              >
+                {line}
+              </tspan>
+            ))}
+          </text>
+          <line
+            class="taxonomy-card-divider"
+            x1={card.cardX + cardPaddingX}
+            x2={card.cardX + cardWidth - cardPaddingX}
+            y1={card.cardY + cardPaddingY + card.titleLines.length * titleLineHeight + titleBottomGap / 2}
+            y2={card.cardY + cardPaddingY + card.titleLines.length * titleLineHeight + titleBottomGap / 2}
+          />
+          {card.chips.map((chip) => (
+            <g class="taxonomy-chip">
+              <rect
+                class="taxonomy-chip-box"
+                x={chip.x + cardPaddingX}
+                y={chip.y}
+                width={cardWidth - cardPaddingX * 2}
+                height={chip.chipHeight}
+                rx="8"
+              />
+              <text class="taxonomy-chip-text" text-anchor="middle">
+                {chip.lines.map((line, lineIndex) => (
+                  <tspan
+                    x={chip.x + cardWidth / 2}
+                    y={chip.y + chipPaddingY / 2 + (lineIndex + 1) * chipLineHeight - 4}
+                  >
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          ))}
+        </g>
+      )),
+    )
   }
 </SvgFrame>
 
@@ -222,32 +256,38 @@ const laidOutBranches = preparedBranches.map((branch) => {
   .taxonomy-root-text {
     fill: var(--card);
     font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
   }
 
-  .taxonomy-branch-box {
-    fill: var(--pine-soft);
-    stroke: var(--pine);
-    stroke-width: 1.5;
-  }
-
-  .taxonomy-branch-text {
-    fill: var(--pine);
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .taxonomy-leaf-box {
-    fill: var(--paper-2);
+  .taxonomy-card-box {
+    fill: var(--card);
     stroke: var(--line-2);
     stroke-width: 1.5;
   }
 
-  .taxonomy-leaf-text {
+  .taxonomy-card-title {
+    fill: var(--pine);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .taxonomy-card-divider {
+    stroke: var(--line-2);
+    stroke-width: 1;
+  }
+
+  .taxonomy-chip-box {
+    fill: var(--paper-2);
+    stroke: var(--line-2);
+    stroke-width: 1;
+  }
+
+  .taxonomy-chip-text {
     fill: var(--ink-2);
     font-family: var(--sans);
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: 500;
   }
 </style>
