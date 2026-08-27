@@ -1,0 +1,14 @@
+# Normalize all text files to LF in the repo and on checkout, regardless of
+# platform or a contributor's local core.autocrlf setting. This repo is
+# developed on Linux (Astro/Node build, Cloudflare Pages deploy); forcing LF
+# avoids CRLF drift when the working tree is copied or cloned across OSes.
+* text=auto eol=lf
+
+# Known binary assets: never touch line endings, never text-diff.
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.woff binary
+*.woff2 binary
