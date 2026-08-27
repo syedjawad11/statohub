@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": ">=20.8.0 <21"
+  },
   "scripts": {
     "predev": "node scripts/gen-route-ids.mjs",
     "dev": "astro dev",
