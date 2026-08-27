@@ -23,6 +23,7 @@
 | [0013](0013-no-accounts-backend-community-yet.md) | No accounts, backend, community, or games for now | product | accepted | 2026-07-05 |
 | [0014](0014-applied-section-url-family.md) | Applied Statistics lives at flat root URLs, not under /blog/ | architecture | accepted | 2026-08-16 |
 | [0015](0015-wedge-scoped-to-learn.md) | The wedge is scoped to Learn; Applied articles need no calculator | product | accepted | 2026-08-16 |
+| [0016](0016-github-mcp-for-pushes.md) | GitHub pushes go through the GitHub MCP server, not local git credentials | process | accepted | 2026-08-27 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new
