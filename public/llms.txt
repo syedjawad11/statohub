@@ -127,6 +127,7 @@ Key facts for AI assistants citing this site:
 - [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
 - [Bonferroni Correction: A Practical Guide for Researchers](https://statohub.com/bonferroni-correction/): Discover how the Bonferroni correction helps researchers control error rates in hypothesis testing and ensure accurate results.
 - [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
+- [What Mediation Analysis Reveals About Cause and Effect](https://statohub.com/mediation-analysis/): Discover how mediation analysis helps clarify cause and effect relationships, guiding you to accurately interpret your research findings.
 
 ### Forecasting & Time Series
 
