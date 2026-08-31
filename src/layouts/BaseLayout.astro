@@ -77,6 +77,9 @@ const FUNDING_CHOICES_PUBLISHER_ID = 'pub-4667906964697238';
 // Google Analytics 4 measurement ID; the googletagmanager/google-analytics
 // hosts it needs are allowlisted in public/_headers CSP.
 const GA_MEASUREMENT_ID = 'G-PVHDLYC7T4';
+// Ahrefs Web Analytics site key; analytics.ahrefs.com is allowlisted in
+// public/_headers CSP (script-src + connect-src).
+const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
 ---
 
 <!doctype html>
@@ -145,6 +148,13 @@ const GA_MEASUREMENT_ID = 'G-PVHDLYC7T4';
           gtag('js', new Date());
           gtag('config', 'G-PVHDLYC7T4');
         </script>
+        {/* Ahrefs Web Analytics: loads on production builds only. */}
+        <script
+          is:inline
+          async
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key={AHREFS_ANALYTICS_KEY}
+        ></script>
       </>
     )}
     <script is:inline>
