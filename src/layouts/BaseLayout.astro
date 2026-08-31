@@ -74,6 +74,9 @@ const footerCalculators = [
 const ADSENSE_PUBLISHER_ID = 'ca-pub-4667906964697238';
 // Bare form (no "ca-" prefix), used by the Funding Choices messaging tag.
 const FUNDING_CHOICES_PUBLISHER_ID = 'pub-4667906964697238';
+// Google Analytics 4 measurement ID; the googletagmanager/google-analytics
+// hosts it needs are allowlisted in public/_headers CSP.
+const GA_MEASUREMENT_ID = 'G-PVHDLYC7T4';
 ---
 
 <!doctype html>
@@ -126,6 +129,22 @@ const FUNDING_CHOICES_PUBLISHER_ID = 'pub-4667906964697238';
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
           crossorigin='anonymous'
         ></script>
+      </>
+    )}
+    {import.meta.env.PROD && (
+      <>
+        {/* Google Analytics 4 (gtag.js): loads on production builds only. */}
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        ></script>
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-PVHDLYC7T4');
+        </script>
       </>
     )}
     <script is:inline>
