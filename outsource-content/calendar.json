@@ -19,6 +19,11 @@
     { "queue_position": 17, "day_label": "3",  "title": "Confusion Matrix Explained",                  "slug": "confusion-matrix-explained",             "category_slug": "machine-learning-statistics" },
     { "queue_position": 18, "day_label": "4",  "title": "F1 Score Explained",                          "slug": "f1-score-explained",                     "category_slug": "machine-learning-statistics" },
     { "queue_position": 19, "day_label": "5",  "title": "SARIMA Model",                                "slug": "sarima-model",                           "category_slug": "time-series-forecasting" },
-    { "queue_position": 20, "day_label": "6",  "title": "Granger Causality",                           "slug": "granger-causality",                      "category_slug": "time-series-forecasting" }
+    { "queue_position": 20, "day_label": "6",  "title": "Granger Causality",                           "slug": "granger-causality",                      "category_slug": "time-series-forecasting" },
+    { "queue_position": 21, "day_label": "7",  "title": "Odds Ratio Interpretation",                   "slug": "odds-ratio-interpretation",              "category_slug": "regression-correlation" },
+    { "queue_position": 22, "day_label": "8",  "title": "Dual-Axis Charts",                            "slug": "dual-axis-charts",                       "category_slug": "data-analysis" },
+    { "queue_position": 23, "day_label": "9",  "title": "Confidence Interval vs Prediction Interval",  "slug": "confidence-interval-vs-prediction-interval", "category_slug": "regression-correlation" },
+    { "queue_position": 24, "day_label": "10", "title": "Box-Cox Transformation",                      "slug": "box-cox-transformation",                 "category_slug": "data-analysis" },
+    { "queue_position": 25, "day_label": "11", "title": "One-Tailed vs Two-Tailed Tests",              "slug": "one-tailed-vs-two-tailed",               "category_slug": "inferential-statistics" }
   ]
 }

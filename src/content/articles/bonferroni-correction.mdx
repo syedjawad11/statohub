@@ -1,0 +1,304 @@
+---
+title: "Bonferroni Correction: A Practical Guide for Researchers"
+description: "Discover how the Bonferroni correction helps researchers control error rates in hypothesis testing and ensure accurate results."
+category: experiments-causality
+primaryKeyword: bonferroni correction
+keywords:
+  - bonferroni correction
+  - hypothesis testing
+  - error rates
+phase: 1
+related: []
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The Bonferroni correction controls the family-wise error rate when you run multiple hypothesis tests, by dividing your significance threshold by the number of tests. Two equivalent forms exist: adjust the alpha level with **α_adj = α / m**, or adjust each p-value with **p_adj = min(1, p × m)**, where m is the number of comparisons in your family of tests. Both give identical accept/reject decisions.
+
+<KeyTakeaways rows={[
+  { point: 'Core formula', details: 'Use α_adj = α / m or the equivalent p_adj = min(1, p × m); both produce identical decisions.' },
+  { point: 'Define m before testing', details: 'Lock in your family of hypotheses and test count before viewing results to avoid post-hoc bias.' },
+  { point: 'Watch the power trade-off', details: 'Bonferroni gets more conservative as m grows, raising the risk of missing real effects.' },
+  { point: 'Consider Holm or FDR', details: 'Holm keeps FWER control with more power; Benjamini-Hochberg suits large, exploratory test sets.' },
+  { point: 'Verify before you report', details: "Statohub's P Value Calculator and Applied Statistics guides help you calculate and report adjustments correctly." },
+]} />
+
+Bonferroni belongs in confirmatory research with a small, pre-specified set of comparisons, especially when a single false positive carries real cost, such as a <Link to={routes.article('how-to-design-an-ab-test')}>confirmatory experiment</Link> or a clinical trial testing several endpoints. It gets [conservative fast](https://pubmed.ncbi.nlm.nih.gov/24697967/) as m grows, so for dozens or hundreds of tests, look at Holm or Benjamini-Hochberg instead.
+
+**Quick math check:** at α = 0.05 with m = 20 tests, α_adj drops to 0.0025. A p-value of 0.01 that looked significant on its own now fails the [adjusted threshold](https://pmc.ncbi.nlm.nih.gov/articles/PMC6099145/) entirely.
+
+## Why does testing multiple hypotheses inflate false positives?
+
+Run one test at α = 0.05 and you accept a 5% chance of a false positive if the <Link to={routes.article('null-hypothesis')}>null hypothesis</Link> is true. Run twenty independent tests at that same threshold, and the chance that at least one comes back "significant" purely by luck climbs sharply, since each test adds its own independent shot at a false alarm.
+
+This is the multiple testing problem, and the metric it threatens is the **family-wise error rate ([FWER](https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm))**, the probability of making at least one <Link to={routes.article('type-i-and-type-ii-errors')}>Type I error</Link> across an entire set, or "family," of tests. FWER is a stricter standard than the per-comparison error rate, which only tracks the error rate of a single test in isolation, and it is a different target altogether from the false discovery rate (FDR), which tolerates a controlled proportion of false positives among the rejections rather than guarding against any single false positive.
+
+- Testing 10,000 independent hypotheses at α = 0.05 without correction yields an expected 500 false positives by chance alone.
+- FWER answers: "What's the chance of even one false positive across my whole study?"
+- Per-comparison error rate answers a narrower question: "What's the error rate of this one test?"
+
+Confusing the two rates is the single most common way a Bonferroni conversation goes sideways. A collaborator who hears "we controlled the error rate at 5%" often assumes that means each individual test still carries a 5% false-positive risk, when the whole point of running the correction was to push the *combined* risk across every test down to 5%, at the cost of a much stricter bar for any one test to clear on its own. Naming which rate you're controlling — FWER, per-comparison, or FDR — in the first sentence of your methods section heads off that confusion before a reviewer has to ask.
+
+## What is the formal Bonferroni rule and why does it work?
+
+The formal rule: reject hypothesis H_i when its p-value satisfies p_i ≤ α / m. Equivalently, multiply each raw p-value by m and compare it to the original α. Defining m correctly matters more than the arithmetic. It should be the full set of hypotheses you planned to test as one family, decided before you saw the data. Padding your test count after peeking at results, or shrinking it to make a favorite result survive, defeats the entire purpose.
+
+The proof that this controls FWER at α relies on Boole's inequality, also called the union bound.
+
+> If you have m null hypotheses, each tested at α/m, the probability that at least one is falsely rejected is at most the sum of the individual error probabilities.
+> P(at least one false positive) ≤ P(error₁) + P(error₂) + ... + P(errorₘ) = m × (α/m) = α
+
+That sum holds regardless of whether the tests are correlated, which is precisely why Bonferroni works even under dependence, at the cost of the conservativeness discussed later.
+
+## How do you apply Bonferroni step by step?
+
+Bonferroni is arithmetic, but the discipline around it is what separates rigorous reporting from cherry-picked results. Follow the sequence below and you'll have a defensible, reproducible record of your decisions.
+
+<Checklist
+  id="apply-bonferroni-steps"
+  title="Applying Bonferroni step by step"
+  style="numbered"
+  items={[
+    { text: 'Pre-specify the family', detail: 'Decide which hypotheses belong together and lock in α (typically 0.05) before looking at any results.' },
+    { text: 'Count m', detail: 'Tally the exact number of tests in that family. This number drives everything downstream.' },
+    { text: 'Compute the adjustment', detail: 'Calculate α_adj = α / m, or equivalently p_adj = p × m for each test, capping any p_adj above 1.0.' },
+    { text: 'Apply the decision rule', detail: 'Reject H_i only if p_i ≤ α_adj (or p_adj ≤ α).' },
+    { text: 'Record both values', detail: 'Report the raw p-value and the adjusted p-value side by side, along with how you defined m and which correction you used.' },
+  ]}
+/>
+
+That last step matters for readers evaluating your methods section later. A results table that only shows adjusted values hides how close some comparisons came to significance before correction.
+
+## What does a worked Bonferroni example look like?
+
+Say you're running m = 5 comparisons in a confirmatory experiment, with α = 0.05. That gives α_adj = 0.05 / 5 = **0.01**. Here are five raw p-values from the study and their fates under both methods:
+
+<Figure number={1} caption="Bonferroni-adjusted p-values (p_adj = p × 5) for five comparisons; tests A, C, and E clear α_adj = 0.01.">
+  <AnnotatedChart
+    title="Bonferroni-adjusted p-values for five comparisons"
+    desc="A bar chart of five adjusted p-values, tests A through E, against the α_adj = 0.01 threshold. Tests A (0.010), C (0.045), and E (0.002) are marked significant because their p_adj stays at or below α = 0.05; tests B (0.155) and D (0.240) do not clear it."
+    type="bar"
+    points={[
+      { label: 'Test A', value: 0.010, annotation: 'Significant' },
+      { label: 'Test B', value: 0.155 },
+      { label: 'Test C', value: 0.045, annotation: 'Significant' },
+      { label: 'Test D', value: 0.240 },
+      { label: 'Test E', value: 0.002, annotation: 'Significant' },
+    ]}
+    xLabel="Test"
+    yLabel="p_adj = p × 5"
+  />
+</Figure>
+
+<DataTable
+  caption="Raw and Bonferroni-adjusted p-values for five comparisons (m = 5, α = 0.05, α_adj = 0.01)"
+  headers={['Test', 'Raw p', 'p_adj = p × 5', 'Significant at α_adj = 0.01?']}
+  align={['left', 'right', 'right', 'center']}
+  rows={[
+    ['A', '0.002', '0.010', 'Yes'],
+    ['B', '0.031', '0.155', 'No'],
+    ['C', '0.009', '0.045', 'Yes'],
+    ['D', '0.048', '0.240', 'No'],
+    ['E', '0.0004', '0.002', 'Yes'],
+  ]}
+/>
+
+Notice test C: its raw p-value of 0.009 clears the usual 0.05 bar comfortably, and it still clears the Bonferroni-adjusted bar too — 0.009 is below α_adj = 0.01, so p_adj = 0.045 stays below α = 0.05. Comparing p_i to α_adj and comparing p_adj to α always produce identical decisions, since the two are algebraically the same inequality rearranged. Tests A, C, and E survive the correction; B and D do not. That's the entire point: Bonferroni asks whether a result would still look impressive if you'd only run one test, not five — and with only m = 5 comparisons here, the correction is mild enough that three of the five original findings hold up.
+
+## How should you interpret and report Bonferroni-adjusted results?
+
+An adjusted p-value below α means the result would remain significant even after accounting for every test in the family, not just the one you're looking at. A raw p-value that clears 0.05 but not α_adj isn't wrong. It's simply not strong enough evidence once your full testing scope is considered.
+
+Reporting works best when you're explicit rather than terse. Adapt language like this for your methods and results sections:
+
+<Callout variant="note" title="Example reporting language">
+**Methods:** "We applied the Bonferroni correction across m = 8 pre-specified comparisons, setting α_adj = 0.05 / 8 = 0.00625."
+
+**Results:** "The difference in outcome X remained significant after Bonferroni correction (p = 0.003, p_adj = 0.024, α = 0.05)."
+</Callout>
+
+Always state how you defined the family of tests. Reviewers and readers need to judge whether your m is reasonable, and transparency guidance consistently recommends showing both raw and adjusted values rather than adjusted numbers alone. The same applies if you're reporting interval estimates instead of p-values: show the uncorrected confidence interval next to the Bonferroni-adjusted one, for the same reason you show both p-values — a reader needs to see how much the correction cost you, not just the final adjusted number.
+
+## When should you use Bonferroni instead of Holm or FDR methods?
+
+Bonferroni earns its keep when the test count is small, the tests are confirmatory rather than exploratory, and a single false positive would be costly — think regulatory submissions or a primary clinical endpoint. Outside that zone, better options exist.
+
+**Holm's step-down procedure** controls FWER at the same strict level as Bonferroni but rejects more hypotheses in practice, since it only requires the smallest p-value to clear the strictest threshold and relaxes the bar for each subsequent test. It's uniformly more powerful than plain Bonferroni, which makes it hard to justify skipping. **Šidák's correction** offers a slightly less conservative alternative, but it assumes independence between tests, an assumption Bonferroni doesn't need. **Benjamini-Hochberg** controls the <Link to={routes.categoryHub('inferential-statistics')}>false discovery rate</Link> instead of FWER, trading a tolerance for some false positives among your rejections for [substantially higher power](https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate), which suits high-throughput or exploratory work.
+
+<DataTable
+  caption="Bonferroni vs. Holm: how the two FWER-controlling procedures compare"
+  headers={['Aspect', 'Bonferroni', 'Holm']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Controls family-wise error rate', 'Yes', 'Yes'],
+    ['Adjustment method', 'α_adj = α / m; p_adj = min(1, p × m)', 'Step-down thresholds (sequential)'],
+    ['Conservatism', 'Conservative; loses power as m increases', 'Less conservative; rejects more hypotheses'],
+    ['Typical preference', 'Rarely preferred when Holm is available', 'Usually preferred over Bonferroni'],
+  ]}
+/>
+
+<DataTable
+  caption="Which multiple-comparison method fits which study goal"
+  headers={['Study goal', 'Recommended approach']}
+  align={['left', 'left']}
+  rows={[
+    ['Small number of confirmatory tests, zero tolerance for false positives', 'Bonferroni'],
+    ['Same FWER goal, want more power', 'Holm'],
+    ['Independent tests, want a slightly less conservative FWER method', 'Šidák'],
+    ['Exploratory, high-throughput (genomics, large screens)', 'Benjamini-Hochberg (FDR)'],
+  ]}
+/>
+
+### How does FDA guidance treat Bonferroni against fixed-sequence and gatekeeping strategies?
+
+Regulatory guidance treats Bonferroni as one option among several for controlling Type I error across the multiple endpoints in a clinical trial, not the default. The FDA's guidance on multiple endpoints — issued jointly by the Center for Drug Evaluation and Research and the Center for Biologics Evaluation and Research in October 2022 — lays out a family of alternatives sponsors can pre-specify in a statistical analysis plan, and Bonferroni's role in it is deliberately modest: the guidance notes that the Holm and Hochberg procedures are more powerful than Bonferroni for primary endpoints in many cases, and that sponsors typically reach for Bonferroni anyway when they want to preserve power for secondary endpoints, or when Hochberg's correlation assumptions aren't defensible for the trial design.
+
+Two alternatives the guidance describes are worth knowing even if you never need them directly. **Fixed-sequence testing** orders the endpoints by clinical priority and tests each one at the full, uncorrected α — no division by m at all — but the moment one endpoint in the sequence fails to reach significance, every endpoint after it is automatically non-significant, regardless of how small its own p-value turns out to be. **Gatekeeping strategies** organize endpoints into hierarchical families — a primary family and one or more secondary families — where whether a later family is even eligible for testing depends on the outcome of the earlier one. A *serial* gatekeeping strategy requires every endpoint in the primary family to reach significance before the secondary family opens for testing at all; a *parallel* gatekeeping strategy only requires at least one primary endpoint to succeed.
+
+The guidance also flags why Bonferroni remains attractive despite being less powerful than these alternatives: unlike the Hochberg procedure, both Bonferroni and Holm are assumption-free regardless of the endpoints' correlation structure, and unlike resampling-based methods, neither requires the large sample sizes that resampling needs to simulate a data-driven null distribution. The trade-off with fixed-sequence and gatekeeping strategies is the same discipline Bonferroni demands: the testing order, or the family structure and the logical relationships between families, has to be specified prospectively, before the trial reads out — not chosen after the fact to make a favorite secondary finding survive. That single requirement — write the plan down before you see the data — is the thread connecting every method in this guide, from a two-endpoint gatekeeping tree to a flat five-test Bonferroni split.
+
+### What does Bonferroni look like at extreme scale?
+
+Genome-wide association studies (GWAS) push Bonferroni to the opposite extreme from the FDA's endpoint guidance above: instead of a handful of pre-specified endpoints, a single GWAS scan tests on the order of a million genetic variants for association with a trait. Applying the Bonferroni formula directly, α_adj = 0.05 / 1,000,000 = 5 × 10⁻⁸ — the widely used "genome-wide significance" threshold that GWAS papers report a hit against, and a direct, if extreme, descendant of the same α/m arithmetic used throughout this guide.
+
+That number isn't quite as arbitrary as m = 1,000,000 makes it look. Genotyped variants that sit physically close together on a chromosome tend to be correlated (a pattern geneticists call linkage disequilibrium), so testing several million individual markers doesn't produce several million *independent* tests. [Pe'er and colleagues](https://pubmed.ncbi.nlm.nih.gov/18348202/) estimated the effective number of independent tests in a typical GWAS panel at close to one million even when the panel itself genotypes several million markers — the calculation behind the field settling on 5 × 10⁻⁸ specifically, rather than a looser or stricter round number. Scale the earlier example of 10,000 uncorrected tests producing an expected 500 false positives up by two more orders of magnitude, and a GWAS-sized correction is exactly the problem it exists to prevent.
+
+The practical consequence of correcting this conservatively: a real genetic association with a modest effect size can easily fail to clear 5 × 10⁻⁸ in an underpowered sample. That's why GWAS relies on sample sizes in the tens of thousands to millions of participants — not because the effects being studied are unusually small, but because the correction demanded by testing roughly a million comparisons at once is unusually harsh. In practice, many modern GWAS analyses pair the fixed 5 × 10⁻⁸ threshold with Benjamini-Hochberg-style false discovery rate control for prioritizing which sub-genome-wide-significant variants deserve follow-up genotyping — the same two-tier logic (a strict Bonferroni-style gate for confirmed hits, FDR for triage) that shows up whenever a field needs both a hard, publishable threshold and a workable way to rank thousands of near-misses.
+
+## What are the main criticisms of the Bonferroni correction?
+
+Bonferroni's biggest weakness is the <Link to={routes.article('statistical-power')}>power</Link> it sacrifices. As m grows, α_adj shrinks toward zero, and real effects get buried under an ever-stricter bar, especially when tests are correlated rather than independent, which makes the correction even more conservative than the math assumes.
+
+There's a deeper conceptual issue too. Bonferroni technically protects against the "omnibus null," the hypothesis that all your null hypotheses are simultaneously true. That's rarely the question researchers actually care about; most want to know whether specific, individual hypotheses hold, not whether every single one in the family is false. Reviews of statistical practice have flagged inconsistent, discretionary use of Bonferroni corrections as a symptom of this mismatch, particularly across [biomedical and clinical research](https://pubmed.ncbi.nlm.nih.gov/9888002/).
+
+- Correlated tests make Bonferroni more conservative than the independent-test math implies.
+- The correction answers "are all nulls true?" not "is this specific effect real?"
+- Reflexive use without stating m or the family can mask cherry-picking rather than prevent it.
+
+<Callout variant="tip" title="Pro tip">
+If you're worried about losing power, check your <Link to={routes.article('effect-size')}>effect sizes</Link> before you correct. A study underpowered for its raw comparisons will be badly underpowered after Bonferroni tightens the threshold further.
+</Callout>
+
+## How do you run Bonferroni in R or Python?
+
+Both major statistical environments have this built in, so there's no reason to compute α_adj by hand once you're working in code.
+
+- In **R**, call `stats::p.adjust(p, method = "bonferroni")`, where `p` is a vector of raw p-values. The function's full method list includes `"holm"`, `"hochberg"`, `"hommel"`, `"BH"`, and `"BY"`, so switching corrections later is a one-word change — see the [full p.adjust() reference](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/p.adjust.html) for the complete argument list.
+- In **Python**, use `statsmodels.stats.multitest.multipletests(pvals, alpha=0.05, method='bonferroni')`. It [returns a tuple](https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html) including a boolean `reject` array and a `pvals_corrected` array, both aligned to your input order.
+
+Running the worked example from earlier through both functions confirms the arithmetic by hand:
+
+```python
+from statsmodels.stats.multitest import multipletests
+
+pvals = [0.002, 0.031, 0.009, 0.048, 0.0004]  # tests A, B, C, D, E
+reject, pvals_corrected, _, _ = multipletests(pvals, alpha=0.05, method='bonferroni')
+
+print(reject)           # [ True False  True False  True]
+print(pvals_corrected)  # [0.01  0.155 0.045 0.24  0.002]
+```
+
+That output matches the worked table exactly: tests A, C, and E (indices 0, 2, and 4) come back significant, and B and D do not. R's `p.adjust()` uses the identical p_adj = min(1, p × m) formula for `method = "bonferroni"`, so `p.adjust(c(0.002, 0.031, 0.009, 0.048, 0.0004), method = "bonferroni")` returns the same five adjusted values — 0.010, 0.155, 0.045, 0.240, 0.002 — leaving the significance call to you at your chosen α.
+
+- Adjusted p-values above 1.0 get capped at 1.0 automatically in both functions.
+- The `m` gotcha is easy to trigger by accident. Drop test E from the vector above and call `multipletests` on the remaining four p-values without changing anything else, and `m` silently becomes 4 instead of 5: the same four p-values now come back as `[0.008, 0.124, 0.036, 0.192]` instead of `[0.01, 0.155, 0.045, 0.24]` — every adjusted value shrinks, because the function has no way to know a fifth test exists unless you tell it. R's `p.adjust()` has an explicit `n` argument (`n = length(p)` by default) for exactly this situation — set `n` to your true family size and it corrects as if that many tests were run. Python's `multipletests()` has no equivalent argument; if your real family size is larger than the vector you're testing, pad the vector with placeholder p-values of 1.0 until its length matches your true m.
+
+## How do you adjust confidence intervals for multiple comparisons?
+
+The same logic extends to interval estimation. Build each <Link to={routes.calculator('confidence-interval')}>confidence interval</Link> at level 1 − α/m instead of 1 − α, and the whole family of intervals maintains simultaneous coverage of 1 − α.
+
+Here's the same five-comparison setup as the p-value worked example above, but this time you're estimating five mean differences rather than testing five p-values. Building each one at the ordinary 95% level (two-sided z ≈ 1.96) only promises 95% coverage for that single interval — the chance that at least one of five independently-built 95% intervals misses its true value climbs well above 5%, for the same union-bound reason that uncorrected p-value tests inflate the family-wise false-positive rate. The Bonferroni fix mirrors the p-value case exactly: build each interval at level 1 − α/m instead of 1 − α. With m = 5 and α = 0.05, that's 1 − 0.01 = 0.99 per interval, using a two-sided z ≈ 2.576 instead of 1.96.
+
+<DataTable
+  caption="Uncorrected 95% intervals vs. Bonferroni-adjusted 99% intervals for five mean-difference estimates (m = 5, α = 0.05)"
+  headers={['Test', 'Estimate', 'SE', '95% CI (uncorrected)', 'Bonferroni-adjusted 99% CI']}
+  align={['left', 'right', 'right', 'center', 'center']}
+  rows={[
+    ['A', '2.40', '0.60', '(1.22, 3.58)', '(0.85, 3.95)'],
+    ['B', '1.10', '0.50', '(0.12, 2.08)', '(−0.19, 2.39)'],
+    ['C', '1.80', '0.65', '(0.53, 3.07)', '(0.13, 3.47)'],
+    ['D', '0.90', '0.45', '(0.02, 1.78)', '(−0.26, 2.06)'],
+    ['E', '3.00', '0.55', '(1.92, 4.08)', '(1.58, 4.42)'],
+  ]}
+/>
+
+Every Bonferroni-adjusted interval is wider than its uncorrected counterpart — that's the price of simultaneous coverage. Under the uncorrected 95% intervals, all five estimates exclude zero. Under the Bonferroni-adjusted 99% intervals, B and D now include zero — the interval can no longer rule out "no difference" — while A, C, and E still exclude it. That's the same split the p-value worked example produced: A, C, and E survive the correction; B and D do not. A Bonferroni-adjusted confidence interval and a Bonferroni-adjusted p-value are answering the same underlying question in two different units, which is exactly why <Link to={routes.article('post-hoc-tests')}>post-hoc pairwise comparisons</Link> are often reported both ways — a table of adjusted p-values for the significance call, and a set of adjusted intervals for the effect-size context a bare p-value can't convey.
+
+- For continuous search problems, like scanning a range of possible effect locations, the "look-elsewhere effect" means the number of effective tests isn't obvious, and Bonferroni's simple m doesn't map cleanly.
+- Šidák-style adjustments or Bayesian approaches that model an effective trial count often fit continuous-search settings better than a flat Bonferroni split.
+
+## What should your Bonferroni checklist look like before you publish?
+
+Before running any multiple comparisons, work through these three stages in order.
+
+<Checklist
+  id="pre-publication-checklist"
+  title="Pre-publication Bonferroni checklist"
+  style="check"
+  items={[
+    { text: 'Pre-analysis', detail: 'Define your family of hypotheses, fix α, and decide upfront whether you need strict FWER control or can tolerate FDR’s looser standard.' },
+    { text: 'Computation', detail: 'Calculate raw p-values, compute α_adj or p_adj, confirm every p_adj is capped at 1, and save both raw and adjusted results together.' },
+    { text: 'Reporting', detail: 'Name the method you used, show unadjusted and adjusted p-values side by side, and justify how you chose the family and why.' },
+  ]}
+/>
+
+## Why does pre-specifying your comparisons matter more than the math?
+
+Applying a multiple testing correction well has less to do with the division sign and more to do with discipline before you touch the data. The researchers who get this right decide their family of comparisons in advance, resist the urge to add "just one more test" after seeing promising results, and report the raw numbers alongside the adjusted ones so readers can judge for themselves.
+
+Bonferroni's strictness is a feature when the cost of a false positive is high and your test count is small. It becomes a liability when applied reflexively to dozens of exploratory comparisons, where it can bury real effects under an unnecessarily harsh bar. Keep your code and your exact test list in your supplementary materials. Anyone questioning your correction should be able to reproduce it in five minutes.
+
+## Where can you calculate and check your own adjustments?
+
+Working through Bonferroni by hand is a good exercise once, but you shouldn't have to redo the arithmetic every time you run a study. Statohub's <Link to={routes.calculator('p-value')}>P Value Calculator</Link> lets you check raw significance before you apply any correction, and the broader <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub walks through workflows for multiple comparisons, confirmatory testing, and reporting that match what's covered here.
+
+If you're still deciding between Bonferroni, Holm, or FDR for a specific project, the <Link to={routes.article('post-hoc-tests')}>post-hoc testing guide</Link> breaks down which correction fits which study design, and Statohub's <Link to={routes.learnLanding()}>learning hub</Link> covers the hypothesis-testing fundamentals underneath all of it. Start with your p-values, run the numbers through the calculator, and build your methods section from there.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — How Can We Make Multiple Comparisons?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'FDA Guidance for Industry — Multiple Endpoints in Clinical Trials', href: 'https://www.fda.gov/regulatory-information/search-fda-guidance-documents/multiple-endpoints-clinical-trials-guidance-industry', org: 'U.S. Food and Drug Administration' },
+  { text: 'Armstrong RA — "When to Use the Bonferroni Correction," Ophthalmic & Physiological Optics (2014)', href: 'https://pubmed.ncbi.nlm.nih.gov/24697967/', org: 'PubMed / National Library of Medicine' },
+  { text: 'Jafari M, Ansari-Pour N — "Why, When and How to Adjust Your P Values?" Cell Journal (2019)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6099145/', org: 'PubMed Central / NIH' },
+  { text: 'Ludbrook J — "Multiple Comparison Procedures Updated," Clinical and Experimental Pharmacology and Physiology (1998)', href: 'https://pubmed.ncbi.nlm.nih.gov/9888002/', org: 'PubMed / National Library of Medicine' },
+  { text: 'Columbia University Mailman School of Public Health — False Discovery Rate', href: 'https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate', org: 'Columbia University' },
+  { text: 'statsmodels documentation — statsmodels.stats.multitest.multipletests', href: 'https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html', org: 'statsmodels' },
+  { text: 'The R Project for Statistical Computing — p.adjust: Adjust P-values for Multiple Comparisons', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/p.adjust.html', org: 'The R Project' },
+  { text: "Pe'er I, Yelensky R, Altshuler D, Daly MJ — \"Estimation of the Multiple Testing Burden for Genomewide Association Studies of Nearly All Common Variants,\" Genetic Epidemiology (2008)", href: 'https://pubmed.ncbi.nlm.nih.gov/18348202/', org: 'PubMed / National Library of Medicine' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the Bonferroni correction used for?',
+    answer: 'It controls the family-wise error rate when you run several hypothesis tests at once, keeping the overall chance of any false positive at or below your chosen alpha.',
+  },
+  {
+    question: 'How do you calculate a Bonferroni correction?',
+    answer: 'Divide your alpha by the number of tests (α_adj = α / m), or multiply each p-value by the number of tests and cap it at 1 (p_adj = min(1, p × m)). Both give the same result.',
+  },
+  {
+    question: 'Is Bonferroni too conservative?',
+    answer: "For large numbers of tests, yes, it often is. It sacrifices power quickly as m increases, which is why Holm's procedure or Benjamini-Hochberg's FDR control are frequently preferred for anything beyond a handful of comparisons.",
+  },
+  {
+    question: 'Bonferroni vs Holm: which should you choose?',
+    answer: "Holm controls the same strict FWER as Bonferroni but rejects more hypotheses because it applies a step-down threshold rather than one flat cutoff. There's rarely a reason to choose plain Bonferroni over Holm when both are available.",
+  },
+  {
+    question: 'Does Bonferroni require independent tests?',
+    answer: "No. The union bound proof holds regardless of correlation between tests, which is part of why it's conservative. Correlated tests make it even more conservative than necessary, since the true joint probability of errors is lower than the bound assumes.",
+  },
+]} />
