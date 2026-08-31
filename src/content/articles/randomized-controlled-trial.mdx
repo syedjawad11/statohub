@@ -1,0 +1,303 @@
+---
+title: "What Is a Randomized Controlled Trial and Why Use One?"
+description: "Discover how randomized controlled trials help isolate the true effects of interventions in medicine, economics, and business testing."
+category: experiments-causality
+primaryKeyword: randomized controlled trial
+keywords:
+  - randomized controlled trial
+  - randomized controlled trials
+phase: 1
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A **randomized controlled trial (RCT)** is an experiment that assigns participants by chance into comparison groups so researchers can isolate the causal effect of an intervention from confounding factors. When ethics and logistics allow it, an RCT is the strongest practical tool for causal inference, because random assignment balances known and unknown differences between groups before treatment ever begins, as [NCI's dictionary](https://www.cancer.gov/publications/dictionaries/cancer-terms/def/randomized-clinical-trial) puts it plainly: at the start, nobody knows which group will fare better. It produces credible causal estimates only when randomization, concealment, and blinding are implemented correctly and paired with a pre-specified, adequately powered analysis plan.
+
+<KeyTakeaways rows={[
+  { point: 'Randomization needs concealment', details: 'Random sequences fail if enrollment staff can predict or influence the next assignment.' },
+  { point: 'Match design to the question', details: 'Use crossover for stable conditions, cluster designs for group-level interventions, factorial for testing multiple treatments at once.' },
+  { point: 'Power the trial properly', details: 'Calculate sample size from effect size, variance, alpha, and power; skipping this risks an underpowered, fragile result.' },
+  { point: 'Analyze by intention-to-treat', details: 'ITT preserves the balance randomization created; per-protocol results are secondary at best.' },
+  { point: 'Check robustness before trusting significance', details: 'A low Fragility Index means a couple of reclassified outcomes could erase the result.' },
+]} />
+
+## What Is a Randomized Controlled Trial, Exactly?
+
+Medicine relies on RCTs to test new drugs against placebos. Economics and public policy use them to test whether a cash transfer or a training program actually changes behavior, not just correlates with it. The logic transfers to business experimentation too, which is why the same design underlies most rigorous A/B testing.
+
+This guide walks through the mechanics you need to design, run, or critically read one:
+
+- How randomization, allocation concealment, and blinding protect against bias
+- The major RCT designs and when each fits
+- Sample-size and power planning, including common hypothesis types
+- Analysis choices like intention-to-treat and robustness checks such as the Fragility Index
+- Ethics, registration, and reporting standards
+- When an RCT isn't feasible, and what to do instead
+
+The formal logic behind an RCT rests on a counterfactual question: what would have happened to this specific group of people if they had *not* received the treatment? You can never observe that directly for any one person, since a person either gets the treatment or doesn't. Randomization solves this by creating two groups that are, on average, statistically identical in every way except the intervention, so the control group's outcome becomes a credible stand-in for the counterfactual.
+
+Picture a simple case: a university wants to know whether a weekly tutoring program improves exam scores. If it just compares students who signed up voluntarily against those who didn't, motivated students self-select into tutoring, and any score gap could reflect motivation rather than the tutoring itself. Randomly assigning eligible students to tutoring or no tutoring removes that self-selection problem. Any measurable score difference between groups is far more likely attributable to the program.
+
+This is the core distinction from observational studies, where researchers watch what happens without controlling who gets what. A <Link to={routes.article('correlation-vs-causation')}>randomized versus observational study</Link> comparison always comes down to this control: observational data can reveal strong associations, but it can rarely rule out confounding variables like income, motivation, or prior health status. Quasi-experimental designs sit in between: they don't randomize, but they use clever comparisons (before/after, matched groups, policy cutoffs) to approximate what randomization would have done.
+
+RCTs show up most often in:
+
+- Clinical medicine, testing drugs, devices, and surgical procedures
+- Public health, evaluating vaccination campaigns or behavioral interventions
+- Development economics, testing microfinance, education, or cash-transfer programs
+- Product and marketing analytics, where randomized experiments test feature changes or pricing
+
+The common thread is a research question shaped like "does X cause Y," where the intervention can be assigned rather than merely observed.
+
+## How Do Randomization, Concealment, and Blinding Work?
+
+Randomization decides who gets what treatment. Allocation concealment hides that assignment from whoever enrolls participants, so nobody can consciously or unconsciously steer a promising candidate toward the treatment group. Those are two separate safeguards, and confusing them is one of the most common design errors novice researchers make.
+
+**Randomization techniques**, in order of increasing sophistication:
+
+1. **Simple randomization** flips a metaphorical coin for each participant. It's easy to implement but can produce imbalanced group sizes in small trials just by chance.
+2. **Block randomization** assigns participants in fixed-size blocks (say, groups of four) to guarantee roughly equal group sizes throughout enrollment.
+3. **Stratified randomization** randomizes separately within subgroups (age bands, disease severity, store location) so those characteristics stay balanced across arms.
+4. **Cluster randomization** assigns entire groups, like schools or clinics, rather than individuals, which is necessary when the intervention operates at the group level.
+5. **Adaptive randomization** adjusts assignment probabilities as the trial progresses, often to route more participants toward an arm that's performing better, though this adds analytic complexity.
+
+Allocation concealment is the practical firewall that keeps randomization honest. In clinical trials, this often means sequentially numbered opaque envelopes or, more reliably, a centralized web-based or phone-based randomization system that the enrolling staff cannot see into ahead of time. Without concealment, even a genuinely random sequence can be gamed: a coordinator who guesses the next assignment might delay enrolling a frail patient until a "control" slot comes up.
+
+Blinding (also called masking) is a separate protection layer that operates after assignment. A single-blind trial keeps participants unaware of their group; a double-blind trial keeps both participants and treating staff unaware; some trials add a third layer by blinding the outcome assessors and data analysts too. Blinding is straightforward for a pill trial using an identical placebo. It's far harder for a surgical or behavioral intervention, where researchers often fall back on blinding only the outcome assessor, since the participant obviously knows whether they had surgery.
+
+<Callout variant="tip" title="Pro tip">
+If full blinding isn't possible, blind whoever measures the outcome. That single step blocks most of the subjective bias that would otherwise creep into subjective endpoints like pain scores or symptom checklists.
+</Callout>
+
+The most common pitfall isn't a flawed randomization algorithm. It's a broken concealment process, where excitement to enroll a "good fit" participant leads staff to peek at or predict upcoming assignments, quietly reintroducing the selection bias randomization was supposed to eliminate.
+
+## Which RCT Design Fits Your Research Question?
+
+The classic **parallel-group trial** assigns each participant to one arm for the trial's duration and compares outcomes between arms at the end. It's the default design because it's conceptually simple, works for almost any intervention, and avoids the complications of within-person comparisons. Most drug trials, education interventions, and marketing experiments use this structure.
+
+**Crossover trials** have each participant receive every treatment condition, one after another, in a randomized order. Because each person acts as their own control, crossover designs need far fewer participants to detect the same effect size. The catch is carryover: if the first treatment's effects linger into the second period, the comparison gets contaminated. Crossover designs work best for chronic, stable conditions and short-acting treatments, like comparing two blood pressure medications, not for anything with a lasting or curative effect.
+
+**Cluster-randomized trials** randomize groups, not individuals, which is unavoidable when the intervention is delivered at the group level (a classroom curriculum, a clinic-wide protocol). The unit of randomization becomes the unit of analysis in an important sense: standard statistical tests assume independent observations, and students in the same classroom are not independent of each other. Analysts need methods that account for that clustering, or they'll understate the trial's true uncertainty.
+
+**Factorial designs** test two or more interventions simultaneously by randomizing participants across every combination (treatment A alone, B alone, both, neither). This structure lets one trial answer multiple questions and can save substantial sample size compared to running separate trials, provided the treatments don't interact strongly with each other.
+
+- Parallel: simplest, most broadly applicable, no carryover risk
+- Crossover: efficient for stable, chronic conditions with reversible effects
+- Cluster: required when the intervention targets groups, not individuals
+- Factorial: efficient for testing multiple interventions in one trial
+
+<DataTable
+  caption="RCT design comparison: unit randomized, best fit, and the main trade-off"
+  headers={['Design', 'Unit randomized', 'Best fit when', 'Key trade-off']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Parallel-group', 'Individual participant', 'Almost any intervention; the default choice', 'Needs more participants than a crossover design for the same power'],
+    ['Crossover', 'Treatment sequence within participant', 'Chronic, stable conditions with reversible, short-acting treatments', 'Carryover: earlier treatment effects can contaminate later ones'],
+    ['Cluster-randomized', 'Groups (schools, clinics, stores)', 'Interventions delivered at the group level, not the individual', 'Must model within-cluster correlation or uncertainty is understated'],
+    ['Factorial', 'Every combination of 2+ treatments', 'Testing multiple interventions in one trial efficiently', 'Assumes the treatments do not interact strongly'],
+  ]}
+/>
+
+Before committing to a full-scale version of any of these, a [pilot trial](https://www.sciencedirect.com/science/article/pii/S147751312400617X) tests whether the protocol is workable, recruitment targets are realistic, and the assumed effect size and variability used for sample-size planning hold up. Skipping this step is a common way novice researchers end up with an underpowered or unrecruitable main trial.
+
+## How Do You Calculate Sample Size and Power for an RCT?
+
+Sample size is not a guess. It's a calculation with specific, checkable inputs, and getting those inputs wrong is the single most common way a well-designed RCT ends up telling you nothing useful.
+
+Start with the hypothesis type, since it changes what the calculation is even testing:
+
+1. **Superiority hypothesis**: asks whether the treatment performs *better* than control or an existing standard. Most drug and product trials test this.
+2. **Noninferiority hypothesis**: asks whether a new treatment is *not meaningfully worse* than an existing one, usually because it offers other advantages (cheaper, safer, easier to administer). This requires pre-specifying a noninferiority margin, the maximum acceptable gap.
+3. **Equivalence hypothesis**: asks whether two treatments produce statistically indistinguishable outcomes within a specified margin on both sides, common in generic-drug and biosimilar research.
+
+Once you know the hypothesis type, a sample-size calculation needs five inputs: the expected <Link to={routes.article('effect-size')}>effect size</Link>, the outcome's <Link to={routes.article('variance')}>variance</Link> (or expected event rate for binary outcomes), your significance threshold (alpha, conventionally 0.05), your desired <Link to={routes.article('statistical-power')}>statistical power</Link> (conventionally 80% or 90%), and an inflation factor for expected attrition. Change any one of these and the required sample size shifts, often by a lot: halving the expected effect size typically more than doubles the sample you need.
+
+> **Where the numbers usually come from:** pilot-trial data, a previous similar study, or, when nothing else exists, a conservative assumption paired with a sensitivity check across a plausible range of effect sizes.
+
+The practical consequence of skipping this step, or padding the assumed effect size to make the numbers look feasible, is an underpowered trial. Underpowered trials inflate the risk of a <Link to={routes.article('type-i-and-type-ii-errors')}>type II error</Link> (missing a real effect) and, even when they do land on statistical significance, tend to produce fragile results. This is exactly what a [fragility index](https://pubmed.ncbi.nlm.nih.gov/32237291/) is built to catch: it counts how many participants would need to switch from a non-event to an event before a statistically significant result flips to non-significant. A trial where swapping the outcome of just one or two participants erases significance deserves a cautious read, regardless of the reported <Link to={routes.article('p-value')}>p-value</Link>.
+
+You can run this math yourself with a <Link to={routes.calculator('probability')}>probability calculator</Link> once you have rough estimates for your effect size and variance, rather than trusting a rule of thumb pulled from an unrelated study.
+
+## How Should You Analyze RCT Results?
+
+**Intention-to-treat (ITT) analysis** compares participants according to the group they were randomly assigned to, regardless of whether they actually completed, adhered to, or even started their assigned treatment. This sounds counterintuitive at first. Why count someone who never took the drug as part of the treatment group? Because ITT preserves the balance that randomization created. The moment you start excluding or reclassifying participants based on what happened after assignment, you reopen the door to the exact selection bias randomization was designed to close.
+
+**Per-protocol analysis** restricts the comparison to participants who followed the trial protocol as assigned. It can be informative as a secondary analysis, showing what happens under ideal adherence, but it should never replace ITT as the primary analysis, because "who adhered" is itself a non-random subgroup.
+
+Missing data and loss to follow-up are inevitable in almost any real trial. Analysts handle this with strategies ranging from simple last-observation-carried-forward approaches to multiple imputation, which models plausible values based on other observed data rather than assuming dropouts look like completers. The right choice depends on why data went missing (the "missingness mechanism"), and a mismatched approach can quietly bias results in either direction.
+
+Trials that run long enough to warrant it often build in **interim analyses**, pre-planned checkpoints where an independent data monitoring committee reviews accumulating results, sometimes for safety, sometimes for early evidence of benefit or futility. Because checking data multiple times inflates the chance of a false-positive finding by chance alone, trials use stopping rules with adjusted significance thresholds to keep the overall error rate honest. The same multiplicity concern applies to subgroup analyses; testing a dozen subgroups for significance is one of the fastest routes to a spurious finding, which is why methods like <Link to={routes.article('post-hoc-tests')}>post-hoc corrections</Link> exist.
+
+- Pre-specify the primary analysis (ITT) before unblinding any data
+- Treat per-protocol and subgroup results as exploratory, not confirmatory
+- Run sensitivity analyses under different missing-data assumptions
+- Check the Fragility Index on any trial with a modest event count
+
+<Callout variant="tip" title="Pro tip">
+If a trial report highlights a subgroup finding that wasn't mentioned in the original protocol, treat it as a hypothesis for a future study, not as proof of anything.
+</Callout>
+
+## What Are the Real Limits of RCT Evidence?
+
+Randomization protects against **selection bias** and, on average, balances confounding variables, both measured and unmeasured, across groups. Combined with blinding, it also reduces performance bias (participants or staff behaving differently because they know the assignment) and detection bias (assessors scoring outcomes differently based on group knowledge). These are the specific problems randomization and blinding solve, as broader methodological reviews of RCT design consistently emphasize.
+
+What randomization does not fix: attrition bias if dropout rates differ meaningfully between arms, reporting bias if researchers selectively publish or emphasize favorable outcomes, and any bias baked into how the outcome itself is measured.
+
+The sharpest trade-off in RCT design is between internal and external validity. **Internal validity** is confidence that the observed effect is really caused by the intervention within this specific trial. **External validity** is confidence that the effect will hold up in the messier, more diverse populations and settings outside the trial. Tightly controlled eligibility criteria (excluding patients with comorbidities, running the trial in a handful of specialized centers) boost internal validity but can shrink external validity, since the trial population no longer resembles the population a clinician or policymaker actually needs to treat.
+
+- Selection, performance, and detection bias: substantially reduced by randomization and blinding
+- Attrition and reporting bias: not automatically solved by randomization
+- Internal validity: strongest in tightly controlled explanatory trials
+- External validity: strongest in pragmatic, real-world trials with broad eligibility
+
+Cost, timeline, and ethics constrain design choices further. A trial can't ethically randomize participants to a harmful exposure, and it can't randomize things people can't be assigned to at all, like their neighborhood of birth. This is precisely why nearly 60% of surgical research questions can't be answered with an RCT, forcing surgical researchers toward well-designed observational or quasi-experimental alternatives instead.
+
+## What Ethical and Reporting Standards Should an RCT Meet?
+
+Every RCT involving human participants needs approval from an institutional review board (IRB) or equivalent ethics committee, and every participant needs to give informed consent after understanding the risks, alternatives, and their right to withdraw at any point. These aren't formalities; they're the mechanism that keeps trial design from trading participant welfare for statistical convenience.
+
+Preregistering a trial, on ClinicalTrials.gov or a field-specific registry, locks in the primary outcome, sample-size target, and analysis plan before any data comes in. This single step closes off one of the most common ways trial results get quietly reshaped after the fact: swapping which outcome counts as "primary" once the data show which one looks best.
+
+The **CONSORT statement** (Consolidated Standards of Reporting Trials) is the reporting checklist most peer-reviewed journals now expect for published RCTs. It covers how randomization was generated, how allocation was concealed, how blinding was implemented, and how participant flow through the trial (enrolled, randomized, followed up, analyzed) should be diagrammed. Trials that skip CONSORT items, most often the concealment and blinding details, are flagging exactly where a reader should be skeptical.
+
+Good practice beyond the minimum:
+
+- Register the trial before enrollment begins, not after
+- Publish the full statistical analysis plan alongside or before results
+- Share de-identified data and code where journal and ethics rules permit
+- Report negative and null results with the same rigor as positive ones
+
+<Checklist
+  id="rct-ethics-checklist"
+  title="RCT ethics and reporting checklist"
+  style="check"
+  items={[
+    { text: 'Get IRB or ethics-committee approval before enrolling anyone', detail: 'Informed consent covers the risks, the alternatives, and the right to withdraw at any point.' },
+    { text: 'Preregister the trial before enrollment begins', detail: 'On ClinicalTrials.gov or a field-specific registry, before any data comes in.' },
+    { text: 'Lock in the primary outcome and analysis plan in advance', detail: 'Prevents quietly reshaping which outcome counts as primary after seeing the data.' },
+    { text: 'Plan for CONSORT-compliant reporting', detail: 'Document how randomization was generated, allocation was concealed, and blinding was implemented.' },
+    { text: 'Publish the statistical analysis plan alongside or before results', detail: 'Share de-identified data and code where journal and ethics rules permit.' },
+    { text: 'Report negative and null results with the same rigor as positive ones', detail: 'Selective reporting of favorable outcomes reintroduces the bias randomization was meant to remove.' },
+  ]}
+/>
+
+## How Would a Simple RCT Actually Play Out?
+
+Consider a novice researcher testing whether a short mindfulness app improves self-reported focus scores among college students over four weeks.
+
+1. **Define the question and outcome.** The research question is whether daily app use increases a validated 1 to 10 focus score. The primary outcome is the change in that score from baseline to week four.
+2. **Choose design and randomization.** A parallel-group design fits well here, with simple randomization since the sample is small enough that block randomization isn't necessary, and stratification by class year to keep that variable balanced.
+3. **Calculate sample size.** Using a pilot estimate of a 1-point difference between groups with a standard deviation of 2, alpha of 0.05, and 80% power, a rough calculation lands near 63 participants per arm. Planning ITT as the primary analysis means every enrolled student counts in their assigned group, regardless of app usage.
+4. **Interpret hypothetical results.** Suppose the trial finds a mean difference of 0.8 points (95% confidence interval: 0.1 to 1.5), just crossing statistical significance. A quick Fragility Index check shows that reclassifying just two participants' outcomes would erase that significance. The honest read: a plausible but fragile effect, worth replicating with a larger sample before treating it as settled.
+
+<Figure number={1} caption="The four-step arc of the worked mindfulness-app example, from defining the outcome to a fragility-checked interpretation.">
+  <ProcessFlow
+    title="Worked RCT example"
+    desc="A four-step horizontal pipeline moves from defining the question and outcome, through choosing the design and calculating sample size, to interpreting results with a fragility check."
+    steps={[
+      { label: 'Define question & outcome', detail: '1-10 focus score; primary outcome is the change from baseline to week four.' },
+      { label: 'Choose design & randomization', detail: 'Parallel-group, simple randomization, stratified by class year.' },
+      { label: 'Calculate sample size', detail: 'Effect size 1, SD 2, alpha 0.05, 80% power → about 63 per arm.' },
+      { label: 'Interpret with a fragility check', detail: 'Mean difference 0.8 (95% CI 0.1-1.5); 2 reclassified outcomes would erase it.' },
+    ]}
+  />
+</Figure>
+
+That fourth step is where most student write-ups fall short. A single significant p-value from a modestly sized trial deserves the same scrutiny as any other number: check the confidence interval width and the fragility before drawing a firm conclusion.
+
+## How Do Statohub's Tools Support Trial Planning?
+
+Working through the math behind an RCT gets much easier once you can check your assumptions against a calculator instead of guessing. The <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> hub on Statohub covers the causal-inference concepts this guide builds on, including a dedicated walkthrough on <Link to={routes.article('how-to-design-an-ab-test')}>how to design an A/B test</Link> that applies the same randomization logic to product and marketing experiments.
+
+When you're ready to move from concept to numbers, Statohub's probability calculator and <Link to={routes.calculator('chi-square')}>chi-square calculator</Link> handle the distributional questions that come up constantly in trial analysis, from event-rate comparisons to categorical outcome testing. Every guide and calculator on the site sticks to the same sourcing standard used throughout this article: peer-reviewed methodology and recognized institutional guidance, not recycled blog advice.
+
+- Read the causal-inference fundamentals before your next design decision
+- Run your assumed effect size through a calculator before committing to a sample size
+- Cross-check categorical outcomes with the chi-square tool during analysis
+
+## When Does an RCT Actually Make Sense for You?
+
+The honest trade-off is this: an RCT gives you the cleanest possible causal claim, but only within the narrow slice of reality you can afford to control. Most novice researchers either overreach, trying to randomize something that can't ethically or practically be randomized, or underreach, defaulting to an observational comparison when a genuine experiment was within reach. Neither instinct serves the question well.
+
+Before committing to a trial, ask yourself: can the intervention actually be assigned by someone other than the participant, is withholding it from a control group ethically defensible, and do you have the resources to follow both groups through to the outcome? If any answer is no, a quasi-experimental design, matching, or a difference-in-differences approach may be the more honest path, even though it demands stronger assumptions than randomization would.
+
+If the answer is yes across the board, don't skip the paperwork that makes the trial worth trusting. Preregister the protocol, commit to CONSORT reporting, and pre-specify your primary analysis before a single data point comes in. Those three habits separate a trial readers can act on from one that just adds noise to the literature.
+
+<Figure number={2} caption="A yes/no triage path for deciding whether a question is ready for a randomized controlled trial or needs a quasi-experimental design instead.">
+  <DecisionTree
+    title="Is an RCT the right design for this question?"
+    desc="A decision tree checks whether the intervention can be assigned, whether withholding it is ethically defensible, and whether both groups can be followed to the outcome, before recommending an RCT or a quasi-experimental design."
+    root={{
+      label: 'Can the intervention be assigned by someone other than the participant?',
+      no: { label: 'Use a quasi-experimental design (matching, difference-in-differences, or regression discontinuity) instead.' },
+      yes: {
+        label: 'Is withholding it from a control group ethically defensible?',
+        no: { label: 'Use a quasi-experimental design instead.' },
+        yes: {
+          label: 'Do you have the resources to follow both groups through to the outcome?',
+          no: { label: 'Use a quasi-experimental design instead.' },
+          yes: { label: 'Design the RCT: preregister, plan CONSORT reporting, pre-specify ITT as primary analysis.' },
+        },
+      },
+    }}
+  />
+</Figure>
+
+## Ready to Plan Your Own Trial?
+
+Reading about sample-size formulas is one thing. Running the actual numbers for your specific effect size, variance, and attrition assumptions is where most novice designs either hold up or fall apart. That's the gap Statohub's <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub is built to close: practical walkthroughs that connect the theory in guides like this one to the calculators you need to plan a defensible trial.
+
+Start with the <Link to={routes.calculatorsHub()}>Calculators</Link> page to check your power calculation before you finalize a protocol, use the probability calculator to sanity-check event-rate assumptions, and revisit the <Link to={routes.article('fundamental-statistics')}>Fundamental Statistics</Link> guide if terms like variance or <Link to={routes.article('confidence-interval')}>confidence interval</Link> need a refresher first. Run your numbers now, before you lock in a sample size you might regret later.
+
+## Sources
+
+<Sources items={[
+  { text: 'Randomized clinical trial — NCI Dictionary of Cancer Terms', href: 'https://www.cancer.gov/publications/dictionaries/cancer-terms/def/randomized-clinical-trial', org: 'National Cancer Institute' },
+  { text: 'Study Design 101: Randomized Controlled Trial', href: 'https://www.ncbi.nlm.nih.gov/books/NBK305495/', org: 'NCBI Bookshelf / Himmelfarb Health Sciences Library, GWU' },
+  { text: 'Limits to clinical trials in surgical areas', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3044561/', org: 'PMC' },
+  { text: 'Randomised controlled trials — the gold standard for effectiveness research', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6235704/', org: 'PMC' },
+  { text: 'Fragility index studies', href: 'https://pubmed.ncbi.nlm.nih.gov/32237291/', org: 'PubMed / National Library of Medicine' },
+  { text: 'ClinicalTrials.gov — Glossary of Common Site Terms', href: 'https://clinicaltrials.gov/about-studies/glossary', org: 'U.S. National Library of Medicine' },
+  { text: 'Step 3: Clinical Research', href: 'https://www.fda.gov/patients/drug-development-process/step-3-clinical-research', org: 'U.S. Food and Drug Administration' },
+  { text: 'CONSORT Statement — official reporting guideline for randomized trials', href: 'https://www.consort-statement.org/', org: 'CONSORT Group' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the main difference between an RCT and an observational study?',
+    answer: 'An RCT assigns participants to groups by chance, while an observational study watches outcomes among people who ended up in each group on their own. That difference in control over assignment is what lets an RCT support stronger causal claims.',
+  },
+  {
+    question: 'How large does an RCT sample size need to be?',
+    answer: 'It depends entirely on your expected effect size, outcome variance, chosen alpha and power, and expected attrition. There is no universal number; a probability calculator using your own pilot estimates will get you closer than any rule of thumb.',
+  },
+  {
+    question: 'What does intention-to-treat mean in simple terms?',
+    answer: 'It means analyzing every participant according to the group they were randomly assigned to, even if they never followed the assigned treatment, because this preserves the balance randomization created.',
+  },
+  {
+    question: 'Why do researchers register a trial before it starts?',
+    answer: 'Preregistration locks in the primary outcome and analysis plan in advance, which prevents researchers from quietly changing what counts as the main result after seeing the data.',
+  },
+  {
+    question: 'When is a randomized controlled trial not feasible?',
+    answer: 'When randomly assigning the intervention would be unethical, impossible to enforce, or prohibitively expensive, researchers turn to quasi-experimental methods like matching, difference-in-differences, or regression discontinuity instead.',
+  },
+]} />
