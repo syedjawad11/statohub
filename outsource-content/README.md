@@ -34,7 +34,12 @@ is marked `approved` — this pipeline never writes to `content.db`, and
 ## Layout
 
 - `schema.sql` / `outsource_content.db` — the tracking DB (own file, not
-  `content-ops/content.db`).
+  `content-ops/content.db`). The `.db` itself is **gitignored**; what's
+  committed is `outsource_content.sql`, a deterministic text dump. After a
+  fresh clone run `python3 scripts/db_sync.py rebuild` to recreate the `.db`,
+  and after any board change run `python3 scripts/db_sync.py dump` before
+  committing. Rationale: a binary blob cannot be pushed through the GitHub
+  MCP server (see that script's header).
 - `outsource_db.py` — CLI: `init`, `import-calendar`, `list`, `show`, `map`,
   `fetch`, `processed`, `set-status`, `log-review`, `stats`.
 - `calendar.json` — the 20-topic priority-ordered queue (not literal
