@@ -17,6 +17,10 @@ dist/
 !.env.example
 outsource-content/raw/_article-list-cache.json
 
+# sqlite boards -- tracked as .sql dumps instead, see scripts/db_sync.py
+# (binary blobs cannot be pushed through the GitHub MCP server)
+*.db
+
 # logs
 npm-debug.log*
 yarn-debug.log*
