@@ -44,6 +44,23 @@ def dump_text(db_path: Path) -> str:
         conn.close()
 
 
+def is_empty(db_path: Path) -> bool:
+    """True if the file holds no user tables.
+
+    `sqlite3.connect()` creates an empty file as a side effect, so simply
+    running one of the board CLIs before `rebuild` leaves a 0-table .db behind.
+    That must not shadow the committed dump.
+    """
+    conn = sqlite3.connect(db_path)
+    try:
+        return not conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' "
+            "AND name NOT LIKE 'sqlite_%' LIMIT 1"
+        ).fetchone()
+    finally:
+        conn.close()
+
+
 def snapshot(conn: sqlite3.Connection) -> dict[str, list]:
     """Every user table's rows, for equivalence checks."""
     tables = [
@@ -70,8 +87,11 @@ def cmd_rebuild() -> int:
     force = "--force" in sys.argv
     for db_path, sql_path in BOARDS:
         if not sql_path.exists():
-            sys.exit(f"missing dump: {sql_path}")
-        if db_path.exists() and not force:
+            # A board with no committed dump is still tracked as a binary .db;
+            # it needs no rebuild. Skip it rather than aborting the whole run.
+            print(f"skip {db_path.name}: no dump committed (still tracked as binary)")
+            continue
+        if db_path.exists() and not force and not is_empty(db_path):
             print(f"skip {db_path.name}: already exists (use --force to overwrite)")
             continue
         if db_path.exists():
@@ -93,8 +113,7 @@ def cmd_check() -> int:
             print(f"skip {db_path.name}: not present")
             continue
         if not sql_path.exists():
-            print(f"DRIFT {db_path.name}: no committed dump")
-            drift = True
+            print(f"skip {db_path.name}: no dump committed (still tracked as binary)")
             continue
 
         # Compare logical content, not dump text: rebuilding from the committed
