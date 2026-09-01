@@ -4,58 +4,50 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-08-23 (applied-statistics infographic readability fix
-sitewide -- `ProcessFlow`/`DecisionTree` no longer overflow the article
-column and shrink text; standard documented in `docs/DESIGN-SYSTEM.md`.
-Also: AdSense CSP `font-src` bug fixed + deployed; consent banner still not
-confirmed rendering, likely blocked on AdSense site review, not code).
+**Last updated:** 2026-09-01 (SQLite boards migrated from binary `.db` to
+committed `.sql` dumps; local `git push` restored over SSH -- see
+[[0017-git-push-over-ssh]] and [[0018-sqlite-boards-as-sql-dumps]]).
+
+## Repo workflow changed -- read before your first commit
+
+- **`git push` works again** (SSH). [[0016-github-mcp-for-pushes]] is
+  superseded -- no more `push_files` + `git reset --hard` to realign SHAs.
+- **No binary `.db` is tracked.** After a clone: `python3 scripts/db_sync.py
+  rebuild`. After any board change: `dump`, then commit the `.sql`. Forgetting
+  `dump` is what silently desynced the outsource board.
+- `docs/ARCHITECTURE.md` still describes the old MCP push flow -- prose pass owed.
 
 ## Active: Applied Statistics -- batch 2 still not started
 
 Batch 1 (4 articles) is live. **Batch 2 (remaining 4, one per hub), planned for
 2026-08-17, has not been started** -- topics never chosen. Governed by
 [[0014-applied-section-url-family]] / [[0015-wedge-scoped-to-learn]]. Recipe:
-`docs/status/sessions/2026-08-16-applied-batch-1.md`. Still owed: full
-desktop+mobile visual QA vs `docs/ideas/homepage-redesign-mock-2026-08-16.png`.
+`docs/status/sessions/2026-08-16-applied-batch-1.md`. Still owed: desktop+mobile
+visual QA vs `docs/ideas/homepage-redesign-mock-2026-08-16.png`.
 
-**Baseline on `origin/main`:** 121 pages, 4,530 internal links, 0 link/meta
+**Baseline on `origin/main`:** 124 pages, 4,670 internal links, 0 link/meta
 violations, 121 tests, `astro check` 0 errors.
 
 **Learn content pipeline:** queue exhausted since 2026-08-14, nightly publisher
 idle (not broken, just out of work). Applied batch-1/2 seed rows stay
 `flagged` so it can't auto-publish a half-written draft.
 
-## AdSense: CSP font-src bug fixed and deployed; banner rendering still unconfirmed
+**Outsource pipeline:** board corrected 2026-09-01 -- 4 published, 16 queued,
+next up `intention-to-treat`.
 
-Loader, CSP allowlist, `ads.txt`, privacy-policy disclosure, and the Funding
-Choices CMP tag are all live in code (TASK-035; commits `8387b15`, `e7b9cca`).
-**No ad units placed yet** -- loader only, deliberately.
+## Security: rotate the GitHub PAT
 
-**Done 2026-08-23:** AdSense UI ad-tech partners list was never confirmed
-(message preview showed "0 partners") -- confirmed the recommended 198 incl.
-Google and published. Reject option was missing (only "Manage options" +
-"Consent") -- enabled "Do not consent" and published. **Real bug found via
-live devtools** (not caught by TASK-035's local-only checks): `font-src` in
-`public/_headers` allowed `'self'`/`fonts.gstatic.com` but not `data:`; the
-consent banner's icon font loads via a `data:` URI and Chrome silently blocked
-it. Fixed by adding `data:` to `font-src` (commit `c45dafc`), deployed,
-reverified live -- Issues panel now clean, all consent/ad requests 200.
+The classic `ghp_` token in `~/.claude.json` is plaintext and was printed into a
+2026-09-01 transcript. Git no longer needs it; the MCP server does. Replace with
+a fine-grained token scoped to this repo.
 
-**Still open:** banner does not visibly render even with 0 CSP issues and all
-requests succeeding. Two account-side theories, neither fixable in this repo:
-(1) AdSense site still "Getting ready" (Google may suppress messaging until
-approved), (2) geo-detection not resolving the browser to an EEA location.
-**Decision 2026-08-23:** stop debugging, wait for AdSense review to complete.
+## AdSense: paused pending Google's review
 
-**Resume once the site shows "Ready":**
-1. Re-test the banner in incognito from an EEA location; if still blank, use
-   the message editor's test-link feature (bypasses geo-targeting) to isolate
-   message config from review-status gating.
-2. Set up `privacy@statohub.com` via Cloudflare Email Routing -- published on
-   the privacy policy now but likely not a real inbox yet.
-3. Place the first ad units in the article rail (left short in the TOC
-   redesign for this). New Codex handoff task, not a quiet edit.
-4. Optional, not blocking: a US states (CCPA/CPRA) message.
+Loader, CSP, `ads.txt`, privacy disclosure and the CMP tag are live; **no ad
+units placed yet**. Banner still doesn't render despite 0 CSP issues and all
+requests 200 -- both remaining theories are account-side. **Decision
+2026-08-23: stop debugging, wait for review.** Detail + resume checklist:
+`docs/status/sessions/2026-08-23-adsense-consent-csp-fix.md`.
 
 ## Parked / paused (do not silently resume)
 
@@ -63,10 +55,10 @@ approved), (2) geo-detection not resolving the browser to an EEA location.
   (`src/lib/schema.ts`) with an `/og-default.png` fallback.
 - `how-to-find-the-range` refresh -- 5 range keywords in DB, unused in copy.
 - `relative frequency` / `cumulative frequency` -- uncovered Learn candidates.
-- No `.gitattributes` with `core.autocrlf=true` -- phantom CRLF-only diffs.
 - `docs/REPO-MAP.md` annotation pass -- drift checker still flags
   `SEO-Audit/`, `docs/audit/`, `docs/ideas/`, config + lockfiles.
 - Phase C / Phase D per `docs/ideas/statohub-action-plan.md`: not started.
+- Session files from July/August still outside `docs/status/sessions/archive/`.
 
 ## Standing hard gates
 

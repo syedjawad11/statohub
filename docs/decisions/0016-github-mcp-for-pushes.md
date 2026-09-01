@@ -2,7 +2,7 @@
 number: 0016
 title: GitHub pushes go through the GitHub MCP server, not local git credentials
 type: process
-status: accepted
+status: superseded-by-0017
 date: 2026-08-27
 ---
 
