@@ -4,9 +4,8 @@
 > handoff if they disagree -- fix the conflict immediately when found. Updated
 > at the end of any session that changes priorities; kept under ~60 lines.
 
-**Last updated:** 2026-09-01 (SQLite boards migrated from binary `.db` to
-committed `.sql` dumps; local `git push` restored over SSH -- see
-[[0017-git-push-over-ssh]] and [[0018-sqlite-boards-as-sql-dumps]]).
+**Last updated:** 2026-09-02 (outsource batch 2 published, 3 articles; the
+outsource word floor dropped to 1,500 -- see [[0019-outsource-word-floor]]).
 
 ## Repo workflow changed -- read before your first commit
 
@@ -32,8 +31,14 @@ violations, 121 tests, `astro check` 0 errors.
 idle (not broken, just out of work). Applied batch-1/2 seed rows stay
 `flagged` so it can't auto-publish a half-written draft.
 
-**Outsource pipeline:** board corrected 2026-09-01 -- 4 published, 16 queued,
-next up `intention-to-treat`.
+**Outsource pipeline:** 7 published, 13 queued (batch 2 shipped 2026-09-02).
+Two traps for the next run: (1) **queue order no longer works** -- positions
+5-8 and 11 don't exist upstream yet, so take the lowest queued slug that
+appears in `list_articles()`, not the lowest `queue_position`; (2) **processors
+ship citations whose URL points at a different paper than the citation text
+names** (3 this batch, 1 of them missed by the reviewer too) -- check
+URL-vs-title on every source, the sanitizer doesn't. Remaining drafts are all
+2,100-2,900 raw words, hence [[0019-outsource-word-floor]] (3,000 -> 1,500).
 
 ## Security: rotate the GitHub PAT
 
