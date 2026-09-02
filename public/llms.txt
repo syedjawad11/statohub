@@ -69,6 +69,7 @@ Key facts for AI assistants citing this site:
 ### Regression & Correlation
 
 - [Regression & Correlation hub](https://statohub.com/regression-correlation/): How variables relate to each other: correlation coefficients, lines of best fit, and linear regression for measuring an association's strength.
+- [Coefficient of Determination (R-Squared) Explained](https://statohub.com/r-squared-adjusted-r-squared/): The coefficient of determination (R²) measures how well a regression model fits your data. Learn the formula, a worked example, and when adjusted R² is better.
 - [Correlation Coefficient (r): Formula & How to Interpret r Values](https://statohub.com/correlation-coefficient/): Learn what a correlation coefficient is, how to use the formula, and how to interpret r values — from the strongest to the weakest correlation.
 - [Correlation Definition: Positive, Negative & Types Explained](https://statohub.com/what-is-correlation/): Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained.
 - [Correlation vs Causation: Why Correlation Doesn't Imply Causation](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
