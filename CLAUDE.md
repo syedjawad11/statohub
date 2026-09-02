@@ -56,6 +56,19 @@ strategy planning -- their durable conclusions are already promoted into
   [[0005-wrangler-v3-lock]].
 - **No accounts, backend, database, or community features** on the current
   roadmap. See [[0013-no-accounts-backend-community-yet]].
+- **Two content sections, ten category hubs -- don't mix them up.** *Applied*
+  (`section: applied` in the category YAML) is exactly four hubs:
+  `data-analysis`, `experiments-causality`, `time-series-forecasting`,
+  `machine-learning-statistics`. *Learn* is the other six: `foundations`,
+  `descriptive-statistics`, `inferential-statistics`,
+  `probability-distributions`, `regression-correlation`, `combinatorics`. An
+  article's section is inferred from its category hub -- nothing in article
+  frontmatter says which section it is in.
+- **Every babylovegrowth / outsourced article is Applied.** Its `category`
+  must be one of the four Applied hubs, never a Learn hub -- pick the closest
+  Applied fit rather than the best topical fit across all ten. Enforced by
+  `ALLOWED_CATEGORIES` in `outsource-content/check_sanitized.py`. See
+  [[0020-outsource-is-applied-only]].
 
 ## Operating Model — Delegation First (BINDING)
 

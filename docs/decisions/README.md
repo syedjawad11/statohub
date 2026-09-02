@@ -27,6 +27,7 @@
 | [0017](0017-git-push-over-ssh.md) | Pushes go back to local git over SSH; GitHub MCP is a fallback | process | accepted | 2026-09-01 |
 | [0018](0018-sqlite-boards-as-sql-dumps.md) | SQLite boards are tracked as SQL dumps, not binary blobs | architecture | accepted | 2026-09-01 |
 | [0019](0019-outsource-word-floor.md) | Outsource pillar gets its own word floor (1,500), below the Applied 3,000 | content | accepted | 2026-09-02 |
+| [0020](0020-outsource-is-applied-only.md) | Outsourced content is Applied-only; Applied has exactly four category hubs | content | accepted | 2026-09-02 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new
