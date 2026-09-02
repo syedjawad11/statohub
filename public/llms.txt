@@ -123,6 +123,7 @@ Key facts for AI assistants citing this site:
 - [Exploratory Data Analysis: A Practical Workflow](https://statohub.com/exploratory-data-analysis/): The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop.
 - [Nonparametric Tests: When to Use Them and How to Choose](https://statohub.com/nonparametric-tests/): Explore when and how to use nonparametric tests for more reliable results in small samples, skewed data, or ordinal scales.
 - [Pearson vs Spearman: Plot First 5 Step Checklist for Students](https://statohub.com/pearson-vs-spearman/): Choose between Pearson and Spearman with a plot first workflow. Follow a clear 5 step checklist for students, see worked examples, and try Statohub...
+- [Students: 400 Per Group Example for Confidence vs Significance](https://statohub.com/confidence-level-vs-significance-level/): Clear, student-first explanation of how confidence and significance levels relate. Reproduce the 400 per group worked example and run the math with...
 - [When Data Span 100x or More: 4 Log Transform Checks for Students](https://statohub.com/log-transform-data/): For students and junior analysts: practical steps to decide, apply (Excel/R/Python), and back transform logged data so coefficients report correctly.
 
 ### Experiments & Causality

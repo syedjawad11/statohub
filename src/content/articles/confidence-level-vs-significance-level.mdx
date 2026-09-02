@@ -1,0 +1,223 @@
+---
+title: "Students: 400 Per Group Example for Confidence vs Significance"
+description: "Clear, student-first explanation of how confidence and significance levels relate. Reproduce the 400 per group worked example and run the math with..."
+category: data-analysis
+primaryKeyword: confidence level vs significance level
+keywords:
+  - confidence level vs significance level
+  - confidence vs significance
+  - confidence and significance levels
+  - 400 per group example
+phase: 1
+related:
+  - confidence-interval
+  - null-hypothesis
+  - p-value
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Significance level (α) is the probability threshold you set before running a hypothesis test, usually a conventional threshold such as 0.05, that defines how much risk of a false positive you're willing to accept. Confidence level, written as 1 − α, is the complementary figure used to build confidence intervals, often a conventional level such as [95%](https://www.usu.edu/math/schneit/StatsStuff/Inference/confidenceintervals). They come from the same decision, expressed for two different tools: one guards a yes/no test, the other frames a range of plausible values.
+
+<KeyTakeaways variant="bullets" bullets={[
+  'Choosing a 95% confidence level (α = 0.05) balances certainty with precision, while lower levels like 90% favor exploratory analysis.',
+  'Setting the significance level before data collection is crucial; adjusting thresholds after seeing results undermines test validity.',
+  'A 95% confidence interval indicates long-run coverage, but it does not assign a probability to the specific interval containing the true value.',
+  'Reducing α lowers false-positive risk but increases the likelihood of missing real effects unless sample sizes grow accordingly.',
+  'Reporting all components — test type, sample size, p-value, effect size, and confidence interval — is essential for clear, accurate analysis interpretation.',
+]} />
+
+## Confidence Level vs. Significance Level at a Glance
+
+Both terms describe the same risk tolerance, just aimed at different outputs. Significance level answers "how often am I willing to be wrong when I reject a true null hypothesis?" Confidence level answers "how often will my interval-building method capture the real value if I repeat this study many times?"
+
+<DataTable
+  caption="Significance level and confidence level compared"
+  headers={['Term', 'Symbol', 'Typical value', 'Question it answers', 'Where you see it']}
+  align={['left', 'left', 'left', 'left', 'left']}
+  rows={[
+    ['Significance level', 'α', 'conventional values like 0.05, 0.01, or 0.10', 'How much Type I error risk am I accepting?', 'Hypothesis tests, p-value comparisons'],
+    ['Confidence level', '1 − α', 'common levels such as 90%, 95%, or 99%', 'How often does this procedure capture the true parameter?', 'Confidence intervals, margin of error'],
+  ]}
+/>
+
+<Callout variant="note" title="Statistic callout">
+The most common convention in introductory statistics sets α = 0.05, which maps directly to a [95% confidence](https://blog.minitab.com/en/blog/alphas-p-values-confidence-intervals-oh-my) level. That single pairing shows up in more textbooks, lab reports, and journal articles than any other combination.
+</Callout>
+
+Picking between 90%, 95%, and 99% (or their α equivalents) comes down to how much precision you're trading for certainty:
+
+- Use **90% confidence / α = 0.10** for exploratory work where a false alarm is cheap to correct.
+- Use **95% confidence / α = 0.05** for most coursework, business analytics, and general research.
+- Use **99% confidence / α = 0.01** when a wrong conclusion carries real cost, like clinical trials or safety testing.
+
+## What Significance Level (α) Actually Controls
+
+Significance level is the probability of rejecting a true null hypothesis, the statistical term for a false positive, also called a [Type I error](https://en.wikipedia.org/wiki/Significance_level). You choose α before collecting any data, not after looking at your results. That order matters. If you peek at your p-value first and then decide what counts as "significant," you're not really testing anything. You're just rationalizing a number you already saw.
+
+The 0.05 default isn't a law of nature. It's a convention that stuck because Ronald Fisher popularized it decades ago, and it happens to balance false positives and practicality reasonably well for typical sample sizes. In a two-tailed test, that [5%](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/) risk splits across both tails of the distribution, 2.5% on each side. In a one-tailed test, the full 5% sits on one side, which is why one-tailed tests can detect smaller effects in a single direction but are more vulnerable to missing effects that go the other way.
+
+<Figure number={1} caption="How a 5% significance level splits across the tails of a two-tailed test versus concentrating on one side in a one-tailed test.">
+  <AnnotatedChart
+    title="Alpha allocation across test tails"
+    desc="A bar chart showing significance level allocation at alpha = 0.05: 2.5% in the left tail and 2.5% in the right tail of a two-tailed test, versus the full 5% concentrated on one side of a one-tailed test."
+    type="bar"
+    points={[
+      { label: 'Two-tailed left', value: 2.5, annotation: 'Half of α sits in the lower tail.' },
+      { label: 'Two-tailed right', value: 2.5, annotation: 'Half of α sits in the upper tail.' },
+      { label: 'One-tailed', value: 5, annotation: 'The full α sits on one side.' },
+    ]}
+    xLabel="Test type"
+    yLabel="Share of α (%)"
+  />
+</Figure>
+
+Here's the trade-off students underestimate: shrinking α to reduce false positives automatically raises your risk of a false negative (a Type II error), unless you also increase your sample size. A stricter threshold demands stronger evidence, and stronger evidence usually means more data or a bigger effect. This is why <Link to={routes.article('p-value')}>statistical power</Link> and sample size planning matter just as much as the α you pick.
+
+Choosing α isn't arbitrary once you think about consequences:
+
+- **Low stakes, exploratory analysis:** α = 0.10 is defensible if false positives just mean a follow-up study.
+- **Standard academic or business research:** α = 0.05 remains the working default.
+- **High-stakes decisions:** α = 0.01 or lower reduces false-positive risk when errors are expensive or irreversible.
+
+<Callout variant="tip" title="Pro tip">
+Decide your α and write it down before you touch the data. If you're tempted to justify a p-value of 0.06 as "basically significant," that's a signal you set the wrong threshold, not that the math is flexible.
+</Callout>
+
+## What Confidence Level (1 − α) Means for an Interval
+
+A confidence interval is a range of values built from your sample that's designed to contain the true population parameter a certain percentage of the time, if you repeated the sampling process many times. Confidence level is that percentage, and it's a property of the method, not a statement about any single interval you calculate.
+
+This is where most students trip. A 95% confidence interval does **not** mean there's a 95% probability the true value falls inside the specific interval you just computed. Once you've calculated it, the parameter either is or isn't in there. What the 95% figure actually describes is long-run behavior: if you drew 100 different samples and built 100 intervals the same way, roughly 95 of them would capture the true value.
+
+Sample size and variability directly shape how wide or narrow that interval is:
+
+- Larger samples produce narrower intervals because the standard error shrinks.
+- More variable data (higher standard deviation) widens the interval.
+- Higher confidence levels widen the interval too, since capturing the truth more reliably requires more room.
+
+That's the real cost of asking for more certainty: precision.
+
+## How α and Confidence Level Map to Each Other
+
+The relationship is simple to state and easy to misapply: confidence level = 1 − α. This isn't a coincidence; it's the same threshold expressed two ways, one for a test decision, one for an interval's coverage.
+
+For two-tailed tests, that α splits evenly across both ends of the distribution. For one-tailed tests, the entire α sits on one side, which changes where the critical value falls even though the confidence level attached to a corresponding two-sided interval stays conceptually linked to the same 1 − α.
+
+In most standard test setups, a confidence interval that excludes the null hypothesis value corresponds to a p-value smaller than α, and one that includes the null corresponds to p ≥ α. That's why analysts often report both: the test gives you a yes/no decision, and the interval shows you the range of plausible effect sizes behind that decision.
+
+There are exceptions. Equivalence testing procedures like TOST (two one-sided tests) don't follow the simple 1 − α mapping, because they're testing whether an effect falls *within* a bound rather than whether it differs from zero. If you're running a specialized design like that, don't assume the standard α/CI relationship holds without checking.
+
+That 1.96 you'll see constantly in textbooks isn't magic. It's the z-score that cuts off 2.5% in each tail of the standard normal distribution when α = 0.05. Change α, and that critical value shifts with it.
+
+## A Worked Example: Test and Interval Side by Side
+
+Say you're comparing two landing page designs. You want to know if that gap is real or just sampling noise, using α = 0.05.
+
+1. **State the hypotheses.** H0: the true conversion rates are equal (p1 = p2). H1: they differ.
+2. **Calculate the pooled proportion.** (48 + 66) / (400 + 400) = 114 / 800 = 0.1425.
+3. **Compute the standard error.** SE = √[p̄(1 − p̄)(1/n1 + 1/n2)] = √[0.1425 × 0.8575 × (1/400 + 1/400)] ≈ 0.0247.
+4. **Find the test statistic.** z = (0.165 − 0.12) / 0.0247 ≈ 1.82.
+5. **Get the p-value.** For a two-tailed test, z = 1.82 corresponds to p ≈ 0.069.
+
+Since 0.069 is greater than α = 0.05, you fail to reject the null. The difference isn't statistically significant at this threshold, even though Page B's raw rate looks better.
+
+Difference = 0.165 − 0.12 = 0.045.
+
+<Callout variant="note" title="Statistic callout">
+That interval straddles zero, from about −0.3 percentage points to +9.3 percentage points. It agrees exactly with the hypothesis test: since the CI includes zero (no difference), you don't have strong enough evidence to call this significant at α = 0.05.
+</Callout>
+
+The plain-English takeaway: your sample hints that Page B might convert better, but with 400 visitors per group, you don't have enough evidence to be confident. A larger sample would narrow that interval and could resolve the ambiguity. You can reproduce every step above with the <Link to={routes.calculator('p-value')}>p-value calculator</Link> and check the interval math against the <Link to={routes.article('confidence-interval')}>confidence interval guide</Link>.
+
+## Where Students Get This Wrong
+
+The single biggest misread is treating the p-value as "the probability the null hypothesis is true." It isn't. A p-value measures how compatible your data is with the null hypothesis and the rest of your model's assumptions, not the probability that any particular hypothesis is correct, and [research on statistical misinterpretation](https://pmc.ncbi.nlm.nih.gov/articles/PMC4386986/) flags this as one of the most persistent errors in published research.
+
+A few other traps to watch for:
+
+- Reading a 95% CI as "95% probability the true value is in this range" instead of the long-run coverage interpretation.
+- Changing your α after seeing the p-value, which quietly turns a rigorous test into a foregone conclusion.
+- Treating "significant" and "not significant" as a binary verdict on importance, when a tiny effect can be statistically significant with a big enough sample, and a large effect can miss significance with a small one.
+- Reporting a p-value alone without an effect size or interval, which hides how much the result actually matters in practice. [Statistical and practical significance](https://www.ncbi.nlm.nih.gov/books/NBK557421/) are genuinely different questions.
+
+<Callout variant="tip" title="Pro tip">
+Before you write "significant" in a report, ask yourself whether you'd still call it meaningful if you saw the actual effect size without the p-value attached. If the answer is no, the p-value is doing more work than it should.
+</Callout>
+
+## What to Report in Every Lab Assignment
+
+A complete result needs more than a p-value. At minimum, report:
+
+<Checklist
+  id="lab-report-checklist"
+  title="What to report in every lab assignment"
+  style="numbered"
+  items={[
+    { text: 'The α you set before testing.' },
+    { text: 'The test used.', detail: 't-test, chi-square, z-test for proportions, etc.' },
+    { text: 'Sample size (n) for each group.' },
+    { text: 'The test statistic value.' },
+    { text: 'The exact p-value.', detail: 'Not just "p < 0.05."' },
+    { text: 'The confidence interval for the effect.', detail: 'With its confidence level stated.' },
+    { text: 'An effect size measure.', detail: "Such as Cohen's d or a proportion difference." },
+  ]}
+/>
+
+Statohub's <Link to={routes.categoryHub('inferential-statistics')}>inferential statistics guide</Link> walks through how these pieces fit together for different test types.
+
+## Statohub's Take on Teaching This Well
+
+Most explanations of confidence level versus significance level stop at the formula, 1 − α, and move on. We think that's where students actually get lost, because the formula is trivial and the interpretation is where the real difficulty lives. Understanding *why* that phrasing is wrong does.
+
+That's why Statohub builds explanations around worked arithmetic instead of abstract rules. When you can trace a p-value and a confidence interval back to the same z-score and the same standard error, the relationship stops feeling like two separate topics to memorize and starts feeling like one idea viewed from two angles. Our <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub extends this further with real datasets, so you can practice choosing α, building intervals, and reporting results the way you'll actually be asked to in coursework or on the job.
+
+If this article helped the concept click, the calculators are where it turns into skill. Run your own numbers through the <Link to={routes.calculatorsHub()}>p-value calculator</Link>, compare a few α thresholds, and watch how the interval width and the test decision move together. That repetition, more than any explanation, is what makes the distinction stick.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — What are statistical tests?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — What are confidence intervals?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Motulsky, H.J. — "Common misconceptions about data analysis and statistics," British Journal of Pharmacology (2014)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4386986/', org: 'PMC / National Library of Medicine' },
+  { text: 'Hypothesis Testing, P Values, Confidence Intervals, and Significance — StatPearls', href: 'https://www.ncbi.nlm.nih.gov/books/NBK557421/', org: 'StatPearls / NCBI Bookshelf' },
+  { text: 'FAQ: What are the differences between one-tailed and two-tailed tests?', href: 'https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/', org: 'UCLA Office of Advanced Research Computing, Statistical Consulting' },
+  { text: 'Alphas, P-Values, and Confidence Intervals, Oh My! — Minitab Blog', href: 'https://blog.minitab.com/en/blog/alphas-p-values-confidence-intervals-oh-my', org: 'Minitab' },
+  { text: 'Significance level — Wikipedia', href: 'https://en.wikipedia.org/wiki/Significance_level', org: 'Wikipedia' },
+  { text: 'Confidence Intervals — course notes, Department of Mathematics and Statistics', href: 'https://www.usu.edu/math/schneit/StatsStuff/Inference/confidenceintervals', org: 'Utah State University' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between confidence level and significance level?',
+    answer: 'They describe the same risk tolerance aimed at different outputs. Significance level (α) is the false-positive risk you accept in a hypothesis test. Confidence level (1 − α) is how often the interval-building method captures the true value if you repeated the study many times. A 0.05 significance level pairs with a 95% confidence level.',
+  },
+  {
+    question: "Does a 95% confidence interval mean there's a 95% probability the true value is inside it?",
+    answer: 'No. Once an interval is calculated, the true parameter either is or is not inside it — there is no probability left to assign. The 95% figure describes long-run behavior: if you repeated the sampling process and built 100 intervals the same way, roughly 95 of them would capture the true value.',
+  },
+  {
+    question: 'Why does lowering the significance level increase the risk of missing a real effect?',
+    answer: 'Shrinking α to reduce false positives (Type I errors) automatically raises the risk of a false negative (a Type II error) unless you also increase your sample size. A stricter threshold demands stronger evidence, and stronger evidence usually means more data or a larger effect to detect it.',
+  },
+  {
+    question: 'How do α and confidence level relate to each other mathematically?',
+    answer: 'Confidence level equals 1 − α — the same threshold expressed two ways. In a two-tailed test, α splits evenly across both tails; in a one-tailed test, the full α sits on one side. A confidence interval that excludes the null value generally corresponds to a p-value smaller than α, though equivalence-testing designs like TOST do not follow this simple mapping.',
+  },
+  {
+    question: 'What should a complete statistical results report include?',
+    answer: 'At minimum: the α set before testing, the test used, the sample size for each group, the test statistic value, the exact p-value (not just "p < 0.05"), the confidence interval with its confidence level stated, and an effect size measure such as a proportion difference or Cohen\'s d.',
+  },
+]} />
