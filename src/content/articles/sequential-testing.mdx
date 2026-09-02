@@ -1,0 +1,228 @@
+---
+title: "Sequential Testing for Students, Researchers, and Product Teams"
+description: "Learn group sequential and alpha spending frameworks, follow a six step prelaunch checklist, and use Statohub calculators to run adjusted interim A/B tests."
+category: experiments-causality
+primaryKeyword: sequential testing
+keywords:
+  - sequential testing
+  - group sequential
+  - alpha spending
+  - interim A/B testing
+phase: 1
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Sequential testing evaluates data as it accumulates and applies pre-specified stopping rules, so you can sometimes reach a valid conclusion before you would with a fixed-sample test. The main benefit is speed: you stop early when the evidence is strong enough. The main trade-off is statistical discipline. Repeated looks at the data inflate your false-positive rate unless you control it with a formal framework such as group sequential design or alpha spending functions.
+
+<KeyTakeaways rows={[
+  { point: 'Stop early, but with discipline', details: 'Sequential testing lets you stop as soon as evidence is strong, but only with boundary adjustments that control the error rate.' },
+  { point: 'Repeated looks inflate false positives', details: 'Multiple data looks raise your false-positive risk above the nominal level unless a framework like alpha spending controls it.' },
+  { point: 'Plan looks, boundaries, and rules upfront', details: 'Define the number of looks, the stopping boundaries, and the rules before the experiment starts, to avoid bias from adaptive changes mid-test.' },
+  { point: 'Early stops overestimate effects', details: 'Stopping early biases the observed effect upward, so bias correction and adjusted p-values are essential before reporting a result.' },
+  { point: 'Best when speed matters and effects are large', details: 'Sequential methods pay off most when you need a fast answer and expect an effect large enough to cross a boundary quickly.' },
+]} />
+
+## What Is Sequential Testing, Exactly?
+
+Fixed-horizon testing, the approach most analysts learn first, requires you to pick a sample size in advance, collect exactly that much data, and analyze it once. [Sequential analysis](https://en.wikipedia.org/wiki/Sequential_analysis) works differently: it evaluates data as it's collected and lets you stop sampling according to a rule you set before the experiment begins, rather than fixing the sample size upfront.
+
+That single design choice changes almost everything downstream. You're no longer running one test at the end of the study. You're running a series of smaller tests, each one a "look" at the accumulating data, and each look carries its own risk of a false positive. Statisticians describe how far along a study is using the **information fraction**, denoted τ, which is simply the accumulated sample size divided by the planned final sample size (n/N). At τ = 0.5, you've collected half the data you originally planned for.
+
+Here's the part that trips up most analysts moving from fixed-horizon testing to sequential methods:
+
+- Every additional look at your data is another chance to see a false positive, purely from chance variation.
+- Check the results five times at a nominal 5% significance threshold, and your actual chance of a <Link to={routes.article('type-i-and-type-ii-errors')}>false positive</Link> across the whole experiment climbs well above 5%.
+- Formal sequential frameworks fix this by adjusting the boundary (the critical value) required at each look, so the *cumulative* error rate across all looks stays at your target level.
+
+That adjustment is the entire discipline behind sequential testing. Skip it, and "peeking" at your dashboard every morning is just uncontrolled multiple testing wearing a statistical disguise.
+
+## How Sequential Testing Differs From Traditional A/B Testing
+
+The workflow itself looks completely different from the moment you design the experiment. A fixed-horizon <Link to={routes.article('how-to-design-an-ab-test')}>A/B test</Link> asks you to commit to a sample size before launch, based on your baseline conversion rate and minimum detectable effect, and then wait until you hit that number. A sequential test asks you to commit to a *monitoring plan* instead: how many times you'll look, when you'll look, and what boundary you'll need to cross to stop.
+
+That single shift ripples through everything else:
+
+<DataTable
+  caption="How the core design decisions change between a fixed-horizon test and a sequential test"
+  headers={['Design element', 'Fixed-horizon testing', 'Sequential testing']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Sample-size planning', 'One fixed number, set before launch', 'A minimum and a maximum — the test can end early or run to a capped ceiling'],
+    ['Monitoring frequency', 'Checked once, at the end', 'Checked at planned intervals or continuously, depending on the framework'],
+    ['P-value interpretation', 'A one-shot nominal p-value means what it says', 'A nominal interim p-value needs adjustment before it means what the same number means in a one-shot test'],
+  ]}
+/>
+
+[Amplitude's practitioner guidance](https://amplitude.com/explore/experiment/sequential-testing) frames this well: sequential testing lets product teams find winners faster while controlling error, but only if the monitoring plan is set up correctly from the start.
+
+So when does each approach win? Sequential testing tends to be the better fit when speed matters and you expect a reasonably large effect, since big effects cross stopping boundaries quickly. Fixed-horizon testing remains the simpler, safer default when the effect you're hunting is small, your traffic is modest, or your team lacks the infrastructure to compute adjusted boundaries reliably.
+
+<Figure number={1} caption="Which approach fits: sequential testing rewards speed and large effects, fixed-horizon testing is the safer default otherwise.">
+  <DecisionTree
+    title="Sequential vs. fixed-horizon testing"
+    desc="A single decision node asks whether speed matters and a large effect is expected. Yes leads to sequential testing; no leads to fixed-horizon testing as the simpler, safer default."
+    root={{
+      label: 'Does speed matter, and do you expect a large effect?',
+      yes: { label: 'Use sequential testing — large effects cross stopping boundaries quickly' },
+      no: { label: 'Use fixed-horizon testing — the simpler, safer default' },
+    }}
+  />
+</Figure>
+
+## Statistical Frameworks Behind Sequential Testing
+
+Several distinct frameworks let you control error across repeated looks, and they differ in flexibility, computational complexity, and how conservative they are early in a study.
+
+**Group sequential designs** are the classical approach, most familiar from clinical trials. You plan a fixed number of interim analyses in advance, and at each one you compute a test statistic and compare it against a boundary calculated from the joint distribution of all the statistics across looks. [Lewis's tutorial on group sequential methods](https://arxiv.org/pdf/2303.01040v1.pdf) notes that this joint-distribution requirement is what makes group sequential methods more complex to implement than a single fixed-sample test, and that permitting early stopping for efficacy or futility can modestly increase total planned sample size to preserve <Link to={routes.article('statistical-power')}>statistical power</Link>.
+
+**Alpha spending functions**, developed by Lan and DeMets, solved a real limitation of early group sequential methods: rigid, pre-committed look schedules. The [gsDesign package's spending-function overview](https://cran.r-project.org/web/packages/gsDesign/vignettes/gsDesignPackageOverview.html) explains how the approach lets you allocate your overall Type I error budget across interim looks as a function of the information fraction, so you can adjust the timing of looks on the fly without inflating error. This flexibility is why spending functions dominate modern practice over rigid group sequential schedules.
+
+Within alpha spending, two named boundary shapes come up constantly:
+
+<DataTable
+  caption="The two boundary shapes used most often in alpha spending"
+  headers={['Boundary shape', 'Alpha spent early', 'Early stopping', 'Final threshold vs. a fixed-sample test']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Pocock', 'Roughly constant rate across looks', 'Easier', 'Slightly less powerful'],
+    ["O'Brien-Fleming", 'Very little spent early', 'Harder', 'Close to a standard fixed-sample threshold'],
+  ]}
+/>
+
+<Callout variant="note" title="A structural trade-off worth internalizing">
+The more conservative your boundary is early in the study, the closer your final analysis behaves to a traditional fixed-sample test, and the less benefit you get from monitoring at all.
+</Callout>
+
+Beyond group sequential and spending functions, two newer families relax the constraints further. **Mixture sequential probability ratio tests (mSPRT)** and other [likelihood-ratio-based sequential tests](https://en.wikipedia.org/wiki/Sequential_probability_ratio_test) support continuous monitoring, checking after every single observation rather than at planned intervals. **Bayesian and e-value approaches** sidestep the frequentist error-spending machinery altogether, framing "when to stop" as a question about accumulated evidence rather than a pre-committed schedule, though they carry their own interpretive trade-offs that are worth understanding before you adopt them.
+
+## Designing a Sequential Test: A Practical Checklist
+
+Building a defensible sequential test is mostly about making decisions before you see any data, not during the experiment. Work through these steps in order:
+
+<Checklist
+  id="sequential-test-design"
+  title="Sequential test design checklist"
+  style="numbered"
+  items={[
+    { text: 'Define your objective and primary metric first', detail: 'Pick one primary metric, the effect size you actually care about detecting, and your acceptable Type I and Type II error rates. Resist the urge to monitor five metrics simultaneously without adjustment.' },
+    { text: 'Choose your framework and monitoring plan', detail: "Decide between group sequential design, alpha spending, or a continuous-monitoring method like mSPRT, and specify exactly how many looks you'll take, or the rule governing continuous checks." },
+    { text: 'Set minimum and maximum sample sizes', detail: 'A minimum protects you from stopping on noise in the first few hours; a maximum caps how long you\'ll run if the effect never materializes. Build in slack for uneven traffic, weekday/weekend patterns, or seasonal spikes.' },
+    { text: 'Select your stopping boundaries and spending parameters', detail: "Decide whether you need an O'Brien-Fleming style conservative boundary or a Pocock style boundary that spends alpha earlier, and write down exactly what happens if you cross an efficacy or futility line." },
+    { text: 'Lock in your data-quality and operational plan', detail: 'Decide who or what triggers a stop, how the metric gets logged, whether assignment stays blinded, and whether stopping is automated or requires human sign-off.' },
+    { text: 'Document your interpretation rules in advance', detail: "Write down what statistic you'll report, whether you'll apply bias correction, and how you'll communicate the result if the test hits its maximum without crossing a boundary." },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Write your stopping rule and boundary choice into a one-page design document before launch, and treat it the same way you'd treat a locked pre-registration. The moment you start adjusting the rule mid-experiment because the data "almost" crossed the line, you've quietly reverted to uncontrolled peeking.
+</Callout>
+
+If you're unsure whether your primary metric setup is even appropriate for hypothesis testing, it's worth a refresher on <Link to={routes.categoryHub('inferential-statistics')}>core inferential statistics concepts</Link> before you commit to a monitoring plan.
+
+## Analyzing and Interpreting Sequential Test Results
+
+The single most important thing to understand about sequential test results is that stopping early biases your effect estimate upward. Sequential analysis documentation on terminated trials shows that studies which stop early tend to overestimate the true treatment effect, and the earlier the stop, the larger that bias tends to be. If your test crosses an efficacy boundary at the very first interim look, treat the observed effect size with real caution rather than reporting it at face value.
+
+This bias has a specific statistical name: **stagewise ordering**. Because a result obtained at an early look is "more extreme" relative to what a fixed-sample test would require, standard <Link to={routes.article('p-value')}>p-values</Link> and confidence intervals computed as if the test had a fixed sample size will be misleading. Analysts correct for this in a few ways:
+
+<DataTable
+  caption="How analysts correct for stagewise-ordering bias after an early stop"
+  headers={['Correction', 'What it does']}
+  align={['left', 'left']}
+  rows={[
+    ['Adjusted p-values', 'Account for the number and timing of looks, not just the final one, so the reported significance reflects the true cumulative error spent.'],
+    ['Bias-corrected point estimates', 'Shrink the observed effect toward zero to counteract the inflation from early stopping, particularly useful when sizing a follow-up decision on that number.'],
+    ['Repeated confidence intervals', 'Built specifically for sequential designs; stay valid at whatever point you stop, unlike a naive interval computed as though the sample size had been fixed from the start.'],
+  ]}
+/>
+
+When you report a sequential test result, state four things plainly: the stopping rule used, the information fraction at which you stopped, whether you applied bias correction, and the adjusted (not naive) p-value or confidence interval. Skipping any of these turns a legitimate sequential result into something a skeptical reader can't actually evaluate.
+
+## A Worked A/B Example and a Clinical-Trial Note
+
+A concrete number makes the mechanics click faster than any formula. Here's how a sequential design plays out against that setup:
+
+<Figure number={2} caption="A three-look sequential design: plan the looks by information fraction, apply a conservative early boundary, then stop or continue.">
+  <ProcessFlow
+    title="Worked sequential A/B example"
+    desc="A three-step horizontal flow: plan interim looks around information fraction, apply a conservative O'Brien-Fleming boundary early, then either cross the boundary and stop or continue to the next look."
+    steps={[
+      { label: 'Plan looks by information fraction', detail: 'Space interim analyses across the planned sample, at fractions like a quarter, half, three-quarters, and the full amount of data.' },
+      { label: 'Apply a conservative boundary early', detail: "Using an O'Brien-Fleming style spending function, the critical value at τ = 0.25 is much stricter than a standard two-sided 5% threshold, loosening at each later look." },
+      { label: 'Cross the boundary, or don\'t', detail: 'If the observed lift clears the τ = 0.5 boundary, stop, document the information fraction, and apply bias correction before reporting the effect size.' },
+    ]}
+  />
+</Figure>
+
+Clinical trials have used this exact logic for decades, which is part of why group sequential designs are well accepted by regulators for pivotal studies: the framework lets a trial stop early for overwhelming efficacy, or for futility when the treatment clearly isn't working, protecting patients from unnecessary exposure in both directions. The general lesson carries directly into product experimentation: plan your looks around information fraction, commit to boundaries before launch, and treat futility as seriously as efficacy.
+
+## Tools and Resources for Running Sequential Tests
+
+You don't need custom software to start applying these ideas correctly. Statohub's <Link to={routes.calculator('t-test')}>t-test calculator</Link> and <Link to={routes.calculator('p-value')}>p-value calculator</Link> handle the interim statistic computations at each look, once you've set your adjusted critical value from your chosen spending function. If you need a refresher on what a p-value actually represents before adjusting it for repeated looks, the <Link to={routes.article('p-value')}>p-value guide</Link> covers the fundamentals cleanly.
+
+For the multiple-comparisons logic underlying why repeated looks need correction in the first place, Statohub's guide to <Link to={routes.article('post-hoc-tests')}>post-hoc tests and multiple-comparison corrections</Link> draws a useful parallel. On the technical side, R and Python both have packages built for computing group sequential boundaries and simulating operating characteristics before you ever touch real data, and [Evan Miller's sequential A/B testing walkthrough](https://www.evanmiller.org/sequential-ab-testing.html) remains one of the clearest code-adjacent explanations of how sample-size tables behave under sequential monitoring.
+
+## Statohub's Take on When Sequential Testing Earns Its Complexity
+
+Sequential testing is a tool for a specific problem, not a universal upgrade over fixed-horizon testing. Statohub recommends it when speed genuinely matters and your team has the discipline to pre-specify a monitoring plan and stick to it, not as a default setting for every experiment you run. Teams that adopt sequential methods purely to "check results early" without adopting the error-control machinery underneath are usually worse off than teams that just ran a clean fixed-sample test.
+
+This is exactly why Statohub built the Applied Statistics hub around a Learn → Calculate → Apply flow: understanding the fundamentals of statistical inference has to come before you touch a calculator, and the calculator has to come before you trust a live result.
+
+## Start Designing Your Sequential Test the Right Way
+
+You now have the framework, the checklist, and the worked example. What you need next is a place to run the numbers without guesswork. Statohub's <Link to={routes.calculatorsHub()}>calculators</Link> let you compute t-tests, p-values, and other interim statistics directly, so you can verify whether an observed result actually clears your adjusted boundary rather than eyeballing a dashboard. Pair that with the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link>, where <Link to={routes.categoryHub('experiments-causality')}>experiments and causality articles</Link> walk through related design questions like sample-size planning and confounding, and the <Link to={routes.learnLanding()}>Learn</Link> section, where the underlying inferential concepts get explained in plain terms before you apply them. Open the t-test calculator, plug in your baseline and minimum detectable effect, and start building your monitoring plan today.
+
+## Sources
+
+For deeper technical grounding, the gsDesign package overview and the arXiv tutorial on group sequential methods cover the mathematics in detail, the FDA's adaptive-designs guidance covers the regulatory context, and the Wikipedia overview of sequential analysis is a solid starting point for historical context.
+
+<Sources items={[
+  { text: 'Sequential analysis', href: 'https://en.wikipedia.org/wiki/Sequential_analysis', org: 'Wikipedia' },
+  { text: 'Sequential probability ratio test', href: 'https://en.wikipedia.org/wiki/Sequential_probability_ratio_test', org: 'Wikipedia' },
+  { text: 'gsDesign Package Overview — spending functions for group sequential design', href: 'https://cran.r-project.org/web/packages/gsDesign/vignettes/gsDesignPackageOverview.html', org: 'CRAN (Keaven Anderson)' },
+  { text: 'Lewis, "An Introduction to Group Sequential Methods: Planning and Multi-Aspect Optimization" (arXiv:2303.01040)', href: 'https://arxiv.org/pdf/2303.01040v1.pdf', org: 'arXiv' },
+  { text: 'Sequential Testing Explained', href: 'https://amplitude.com/explore/experiment/sequential-testing', org: 'Amplitude' },
+  { text: 'Simple Sequential A/B Testing', href: 'https://www.evanmiller.org/sequential-ab-testing.html', org: 'Evan Miller' },
+  { text: 'Adaptive Designs for Clinical Trials of Drugs and Biologics — Guidance for Industry', href: 'https://www.fda.gov/media/78495/download', org: 'U.S. Food and Drug Administration' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is sequential testing?',
+    answer: 'Sequential testing evaluates data as it accumulates and applies pre-specified stopping rules, so you can sometimes reach a valid conclusion before a fixed-sample test would finish. It trades the simplicity of a single fixed sample size for a monitoring plan that can end the test early when evidence is strong enough.',
+  },
+  {
+    question: 'How is sequential testing different from a fixed-horizon A/B test?',
+    answer: "A fixed-horizon test commits to one sample size before launch and analyzes the data once at the end. A sequential test commits to a monitoring plan instead — how many times you'll look, when you'll look, and what boundary you need to cross to stop — which changes sample-size planning, monitoring frequency, and how you interpret p-values.",
+  },
+  {
+    question: 'Why does peeking at results multiple times inflate the false-positive rate?',
+    answer: 'Every additional look at accumulating data is another chance to see a false positive from chance variation alone. Checking results repeatedly at a nominal 5% threshold pushes your actual false-positive rate across the whole experiment well above 5%, unless a formal framework adjusts the boundary at each look.',
+  },
+  {
+    question: "What's the difference between Pocock and O'Brien-Fleming boundaries?",
+    answer: "Pocock boundaries spend the error budget at a roughly constant rate across looks, which makes early stopping easier but the final analysis slightly less powerful. O'Brien-Fleming boundaries spend very little early and save most of the budget for later looks, making early stopping harder but keeping the final threshold close to a standard fixed-sample test.",
+  },
+  {
+    question: 'Why does stopping a test early bias the effect estimate?',
+    answer: 'A result observed at an early look is statistically more extreme than what a fixed-sample test would require to reach the same conclusion — a phenomenon called stagewise ordering. That means naive effect sizes and p-values from an early stop tend to overestimate the true effect, so analysts apply bias-corrected point estimates and adjusted p-values before reporting results.',
+  },
+]} />

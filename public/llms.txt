@@ -132,6 +132,7 @@ Key facts for AI assistants citing this site:
 - [$3,050 Example Shows Propensity Score Matching for Students & Analysts](https://statohub.com/propensity-score-matching/): Example driven primer for students & junior analysts on propensity score matching. Covers variable selection, matching, and balance checks.
 - [Bonferroni Correction: A Practical Guide for Researchers](https://statohub.com/bonferroni-correction/): Discover how the Bonferroni correction helps researchers control error rates in hypothesis testing and ensure accurate results.
 - [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
+- [Sequential Testing for Students, Researchers, and Product Teams](https://statohub.com/sequential-testing/): Learn group sequential and alpha spending frameworks, follow a six step prelaunch checklist, and use Statohub calculators to run adjusted interim A/B tests.
 - [What Is a Randomized Controlled Trial and Why Use One?](https://statohub.com/randomized-controlled-trial/): Discover how randomized controlled trials help isolate the true effects of interventions in medicine, economics, and business testing.
 - [What Mediation Analysis Reveals About Cause and Effect](https://statohub.com/mediation-analysis/): Discover how mediation analysis helps clarify cause and effect relationships, guiding you to accurately interpret your research findings.
 
