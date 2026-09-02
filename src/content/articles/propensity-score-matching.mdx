@@ -1,0 +1,280 @@
+---
+title: "$3,050 Example Shows Propensity Score Matching for Students & Analysts"
+description: "Example driven primer for students & junior analysts on propensity score matching. Covers variable selection, matching, and balance checks."
+category: experiments-causality
+primaryKeyword: propensity score matching
+keywords:
+  - propensity score matching
+  - variable selection
+  - balance checks
+phase: 1
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Propensity score matching pairs treated and untreated units that share a similar predicted probability of receiving treatment, given their observed characteristics, then compares outcomes across those matched pairs. It typically estimates the average treatment effect on the treated (ATT) and works by mimicking, on paper, what randomization does in an experiment. The catch, and it's a serious one, is that it only balances the confounders you actually measured. Anything hidden stays hidden.
+
+<KeyTakeaways variant="bullets" bullets={[
+  'Propensity score matching effectively balances observed covariates but cannot control for unmeasured confounders, risking biased estimates if relevant variables are missing.',
+  'Use a caliper of about 0.2 times the standard deviation of the logit of the propensity score to improve match quality and reduce bias.',
+  'Check covariate balance with standardized mean differences below 0.1 post-matching, and consider trimming units outside the area of common support to avoid bias.',
+  'The typical estimand of interest is the ATT, which reflects the effect on units similar to those who received treatment, not the entire population.',
+  'Variance estimation should account for the matching design, with bootstrap methods often recommended for reliable confidence intervals.',
+]} />
+
+## What Is a Propensity Score, and Why Does It Help?
+
+A propensity score is the probability that a given unit, a patient, a customer, a firm, receives treatment given its observed covariates. Formally, [Rosenbaum and Rubin's original 1983 formulation](https://www.stat.cmu.edu/~ryantibs/journalclub/rosenbaum_1983.pdf) defines it as e(x) = P(treatment = 1 | X = x). That's the entire concept in one line, but the reason it works is worth sitting with.
+
+Imagine you're studying whether a job-training program raises earnings. Participants likely differ from non-participants in age, education, prior employment history, and a dozen other traits. Comparing raw averages between the two groups conflates the program's effect with all those pre-existing differences. This is precisely the trap covered in <Link to={routes.article('correlation-vs-causation')}>correlation versus causation</Link>: a naive comparison mistakes selection effects for causal effects.
+
+The propensity score solves a practical problem: you can't match people on ten covariates at once without running out of exact matches. But Rosenbaum and Rubin proved something elegant. If you condition on the propensity score alone, a single number between 0 and 1, you achieve the same covariate balance as if you'd conditioned on the entire vector of covariates. That's the "balancing-score" property, and it's the reason the whole method is tractable. Ten variables become one.
+
+Once you match on that score, you're approximating a randomized controlled trial for the subset of covariates you observed. Treated and matched-control units should look statistically similar on age, education, income history, whatever went into the model. That's why PSM typically targets the ATT rather than the average treatment effect (ATE) across everyone: you're asking what the treatment did for the people who actually got it, using untreated people as stand-ins for what would have happened otherwise.
+
+The limitation sits right there in the phrase "observed covariates." If something unmeasured, motivation, unrecorded health status, informal network access, drives both treatment uptake and the outcome, propensity score matching cannot correct for it. It balances what you can see, not what you can't.
+
+## When Should You Use Propensity Score Matching?
+
+PSM fits best when you have an observational dataset, a reasonably rich set of measured confounders, and decent overlap between treated and untreated groups on those confounders. Think administrative records, electronic health data, or survey panels where randomization was never an option but you have solid covariate coverage.
+
+It's a poor fit in two common scenarios. First, when a key confounder wasn't recorded at all, no amount of clever matching brings it back into the analysis. Second, when treated and untreated units occupy almost non-overlapping regions of covariate space, matching has nothing sensible to pair.
+
+Other estimators solve overlapping but distinct problems. Inverse probability of treatment weighting (IPTW) uses the same propensity score but weights the full sample rather than discarding unmatched units, which often targets the ATE instead of the ATT. Regression adjustment models the outcome directly and can extrapolate beyond the data, sometimes riskily. Instrumental variable methods sidestep the confounding problem entirely by finding a variable that shifts treatment without directly affecting the outcome, useful when unmeasured confounding is the real worry, but good instruments are rare in practice. Choose based on your estimand and your confidence in measured covariates, not habit.
+
+## How Do You Estimate Propensity Scores?
+
+Logistic regression is the default choice, and for good reason: it's transparent, fast, and its coefficients are easy to sanity-check against subject-matter knowledge. You regress the treatment indicator on the covariates you believe drive both treatment assignment and the outcome, then take the predicted probabilities as your scores.
+
+Alternatives exist for good reasons. Generalized additive models (GAMs) allow flexible, non-linear relationships between covariates and treatment probability without you having to specify interaction terms manually. Machine-learning approaches, random forests and gradient boosting in particular, can capture complex interactions automatically. But here's a mindset shift worth internalizing: the propensity model is not a prediction contest. A model that classifies treatment assignment with [95%](https://imai.fas.harvard.edu/research/CBPS.html) accuracy might produce worse covariate balance than a simpler model with 70% accuracy, because balance, not classification skill, is the actual goal.
+
+Variable selection is where a lot of student projects go wrong. The rule of thumb is straightforward:
+
+<Checklist
+  id="variable-selection"
+  title="Variable selection checklist for the propensity model"
+  style="check"
+  items={[
+    'Include variables that plausibly predict both treatment assignment and the outcome, the classic confounders.',
+    'Include strong predictors of the outcome even if their link to treatment is modest, since omitting them can weaken balance on important dimensions.',
+    'Exclude instruments, variables that affect treatment but not the outcome directly, since including them can inflate variance without reducing bias.',
+    'Exclude colliders and pure mediators, variables that sit downstream of treatment, since conditioning on them can introduce bias rather than remove it.',
+    "Avoid variables measured after treatment assignment; they may reflect the treatment's effect rather than a pre-existing condition.",
+  ]}
+/>
+
+After fitting the model, check the distribution of predicted scores before doing anything else. If treated and untreated groups produce almost non-overlapping histograms, matching will struggle no matter which algorithm you pick next.
+
+<Callout variant="tip" title="Pro tip">
+Run the propensity model, then immediately plot the predicted scores by group before you touch a matching algorithm. A five-minute histogram check saves hours of debugging a matching routine that was destined to fail on overlap alone.
+</Callout>
+
+## Which Matching Algorithm Should You Choose?
+
+The algorithm you pick changes both your effective sample size and how well-matched your pairs actually are, and the trade-offs are more concrete than they first appear.
+
+1. **Nearest-neighbor matching** pairs each treated unit with the untreated unit whose propensity score is closest. It's simple to implement and simple to explain in a methods section, which matters for a thesis committee or a journal reviewer. Matching without replacement means each control is used once, which keeps variance calculations straightforward but can leave some treated units poorly matched if good controls run out. Matching with replacement lets a strong control match multiple treated units, improving match quality at the cost of a slightly more complicated variance estimate.
+
+2. **Caliper (or radius) matching** adds a constraint: only accept a match if the propensity-score distance falls within a specified caliper width. This prevents the algorithm from pairing units whose scores are technically closest but still far apart in absolute terms. Austin's guidance recommends a caliper of roughly 0.2 times the standard deviation of the logit of the propensity score, a rule of thumb that consistently reduces bias in simulation studies without discarding too many usable pairs.
+
+3. **Optimal matching** takes a global view. Rather than greedily pairing off units one at a time, it minimizes the total distance summed across all pairs simultaneously. This tends to produce closer matches overall and can retain more treated units than a naive nearest-neighbor pass, though it's more computationally demanding on large datasets.
+
+4. **Full matching** goes further still, allowing variable-sized matched sets, one treated unit to several controls, or several treated units to one control, so that essentially every unit finds a place in some matched set. This preserves sample size better than one-to-one approaches, which matters when your treated group is already small.
+
+5. **Many-to-one matching** sits between nearest-neighbor and full matching: each treated unit gets matched to a fixed number of controls (say, two or three), trading some match precision for lower variance in the effect estimate, since you're now averaging over more control observations per treated unit.
+
+6. **Kernel weighting** skips discrete pairing altogether. Every control contributes to a treated unit's counterfactual estimate, weighted by how close its propensity score is, via a kernel function. It's a soft-matching alternative that uses more of the available data but requires a bandwidth choice, which introduces its own bias-variance trade-off.
+
+For a first project, nearest-neighbor with a 0.2 caliper is a defensible, well-documented starting point. Move to optimal or full matching once you've confirmed that greedy matching is leaving treated units stranded or producing unstable balance across repeated runs.
+
+## How Do You Check Balance After Matching?
+
+Balance diagnostics tell you whether the matching actually did its job, and skipping this step is one of the most common failures in applied work.
+
+The standardized mean difference (SMD) is the workhorse statistic. It expresses the difference in covariate means between treated and matched-control groups in units of pooled standard deviation, which makes it comparable across variables measured on different scales. Austin's balance-diagnostics work treats an SMD below 0.1 as a reasonable benchmark for adequate balance, with values between 0.1 and 0.25 flagged as worth scrutinizing rather than automatically acceptable.
+
+<Callout variant="note" title="Judge the match, not the classifier">
+Balance, not predictive accuracy, is what determines whether your propensity model succeeded. A model that discriminates perfectly between treated and untreated units can still leave covariates poorly balanced after matching, and a model that predicts treatment mediocre can produce excellent balance.
+</Callout>
+
+Beyond SMDs, a few visual checks round out a thorough diagnostic pass:
+
+- **Love plots** display SMDs for every covariate before and after matching in a single chart, making it immediately obvious which variables improved and which didn't.
+- **Propensity-score histograms or density plots**, split by treatment group, reveal overlap problems that a single summary statistic can mask.
+- **Variance ratios** between treated and control covariate distributions catch cases where means match but spread doesn't, a subtler imbalance that SMDs alone can miss.
+- **Empirical CDF plots** for continuous covariates show whether the entire distribution, not just the mean, lines up across groups.
+
+If diagnostics come back poor, you have three honest options, and pretending the problem away isn't one of them. Trim the sample to the region of common support, discarding treated units with no comparable controls. Restrict your estimand explicitly to the population where overlap exists, and say so in your write-up rather than implying the result generalizes further than it does. Or try a different matching specification, a tighter caliper, a different set of covariates, before concluding the data simply can't support a credible comparison. The common-support literature is blunt on this point: failing to define common support explicitly is one of the more consistent sources of bias in applied matching studies.
+
+## How Do You Estimate the Treatment Effect After Matching?
+
+Once matching is done and balance looks acceptable, estimating the effect itself is usually the easy part, though the details still matter for getting your standard errors right.
+
+The simplest approach is a difference in means computed directly on the matched sample, treated group average outcome minus matched-control group average outcome. This works cleanly for one-to-one matching without replacement. A more robust alternative runs a regression of the outcome on the treatment indicator, using only the matched sample, and optionally includes covariates as a double-check against any residual imbalance. This regression-on-matched-data approach tends to tighten confidence intervals slightly and provides a natural place to add covariate adjustment as a belt-and-suspenders move.
+
+Which estimand you're identifying matters for interpretation. Matching on the treated group's propensity scores, discarding unmatched controls, typically delivers the ATT: the effect for units similar to those who actually received treatment. This differs from IPTW, which commonly targets a population-average estimand by reweighting the full sample rather than subsetting it. Know which one your method estimates before you write your conclusion, since ATT and ATE can genuinely differ when treatment effects vary across the covariate distribution.
+
+Variance estimation deserves more care than students typically give it:
+
+- Standard errors that ignore the matching process, treating the matched sample as if it were an original random sample, tend to understate uncertainty.
+- Matching with replacement introduces additional complexity, since a single control unit can appear in multiple matched pairs, and this correlation needs to be reflected in the variance calculation.
+- [Bootstrap resampling](https://web.stanford.edu/~swager/causal_inf_book.pdf) is a common practical workaround when the analytic variance formula for a particular matching design is unclear or unavailable, though it requires resampling in a way that respects the matching structure rather than the raw dataset.
+
+Report whichever variance approach you use explicitly. A confidence interval without a stated method behind it is close to meaningless in a matched-data context.
+
+## What Assumptions and Pitfalls Should You Watch For?
+
+Two assumptions carry the entire causal claim, and both deserve more scrutiny than a single sentence in a methods section usually gives them.
+
+Unconfoundedness, sometimes called strong ignorability, requires that treatment assignment be independent of the potential outcomes once you condition on the observed covariates. There's no statistical test that confirms this. You defend it with subject-matter reasoning: did you measure the variables that plausibly drive both who gets treated and how they'd fare either way? Sensitivity analyses, checking how large an unmeasured confounder would need to be to overturn your result, are the closest thing to a formal check available, and reviewers increasingly expect at least a qualitative version of this argument.
+
+Positivity, the common-support condition, requires that every covariate combination present among treated units also has a realistic chance of appearing among untreated units. When this fails, some treated units simply have no honest comparison group, and they need to be excluded rather than force-matched to a poor substitute.
+
+A short list of mistakes that come up again and again in applied projects:
+
+- **Overcontrolling** by including every available variable in the propensity model, some of which may be colliders or mediators that introduce bias rather than remove it.
+- **Proceeding on weak overlap**, matching units with wildly different propensity scores because the algorithm technically found a "nearest" neighbor, even when that neighbor isn't close in any meaningful sense.
+- **Skipping balance diagnostics entirely** and assuming that matching automatically produces balance, when in practice a poorly specified propensity model can leave covariates just as imbalanced as before matching.
+- **Treating the propensity score as a causal effect** rather than a nuisance parameter whose only job is to enable balanced comparison.
+- **Reporting ATT results as if they generalize to the full population**, without noting that the estimate applies specifically to units resembling the treated group.
+
+<Callout variant="tip" title="Pro tip">
+Write your sensitivity analysis before you see your final results, not after. Deciding in advance how much unmeasured confounding it would take to overturn your conclusion keeps you honest about the strength of your evidence.
+</Callout>
+
+## A Worked Example: From Research Question to ATT
+
+Consider a common student project design: does completing an online statistics certification (the "treatment") raise starting salary for recent graduates? You have observational data on 400 graduates, 120 of whom completed the certification voluntarily, and 280 who did not.
+
+**Step 1: Define the estimand and data needed.** You want the ATT, the effect of certification on the graduates who actually pursued it. You need pre-treatment covariates that plausibly drive both certification uptake and salary: undergraduate GPA, major, prior internship experience, and university tier. Collect these before matching, and confirm none of them was measured after certification status was known.
+
+**Step 2: Check pre-match covariate balance.** Before doing anything else, compare the two groups as they stand. Every SMD sits well above the 0.1 benchmark. This confirms what you'd suspect: students who pursue certification differ systematically from those who don't, and a raw salary comparison would mostly be measuring who self-selects into the program, not what the program does.
+
+**Step 3: Estimate propensity scores.** Fit a logistic regression of certification status on the four covariates above. The predicted scores for the 120 certified graduates cluster mostly between 0.35 and 0.85. Among the 280 non-certified graduates, scores range more broadly from 0.05 to 0.75. That upper tail mismatch, certified students with scores above 0.75 having few non-certified counterparts, is worth flagging now, since it foreshadows where matching will struggle.
+
+**Step 4: Perform matching.** Using nearest-neighbor matching without replacement and a caliper recommended by standard guidance, the algorithm successfully matches most of the certified graduates to comparable non-certified peers. Some certified graduates, mostly those with the highest propensity scores, fall outside the common-support region and get excluded, a decision you report explicitly rather than burying in a footnote. Post-match balance improves sharply: all four SMDs now fall under the 0.1 threshold, which is the green light to proceed to effect estimation.
+
+**Step 5: Compute the ATT and interpret it.** On the matched sample, average starting salary for certified graduates is higher than their matched non-certified counterparts, with a bootstrap confidence interval indicating uncertainty in the effect. In plain language: among graduates who resembled the type of student likely to pursue certification, completing it appears associated with higher starting salary, though the estimate applies specifically to that matched subgroup and not to those excluded for lack of comparable controls.
+
+**Step 6: Check sensitivity to specification choices.** Rerunning the match with a tighter caliper (0.1 times the logit SD) drops the matched sample to 89 pairs but shifts the ATT estimate only modestly, to roughly $3,050. Switching to optimal matching instead of nearest-neighbor produces a similar estimate with slightly tighter balance on GPA. That stability across specifications is itself informative. It suggests the result isn't an artifact of one arbitrary algorithmic choice, though it still says nothing about the graduates you never had good comparisons for in the first place.
+
+<Figure number={1} caption="The worked example's six-step path from research question to a sensitivity-checked ATT estimate.">
+  <ProcessFlow
+    title="PSM workflow example"
+    desc="A six-step vertical flow: data and estimand (400 grads, 120 treated, 280 control), covariates (GPA, major, internships, university tier), propensity scores (treated 0.35-0.85, controls 0.05-0.75), matching (nearest-neighbor with caliper, some exclusions), the ATT estimate ($3,050 higher salary with a bootstrap confidence interval), and a sensitivity check (tighter caliper drops the sample to 89 matched pairs)."
+    direction="vertical"
+    steps={[
+      { label: 'Data & estimand', detail: '400 grads; 120 treated, 280 control' },
+      { label: 'Covariates', detail: 'GPA, major, internships, university tier' },
+      { label: 'Propensity scores', detail: 'Treated 0.35-0.85; controls 0.05-0.75' },
+      { label: 'Matching', detail: 'Nearest-neighbor with caliper; some exclusions' },
+      { label: 'ATT estimate', detail: '$3,050 higher salary; bootstrap CI' },
+      { label: 'Sensitivity check', detail: 'Tighter caliper leads to 89 matched pairs' },
+    ]}
+  />
+</Figure>
+
+## Which Software and Packages Handle Propensity Score Matching?
+
+You don't need to build any of this from scratch. Established packages across major statistical platforms handle propensity score estimation, matching, and diagnostics with well-tested defaults.
+
+- **R** users typically reach for `MatchIt`, which wraps nearest-neighbor, optimal, and full matching behind a single `matchit()` function, alongside `Matching` and `optmatch` for more specialized matching designs.
+- **Stata** offers `teffects psmatch` as a built-in command, plus the widely used community-contributed `psmatch2` for additional matching options and diagnostics.
+- **SAS** provides the `PSMatch` procedure, covering propensity estimation, several matching methods, and balance assessment in one macro-driven workflow.
+- **Python** analysts commonly use `PsmPy` for a straightforward matching pipeline, often paired with `statsmodels` for the underlying logistic regression.
+
+Whichever tool you use, set a random seed before matching, especially with nearest-neighbor approaches where tie-breaking involves randomness, and save your full script rather than just your output. A matched analysis that can't be rerun by someone else, including you in six months, isn't a finished analysis yet.
+
+## A Quick Checklist Before You Run and Report Your Analysis
+
+Use this as a pre-flight check before starting the analysis, and again before writing up results:
+
+- State your causal question and target estimand (ATT versus ATE) explicitly, before touching any code.
+- Justify covariate selection using subject-matter reasoning, excluding instruments and post-treatment variables.
+- Estimate propensity scores and inspect the overlap between groups before committing to a matching algorithm.
+- Choose a matching method (nearest-neighbor, caliper, optimal, or full) that fits your sample size and overlap pattern.
+- Report standardized mean differences before and after matching for every covariate in the model.
+- Document how many units were excluded for lack of common support, and what that implies for generalizability.
+- State your variance-estimation method and whether it accounts for the matching design.
+- Include a sensitivity discussion addressing the unconfoundedness assumption, even briefly.
+
+<DataTable
+  caption="Why each item on the pre-analysis checklist matters"
+  headers={['Checklist item', 'Why it matters']}
+  align={['left', 'left']}
+  rows={[
+    ['Define estimand upfront', 'Prevents mismatched conclusions later'],
+    ['Justify covariates', 'Avoids colliders and instruments biasing results'],
+    ['Report SMDs pre- / post-match', 'Verifies the match actually balanced the data'],
+    ['Disclose exclusions', 'Keeps generalizability claims honest'],
+    ['State variance method', 'Makes confidence intervals interpretable'],
+  ]}
+/>
+
+## Practical Lessons From Applied Projects
+
+Across applied projects worth reviewing, the failure pattern is rarely the matching algorithm itself. It's skipping the balance check and assuming that fitting a propensity model automatically produces a good match. It doesn't. A logistic regression with a reasonable pseudo-R-squared can still leave covariates badly imbalanced if the wrong variables went in.
+
+The second lesson: rigor and feasibility pull against each other in student timelines, and that's fine. A well-executed nearest-neighbor match with honest diagnostics beats an ambitious full-matching design with no balance table at all. Start simple, verify balance, then add complexity only if the diagnostics tell you to.
+
+For the underlying mechanics behind treatment-versus-control comparisons, Statohub's <Link to={routes.categoryHub('experiments-causality')}>experiments and causality</Link> section is a useful companion to this one, and the <Link to={routes.appliedLanding()}>applied statistics hub</Link> collects similar worked examples across other methods.
+
+## Where to Go Next
+
+Statohub's Applied Statistics hub collects worked, example-driven articles like this one across data analysis, forecasting, and machine learning statistics, built for exactly the moment when you understand the theory but need to see it run end to end. If propensity score matching is one tool in a broader causal-inference toolkit you're assembling, the <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> section covers the randomization and bias concepts that make matching necessary in the first place.
+
+Before running your own analysis, the <Link to={routes.learnLanding()}>Learn Statistics</Link> hub covers the foundational ideas, confidence intervals, hypothesis testing, standard deviation, that underpin every diagnostic in this guide. And once you've estimated your matched-sample averages, Statohub's <Link to={routes.calculator('average')}>average calculator</Link> and <Link to={routes.calculator('probability')}>probability calculator</Link> can handle the arithmetic while you focus on interpretation. If you want to formalize the comparison between matched groups, the <Link to={routes.calculator('t-test')}>t-test calculator</Link>, <Link to={routes.calculator('chi-square')}>chi-square calculator</Link>, and <Link to={routes.calculator('p-value')}>p-value calculator</Link> cover the follow-up significance tests, and the <Link to={routes.categoryHub('data-analysis')}>data analysis</Link> hub covers the broader descriptive toolkit.
+
+A reasonable next step: read the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> for a related worked example, then rerun the covariate-balance table from this article's worked example using your own dataset before touching a matching algorithm at all.
+
+## Sources
+
+<Sources items={[
+  { text: 'Rosenbaum PR, Rubin DB — "The Central Role of the Propensity Score in Observational Studies for Causal Effects," Biometrika (1983)', href: 'https://www.stat.cmu.edu/~ryantibs/journalclub/rosenbaum_1983.pdf', org: 'Carnegie Mellon University' },
+  { text: 'Austin PC — "Optimal Caliper Widths for Propensity-Score Matching When Estimating Differences in Means and Differences in Proportions in Observational Studies," Pharmaceutical Statistics (2011)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3120982/', org: 'PMC' },
+  { text: 'Austin PC — "Balance Diagnostics for Comparing the Distribution of Baseline Covariates Between Treatment Groups in Propensity-Score Matched Samples," Statistics in Medicine (2009)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3472075/', org: 'PMC' },
+  { text: 'Imai K, Ratkovic M — Covariate Balancing Propensity Score (CBPS)', href: 'https://imai.fas.harvard.edu/research/CBPS.html', org: 'Harvard University' },
+  { text: 'Wager S — Causal Inference: A Statistical Learning Approach (course text)', href: 'https://web.stanford.edu/~swager/causal_inf_book.pdf', org: 'Stanford University' },
+  { text: 'MatchIt package documentation', href: 'https://cran.r-project.org/web/packages/MatchIt/index.html', org: 'CRAN / The R Project' },
+  { text: 'teffects psmatch reference manual', href: 'https://www.stata.com/manuals13/teteffectspsmatch.pdf', org: 'StataCorp' },
+  { text: 'The PSMATCH Procedure, SAS/STAT User’s Guide', href: 'https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/statug/statug_psmatch_overview.htm', org: 'SAS Institute' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Does propensity score matching control for unmeasured confounders?',
+    answer: "No. Propensity score matching only balances the covariates you actually measured and included in the model. If an unmeasured factor drives both treatment uptake and the outcome, matching cannot correct for it — the resulting estimate can still be biased even after achieving excellent balance on every observed covariate.",
+  },
+  {
+    question: 'What standardized mean difference counts as good covariate balance?',
+    answer: "A standardized mean difference (SMD) below 0.1 is a reasonable benchmark for adequate balance after matching, per Austin's balance-diagnostics work. Values between 0.1 and 0.25 are worth scrutinizing rather than automatically accepted, and anything higher signals the matching specification needs revisiting before you trust the balance.",
+  },
+  {
+    question: 'What caliper width should I use for nearest-neighbor matching?',
+    answer: "A commonly used starting point is a caliper of about 0.2 times the standard deviation of the logit of the propensity score. This width consistently reduces bias in simulation studies without discarding too many usable matched pairs, and tightening it, say to 0.1, trades sample size for closer matches.",
+  },
+  {
+    question: 'Does propensity score matching estimate the ATT or the ATE?',
+    answer: "Matching on the treated group's propensity scores and discarding unmatched controls typically delivers the average treatment effect on the treated (ATT). This differs from inverse probability of treatment weighting, which commonly targets a population-average estimand, the ATE, by reweighting the full sample instead of subsetting it.",
+  },
+  {
+    question: 'Should I pick the propensity model with the best predictive accuracy?',
+    answer: "No. Balance, not classification skill, is the goal. A model that discriminates almost perfectly between treated and untreated units can still leave covariates poorly balanced after matching, while a model with weaker predictive accuracy can produce excellent balance — judge the propensity model by the balance it produces.",
+  },
+]} />

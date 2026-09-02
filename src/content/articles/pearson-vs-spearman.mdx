@@ -1,0 +1,215 @@
+---
+title: "Pearson vs Spearman: Plot First 5 Step Checklist for Students"
+description: "Choose between Pearson and Spearman with a plot first workflow. Follow a clear 5 step checklist for students, see worked examples, and try Statohub..."
+category: data-analysis
+primaryKeyword: pearson vs spearman
+keywords:
+  - pearson vs spearman
+  - pearson and spearman
+  - plot first workflow
+  - 5 step checklist
+phase: 1
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Use Pearson when your two variables are continuous and their relationship looks linear on a scatterplot. Use Spearman when the relationship is monotonic but curved, when your data are ordinal, or when a handful of extreme values could distort a linear measure. Either way, plot the data before you calculate anything, and state which coefficient you used and why when you report your results.
+
+<KeyTakeaways variant="bullets" bullets={[
+  'Spearman is more reliable than Pearson when the data contain outliers or heavy tails, especially if the relationship is monotonic but not linear.',
+  "For small samples with many tied ranks, Kendall's tau can provide a more stable estimate than Spearman.",
+  'Always plot your data and check the relationship shape before selecting the coefficient, rather than relying solely on numerical output.',
+  'Calculating both Pearson and Spearman and comparing results clarifies whether the relationship is linear or just monotonic.',
+  "Use the coefficient that matches your data's measurement level; apply Spearman for ordinal data and Pearson for continuous, linear relationships.",
+]} />
+
+## Pearson vs. Spearman: What Each Coefficient Actually Measures
+
+Pearson's r is the classic measure of linear association between two continuous variables. It asks a narrow question: as one variable rises, does the other rise (or fall) at a roughly constant rate? Values run from −1 to +1, where 0 means no linear pattern, +1 means a perfect increasing line, and −1 means a perfect decreasing one, as described in this [tutorial on correlation methods](https://pmc.ncbi.nlm.nih.gov/articles/PMC7779167/).
+
+Spearman's rho asks a broader question. Instead of working with raw values, it converts each variable to ranks, then calculates Pearson's formula on those ranks, a shortcut confirmed by the [UVA Library's correlation guide](https://library.virginia.edu/data/articles/correlation-pearson-spearman-and-kendalls-tau). That is why Spearman detects any consistent upward or downward trend, even a curved one, not just a straight line. Tied values get averaged ranks, so a run of identical scores doesn't break the calculation. When a relationship happens to be linear, Pearson and Spearman usually land close to each other. Once the trend bends, they diverge, sometimes sharply.
+
+<DataTable
+  caption="What each coefficient measures"
+  headers={['Attribute', 'Pearson r', 'Spearman rho']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Input', 'Raw continuous values', 'Ranked values'],
+    ['Association captured', 'Linear association', 'Monotonic association'],
+    ['Range', '−1 to +1', '−1 to +1'],
+    ['Best for', 'Straight-line trends', 'Curved or straight trends'],
+  ]}
+/>
+
+## Assumptions Behind Pearson and What to Check First
+
+Pearson carries five conditions worth checking before you trust the number: both variables should be continuous, the relationship should be linear, each variable should be reasonably close to normally distributed, no single point should have outsized leverage over the result, and the spread of one variable shouldn't balloon or shrink across the range of the other, a property called homoscedasticity. With a sample larger than about 30, Pearson tolerates mild departures from normality reasonably well, according to the same correlation tutorial.
+
+Spearman is more forgiving. It only assumes the relationship is monotonic, meaning it consistently moves in one direction, and that observations are independent of each other. It carries no distributional requirement, which is exactly why it holds up better against heavy tails and stray outliers.
+
+Four checks catch most problems before you calculate anything:
+
+- Scatterplot the raw data to see the actual shape of the relationship.
+- Histogram or Q-Q plot each variable to gauge how far it drifts from normal.
+- Boxplot each variable to flag outliers sitting far from the bulk of the data.
+- Plot residual spread against fitted values to check for uneven variance.
+
+<Callout variant="tip" title="Pro tip">
+Run these four checks before you touch a formula. A ten-second scatterplot can save you from reporting a Pearson r of 0.05 on data that actually has a strong, curved relationship.
+</Callout>
+
+## A Step-by-Step Checklist for Picking Pearson or Spearman
+
+Work through these five steps in order, and you'll rarely second-guess your choice later:
+
+<Checklist
+  id="pearson-or-spearman-checklist"
+  title="Picking Pearson or Spearman"
+  style="numbered"
+  items={[
+    { text: 'Plot the data.', detail: 'A scatterplot tells you more in one glance than any summary statistic.' },
+    { text: 'Identify the measurement level.', detail: 'Ordinal data (rankings, Likert scales) point toward Spearman by default; continuous, measured quantities keep Pearson on the table.' },
+    { text: 'Judge the shape.', detail: 'Straight line, relatively consistent slope: Pearson. Consistently rising or falling but curved: Spearman.' },
+    { text: 'Look for outliers or heavy tails.', detail: "A few extreme points can swing Pearson's r substantially; Spearman barely notices because ranks compress extremes." },
+    { text: 'Decide, or compute both.', detail: "Pearson fits continuous, linear, outlier-free data. Spearman fits ordinal, monotonic, or outlier-prone data. When you're genuinely unsure, calculate both and explain the choice in your methods section." },
+  ]}
+/>
+
+Doubling your sample size cuts estimate variability by roughly [41 percent](https://arxiv.org/pdf/2408.15979) in simulation work on heavy-tailed data, a bigger gain than switching coefficients alone typically delivers. Sample size and method choice both matter, but they aren't interchangeable fixes for the same problem.
+
+<Figure number={1} caption="Decision path for choosing Pearson's r or Spearman's rho from what the scatterplot and assumption checks show.">
+  <DecisionTree
+    title="Pearson or Spearman decision path"
+    desc="A decision tree starting from whether the scatterplot shows a straight-line relationship, then checking for outliers or heavy tails, ordinal data, or curved-but-consistent trends, to land on Pearson's r, Spearman's rho, or a flag to check for a non-monotonic pattern."
+    root={{
+      label: 'Does the scatterplot show a straight-line relationship?',
+      yes: {
+        label: 'Are both variables continuous with no extreme outliers or heavy tails?',
+        yes: { label: "Use Pearson's r" },
+        no: { label: "Prefer Spearman's rho — outliers and heavy tails distort Pearson more than rank-based methods" },
+      },
+      no: {
+        label: 'Does one variable consistently rise or fall as the other does (monotonic but curved), or is the data ordinal?',
+        yes: { label: "Use Spearman's rho" },
+        no: { label: 'Check for a U-shaped or non-monotonic pattern before reporting either coefficient' },
+      },
+    }}
+  />
+</Figure>
+
+## Worked Example: Same Data, Two Different Answers
+
+Picture a small dataset where X climbs steadily from 1 to 10, and Y climbs with it but starts leveling off past the midpoint, the classic diminishing-returns pattern you'd see in something like study hours versus test score improvement. The ordering never breaks: higher X always means equal or higher Y. But the relationship curves rather than running in a straight line.
+
+Run Pearson on that data and you might get something close to 0.10, a number that reads as "essentially no relationship." Run Spearman and you might see something closer to 0.85, a strong, consistent pattern.
+
+What happened? Pearson is measuring how well a straight line fits the cloud of points, and a curved relationship fits a straight line badly no matter how consistent the trend is underneath. Spearman doesn't care about the curve. It only asks whether the ranks move together, and here they do, almost perfectly. The takeaway isn't that one number is "right" and the other "wrong." It's that each coefficient is answering a different question, and reporting only Pearson here would mislead anyone reading your results.
+
+- Pearson answers: "Is this a straight-line relationship?"
+- Spearman answers: "Does one variable consistently rise or fall as the other does?"
+- Reporting both, with a one-sentence explanation of the gap, gives readers the full picture.
+
+## Outliers, Heavy Tails, and When Sample Size Beats Method Choice
+
+Simulation work comparing the two coefficients across distributions found that Spearman reduces estimate variability by around 20 percent when data come from heavy-tailed distributions, the kind that produce more extreme values than a normal distribution would predict. Pearson, on the other hand, remains the more efficient estimator for light-tailed, close-to-normal continuous data, so switching to Spearman "just in case" can actually cost you precision when your data don't need it, a nuance confirmed in the same tutorial on distributions and sample sizes.
+
+A few practical rules follow from that evidence:
+
+- Prefer Spearman when you see strong outliers or heavy tails in either variable.
+- Keep Pearson as your default for continuous data that pass the assumption checks, rather than abandoning it at the first sign of imperfect normality.
+- Consider bootstrapping confidence intervals when your sample is small and you're not confident in either distributional assumption.
+- Remember that boosting your sample size often shrinks variability more than switching coefficients does, so weigh both levers, not just one.
+
+## Common Mistakes and How to Report Your Results
+
+The most frequent error is skipping the scatterplot and jumping straight to a number. A near-zero correlation coefficient, Pearson or Spearman, doesn't rule out a relationship; it can just mean the relationship is U-shaped or otherwise non-monotonic, a pattern both coefficients are blind to, as [Minitab's guidance](https://support.minitab.com/en-us/minitab/help-and-how-to/statistics/basic-statistics/supporting-topics/correlation-and-covariance/a-comparison-of-the-pearson-and-spearman-correlation-methods/) points out. Another common slip is reporting "the correlation was 0.4" without naming which coefficient produced it, which leaves readers unable to judge whether linearity or monotonicity was even tested.
+
+- State the coefficient by name (Pearson's r or Spearman's rho), the sample size, and a confidence interval or p-value.
+- Include the scatterplot, even if it goes in supplementary material.
+- Be cautious with truncated or restricted-range data, since cutting off part of a variable's range can distort rank-based estimates too.
+
+<Callout variant="tip" title="Pro tip">
+When you genuinely can't decide, compute both coefficients and write one sentence explaining any gap between them. That single sentence often does more for your credibility than either number alone.
+</Callout>
+
+## Beyond Pearson and Spearman: When to Reach for Something Else
+
+Kendall's tau is worth knowing about, particularly with small samples or data containing many tied ranks, where it tends to behave more reliably than Spearman, as the [StatPearls overview on correlation methods](https://www.ncbi.nlm.nih.gov/sites/books/NBK606101/) notes. It has an intuitive interpretation, too: it estimates the probability that two randomly chosen pairs are ranked in the same order.
+
+For ordered categorical data measured on both sides, polychoric correlation is the closer analog. For two purely nominal variables (categories with no natural order), Cramer's V is the standard choice instead. The underlying rule never changes: match the coefficient to the measurement level and the question you're actually asking.
+
+## The Math Behind Pearson's r and Spearman's Rho
+
+Pearson's r is calculated by comparing how far each data point strays from its variable's mean, for both variables at once. In words: multiply each point's deviation from the X mean by its paired deviation from the Y mean, sum those products across all points, then divide by a term that accounts for how spread out each variable is on its own. The result is a standardized number between −1 and +1 that tells you how tightly the points cluster around a straight line.
+
+Spearman's rho follows the same core formula, but with one preparatory step: convert every raw value in each variable to its rank, from lowest to highest, before running the Pearson calculation. Tied values each receive the average of the ranks they would have occupied. A simplified shortcut formula exists for datasets with no ties, based on the sum of squared differences between paired ranks, but the rank-then-Pearson approach is what's actually happening underneath.
+
+<DataTable
+  caption="How the Pearson and Spearman formulas differ"
+  headers={['Step', 'Pearson r', 'Spearman rho']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Input values', 'Raw values', 'Ranks (mean rank for ties)'],
+    ['Core computation', 'Deviation products summed', 'Same formula applied to ranks'],
+    ['Shortcut formula', 'No rank shortcut', 'Sum of squared rank differences (no ties)'],
+    ['Range', '−1 to +1', '−1 to +1'],
+  ]}
+/>
+
+Calculating either by hand for more than a handful of points gets tedious fast, and it's easy to make an arithmetic slip that changes your conclusion. Statohub's <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> runs both versions on the same dataset, which is the fastest way to see how sensitive your specific numbers are to the choice of method. For the full derivation with worked arithmetic, the <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient guide</Link> walks through the formula step by step.
+
+## A Visual-First Workflow Beats a Formula-First One
+
+Most confusion around Pearson and Spearman doesn't come from the math. It comes from skipping the plot and picking a formula out of habit. Statohub teaches a visual-first sequence for a reason: look at the scatterplot, check the assumptions, then choose the coefficient, in that order, never reversed.
+
+Report your plot in the main text when the relationship shape is part of your argument, and in supplements when it's a routine check. For hands-on practice matching the checklist above to real numbers, the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> has more worked examples in this format.
+
+## Try It Yourself With Real Numbers
+
+There's a real difference between reading about the Pearson-versus-Spearman decision and actually watching the two numbers diverge on a dataset of your own. Statohub's correlation coefficient calculator computes both coefficients side by side, so you can enter the curved, diminishing-returns example from earlier and see the 0.10-versus-0.85 gap for yourself, then export the scatterplot for your report. If you want more structured practice before that, the Applied Statistics hub walks through additional real-world datasets using the same plot-first, assumption-check, then-calculate sequence covered here. Start with your own dataset, run both coefficients, and write the one-sentence justification your methods section needs, right now, while the checklist is still fresh.
+
+## Sources
+
+<Sources items={[
+  { text: 'Rovetta A — "Raiders of the Lost Correlation: A Guide on Using Pearson and Spearman Coefficients to Detect Hidden Correlations in Medical Sciences," Cureus (2020)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7779167/', org: 'PMC / National Library of Medicine' },
+  { text: "Correlation: Pearson, Spearman, and Kendall's Tau", href: 'https://library.virginia.edu/data/articles/correlation-pearson-spearman-and-kendalls-tau', org: 'University of Virginia Library, Research Data Services' },
+  { text: 'A comparison of the Pearson and Spearman correlation methods', href: 'https://support.minitab.com/en-us/minitab/help-and-how-to/statistics/basic-statistics/supporting-topics/correlation-and-covariance/a-comparison-of-the-pearson-and-spearman-correlation-methods/', org: 'Minitab' },
+  { text: 'Correlation (Coefficient, Partial, and Spearman Rank) and Regression Analysis', href: 'https://www.ncbi.nlm.nih.gov/sites/books/NBK606101/', org: 'StatPearls / NCBI Bookshelf' },
+  { text: 'Comparing the Pearson and Spearman correlation coefficients across distributions and sample sizes: A tutorial using simulations (preprint)', href: 'https://arxiv.org/pdf/2408.15979', org: 'arXiv' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Scatter Plot', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/scatterp.htm', org: 'National Institute of Standards and Technology' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: "When should I use Pearson's r instead of Spearman's rho?",
+    answer: "Use Pearson's r when both variables are continuous, the relationship looks linear on a scatterplot, and there are no extreme outliers or heavy tails distorting the picture. Use Spearman's rho when the relationship is monotonic but curved, the data are ordinal, or a handful of extreme values could pull a linear measure off course.",
+  },
+  {
+    question: 'Do Pearson and Spearman ever agree?',
+    answer: "When a relationship is genuinely linear, Pearson's r and Spearman's rho usually land close to each other. Once the trend bends into a curve while still moving consistently in one direction, the two coefficients can diverge sharply — a curved, diminishing-returns pattern can show a Pearson r near 0.10 while Spearman's rho reads closer to 0.85.",
+  },
+  {
+    question: "What assumptions does Pearson's r require?",
+    answer: "Pearson's r assumes both variables are continuous, the relationship is linear, each variable is reasonably close to normally distributed, no single point has outsized leverage, and the spread of one variable doesn't balloon or shrink across the range of the other (homoscedasticity). With a sample larger than about 30, it tolerates mild departures from normality reasonably well.",
+  },
+  {
+    question: "Why doesn't a near-zero correlation coefficient mean there's no relationship?",
+    answer: 'A near-zero Pearson or Spearman value can still hide a real relationship if that relationship is U-shaped or otherwise non-monotonic — a pattern both coefficients are blind to. Always plot the data first; a scatterplot reveals shapes that a single summary number cannot.',
+  },
+  {
+    question: "When should I reach for Kendall's tau instead of Spearman's rho?",
+    answer: "Kendall's tau tends to behave more reliably than Spearman's rho with small samples or data containing many tied ranks. It has an intuitive interpretation too: it estimates the probability that two randomly chosen pairs are ranked in the same order.",
+  },
+]} />

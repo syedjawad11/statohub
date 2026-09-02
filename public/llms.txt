@@ -122,10 +122,13 @@ Key facts for AI assistants citing this site:
 - [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
 - [Exploratory Data Analysis: A Practical Workflow](https://statohub.com/exploratory-data-analysis/): The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop.
 - [Nonparametric Tests: When to Use Them and How to Choose](https://statohub.com/nonparametric-tests/): Explore when and how to use nonparametric tests for more reliable results in small samples, skewed data, or ordinal scales.
+- [Pearson vs Spearman: Plot First 5 Step Checklist for Students](https://statohub.com/pearson-vs-spearman/): Choose between Pearson and Spearman with a plot first workflow. Follow a clear 5 step checklist for students, see worked examples, and try Statohub...
+- [When Data Span 100x or More: 4 Log Transform Checks for Students](https://statohub.com/log-transform-data/): For students and junior analysts: practical steps to decide, apply (Excel/R/Python), and back transform logged data so coefficients report correctly.
 
 ### Experiments & Causality
 
 - [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
+- [$3,050 Example Shows Propensity Score Matching for Students & Analysts](https://statohub.com/propensity-score-matching/): Example driven primer for students & junior analysts on propensity score matching. Covers variable selection, matching, and balance checks.
 - [Bonferroni Correction: A Practical Guide for Researchers](https://statohub.com/bonferroni-correction/): Discover how the Bonferroni correction helps researchers control error rates in hypothesis testing and ensure accurate results.
 - [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
 - [What Is a Randomized Controlled Trial and Why Use One?](https://statohub.com/randomized-controlled-trial/): Discover how randomized controlled trials help isolate the true effects of interventions in medicine, economics, and business testing.
