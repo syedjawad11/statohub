@@ -121,6 +121,7 @@ Key facts for AI assistants citing this site:
 
 - [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
 - [Exploratory Data Analysis: A Practical Workflow](https://statohub.com/exploratory-data-analysis/): The exploratory data analysis workflow analysts follow: data quality checks, missingness patterns, distribution shape, outliers, and when to stop.
+- [How to Test for Heteroscedasticity in Regression](https://statohub.com/heteroscedasticity-test/): Plot residuals first, then confirm with Breusch Pagan, Koenker, or White. Use HC3 robust SEs. R/Python commands and 120 case worked example.
 - [Nonparametric Tests: When to Use Them and How to Choose](https://statohub.com/nonparametric-tests/): Explore when and how to use nonparametric tests for more reliable results in small samples, skewed data, or ordinal scales.
 - [Pearson vs Spearman: Plot First 5 Step Checklist for Students](https://statohub.com/pearson-vs-spearman/): Choose between Pearson and Spearman with a plot first workflow. Follow a clear 5 step checklist for students, see worked examples, and try Statohub...
 - [Students: 400 Per Group Example for Confidence vs Significance](https://statohub.com/confidence-level-vs-significance-level/): Clear, student-first explanation of how confidence and significance levels relate. Reproduce the 400 per group worked example and run the math with...

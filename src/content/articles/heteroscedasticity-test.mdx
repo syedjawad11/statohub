@@ -1,0 +1,236 @@
+---
+title: "How to Test for Heteroscedasticity in Regression"
+description: "Plot residuals first, then confirm with Breusch Pagan, Koenker, or White. Use HC3 robust SEs. R/Python commands and 120 case worked example."
+category: data-analysis
+primaryKeyword: heteroscedasticity test
+keywords:
+  - heteroscedasticity test
+  - test for heteroscedasticity
+  - heteroscedasticity in regression
+  - breusch-pagan test
+  - white test heteroscedasticity
+  - HC3 robust standard errors
+phase: 1
+related:
+  - regression-assumptions
+  - multicollinearity-vif
+  - linear-regression
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Run a residuals-vs-fitted plot first, then confirm what you see with the Breusch–Pagan test (or its Koenker variant) and the White test if you suspect nonlinear variance patterns. A p-value below 0.05 on either test is evidence against constant variance. Once confirmed, the immediate fix is switching to heteroskedasticity-consistent standard errors or, in defensible cases, weighted least squares.
+
+<KeyTakeaways rows={[
+  { point: "Check residual plots first", details: "Plot residuals against fitted values, then against each predictor — a fan or cone shape is the fastest signal that variance isn't constant." },
+  { point: "Confirm with Breusch–Pagan", details: "Run the Breusch–Pagan test (Koenker variant for non-normal residuals) first; a p-value below 0.05 is evidence against constant variance." },
+  { point: "Default to HC3 standard errors", details: "Once heteroscedasticity is confirmed, HC3 robust standard errors generally give the best small-sample correction for inference." },
+  { point: "Reach for WLS only when justified", details: "Weighted least squares can be more efficient than robust SEs, but only if you can defend the specific variance structure you're weighting by." },
+  { point: "Combine all three checks", details: "Visual diagnostics, a formal test, and a review of model specification together — not any single check alone — are what avoid false positives." },
+]} />
+
+## What Is Heteroscedasticity and Why Does It Matter for Regression?
+
+Homoscedasticity means the variance of your regression errors stays constant no matter what values your predictors take. Heteroscedasticity is the opposite: the spread of the residuals changes as a function of one or more explanatory variables, so the conditional variance depends on where you are in the data, not just on chance.
+
+This matters more than most students expect. Ordinary least squares (OLS) coefficients stay unbiased even when heteroscedasticity is present. What breaks is the standard error estimation, which becomes inconsistent. That means your t-statistics, confidence intervals, and p-values can all be wrong, sometimes badly, even though your point estimates are fine.
+
+The stakes rise sharply for maximum likelihood models like logit and probit. In those frameworks, heteroscedasticity doesn't just distort the standard errors; it can bias the coefficient estimates themselves, because the likelihood function assumes a specific variance structure baked into the model.
+
+A quick mental checklist before you run anything:
+
+- Are your residuals wider at high fitted values than low ones (or vice versa)?
+- Does the spread of residuals change across levels of a specific predictor, like income or firm size?
+- Are you working with cross-sectional data spanning very different scales (small firms and large firms in one sample)?
+
+**Statistic to watch:** [heteroskedasticity-consistent standard errors](https://en.wikipedia.org/wiki/Heteroscedasticity-consistent_standard_errors) come in several variants (HC0 through HC3), and HC3 tends to perform best when your sample is small, a detail that matters more than most regression textbooks let on.
+
+## What Do Residual Plots Reveal About Heteroscedasticity?
+
+Before running any formal test, look at your data. Plot the residuals from your fitted regression against the fitted values, then plot them again against each key predictor separately. This costs you two minutes and often tells you exactly where the problem lives.
+
+<Checklist
+  id="residual-plot-sequence"
+  title="Reading a residual plot for heteroscedasticity"
+  style="numbered"
+  items={[
+    { text: "Fit your OLS model and extract the residuals." },
+    { text: "Plot residuals against fitted values.", detail: "A random, even scatter around zero is what you want to see." },
+    { text: "Look for a fan or cone shape.", detail: "Vertical spread widening as fitted values increase is the classic visual signature of heteroscedasticity." },
+    { text: "Repeat the plot against each individual predictor.", detail: "Variance can depend on one variable more than the model as a whole suggests." },
+    { text: "Plot squared or absolute residuals if the pattern is subtle.", detail: "Squaring amplifies the signal and makes a faint fan easier to spot." },
+  ]}
+/>
+
+A cone that widens left to right usually means variance grows with the predictor's scale, common in spending, revenue, or population data. A cone that narrows suggests the opposite, which is rarer but still worth flagging.
+
+<Callout variant="tip" title="Pro tip">
+Never stop at the plot. A residual pattern can look convincing and still be sampling noise, especially with fewer than 50 observations. Treat the plot as a hypothesis generator, and let a formal test confirm or reject it.
+</Callout>
+
+Visual diagnostics are fast, but they're subjective. Two analysts can look at the same plot and disagree about whether the fan is real. That's exactly why the field developed formal statistical tests, which is where we go next.
+
+## Which Formal Test Should You Run: Breusch–Pagan, White, or Something Else?
+
+Run the Breusch–Pagan test first for most applied regression work, then fall back to White or Goldfeld–Quandt when you have a specific reason to suspect a different variance structure. Each test answers a slightly different question, and picking the wrong one can waste time or miss the actual problem.
+
+The **Breusch–Pagan test** regresses the squared residuals from your original model on the explanatory variables (this is called the auxiliary regression). The resulting Lagrange multiplier (LM) statistic follows a chi-squared distribution with degrees of freedom equal to the number of regressors. A low p-value, conventionally below 0.05, signals that variance depends on those regressors. The original Breusch–Pagan test assumes normally distributed errors, which is a real limitation. The **Koenker variant** relaxes that assumption and is more robust when your residuals are skewed or heavy-tailed, which makes it the safer default for real-world data.
+
+The **White test** extends the same idea but adds squared terms and cross-products of the regressors to the auxiliary regression. This lets it detect nonlinear forms of heteroscedasticity that Breusch–Pagan can miss, though it costs you degrees of freedom fast if you have many predictors.
+
+The **Goldfeld–Quandt test** takes a different approach entirely. It splits your ordered sample into two groups (often high and low values of a suspected variance driver), then compares the variance of residuals between groups using an F-ratio. It works well when you have a specific ordering variable in mind but doesn't generalize to more complex variance patterns.
+
+**Glejser** and **Park** tests model the variance parametrically, regressing absolute or log-squared residuals directly on a predictor. They're less common in modern practice but still show up in coursework because they make the variance relationship explicit.
+
+<DataTable
+  caption="Heteroscedasticity tests compared: approach and when to reach for each one"
+  headers={['Test', 'Core approach', 'Best for']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Breusch–Pagan', 'Regress squared residuals on regressors', 'General-purpose first check'],
+    ['Koenker (robust BP)', 'Same as BP, robust to non-normality', 'Skewed or heavy-tailed residuals'],
+    ['White', 'Adds squares and cross-products', 'Nonlinear or unknown variance form'],
+    ['Goldfeld–Quandt', 'Compare variances across ordered groups', 'A specific suspected variance driver'],
+    ['Glejser / Park', 'Model variance directly as a function', 'Explicit variance structure hypotheses'],
+  ]}
+/>
+
+For a typical student dataset with a handful of predictors, start with Breusch–Pagan (Koenker version), and reach for White only if you suspect the relationship is nonlinear.
+
+## How Do You Run These Tests in R and Python?
+
+The mechanics differ slightly between R and Python, but the interpretation stays the same in both: you're reading off a test statistic and a p-value.
+
+In **R**, fit your model with `lm()`, then hand the fitted object to `lmtest::bptest()` for the Breusch–Pagan test. Add `studentize = TRUE` (the default) for the Koenker robust variant. For the White-style nonlinear check, `car::ncvTest()` offers a related non-constant variance test. Once you've confirmed heteroscedasticity, generate robust standard errors with `sandwich::vcovHC()`, specifying `type = "HC3"` for the small-sample correction.
+
+In **Python**, fit your OLS model using `statsmodels`, extract the residuals, and pass them to [`statsmodels.stats.diagnostic.het_breuschpagan(resid, exog_het)`](https://www.statsmodels.org/stable/generated/statsmodels.stats.diagnostic.het_breuschpagan.html), where `exog_het` is your matrix of explanatory variables. The function returns the LM statistic, its p-value, an F-statistic version, and that F-statistic's p-value. Set the `robust` flag to use the Koenker adjustment.
+
+What to actually pull from the output and report:
+
+- The test statistic value (LM or F, depending on which you cite).
+- The p-value, stated to at least three decimal places if it's close to your threshold.
+- The direction of the alternative hypothesis, since some implementations test two-sided variance dependence by default.
+- Which regressors were included in the auxiliary regression, since that choice changes the degrees of freedom.
+
+White test implementations vary by package, and Goldfeld–Quandt is less consistently available across libraries, so check your specific documentation before assuming a function exists.
+
+## What Should You Do After a Significant Test Result?
+
+A significant Breusch–Pagan or White test tells you one thing clearly: your standard errors from the original OLS output are unreliable. It does not mean your coefficients are wrong, and it does not automatically mean your model is broken. Treat it as a signal to correct inference, not necessarily a signal to rebuild your model from scratch.
+
+<Checklist
+  id="post-significant-test-order"
+  title="After a significant heteroscedasticity test"
+  style="numbered"
+  items={[
+    { text: "Switch to heteroskedasticity-consistent standard errors first.", detail: "This is the lowest-risk, most widely used fix, because it doesn't require you to know or model the true variance structure." },
+    { text: "Choose HC3 over HC0 or HC1 when your sample is small.", detail: "HC3 tends to correct small-sample bias better than the simpler variants." },
+    { text: "Consider weighted least squares (WLS) or feasible WLS only with a defensible variance model.", detail: "For example, variance proportional to a squared predictor. Feasible WLS estimates that variance function first, then reweights the regression." },
+    { text: "Revisit the model itself if robust SEs and WLS both feel like patches.", detail: "Try a log transform on the outcome, add omitted predictors, or introduce nonlinear terms." },
+  ]}
+/>
+
+The honest tradeoff: WLS is more statistically efficient than robust SEs when the variance function is correctly specified, but that's a big "when." Most applied researchers reach for [robust standard errors as the default](https://nielsen.sites.oasis.unc.edu/soci709/m12/m12.html) precisely because getting the variance model wrong in WLS can make things worse, not better.
+
+<Callout variant="tip" title="Pro tip">
+Report which HC variant you used. "Robust standard errors" without specifying HC0 through HC3 leaves your reader guessing which correction you applied, and the choice can shift your p-values more than you'd expect.
+</Callout>
+
+## How Do You Detect and Fix Heteroscedasticity: A Worked Example
+
+Picture a dataset of 120 small businesses, regressing annual profit on advertising spend and number of employees. The equation: `profit = β0 + β1(ad_spend) + β2(employees) + ε`. Larger businesses tend to have more variable profit outcomes than smaller ones, which is exactly the kind of setup where heteroscedasticity shows up.
+
+**Step 1:** Fit the OLS model and plot residuals against fitted values. The plot shows a clear fan shape: tight clustering near zero for low fitted profit, wide scatter for high fitted profit.
+
+**Step 2:** Run the Breusch–Pagan test. Suppose it returns an LM statistic of 8.42 with 2 degrees of freedom, giving a p-value of 0.015. Since that falls below the conventional 0.05 threshold, you have statistical evidence against constant variance.
+
+**Step 3:** Apply HC3 robust standard errors to the same model. In this scenario, the coefficient on employees, previously significant at p = 0.03 under standard OLS errors, might shift to p = 0.09 once heteroscedasticity is corrected. That's a meaningful change: a variable you'd have called significant under naive OLS no longer clears the bar once your inference accounts for the true variance structure.
+
+**Step 4:** If a closer look shows variance scaling roughly with the square of number of employees, feasible WLS using weights of `1/employees^2` would be worth testing as an efficiency gain, provided you can justify that specific form.
+
+This is the exact workflow to practice on your own coursework datasets before you rely on it for a thesis or client report.
+
+<Figure number={1} caption="The detect-and-fix workflow applied to the 120-business worked example: plot, test, correct standard errors, then weigh WLS only if justified.">
+  <ProcessFlow
+    title="Heteroscedasticity workflow"
+    desc="A four-step workflow moving from fitting the OLS model and plotting residuals, through the Breusch-Pagan test, HC3 robust standard errors, and feasible weighted least squares."
+    steps={[
+      { label: "Fit OLS & plot", detail: "Residuals vs. fitted values show a clear fan shape." },
+      { label: "Breusch–Pagan test", detail: "LM = 8.42 (df = 2), p = 0.015." },
+      { label: "Apply HC3 standard errors", detail: "Coefficient on employees shifts from p = 0.03 to p = 0.09." },
+      { label: "Consider feasible WLS", detail: "Weights proportional to 1/employees² if the variance structure is justified." },
+    ]}
+  />
+</Figure>
+
+## What Limits Should You Keep in Mind When Testing for Heteroscedasticity?
+
+These tests aren't infallible, and treating a single p-value as gospel is a common student mistake. A few limits to hold onto:
+
+- Breusch–Pagan's original form assumes normal residuals; violate that assumption badly and the test's size can be off, which is why the Koenker variant exists.
+- Small samples reduce the power of every heteroscedasticity test, meaning you can fail to detect real heteroscedasticity simply because you don't have enough data.
+- Running multiple diagnostic tests and reporting only the significant one is a pre-testing trap that inflates your effective false-positive rate.
+- A significant test sometimes reflects [omitted variables or the wrong functional form](https://sociology-fa-cu.github.io/appliedregressioninr/08_heterscedasticity.html) rather than genuine heteroscedasticity. A missing squared term can masquerade as a variance problem.
+- Multicollinearity and heteroscedasticity checks should happen together, since a poorly specified model can produce misleading signals on both fronts simultaneously.
+
+Combine the visual check, the formal test, and a hard look at your model specification before deciding what's actually wrong.
+
+## What Is Statohub's Recommended Default for Testing Heteroscedasticity?
+
+Our default advice for students and early-career analysts is simple: plot first, confirm with Breusch–Pagan or its Koenker variant, and report HC3 standard errors unless you have a genuinely strong case for weighted least squares. That order avoids the two most common mistakes we see: skipping the visual check entirely, and jumping to WLS with a variance model nobody can defend.
+
+Before you treat heteroscedasticity as the headline problem, rule out model misspecification. A missing interaction term or an omitted quadratic often produces the exact fan pattern you're chasing. Our <Link to={routes.article('regression-assumptions')}>regression assumptions guide</Link> walks through that broader diagnostic sequence, and it's worth working through before you touch a single standard error correction.
+
+## Practice These Steps With Statohub's Learning Resources
+
+Reading about the Breusch–Pagan test and actually running it on a messy dataset are two different skills, and the gap between them is where most students get stuck. Statohub's <Link to={routes.article('regression-assumptions')}>regression assumptions guide</Link> breaks down every OLS assumption, including homoscedasticity, in the same plain-English style used throughout this article, and it links directly into the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub where you'll find more worked examples built around real analytical problems.
+
+If you're checking p-values or working through variance calculations by hand before trusting your software output, the <Link to={routes.calculatorsHub()}>calculators page</Link> has tools built for exactly that. Statohub doesn't sell software or run your regressions for you. It's built to teach you the reasoning behind each step, so the next time a residual plot looks suspicious, you already know what to check and why. Start with the regression assumptions guide, then bring your own dataset to the calculators to practice the workflow end to end.
+
+## Sources
+
+<Sources items={[
+  { text: 'statsmodels.stats.diagnostic.het_breuschpagan — statsmodels 0.15.0', href: 'https://www.statsmodels.org/stable/generated/statsmodels.stats.diagnostic.het_breuschpagan.html', org: 'statsmodels' },
+  { text: 'Section 8: Heteroskedasticity — Econometrics Course Notes (Parker)', href: 'https://www.reed.edu/economics/parker/s12/312/notes/Notes8.pdf', org: 'Reed College' },
+  { text: 'Heteroskedasticity-consistent standard errors', href: 'https://en.wikipedia.org/wiki/Heteroscedasticity-consistent_standard_errors', org: 'Wikipedia' },
+  { text: 'Module 12: Heteroscedasticity & Weighted Least Squares', href: 'https://nielsen.sites.oasis.unc.edu/soci709/m12/m12.html', org: 'University of North Carolina at Chapel Hill' },
+  { text: 'Applied Regression in R — Chapter 8: Heteroskedasticity', href: 'https://sociology-fa-cu.github.io/appliedregressioninr/08_heterscedasticity.html', org: 'Applied Regression in R (bookdown)' },
+  { text: 'lmtest package manual — bptest() (Breusch-Pagan test)', href: 'https://cran.r-project.org/web/packages/lmtest/lmtest.pdf', org: 'CRAN / R Project' },
+  { text: 'car package manual — ncvTest() (non-constant variance test)', href: 'https://cran.r-project.org/web/packages/car/car.pdf', org: 'CRAN / R Project' },
+  { text: 'sandwich package manual — vcovHC() (heteroskedasticity-consistent covariance estimators)', href: 'https://cran.r-project.org/web/packages/sandwich/sandwich.pdf', org: 'CRAN / R Project' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is heteroscedasticity in a regression model?',
+    answer: "Heteroscedasticity means the spread of your regression residuals changes depending on where you are in the data, instead of staying constant (homoscedasticity). OLS coefficients stay unbiased when it's present, but the standard error estimation becomes inconsistent, so t-statistics, confidence intervals, and p-values built on those standard errors can all be wrong even though the point estimates are fine.",
+  },
+  {
+    question: 'Which heteroscedasticity test should I run first?',
+    answer: "Run the Breusch–Pagan test first for most applied regression work — specifically the Koenker variant, which is robust to non-normal residuals. Fall back to the White test when you suspect a nonlinear variance pattern it could miss, or to the Goldfeld–Quandt test when you have one specific variable you think is driving the variance.",
+  },
+  {
+    question: 'What p-value indicates heteroscedasticity is present?',
+    answer: "A p-value below the conventional 0.05 threshold on the Breusch–Pagan or White test is evidence against constant variance — it means the null hypothesis of homoscedasticity can be rejected. A non-significant result doesn't prove homoscedasticity either; small samples reduce every heteroscedasticity test's power to detect a real effect.",
+  },
+  {
+    question: 'What should I do once a heteroscedasticity test comes back significant?',
+    answer: "A significant result means your original OLS standard errors are unreliable, not that your coefficients or your model are wrong. Switch to heteroskedasticity-consistent standard errors first — HC3 if your sample is small — and only consider weighted least squares if you can defend a specific model for how the variance changes.",
+  },
+  {
+    question: 'Does heteroscedasticity bias my coefficient estimates?',
+    answer: "Not in OLS: the coefficients stay unbiased, and only the standard errors become unreliable. The stakes are higher for maximum likelihood models like logit and probit, where heteroscedasticity can bias the coefficient estimates themselves, because the likelihood function assumes a specific variance structure that's now violated.",
+  },
+]} />
