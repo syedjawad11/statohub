@@ -34,6 +34,11 @@ REQUIRED_FRONTMATTER = (
     "title", "description", "category", "primaryKeyword", "keywords",
     "phase", "draft",
 )
+# Outsource-pillar word floor, deliberately below the Applied playbook's 3000.
+# Vendor drafts run 1500-2900 words and padding them to 3000 would mean
+# fabricating prose, which is a HARD violation in its own right. This is a
+# real quality concession -- see [[0019-outsource-word-floor]] for the cost.
+OUTSOURCE_WORD_FLOOR = 1500
 VENDOR_HOSTS = {
     "babylovegrowth.ai",
     "www.babylovegrowth.ai",
@@ -435,14 +440,14 @@ def run_checks(path, verbose=False):
     # This count is intentionally approximate. Paired capitalized components
     # and their internal prose are excluded so FAQ answers, checklist details,
     # and similar props do not inflate the total artificially. A result close
-    # to the 3000-word floor deserves a human glance, not blind trust.
+    # to the floor deserves a human glance, not blind trust.
     countable_body = _strip_components_for_word_count(body)
     word_count = len(re.findall(r"\S+", countable_body))
     record(
         11,
-        word_count >= 3000,
+        word_count >= OUTSOURCE_WORD_FLOOR,
         f"approximate body word count is {word_count}",
-        f"approximate body word count is {word_count}; expected at least 3000",
+        f"approximate body word count is {word_count}; expected at least {OUTSOURCE_WORD_FLOOR}",
     )
 
     image = re.search(r"<img|!\[|<Image", text, flags=re.IGNORECASE)

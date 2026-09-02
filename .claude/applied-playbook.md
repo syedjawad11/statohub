@@ -46,6 +46,13 @@ just isn't mandatory.
 - **3,000–4,500 words** [HARD floor at 3,000; WARN below 3,200 or above
   4,800]. Word count is body prose; components don't inflate it artificially,
   but the prose around them counts.
+  - **Exception — the outsource pillar floor is 1,500**, not 3,000. Vendor
+    drafts run shorter than this standard and padding them would violate the
+    no-fabrication rule below. Enforced by `OUTSOURCE_WORD_FLOOR` in
+    `outsource-content/check_sanitized.py`, and it applies *only* to articles
+    coming through `outsource-content/`. Internally written articles keep the
+    3,000 floor. This is a deliberate quality concession — see
+    [[0019-outsource-word-floor]] for what it costs.
 - **Practitioner-focused**: the reader applies a method on the job (analyst,
   experimenter, forecaster, ML engineer), not a first-time learner. Assume
   they know what a p-value or confidence interval is; teach *how to use it in
@@ -240,7 +247,9 @@ HARD failure → CHANGES_REQUESTED. WARN/ADVISORY shape the score, reported as
 a fix-list, never flip the verdict alone.
 
 **HARD (any failure → CHANGES_REQUESTED):**
-1. 3,000–4,500 words of real practitioner prose (3,000 is a floor).
+1. 3,000–4,500 words of real practitioner prose (3,000 is a floor; the
+   outsource pillar's floor is 1,500 instead — see §2 and
+   [[0019-outsource-word-floor]]).
 2. `<KeyTakeaways>` present before the first H2.
 3. At least one each of `<DataTable>`, `<Checklist>`, `<Figure>`-wrapped
    infographic.
