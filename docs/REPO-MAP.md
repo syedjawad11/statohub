@@ -77,30 +77,56 @@ statohub/
 |   |-- gen-repo-map.mjs     # DRIFT CHECKER for this file -- lists undocumented dirs/root
 |   |                        #   files; it does NOT write. Annotations are hand-written.
 |   |-- check-llms-txt.mjs   # BUILD GATE: sitemap coverage + committed/deployed llms.txt drift
-|   `-- check-links.mjs      # BUILD GATE: crawls dist/**, fails on any internal redirect/404
+|   |-- check-links.mjs      # BUILD GATE: crawls dist/**, fails on any internal redirect/404
+|   |-- check-meta-description.mjs  # BUILD GATE: meta-description presence + length
+|   |-- check-contrast.mjs   # CI GATE: design-token contrast ratios
+|   |-- check-docs.mjs       # BUILD GATE: docs/ link + wikilink resolution, ADR index
+|   |                        #   completeness, NOW.md/CLAUDE.md line caps, session archive age
+|   `-- db_sync.py           # dump/rebuild/check the two SQLite boards <-> their .sql dumps
+|                            #   (ADR 0018). `check` runs in the build; `dump` before committing.
 |
 |-- public/                  # robots.txt, _headers (security headers), favicons, og-default.png
 |
-|-- content-ops/             # Editorial board + cloud-routine content pipeline
-|   |-- content.db            # SQLite editorial DB (articles/keywords/status)
+|-- content-ops/             # INTERNAL content board -- everything we write ourselves
+|   |-- content.db            # SQLite editorial DB (gitignored; tracked as content.sql)
+|   |-- content.sql           # committed dump -- the version-controlled board
 |   |-- content_db.py         # CLI: init/seed/list/brief/next/set-status/...
 |   |-- schema.sql, seed.json
 |   |-- cloud-routine/        # publish-next-article.md, publish-next-calc-prose.md, README.md
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)
 |
-|-- handoff/                 # Codex task box (5-state loop) -- TASK-001...TASK-033 + TEMPLATE.md + README.md
+|-- outsource-content/       # VENDOR content board (babylovegrowth) -- always Applied (ADR 0020)
+|   |-- outsource_content.db  # SQLite queue (gitignored; tracked as outsource_content.sql)
+|   |-- outsource_content.sql # committed dump
+|   |-- outsource_db.py       # CLI: list/show/map/fetch/processed/log-review/set-status/stats
+|   |-- check_sanitized.py    # GATE: image/citation/category sanitization on a processed draft
+|   |-- schema.sql, calendar.json, README.md   # README.md = the two-board boundary rules
+|   `-- raw/                  # fetched vendor JSON, kept as an audit trail
+|
+|-- handoff/                 # Codex task box (5-state loop) -- TEMPLATE.md + README.md
+|   `-- archive/              # CLOSED tasks (TASK-001...TASK-036)
 |
 |-- docs/                    # THIS documentation tree -- see docs/ARCHITECTURE.md for the layout
-|-- doc/                     # Legacy: BUILD-PLAN.md (still authoritative build spec), SITE-ARCHITECT.md, theme mockups
+|   |-- decisions/            # ADRs 0001-0021 + README.md index (the ledger)
+|   |-- status/               # NOW.md (hot state) + sessions/ + sessions/archive/
+|   |-- standards/            # content.md (writing/review standards)
+|   |-- audit/                # point-in-time audit snapshots (workspace, technical SEO)
+|   |-- ideas/                # raw strategy prose -- NOT auto-loaded, see CLAUDE.md
+|   `-- legacy/               # BUILD-PLAN.md, SITE-ARCHITECT.md, CONTENT-WORKFLOW.md,
+|                             #   superseded briefs + keyword research (historical only)
 |
-|-- .claude/                 # Project agents + skills + SEO playbook
-|   |-- agents/               # stats-article-writer.md, stats-article-reviewer.md
-|   |-- skills/               # write-article/SKILL.md, session-close/SKILL.md
+|-- .claude/                 # Project agents + skills + playbooks
+|   |-- agents/               # stats-article-{writer,reviewer}.md,
+|   |                         #   outsource-content-{processor,reviewer}.md
+|   |-- skills/               # write-article/, publish-outsource-article/, session-close/
 |   |-- seo-playbook.md       # governs LEARN articles
 |   `-- applied-playbook.md   # governs APPLIED articles (modules, 3-4.5k words, ADR-0015 exemption)
 |
 |-- .github/workflows/deploy.yml   # CI/CD: gates -> Cloudflare deploy on push to main
-`-- .codex/                  # Codex skills/config
+|-- .codex/                  # Codex skills/config
+|-- package-lock.json        # npm lockfile (committed; CI runs `npm ci` against it)
+|-- postcss.config.cjs       # Tailwind/autoprefixer pipeline
+`-- vitest.config.ts         # unit-test config (`npm test`)
 ```
 
 ## Non-negotiable repo rules (see `CLAUDE.md` for the full list)

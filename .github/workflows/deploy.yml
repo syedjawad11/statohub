@@ -40,6 +40,12 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      # The .db files are gitignored, so CI cannot detect local drift -- it can
+      # only prove the committed dumps are valid SQL that rebuilds cleanly.
+      # The drift guard itself is local, in `npm run build` (see package.json).
+      - name: Board dumps rebuild cleanly
+        run: python3 scripts/db_sync.py rebuild && python3 scripts/db_sync.py check
+
       - name: Contrast check
         run: node scripts/check-contrast.mjs
 

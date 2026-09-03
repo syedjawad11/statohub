@@ -1,7 +1,13 @@
 # Handoff Folder — statohub.com build
 
-Task drop-box between Claude and Codex for building **statohub.com**. Full
-working model is in [`../../Claude_OS/CODEX-WORKFLOW.md`](../../Claude_OS/CODEX-WORKFLOW.md).
+Task drop-box between Claude and Codex for building **statohub.com**. The
+working model is in [`../AGENTS.md`](../AGENTS.md) (Codex's entry point) and
+[`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md) "Division of labor"; the
+rule that only one agent works the repo at a time is
+[`../docs/decisions/0004-codex-builds-claude-reviews.md`](../docs/decisions/0004-codex-builds-claude-reviews.md).
+
+Closed tasks are archived to [`archive/`](archive/); this folder holds only
+live ones.
 
 ## How it works
 

@@ -13,9 +13,13 @@ in your session note rather than silently picking a side.
 
 - **Starting any session** -> `docs/status/NOW.md` (current state, active
   work, blockers) -- read this first, always.
-- **Writing or editing content** (articles, calculator teaching blocks) ->
-  `docs/standards/content.md`, then `.claude/seo-playbook.md` for the full
-  mechanical rule set.
+- **Writing or editing content** -> `docs/standards/content.md` first, then the
+  playbook for the section you are in -- they are not interchangeable:
+  **Learn** -> `.claude/seo-playbook.md`; **Applied** ->
+  `.claude/applied-playbook.md`.
+- **Outsourced (babylovegrowth) content** -> `outsource-content/README.md` and
+  the `/publish-outsource-article` skill. Never route it through
+  `content_db.py`; it has its own board and CLI (`outsource_db.py`).
 - **Templates, CSS, components, the theme** -> `docs/DESIGN-SYSTEM.md`.
 - **Anything architectural** (stack, URL scheme, build pipeline, content
   model) -> `docs/ARCHITECTURE.md`.
@@ -35,8 +39,8 @@ strategy planning -- their durable conclusions are already promoted into
 
 ## What this site is
 
-- ~50 teaching articles + ~29 standalone calculator pages across 6-7
-  categories. Full thesis: `docs/PROJECT.md`.
+- 88 published teaching articles + ~29 standalone calculator pages across the
+  ten category hubs. Full thesis: `docs/PROJECT.md`.
 - Wedge: deep calculator **+** teaching on the same page -- see
   [[0001-wedge-model]] (`docs/decisions/0001-wedge-model.md`).
 
@@ -57,18 +61,28 @@ strategy planning -- their durable conclusions are already promoted into
 - **No accounts, backend, database, or community features** on the current
   roadmap. See [[0013-no-accounts-backend-community-yet]].
 - **Two content sections, ten category hubs -- don't mix them up.** *Applied*
-  (`section: applied` in the category YAML) is exactly four hubs:
-  `data-analysis`, `experiments-causality`, `time-series-forecasting`,
+  (`section: applied` in the category YAML) is exactly four: `data-analysis`,
+  `experiments-causality`, `time-series-forecasting`,
   `machine-learning-statistics`. *Learn* is the other six: `foundations`,
   `descriptive-statistics`, `inferential-statistics`,
-  `probability-distributions`, `regression-correlation`, `combinatorics`. An
-  article's section is inferred from its category hub -- nothing in article
-  frontmatter says which section it is in.
+  `probability-distributions`, `regression-correlation`, `combinatorics`. A
+  section is inferred from the hub -- article frontmatter never states it.
 - **Every babylovegrowth / outsourced article is Applied.** Its `category`
   must be one of the four Applied hubs, never a Learn hub -- pick the closest
   Applied fit rather than the best topical fit across all ten. Enforced by
   `ALLOWED_CATEGORIES` in `outsource-content/check_sanitized.py`. See
   [[0020-outsource-is-applied-only]].
+- **The two content boards split by *source*, not by section.**
+  `content-ops/content.db` holds everything **we** write (all Learn + the
+  internally written Applied articles); `outsource-content/outsource_content.db`
+  holds only **vendor** articles. So "Applied" spans both boards, and neither
+  board alone answers "what is live". Never migrate rows between them. See
+  [[0021-boards-split-by-source]].
+- **Board changes only reach git through a dump.** Both `.db` files are
+  gitignored: after any board write run `python3 scripts/db_sync.py dump` and
+  commit the `.sql`; after a clone run `rebuild` or the CLIs fail. `npm run
+  build` runs `check`, so a forgotten dump fails the build. See
+  [[0018-sqlite-boards-as-sql-dumps]].
 
 ## Operating Model — Delegation First (BINDING)
 
@@ -121,16 +135,10 @@ do bulk reading, bulk drafting, or long audits itself.
 
 ## Session-end convention
 
-At the end of a session that finishes non-trivial work or makes a decision,
-write a dated handoff to `docs/status/sessions/YYYY-MM-DD-topic.md` (template
-in `docs/MEMORY-SYSTEM.md` Section 7) and update `docs/status/NOW.md`.
-Promote any durable decision to a new ADR in `docs/decisions/` rather than
-only noting it in the session file. A session that only executes an existing,
-already-decided plan (e.g. publishing already-queued content) doesn't need a
-handoff file -- updating the relevant queue/tracker suffices.
-
-Run **`/session-close`** to execute this ritual; the prose above is the
-fallback if the skill is unavailable.
+Run **`/session-close`**. It updates `docs/status/NOW.md`, writes a dated
+handoff to `docs/status/sessions/` when the session left work unfinished or
+made a decision, and promotes durable decisions to a new ADR. A session that
+only executes an already-decided plan needs no handoff -- update the tracker.
 
 ## Memory system
 

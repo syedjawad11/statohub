@@ -3,9 +3,12 @@
 This is the **statohub.com** build repo. If you are Codex (or any build agent),
 read this, then your task in [`handoff/`](handoff/).
 
+Like `CLAUDE.md`, this file is a **router, not a knowledge dump**. Durable
+knowledge lives in `docs/`; per-task history lives in `handoff/` and `git log`.
+Keep this file under ~80 lines.
+
 ## Where things live (docs/ router)
 
-The project's durable knowledge lives in `docs/`, not in this file's prose.
 Read the one relevant to your task, skip the rest:
 
 - **`docs/ARCHITECTURE.md`** — stack, URL scheme, build/CI pipeline, content
@@ -19,317 +22,65 @@ Read the one relevant to your task, skip the rest:
   oversight.
 - **`docs/DESIGN-SYSTEM.md`** — tokens, fonts, component patterns; read before
   any styling task.
+- **`docs/status/NOW.md`** — current state, active work, blockers.
 - `docs/legacy/BUILD-PLAN.md` is the original full build spec, kept for depth;
   where it and `docs/ARCHITECTURE.md` disagree, `docs/ARCHITECTURE.md` (newer)
   wins — flag the conflict in your Work Log rather than silently picking one.
 
 ## Division of labor & handoff
 
-- **Claude** researches, decides SEO rules, writes the 50 articles, and reviews.
+- **Claude** researches, decides SEO rules, writes and reviews content, and
+  closes tasks. It runs two content pipelines — internal (`content-ops/`) and
+  outsourced (`outsource-content/`) — which Codex does not touch.
 - **Codex** builds to spec: the Astro scaffold, the `<StatCalc>` component, the
   calculator engines, and the SEO/link-integrity plumbing.
 - Work passes through [`handoff/`](handoff/) as one file per task, moving
   `TODO → IN_PROGRESS → DONE → CLOSED` (or `CHANGES_REQUESTED`). Pick the
   lowest-numbered `TODO`, set `IN_PROGRESS`, build, fill the **Work Log**, set
-  `DONE`. Full protocol: `../Claude_OS/CODEX-WORKFLOW.md`.
+  `DONE`. Full protocol: [`handoff/README.md`](handoff/README.md). Closed tasks
+  are archived to `handoff/archive/`.
+- **One agent on the repo at a time** — see
+  [[0004-codex-builds-claude-reviews]].
 
-## Hard constraints (do not violate — see docs/legacy/BUILD-PLAN.md for full detail)
+## Hard constraints (full detail in `docs/ARCHITECTURE.md` + the cited ADRs)
 
 - **Stack:** Astro SSG + Tailwind + MDX → Cloudflare Pages. Calculators are
-  client-side only. **Wrangler v3** (Node 20.8.0 is incompatible with v4).
+  client-side only. **Wrangler v3** (Node 20.8.0 is incompatible with v4). See
+  [[0005-wrangler-v3-lock]].
 - **Flat trailing-slash URLs.** Every route is `<folder>/index.astro` (never a
   flat `[slug].astro`); `astro.config.mjs` sets `trailingSlash:'always'` +
-  `build.format:'directory'`. Every URL ends in `/`.
-- **Internal links never hand-typed.** Use the typed registry in `src/lib/links.ts`
-  via `url(id)` / `Link.astro`. `scripts/check-links.mjs` must pass (no broken,
-  no non-slash internal links) or the build fails.
+  `build.format:'directory'`. Every URL ends in `/`. See
+  [[0002-flat-url-structure]].
+- **Internal links never hand-typed.** Use the typed registry in
+  `src/lib/links.ts` via `url(id)` / `Link.astro`. `scripts/check-links.mjs`
+  must pass or the build fails.
 - **No odds calculators.** Do not build `/calculators/betting-odds/` or
-  `/calculators/odds/`.
+  `/calculators/odds/`. See [[0003-no-odds-calculators]].
+- **Never commit a board `.db`.** Both SQLite boards are gitignored and tracked
+  as `.sql` dumps; if a task touches one, run `python3 scripts/db_sync.py dump`
+  and commit the `.sql`. See [[0018-sqlite-boards-as-sql-dumps]].
 - **Lean, no over-engineering.** A small reproducible script beats a framework.
-  Don't touch sibling folders. Don't edit `CLAUDE.md` (Claude's log).
+  Don't touch sibling folders. Don't edit `CLAUDE.md` — it is Claude's router,
+  maintained by the orchestrator.
 
-## Sandbox heads-up (expected, not blockers)
+## Gates before handing off
 
-These are normal approval prompts in this project (it is `trusted`); approve and
-re-run, don't work around them:
+Run all of these; a task is not `DONE` until they pass:
 
-- **`spawn EPERM` on `npm test` / `astro build`.** The Windows sandbox blocks
-  worker-process spawn (Vitest/esbuild/astro) until approved. Re-run with
-  process-spawn approval -- it passes.
-- **`npm install` fails "cached-only".** Installing an uncached package needs
-  network approval. Re-run `npm install` with network access.
-- **Mojibake when reading `.md` files** (`â€"`, `â†'`, `â€¦`): codepage artifact,
-  not corruption. Task files are authored in plain ASCII to avoid this; if you
-  still hit a patch mismatch, replace the bounded section rather than the exact
-  glyph, then re-read to verify.
+```
+npx astro check      # expect 0 errors
+npm test             # Vitest
+npm run build        # gen-route-ids + astro build + link/meta/docs/board gates
+```
 
-## Codex work-history reference
+- For route work, inspect `dist/` to confirm generated paths, canonical URLs,
+  JSON-LD, sitemap entries, and the absence of unwanted pages.
+- Preserve `StatCalc` byte-stable hooks when styling: `data-statcalc`,
+  per-instance JSON config, form fields, `aria-live` result region, and the
+  client island import.
+- This workspace is Linux (migrated from Windows 2026-08). If you hit
+  `spawn EPERM` on `npm test` / `astro build`, or an `npm install`
+  "cached-only" failure, that is a sandbox approval prompt — approve and re-run
+  rather than changing the implementation.
 
-Update this section whenever Codex finishes a task in this repo. Keep entries
-concise: what changed, key decisions, verification commands, and reusable lessons.
-
-### Handoff tasks completed through TASK-016
-
-- **TASK-001 -- scaffold/trailing slash/Tailwind:** Astro 4 + MDX + sitemap +
-  Tailwind v3/PostCSS scaffold, `astro.config.mjs` locked to
-  `site:'https://statohub.com'`, `trailingSlash:'always'`, and
-  `build.format:'directory'`; class-based dark mode with pre-paint script;
-  Wrangler v3 config. Verification used `npm run build`, `npx astro check`,
-  sitemap inspection, and local preview HTTP checks.
-- **TASK-002 -- content collections:** added `categories`, `articles`, and
-  `calculators` collections in `src/content/config.ts` with Astro
-  `reference()` fields; seeded minimal category/article/calculator samples.
-  `astro sync`, `astro check`, and build validated cross-collection integrity.
-- **TASK-003 -- calculator engines:** added pure TS calculator contract,
-  registry, and 10 engines (`mean`, `median`, `mode`, `range`, `variance`,
-  `standardDeviation`, `meanAbsoluteDeviation`, `percentile`, `weightedMean`,
-  `zScore`) with Vitest coverage. Percentile uses Hyndman-Fan Type 7; mode ties
-  return the lowest tied value, all-unique returns a no-mode error result.
-- **TASK-004 -- StatCalc dual deploy:** built shared server-rendered
-  `StatCalc.astro`, vanilla client island, parse/format helpers, standalone
-  calculator routes, calculators hub, and embed-only median config. Same config
-  and engine path drives article embeds and standalone pages; `standalone:false`
-  correctly suppresses standalone route generation.
-- **TASK-005 -- typed links/link gate:** added `src/lib/links.ts`,
-  `Link.astro`, `scripts/check-links.mjs`, and wired the build gate. Astro 4
-  public `CollectionEntry` types widened route ids to `string`, so route-id
-  literal unions are generated by `scripts/gen-route-ids.mjs` into committed
-  `src/lib/content-route-ids.ts`. `npm run build` now regenerates ids, builds,
-  then blocks broken, non-slash, or redirect-source internal page links.
-- **TASK-006 -- SEO plumbing:** added Meta, Canonical, JsonLd, Breadcrumbs, and
-  `src/lib/schema.ts` helpers for BreadcrumbList, Article, and
-  SoftwareApplication schema. `BaseLayout` owns canonical/meta/noindex/schema
-  rendering; URL fields route through `url()`/`routes`. Added `robots.txt` and
-  sitemap filtering for noindex proof routes.
-- **TASK-007 -- Cloudflare Pages deploy:** Claude executed the interactive
-  deployment. Important repo-side fixes: `wrangler.toml` needs top-level
-  `name = "statohub"` for Wrangler v3 Pages validation; `src/pages/404.astro`
-  is required so Cloudflare Pages serves real 404s instead of homepage 200s for
-  unmatched paths. Domain and CI/CD were later completed: live at
-  `https://statohub.com`, `www` redirects to apex, GitHub Actions deploys after
-  check/test/build gates.
-- **TASK-008 -- flat article routes:** added `ArticleLayout.astro` and
-  `src/pages/[slug]/index.astro` for flat root article URLs while filtering
-  drafts; deleted the temporary `normal-distribution` proof route. MDX imports
-  `StatCalc`, `Link`, and `routes` explicitly; prose styling is hand-written in
-  `global.css` instead of adding `@tailwindcss/typography`.
-- **TASK-009 -- design system/chrome redesign:** added self-hosted Fontsource
-  fonts, warm token system via CSS variables + Tailwind mappings, rebuilt
-  header/footer/mobile menu/theme toggle, added `/about/`, seeded all category
-  hubs, unified root `[slug]` handling for category hubs and articles, and
-  rethemed StatCalc/calculator pages without changing calculator hooks or math.
-- **TASK-010 -- homepage/article layout redesign:** replaced homepage with the
-  mockup-driven hero, category cards, calculator strip, and real embedded
-  StatCalc; upgraded ArticleLayout to 3-column shell with in-article breadcrumb,
-  H2 TOC, reading progress, calculator jump link, related grid, reading time,
-  and MDX `.callout` / `.formula-block` authoring classes. Homepage only links
-  to routes that exist so `check-links` remains green.
-- **TASK-011 -- descriptive standalone calculator configs:** added six
-  standalone calculator YAML configs (`average`, `weighted-average`, `variance`,
-  `mean-absolute-deviation`, `percentile`, `z-score`) reusing existing registry
-  engines and generated route ids. Added a type-only CategoryLayout annotation
-  so `npx astro check` is clean. Verification used `npx astro check`, `npm test`
-  after the expected spawn approval, and `npm run build` with 0 link violations.
-- **TASK-012 -- structured descriptive outputs:** extended `CalcResult` with
-  optional `table`, `list`, and `text` fields; appended client rendering for
-  structured output while preserving the numeric `<dl>` path; added `mmmr`,
-  `range-iqr`, `outlier`, and `frequency-table` engines/configs/tests. Only
-  `frequency-table` is standalone; the other three remain embed-only. Verification
-  used `npx astro check`, `npm test` after spawn approval, `npm run build`, route
-  existence checks, and a clean calc purity grep.
-- **TASK-013 -- select inputs and probability/combinatorics calculators:** added
-  schema/component/client support for `select` inputs, passing selected values as
-  raw strings; added BigInt-backed `factorial`, `combination`, `probability`, and
-  `binomial` engines with standalone configs and tests. Oversized combinatorics
-  results return clean errors instead of unsafe numbers. Verification used
-  `npx astro check`, `npm test` after spawn approval, `npm run build`, route and
-  select HTML checks, and a clean calc purity grep.
-- **TASK-014 -- normal-family calculators + stats math:** added pure
-  `_stats-math` helpers (`erf`, normal CDF/PDF, inverse normal CDF, z critical),
-  standalone normal-distribution, z-table, confidence-interval, and sample-size
-  engines/configs/tests, and registered their calculator routes. Verification
-  used focused Vitest, `npx astro check`, full `npm test` after spawn approval,
-  `npm run build`, route/select HTML checks, category checks, and a clean calc
-  purity grep.
-- **TASK-015 -- correlation/regression paired-list calculators:** added pure
-  `_regression-core` paired-list validation/sums, Pearson correlation and linear
-  regression engines/configs/tests, with two `numberList` inputs and equation
-  `text` output for regression. Verification used focused Vitest,
-  `npx astro check`, full `npm test` after spawn approval, `npm run build`,
-  route/textarea checks, category checks, and a clean calc purity grep.
-- **TASK-016 -- inferential calculators + t/chi-square math:** extended
-  `_stats-math` with log-gamma, regularized gamma/beta, chi-square CDF,
-  Student-t CDF/quantile, and critical-t helpers; added p-value, t-test,
-  chi-square, t-table, and proportion engines/configs/tests. Verification used
-  math-first focused Vitest after expected spawn approval, `npx astro check`,
-  full `npm test`, `npm run build`, route existence checks, select DOM checks,
-  and a clean calc purity grep.
-
-- **TASK-017 -- internal linking + legal page:** added typed
-  `privacyCookiePolicy` route support, a combined `/privacy-cookie-policy/` page,
-  footer link, collection-driven related-calculator sidebar on standalone
-  calculator pages, deterministic `<RelatedLink>` callout with one
-  standard-deviation demo, and focused CSS reuse of article rail/card patterns.
-  Verification used `npx astro check`, `npm test` after expected spawn approval,
-  `npm run build` with 0 link violations, built HTML checks for the policy page,
-  all calculator sidebars, footer link, callout render, and local preview HTTP
-  checks.
-- **TASK-018 -- woven RelatedLink callouts:** inserted the exact Claude-authored
-  `<RelatedLink>` map across 21 article MDX files and 19 calculator-content
-  MDX files: 63 article callouts plus 38 calculator teaching-block callouts.
-  Removed the old trailing standard-deviation variance demo and kept all links
-  routed through `routes.article(...)` / `routes.calculator(...)`. Verification
-  used structural callout/import audits, an independent subagent audit,
-  `npx astro check`, `npm test` after expected spawn approval,
-  `npm run build` with 0 link violations, and built HTML spot checks.
-- **TASK-019 -- theme foundation/chrome:** swapped Fraunces for self-hosted
-  Newsreader, ported the preview token palette/dark overrides into `html.dark`,
-  renamed Tailwind color aliases to `pine`/`clay`/`ink-2`/`ink-3`, restyled the
-  global top bar/footer/buttons/utilities, and mechanically removed old token
-  references. Verification used `npx astro check`, `npm test`, `npm run build`
-  with 0 link violations, old-token grep, built HTML spot checks, and local
-  preview HTTP checks.
-- **TASK-020 -- theme home/article views:** rebuilt the homepage to the preview
-  hero, distribution figure, catalog, calculator band, and recent list using
-  typed links only; restyled `ArticleLayout` to the preview breadcrumb, header,
-  divider, dynamic TOC, article body, related grid, and real MDX StatCalc embed
-  styling. Verification used `npx astro check`, `npm test`, `npm run build`
-  with 0 link violations, built HTML checks for `/` and `/frequency-table/`,
-  and local preview HTTP checks.
-- **TASK-021 -- theme calculator view/panel:** rewrapped `StatCalc` page variant
-  in the preview instrument panel (`panel-top`, two-column `panel-grid`, input
-  and output panes) while preserving all client hooks and leaving `client.ts`,
-  `format.ts`, and `src/calc` untouched; restyled standalone calculator pages
-  with `calc-hero`, `howto`, and related `side-card`. Verification used
-  `npx astro check`, `npm test`, `npm run build` with 0 link violations,
-  unchanged client/engine diffs, built DOM hook checks on standard-deviation,
-  frequency-table, and mean calculators, and local preview HTTP checks. Browser
-  screenshots/click tests could not run because no in-app browser backend was
-  available.
-- **TASK-022 -- trivial fix batch:** removed the article H2 pseudo-element that produced the broken glyph, deleted the obsolete root-segment sitemap noindex filter, removed superseded duplicate `.section-head` / `.article-standfirst` CSS while preserving live computed declarations, and left still-referenced TOC/article-shell rules in place. Verification used `npx astro check`, `npm test` after expected spawn approval, `npm run build`, built CSS U+FFFD byte checks, h2 pseudo-element checks, and root `/normal-distribution/` artifact checks.
-- **TASK-023 -- contrast tokens + CI guard:** adjusted only failing contrast tokens (`--ink-3` light/dark and light `--brass`), added `scripts/check-contrast.mjs` with direct WCAG luminance math reading live CSS tokens, and wired it into GitHub Actions between tests and build. Verification used the contrast script, an intentional temporary failing-token proof, `npx astro check`, `npm test`, and `npm run build`.
-- **TASK-024 -- canonical calculator regression suite:** probed SciPy first (`python3` found SciPy 1.17.1), then added `src/calc/__tests__/canonical-regression.test.ts` covering all 29 live registry engines with sourced typical/edge/larger cases. Distribution cases cite exact SciPy 1.17.1 calls; hand-computable cases show arithmetic inline. No engine files changed and no `// MISMATCH:` cases remained. Verification used focused Vitest, full `npm test`, `npx astro check`, `npm run build`, mismatch grep, and engine-diff scope checks.
-- **TASK-025 -- applied foundations:** added a defaulted `learn`/`applied`
-  section field to categories only, exact light/dark status tokens with eight
-  new contrast checks, and a reusable validated `faqPageSchema()` builder with
-  focused tests. Verification used clean `npx astro check`, `npm test` after
-  expected spawn approval (35 files/120 tests), 13 passing contrast checks,
-  and `npm run build` with 109 pages and 0 link/meta-description violations.
-- **TASK-026 -- section landings + reserved-slug guard:** added `learnLanding`
-  and `appliedLanding` route kinds, a props-driven `SectionLandingLayout`
-  serving both `/learn/` and `/applied/`, section-aware category breadcrumbs
-  read from the category's own `section` field, and a `RESERVED_SLUGS` guard
-  closing the root-route hole where a slug matching a static segment was
-  silently shadowed with a green build. `ArticleLayout` and the nav/footer were
-  deliberately left untouched (TASK-030 and TASK-027 own those). Verification:
-  `npx astro check` clean, `npm test` 35 files/120 tests, `npm run build` 115
-  pages with 0 link/meta-description violations, catalog isolation checks, and
-  a guard proof run in both directions. **Entry written by Claude, not Codex:
-  the MCP call hit the 900s timeout after the code was complete but before the
-  work log or this entry were written.**
-- **TASK-027 -- section-aware nav/footer chrome:** replaced the six-category
-  header with Learn / Applied / Calculators and rebuilt the footer as brand +
-  Learn + Applied + Calculators + Site, deriving both category columns from the
-  collection in `data.order`; expanded only the desktop footer grid template
-  while retaining existing responsive breakpoints. Verification used clean
-  `npx astro check`, a sandbox-safe full Vitest fallback (35 files/120 tests)
-  after the exact `npm test` command hit documented `spawn EPERM`, `npm run build`
-  with 115 pages/4268 links/0 violations, 13 passing contrast checks,
-  and built HTML nav/footer/order/inbound-link inspection. Browser visual QA
-  was unavailable because no in-app browser backend was connected.
-- **TASK-028A -- applied module components core:** added token-only, scoped
-  `KeyTakeaways`, `Callout`, `Checklist`, and `DataTable` components under
-  `src/components/applied/`, plus a noindex `/dev/preview/` consumer excluded
-  from sitemap and robots. Verification used clean `npx astro check`, a
-  sandbox-safe full Vitest fallback (35 files/120 tests) after the exact
-  `npm test` command hit documented `spawn EPERM`, `npm run build` with 116
-  pages/4296 links/0 link or meta-description violations, 13 passing contrast
-  checks, clean six-digit-hex and `/blog/` source proofs, and built artifact
-  checks for noindex, sitemap exclusion, component variants, and visible
-  status-badge labels.
-- **TASK-028B -- applied module components structural:** added token-only,
-  scoped `Sources`, `FAQ`, `Figure`, and interim hand-authored
-  `TableOfContents` components under `src/components/applied/`; `FAQ` renders
-  its visible Q&A and `faqPageSchema()` JSON-LD from one items array. Appended
-  all four to the existing preview and added one schema ordering/count test.
-  Verification used clean `npx astro check`, a sandbox-safe full Vitest
-  fallback (35 files/121 tests) after the exact `npm test` command hit
-  documented `spawn EPERM`, `npm run build` with 116 pages/4296 links/0 link or
-  meta-description violations, 13 passing contrast checks, a clean hex-token
-  proof, and built HTML extraction showing 3 visible FAQs matching all 3
-  FAQPage entities verbatim and in order.
-- **TASK-029A -- SVG infographic frame + core diagrams:** added the unique-id,
-  accessible `_SvgFrame` and token-only `ProcessFlow`, `TaxonomyTree`, and
-  `ComparisonMatrix` components; appended four numbered preview figures and
-  expanded status-token contrast coverage from 13 to 21 pairs. Verification
-  used clean `npx astro check`, a sandbox-safe full Vitest fallback (35
-  files/121 tests) after the exact `npm test` command hit documented
-  `spawn EPERM`, `npm run build` with 116 pages/4296 links/0 violations, all 21
-  contrast checks, a clean SVG colour-attribute proof, 24 total/24 unique
-  built ids, resolved title/description references, and numeric matrix cells.
-- **TASK-029B -- SVG infographic decision/score/chart set:** added token-only
-  `DecisionTree` (truncates past `maxDepth` rather than throwing), `Scorecard`
-  (second consumer of the `--status-*` tokens; renders value and status word as
-  text), and `AnnotatedChart` (bar and line modes, real negative-value support
-  via a computed zero axis), completing the 6-infographic set. Appended four
-  numbered preview figures. **This entry was written by the Orchestrator, not
-  Codex** -- the MCP transport hit its 900s timeout before Codex wrote its Work
-  Log or this entry, though the implementation itself was complete and correct.
-  Every result here was produced by the Orchestrator re-running the gates:
-  clean `npx astro check` (36 files), `npm test` 35 files/121 tests passing as
-  the exact command, `npm run build` with 116 pages/4296 links/0 violations, all
-  21 contrast checks, a clean SVG colour-attribute proof, 35 total/35 unique
-  built ids, and 8/8 framed diagrams with resolving `aria-labelledby`.
-
-- **TASK-030 -- Applied article layout:** added `AppliedArticleLayout` with an
-  H2/H3 table of contents and section-aware root-route dispatch, while keeping
-  the existing Learn article layout unchanged.
-- **TASK-031 -- three-section homepage:** rebuilt the hero and route finder
-  around Learn / Calculate / Apply, with 5 Learn topics, 8 calculators, and
-  exactly the 4 approved Applied hubs plus progressive-enhancement filters. No
-  Applied articles, newsletter, fabricated content, or fifth category was added.
-- **TASK-032 -- Applied content ops:** added the additive/idempotent category
-  `section` migration, seeded exactly 4 Applied categories with no Applied
-  articles, and branched Learn/Applied briefs. Temporary-database verification
-  covered both schema paths and confirmed the real `content.db` stayed unchanged.
-- **TASK-033 -- Applied preview route:** moved the component showcase from
-  `/dev/preview/` to noindex `/dev/applied-preview/`, kept it out of the sitemap,
-  and verified 8 SVG frames with 35 unique ids. Integrated gates passed:
-  `npx astro check` 37 files/0 diagnostics, Vitest 35 files/121 tests, contrast
-  21/21, and `npm run build` 116 pages/4309 links/0 link or meta violations.
-  Browser runtime exposed zero instances, so visual QA used built artifacts and
-  local HTTP checks.
-- **TASK-034 -- llms.txt generator + drift gate:** added a Node-built-ins-only
-  post-build generator sourced from the built sitemap/HTML, category YAML, and
-  article BreadcrumbList JSON-LD; added a gate for URL coverage, trailing
-  slashes, byte identity, and pre-generation committed-copy drift; wired both
-  into `npm run build`. The committed file remained byte-identical across two
-  builds, and drafting `/frequency-table/` produced the required URL-specific
-  failure. Verification used clean `npx astro check`, 35 files/121 Vitest tests,
-  repeated `npm run build` runs with 0 integrated violations, and SHA-256 checks.
-- **TASK-035 -- CSP allowances + AdSense loader:** widened the single
-  Cloudflare Pages CSP to the specified Google ad/CMP origins and added one
-  production-only, indexable-page-only loader in `BaseLayout`, backed by a
-  single public publisher-ID constant. Verification used clean Astro check,
-  35 files/121 Vitest tests, a 120-page integrated build, exact built/dev
-  loader-count assertions, and a byte-for-byte CSP response through local
-  Wrangler Pages. Dynamic browser-console and deployed-edge checks were
-  unavailable and are recorded in the Work Log.
-
-### Reusable verification habits
-
-- Preferred gates before handing off: `npx astro check`, `npm test`, and
-  `npm run build` (which includes `gen-route-ids`, Astro build, and
-  `check-links`). Expect Windows sandbox `spawn EPERM` for Astro/Vitest worker
-  processes; approve and rerun rather than changing the implementation.
-- For route work, inspect `dist` or temporary published draft builds to confirm
-  generated paths, canonical URLs, JSON-LD, sitemap entries, and absence of
-  unwanted pages such as `/calculators/odds/`.
-- Keep internal links and schema URL fields on `Link.astro`, `routes.*`, or
-  `url()`. Never hand-type internal page hrefs.
-- Preserve `StatCalc` byte-stable hooks when styling:
-  `data-statcalc`, per-instance JSON config, form fields, `aria-live` result
-  region, and the client island import.
-- Browser/plugin availability has varied. When the in-app browser is not
-  available, use local preview HTTP checks and built HTML inspection; use real
-  browser screenshots when available for visual QA.
+Per-task history is in `handoff/archive/` and `git log`, not in this file.

@@ -10,7 +10,7 @@
     "predev": "node scripts/gen-route-ids.mjs",
     "dev": "astro dev",
     "gen:routes": "node scripts/gen-route-ids.mjs",
-    "build": "node scripts/gen-route-ids.mjs && astro build && node scripts/gen-llms-txt.mjs && node scripts/check-llms-txt.mjs && node scripts/check-links.mjs && node scripts/check-meta-description.mjs",
+    "build": "node scripts/gen-route-ids.mjs && astro build && node scripts/gen-llms-txt.mjs && node scripts/check-llms-txt.mjs && node scripts/check-links.mjs && node scripts/check-meta-description.mjs && node scripts/check-docs.mjs && python3 scripts/db_sync.py check",
     "preview": "astro preview",
     "astro": "astro",
     "astro check": "astro check",

@@ -43,15 +43,18 @@ explanation of how it was produced, without leaving the page.
 
 ## Scale and scope
 
-- **~50 teaching articles** (MDX, `src/content/articles/`), each pairing an
-  embedded calculator where one applies. Flat, primary-keyword slugs, no
-  category in the URL path.
+- **88 published teaching articles** (MDX, `src/content/articles/`; 74 Learn,
+  14 Applied as of 2026-09-03), each pairing an embedded calculator where one
+  applies. Flat, primary-keyword slugs, no category in the URL path.
 - **~23-29 standalone calculator pages** (`src/content/calculators/`, each a
   YAML config against a pure `src/calc/*.ts` engine), reachable at
   `/calculators/{slug}/`, plus a `/calculators/` hub.
-- **6-7 categories**: foundations, descriptive-statistics,
-  probability-distributions, combinatorics, regression-correlation,
-  inferential-statistics -- each with its own hub page at `/{category}/`.
+- **10 category hubs**, each with its own hub page at `/{category}/`, split
+  into two sections ([[0014-applied-section-url-family]]). *Learn* (6):
+  foundations, descriptive-statistics, probability-distributions,
+  combinatorics, regression-correlation, inferential-statistics. *Applied* (4):
+  data-analysis, experiments-causality, time-series-forecasting,
+  machine-learning-statistics.
 - **Short calculator teaching blocks** (`src/content/calculator-content/`) --
   a separate, lighter content type: a ~300-700-word definition/how-to/worked-
   example/FAQ block rendered under each standalone calculator, distinct from

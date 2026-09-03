@@ -9,6 +9,9 @@ __pycache__/
 dist/
 .astro/
 
+# scratch dirs left behind by interrupted vitest runs
+.tmp-*/
+
 # cloudflare / wrangler
 .wrangler/
 .dev.vars

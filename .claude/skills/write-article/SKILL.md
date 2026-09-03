@@ -41,11 +41,21 @@ pick the recommended next one.
      a green `npm run build` (the link gate). Approval is not auto-publish.
 
 6. **Wrap up.** Run `python content-ops/content_db.py stats` and report the new
-   board state.
+   board state. Then persist the board to git:
+   ```
+   python3 scripts/db_sync.py dump      # then commit content-ops/content.sql
+   ```
+   `content.db` is gitignored — every `content_db.py` write (`set-status`,
+   `log-review`) reaches the repo only through this dump. CI runs
+   `db_sync.py check`, so a forgotten dump fails the build.
 
 ## Notes
 - All commands run from the repo root (`Desktop/statohub/`).
 - The writer drafts and the reviewer checks — keep the roles separate (the
   reviewer never rewrites).
 - This pipeline is for **content**. Site/calculator **build** work goes through
-  the Codex `handoff/` loop, not here (see `CONTENT-WORKFLOW.md`).
+  the Codex `handoff/` loop, not here (see `handoff/README.md` and
+  `docs/ARCHITECTURE.md` "Division of labor").
+- This pipeline writes **Learn** articles, governed by `.claude/seo-playbook.md`.
+  Applied articles are governed by `.claude/applied-playbook.md`; outsourced
+  ones go through `/publish-outsource-article`, never through `content_db.py`.

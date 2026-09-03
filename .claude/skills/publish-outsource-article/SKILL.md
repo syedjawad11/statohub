@@ -9,14 +9,20 @@ Take one babylovegrowth-sourced topic from `outsource-content/calendar.json`
 through the full pipeline to a **live, published** article, with no human
 approval step at the end (this pipeline auto-publishes on a clean gate —
 unlike `/write-article`, there is no "human flips draft:false" pause). With
-no slug, pick the lowest `queue_position` still `queued`.
+no slug, pick the lowest queued slug that **exists upstream** (see step 1).
 
 ## Steps
 
 1. **Pick the article.**
    - If a slug was given, use it.
-   - Else run `python outsource-content/outsource_db.py list --status queued`
-     and take the lowest `queue_position`.
+   - Else run `python outsource-content/outsource_db.py list --status queued`,
+     then cross-check against `babylovegrowth_client.list_articles()` and take
+     the **lowest queued slug that actually exists upstream**.
+   - **Never take work by `queue_position` alone.** The board and upstream do
+     not line up: several queued slots were never written by the vendor, so
+     the lowest `queue_position` is routinely a topic that does not exist.
+     Ordering by position and fetching blindly wastes a full pass. Position
+     orders the queue; upstream presence decides what is workable.
 
 2. **Map, if not already mapped.**
    - `python outsource-content/outsource_db.py show <slug>` — if
@@ -63,7 +69,13 @@ no slug, pick the lowest `queue_position` still `queued`.
      was stripped/converted, and the final source count.
 
 7. **Wrap up.** Run `python outsource-content/outsource_db.py stats` and
-   report the new queue state.
+   report the new queue state. Then confirm the board reached git:
+   ```
+   python3 scripts/db_sync.py check
+   ```
+   If it reports drift, run `python3 scripts/db_sync.py dump` and commit
+   `outsource-content/outsource_content.sql`. The `.db` is gitignored, so an
+   undumped board change exists only on this machine.
 
 ## Notes
 - All commands run from the repo root (`Desktop/statohub/`).

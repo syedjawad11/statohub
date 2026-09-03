@@ -45,10 +45,25 @@ internal article: read-only `SELECT article_slug FROM keywords WHERE
 keyword = ?` against `content-ops/content.db` (via `python -c` +
 `sqlite3` — never write to that database). A collision is a HARD failure.
 
-## 4. Confirm external Sources actually resolve
-`curl -sI` (or `-sL -o /dev/null -w '%{http_code}'`) every href under
-`## Sources`. Any non-2xx/3xx is a HARD failure — same bar
-`stats-article-reviewer` applies internally.
+## 4. Confirm external Sources resolve **and say what the citation claims**
+Fetch every href under `## Sources` with a plain `curl -sL` — **never `-I`
+alone and never `-k`**: a HEAD request hides redirects to soft-404 landing
+pages, and `-k` masks the dead-certificate hosts that link rot produces.
+
+Two distinct failures, both HARD:
+1. **Link rot** — any non-2xx final status.
+2. **Mis-citation** — the URL resolves, but the live page's `<title>` does not
+   match the citation text. Vendor drafts cite plausible-looking URLs that
+   point at the wrong paper or a generic hub. Compare the fetched title to the
+   citation before passing it.
+
+Both were hit in outsource batch 3, and `check_sanitized.py` detects neither.
+
+## 4b. Two more traps the sanitizer does not catch
+- **Category** — must be one of the four Applied hubs, never a Learn hub, even
+  when a Learn hub is the better topical fit (ADR 0020).
+- **Vendor template drift** — keep the `## Statohub's Take` section; strip any
+  `> *— Statohub*` sign-off line that came with the vendor draft.
 
 ## 5. Re-run the real build gate
 ```
@@ -72,20 +87,31 @@ the recoverable path.
    python outsource-content/outsource_db.py log-review <slug> pass "one-line summary"
    python outsource-content/outsource_db.py set-status <slug> published
    ```
-3. `git add src/content/articles/<slug>.mdx outsource-content/` (plus
-   `outsource_content.db` and the `raw/<slug>.json` audit file if not
-   already committed) and commit:
+3. **Dump the board before staging anything** — the `.db` is gitignored, so
+   the committed `.sql` is the only record of the status change you just
+   made. Skipping this is what silently desynced the board for 3 articles:
+   ```
+   python3 scripts/db_sync.py dump
+   ```
+4. `git add src/content/articles/<slug>.mdx outsource-content/` (this must
+   pick up `outsource-content/outsource_content.sql` and the
+   `raw/<slug>.json` audit file). Confirm the `.sql` is in
+   `git diff --cached --name-only` before committing — if it is missing,
+   the dump did not run. Never `git add` the `.db`; it is gitignored.
    ```
    git commit -m "content: publish <slug> (outsource, babylovegrowth)"
    ```
-4. `git push origin main` — this triggers the same GitHub Actions ->
-   Cloudflare Pages deploy as every other publish on this site.
+5. `git push origin main` — this triggers the same GitHub Actions ->
+   Cloudflare Pages deploy as every other publish on this site. CI runs
+   `db_sync.py check`, so a forgotten dump fails the deploy rather than
+   shipping a desynced board.
 
 On CHANGES_REQUESTED / blocked, do **not** touch `draft` and do **not**
 commit or push:
 ```
 python outsource-content/outsource_db.py log-review <slug> fail "specific fix list"
 python outsource-content/outsource_db.py set-status <slug> changes_requested   # or: blocked
+python3 scripts/db_sync.py dump   # the status change still has to reach the .sql
 ```
 
 ## Hard rules

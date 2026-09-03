@@ -63,9 +63,19 @@ JSON-LD (`src/lib/schema.ts` builders), sitemap entries, and canonical tags.
 
 Four Zod-validated Astro content collections (`src/content/config.ts`):
 
-- **`categories`** -- 6 categories (foundations, descriptive-statistics,
-  probability-distributions, combinatorics, regression-correlation,
-  inferential-statistics), each with a category-hub YAML.
+- **`categories`** -- 10 category hubs, each with a category-hub YAML, split
+  into **two sections** by a `section` field ([[0014-applied-section-url-family]],
+  [[0020-outsource-is-applied-only]]):
+  - *Learn* (`section` absent, defaults to `learn`) -- `foundations`,
+    `descriptive-statistics`, `probability-distributions`, `combinatorics`,
+    `regression-correlation`, `inferential-statistics`.
+  - *Applied* (`section: applied`) -- `data-analysis`,
+    `experiments-causality`, `time-series-forecasting`,
+    `machine-learning-statistics`.
+
+  An article's section is inferred from its hub; article frontmatter never
+  states it. Learn articles follow `.claude/seo-playbook.md`, Applied ones
+  `.claude/applied-playbook.md` -- the two are not interchangeable.
 - **`calculators`** -- one YAML config per calculator (29 as of the last count),
   each pointing at an engine key in `src/calc/registry.ts` and carrying
   `standalone: true|false` (whether it gets its own `/calculators/{slug}/` route, or
@@ -94,8 +104,15 @@ via the repo secret `CLOUDFLARE_API_TOKEN`.
 **Three gates to run before any push, always:** `npx astro check` (expect 0/0/0),
 `npm test` (Vitest), `npm run build` (includes the link gate -- expect 0 violations).
 
-Claude pushes to `main` via the GitHub MCP server, not local `git push` -- see
-[[0016-github-mcp-for-pushes]].
+Claude pushes to `main` with plain `git push` over SSH -- see
+[[0017-git-push-over-ssh]], which supersedes the GitHub-MCP-only flow of
+[[0016-github-mcp-for-pushes]]. The MCP server remains a fallback, with hard
+limits (no binary files, no deletes, whole-file overwrites only).
+
+CI also runs `db_sync.py rebuild && check`, proving the committed board dumps
+are valid SQL. Drift between a local `.db` and its committed `.sql` is caught
+locally instead, by `db_sync.py check` inside `npm run build` -- the `.db`
+files are gitignored, so CI never sees them ([[0018-sqlite-boards-as-sql-dumps]]).
 
 ## SEO plumbing
 
@@ -109,13 +126,35 @@ for a Direct Upload project.
 
 ## Editorial / content pipeline
 
-`content-ops/` is a self-contained SQLite editorial board (`content_db.py` CLI:
-`init`/`seed`/`list`/`brief`/`next`/`set-status`) tracking every planned article and
-calculator teaching block against ~350+ keywords with a hard uniqueness constraint
-(one keyword maps to exactly one page -- prevents cannibalization mechanically, not
-just by convention). See `docs/standards/content.md` for the writing/review standards
-this pipeline enforces, and `content-ops/calc-prose/SESSION-PLAN.md` for the current
-manual calc-prose procedure.
+There are **two** pipelines with two separate boards. They split by *source*
+(who wrote the article), not by section -- see [[0021-boards-split-by-source]].
+Never move rows between them.
+
+**1. Internal (`content-ops/`).** A self-contained SQLite editorial board
+(`content_db.py` CLI: `init`/`seed`/`list`/`brief`/`next`/`set-status`) tracking
+every planned article and calculator teaching block against ~350+ keywords with a
+hard uniqueness constraint (one keyword maps to exactly one page -- prevents
+cannibalization mechanically, not just by convention). Holds **all Learn
+articles plus the internally written Applied ones**. Driven by the
+`/write-article` skill and the `stats-article-writer` / `stats-article-reviewer`
+agents; approval is not auto-publish (a human flips `draft: false`). See
+`docs/standards/content.md` for the standards it enforces, and
+`content-ops/calc-prose/SESSION-PLAN.md` for the manual calc-prose procedure.
+
+**2. Outsourced (`outsource-content/`).** A separate board
+(`outsource_content.db`, `outsource_db.py`) for babylovegrowth-sourced vendor
+articles, which are **always Applied** ([[0020-outsource-is-applied-only]]).
+Driven by the `/publish-outsource-article` skill and the
+`outsource-content-processor` / `outsource-content-reviewer` agents:
+map -> fetch -> process -> review, and on a clean gate the reviewer flips
+`draft: false`, commits and pushes **with no human checkpoint**. Sanitization is
+enforced by `outsource-content/check_sanitized.py`. Full boundary rules:
+`outsource-content/README.md`. Its one sanctioned reach into the other board is
+a read-only `SELECT` on `content.db.keywords` for cannibalization checks.
+
+Both boards are gitignored `.db` files committed as `.sql` dumps; every board
+write must be followed by `python3 scripts/db_sync.py dump`
+([[0018-sqlite-boards-as-sql-dumps]]).
 
 ## Division of labor (build vs. content)
 
@@ -124,4 +163,7 @@ manual calc-prose procedure.
   artifacts (re-run the three gates, inspect `dist/`) before closing -- never just
   trusting the Work Log.
 - **Claude** writes content, sets SEO rules, and reviews/closes Codex's tasks.
+  It also runs both content pipelines above -- as the Orchestrator, delegating
+  drafting and audits to subagents but performing the single gated commit
+  itself ([[0004-codex-builds-claude-reviews]]).
 - **One agent on the repo at a time.**
