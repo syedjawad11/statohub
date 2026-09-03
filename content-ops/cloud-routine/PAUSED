@@ -1,0 +1,27 @@
+PAUSED 2026-09-03 — by explicit user decision: "we don't need any cloud
+routines for now."
+
+Scope: ALL statohub cloud routines. Both routine files check for this marker
+in Step 0 and exit 0 without picking, writing, building, or pushing:
+  - publish-next-article.md      (statohub-publish-next-article)
+  - publish-next-calc-prose.md   (statohub-publish-next-calc-prose)
+
+Reason: not a queue problem and not a failure. The Learn queue has been
+exhausted since 2026-08-14 and the routine has been no-opping nightly since
+(its one 2026-09-02 run published r-squared-adjusted-r-squared from a
+late-added row). Content direction is being decided by hand — internal
+Applied batch 2 topics are still unchosen — so unattended publishing is not
+wanted right now.
+
+IMPORTANT — this marker stops the WORK, not the SCHEDULE. The schedule lives
+in claude.ai -> Routines, which no repo-side file can reach. While this file
+exists a scheduled run still wakes, pulls main, prints `PUBLISH_RESULT:
+paused` and exits 0 — harmless, but it still consumes a run. To stop the
+runs themselves, disable or delete the routines in claude.ai -> Routines.
+
+To resume:
+  1. Delete this file.
+  2. Confirm the queue actually has work: `python3 content-ops/content_db.py next`
+  3. Update the pipeline line in docs/status/NOW.md.
+  4. Commit and push — the routine cold-starts from main, so the change takes
+     effect on the next scheduled run with no claude.ai-side action.

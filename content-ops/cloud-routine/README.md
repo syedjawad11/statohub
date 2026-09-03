@@ -4,7 +4,7 @@ Self-contained routine definitions that a **Claude cloud Routine** (claude.ai ->
 Routines) runs on a schedule against the connected `statohub` repo. Each run is a
 cold start: the routine file is the complete instruction set.
 
-## The routine
+## The routines
 
 - **`publish-next-article.md`** -- writes + publishes ONE planned article per run.
   Flow: locate repo -> `content_db.py next` (the queue) -> write a >=2000-word MDX
@@ -12,6 +12,25 @@ cold start: the routine file is the complete instruction set.
   + `vitest` + `npm run build` incl. the link gate) -> flip `draft:false` ->
   update `content.db` -> `git commit && push origin main`. The push triggers the
   existing GitHub Actions -> Cloudflare Pages deploy, so the article goes live.
+- **`publish-next-calc-prose.md`** -- the LIGHT counterpart: writes ONE short
+  (~300-700 word) calculator teaching block per run from
+  `content-ops/calc-prose/QUEUE.md` into `src/content/calculator-content/`.
+  Last ran 2026-06-25; kept for when the calc-prose queue is picked back up.
+
+Both are currently **paused** -- see below.
+
+## Pausing (repo-side kill switch)
+
+Create `content-ops/cloud-routine/PAUSED` (any content -- record the reason and
+date) and push. Both routine files check for it in Step 0 and exit 0 with
+`PUBLISH_RESULT: paused` before picking, writing, building, or pushing. Delete
+the file and push to resume. The marker is the source of truth for pause state,
+not this README's prose.
+
+**It stops the work, not the schedule.** The schedule lives in claude.ai ->
+Routines, which no repo file can reach: a paused run still wakes, pulls `main`,
+prints `paused`, and exits. To stop the runs themselves, disable or delete the
+routines in claude.ai -> Routines.
 
 ## Prerequisites (one-time)
 

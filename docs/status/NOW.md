@@ -4,12 +4,11 @@
 > ~60 lines by `scripts/check-docs.mjs`. Durable rules go in `CLAUDE.md`;
 > operational detail goes in the skill or agent that runs it.
 
-**Last updated:** 2026-09-03 (housekeeping: docs realigned, guardrails built,
-boards verified -- `docs/status/sessions/2026-09-03-housekeeping.md`).
+**Last updated:** 2026-09-03 (housekeeping shipped `3b72911`; cloud routines
+paused -- `docs/status/sessions/2026-09-03-housekeeping.md`).
 
 **Known quirk:** `db_sync.py check` always recommends `dump`, even when the
-`.db` is the stale side. If the `.sql` looks newer, `rm` the `.db` and
-`rebuild`.
+`.db` is stale. If the `.sql` looks newer, `rm` the `.db` and `rebuild`.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
@@ -23,11 +22,12 @@ visual QA vs `docs/ideas/homepage-redesign-mock-2026-08-16.png`. Applied hubs
 are thin -- `time-series-forecasting` and `machine-learning-statistics` hold
 **1 article each**.
 
-**Learn pipeline:** queue exhausted since 2026-08-14; nightly cloud routine idle
-(out of work, not broken). Applied seed rows stay `flagged` so it cannot
-auto-publish a half-written draft.
+**Cloud routines: PAUSED 2026-09-03** (user decision, both routines) by
+`content-ops/cloud-routine/PAUSED`; each gates on it in Step 0. The marker stops
+the work, **not the schedule** -- disable them in claude.ai -> Routines to stop
+the runs. Learn queue was exhausted since 2026-08-14 anyway.
 
-**Baseline on `origin/main`** (`94803cc`): 131 pages, 4,967 internal links, 0
+**Baseline on `origin/main`** (`3b72911`): 131 pages, 4,967 internal links, 0
 link/meta violations, 121 tests, 88 published articles (74 Learn / 14 Applied).
 
 ## Outsource pipeline: 10 published, 10 queued
