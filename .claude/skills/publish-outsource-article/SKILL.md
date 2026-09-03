@@ -53,9 +53,10 @@ no slug, pick the lowest queued slug that **exists upstream** (see step 1).
 
 5. **Review.** Spawn the **outsource-content-reviewer** agent on the draft.
    It runs `check_sanitized.py`, spot-checks fidelity, cross-checks
-   cannibalization, re-runs the real build gate, and — on a full pass —
-   flips `draft: false`, commits, and pushes itself. No human checkpoint on
-   PASS; that's the defined behavior for this pipeline.
+   cannibalization, and — on a full pass — flips `draft: false`, re-runs the
+   real build gate against that published state, then commits and pushes
+   itself. No human checkpoint on PASS; that's the defined behavior for this
+   pipeline.
 
 6. **Loop or finish.**
    - **CHANGES_REQUESTED:** hand the reviewer's fix list back to the
@@ -76,6 +77,15 @@ no slug, pick the lowest queued slug that **exists upstream** (see step 1).
    If it reports drift, run `python3 scripts/db_sync.py dump` and commit
    `outsource-content/outsource_content.sql`. The `.db` is gitignored, so an
    undumped board change exists only on this machine.
+
+   Then confirm the reviewer left nothing behind:
+   ```
+   git status --porcelain
+   ```
+   Empty is the only acceptable result. If `src/lib/content-route-ids.ts` or
+   `public/llms.txt` show up dirty, the reviewer skipped its own staging step
+   — commit them, and say so in your summary so the gap gets fixed rather
+   than papered over each run.
 
 ## Notes
 - All commands run from the repo root (`Desktop/statohub/`).

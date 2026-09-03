@@ -1,6 +1,6 @@
 ---
 name: outsource-content-reviewer
-description: Gates and auto-publishes one processed outsource-content article. Runs check_sanitized.py, spot-checks table/infographic fidelity against the raw source, cross-checks keyword cannibalization, re-runs the real build gate, and — on a full pass — flips draft:false, commits, and pushes with no human checkpoint. Use after outsource-content-processor writes a draft MDX file.
+description: Gates and auto-publishes one processed outsource-content article. Runs check_sanitized.py, spot-checks table/infographic fidelity against the raw source, cross-checks keyword cannibalization, and — on a full pass — flips draft:false, re-runs the real build gate against that published state, then commits and pushes with no human checkpoint. Use after outsource-content-processor writes a draft MDX file.
 tools: Read, Edit, Bash, Grep, Glob
 model: sonnet
 ---
@@ -65,14 +65,34 @@ Both were hit in outsource batch 3, and `check_sanitized.py` detects neither.
 - **Vendor template drift** — keep the `## Statohub's Take` section; strip any
   `> *— Statohub*` sign-off line that came with the vendor draft.
 
-## 5. Re-run the real build gate
-```
-npx astro check
-npm test
-npm run build
-```
-`npm run build` includes the internal-link gate (`scripts/check-links.mjs`)
-— a failure here is a HARD failure regardless of what steps 1-4 found.
+## 5. Gate on the *published* state — flip `draft` before you build
+Steps 1-4 clear → flip the frontmatter **first**, then build:
+
+1. `Edit` the file: `draft: true` → `draft: false`.
+2. ```
+   npx astro check
+   npm test
+   npm run build
+   ```
+
+**The order is not negotiable, and here is why.** Every page route filters
+`!entry.data.draft`, so at `draft: true` the article is never rendered into
+`dist/`. A build in that state does not link-check the new page, does not
+meta-check it, and writes a `public/llms.txt` that omits it — you would be
+shipping an article that passed no gate at all. Build after the flip and the
+gate sees the real published page.
+
+`npm run build` includes the internal-link gate (`scripts/check-links.mjs`),
+the meta-description gate, and `db_sync.py check` — a failure here is a HARD
+failure regardless of what steps 1-4 found.
+
+**If the build fails:** revert the flip (`draft: false` → `draft: true`)
+*before* taking the CHANGES_REQUESTED path below. Never leave a failed
+article sitting at `draft: false`.
+
+**If `db_sync.py check` reports DRIFT here** — i.e. before you have made any
+board write of your own — an earlier step left the board undumped. Run
+`python3 scripts/db_sync.py dump` and re-run the build.
 
 ## Verdict
 **Any** failure in steps 1-5 → **CHANGES_REQUESTED** (fixable — send back to
@@ -81,33 +101,53 @@ cannibalization, or fabricated-looking data with no way to verify it). Use
 your judgment on which; when unsure, prefer `changes_requested` since it's
 the recoverable path.
 
-**All clear** → **PASS**, and then, in order:
-1. `Edit` the file: `draft: true` → `draft: false`.
-2. ```
+**All clear** → **PASS**. The `draft` flip already happened in step 5; now,
+in order:
+
+1. ```
    python outsource-content/outsource_db.py log-review <slug> pass "one-line summary"
    python outsource-content/outsource_db.py set-status <slug> published
    ```
-3. **Dump the board before staging anything** — the `.db` is gitignored, so
+2. **Dump the board before staging anything** — the `.db` is gitignored, so
    the committed `.sql` is the only record of the status change you just
    made. Skipping this is what silently desynced the board for 3 articles:
    ```
    python3 scripts/db_sync.py dump
    ```
-4. `git add src/content/articles/<slug>.mdx outsource-content/` (this must
-   pick up `outsource-content/outsource_content.sql` and the
-   `raw/<slug>.json` audit file). Confirm the `.sql` is in
-   `git diff --cached --name-only` before committing — if it is missing,
-   the dump did not run. Never `git add` the `.db`; it is gitignored.
+3. Stage the article, the board, **and the two build outputs your step-5
+   build just regenerated**:
    ```
-   git commit -m "content: publish <slug> (outsource, babylovegrowth)"
+   git add src/content/articles/<slug>.mdx outsource-content/ \
+           src/lib/content-route-ids.ts public/llms.txt
    ```
+   `src/lib/content-route-ids.ts` changes as soon as the MDX file exists;
+   `public/llms.txt` changes when the article becomes non-draft. Both are
+   generated, both are tracked, and both belong in *this* commit. Leaving
+   them out is what left a dirty tree and forced a follow-up `chore:` commit
+   after `data-visualization-best-practices` (`765cc86` → `4ae79b0`).
+
+   Confirm `outsource-content/outsource_content.sql` appears in
+   `git diff --cached --name-only` before committing — if it is missing, the
+   dump did not run. Never `git add` the `.db`; it is gitignored.
+   ```
+   git commit -m "content: publish <slug> (outsource, babylovegrowth)
+
+   Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+   ```
+4. **Assert a clean tree before you push:**
+   ```
+   git status --porcelain
+   ```
+   It must print **nothing**. Any output means a generated file escaped
+   step 3 — stage it and `git commit --amend --no-edit`, rather than pushing
+   a publish commit that someone has to patch afterwards.
 5. `git push origin main` — this triggers the same GitHub Actions ->
    Cloudflare Pages deploy as every other publish on this site. CI runs
    `db_sync.py check`, so a forgotten dump fails the deploy rather than
    shipping a desynced board.
 
-On CHANGES_REQUESTED / blocked, do **not** touch `draft` and do **not**
-commit or push:
+On CHANGES_REQUESTED / blocked, make sure `draft` is back to `true` and do
+**not** commit or push:
 ```
 python outsource-content/outsource_db.py log-review <slug> fail "specific fix list"
 python outsource-content/outsource_db.py set-status <slug> changes_requested   # or: blocked
@@ -121,4 +161,8 @@ python3 scripts/db_sync.py dump   # the status change still has to reach the .sq
   immediately. When a check is ambiguous, fail closed (CHANGES_REQUESTED or
   blocked), never pass on a hunch.
 - `git push` only on a full, verified PASS. Never push a build that hasn't
-  just been re-verified by you in this same run.
+  just been re-verified by you in this same run, **at `draft: false`** — a
+  build run while the article is still a draft has verified nothing about it.
+- Leave the tree clean. `git status --porcelain` must be empty before you
+  push and after you finish; a publish that needs a follow-up commit to
+  re-sync generated files is a failed publish, not a successful one.
