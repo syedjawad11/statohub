@@ -8,7 +8,7 @@
 
 ```
 statohub/
-|-- CLAUDE.md               # Router + hard rules (<150 lines)
+|-- CLAUDE.md               # Workspace map: where to look + how work flows (<90 lines)
 |-- AGENTS.md                # Codex entry point + sandbox notes
 |-- astro.config.mjs         # trailingSlash:'always' + directory output + mdx + sitemap
 |-- tailwind.config.cjs      # class-based dark mode + CSS-var-backed token colors
@@ -92,7 +92,7 @@ statohub/
 |   |-- content.sql           # committed dump -- the version-controlled board
 |   |-- content_db.py         # CLI: init/seed/list/brief/next/set-status/...
 |   |-- schema.sql, seed.json
-|   |-- cloud-routine/        # publish-next-article.md, publish-next-calc-prose.md, README.md
+|   |-- cloud-routine/        # retired -> docs/legacy/cloud-routine/; only PAUSED + a stub remain
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)
 |
 |-- outsource-content/       # VENDOR content board (babylovegrowth) -- always Applied (ADR 0020)
@@ -129,13 +129,11 @@ statohub/
 `-- vitest.config.ts         # unit-test config (`npm test`)
 ```
 
-## Non-negotiable repo rules (see `CLAUDE.md` for the full list)
+## Non-negotiable repo rules
 
-1. Flat trailing-slash URLs: `/{slug}/`, `/{category}/`, `/calculators/{tool}/`.
-2. Zero internal redirects/404s -- enforced by `src/lib/links.ts` + `scripts/check-links.mjs`.
-3. No odds/betting calculators.
-4. Wrangler v3 lock (Node 20.8.0 breaks v4).
-5. `src/calc/**` stays pure (no DOM/network) -- dual-deploy (standalone page + embed) depends on it.
+Listed once, in `docs/ARCHITECTURE.md` (URL scheme, link safety, stack lock,
+content model) and the ADRs it cites. `CLAUDE.md` §Invariants is the one-line
+index into them.
 
 ## Where things live (quick index)
 

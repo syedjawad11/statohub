@@ -29,6 +29,7 @@
 | [0019](0019-outsource-word-floor.md) | Outsource pillar gets its own word floor (1,500), below the Applied 3,000 | content | accepted | 2026-09-02 |
 | [0020](0020-outsource-is-applied-only.md) | Outsourced content is Applied-only; Applied has exactly four category hubs | content | accepted | 2026-09-02 |
 | [0021](0021-boards-split-by-source.md) | The two content boards split by source (internal vs. vendor), not by section | process | accepted | 2026-09-03 |
+| [0022](0022-routers-are-maps-not-rulebooks.md) | Router files are maps, not rulebooks; delegation is a judgment call | process | accepted | 2026-09-06 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new

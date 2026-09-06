@@ -8,7 +8,8 @@
  * audit.
  *
  * Checks:
- *   1. Every relative markdown link in docs/ (and CLAUDE.md / AGENTS.md) resolves.
+ *   1. Every relative markdown link in docs/, handoff/, .claude/ and the two
+ *      root routers resolves.
  *   2. Every [[adr-slug]] wikilink resolves to a file in docs/decisions/.
  *   3. Every ADR file appears in the docs/decisions/README.md index.
  *   4. NOW.md and CLAUDE.md stay under their stated line caps.
@@ -25,7 +26,8 @@ const violations = [];
 
 const LINE_CAPS = [
   { file: 'docs/status/NOW.md', max: 60 },
-  { file: 'CLAUDE.md', max: 150 },
+  { file: 'CLAUDE.md', max: 90 },
+  { file: 'AGENTS.md', max: 70 },
 ];
 
 const SESSION_MAX_AGE_DAYS = 30;
@@ -53,7 +55,7 @@ function walk(dir, out = []) {
 // linter would falsify the record. They are excluded from link checks (but
 // archived sessions are still subject to nothing -- see check 5, which only
 // looks at the live sessions dir).
-const FROZEN = ['docs/status/sessions/archive', 'docs/legacy'];
+const FROZEN = ['docs/status/sessions/archive', 'docs/legacy', 'handoff/archive'];
 
 const isFrozen = (file) => {
   const rel = path.relative(ROOT, file).split(path.sep).join('/');
@@ -62,6 +64,8 @@ const isFrozen = (file) => {
 
 const markdownFiles = [
   ...walk(path.join(ROOT, 'docs')),
+  ...walk(path.join(ROOT, 'handoff')),
+  ...walk(path.join(ROOT, '.claude')),
   path.join(ROOT, 'CLAUDE.md'),
   path.join(ROOT, 'AGENTS.md'),
 ]
@@ -72,6 +76,13 @@ const markdownFiles = [
 
 // Markdown links: [text](target). Skip external, anchors, and mailto.
 const LINK_RE = /\[[^\]]*\]\(([^)]+)\)/g;
+
+// Fenced blocks and inline code carry illustrative link *syntax* (`[alt](url)`,
+// `[NIST](...)`) that is documentation, not a real link. Blank them out before
+// scanning so examples don't trip the gate. An inline span may wrap one line
+// (markdown allows it) but never a blank line.
+const stripCode = (text) =>
+  text.replace(/```[\s\S]*?```/g, '').replace(/`(?:[^`\n]|\n(?!\s*\n))*`/g, '');
 const WIKILINK_RE = /\[\[([^\]]+)\]\]/g;
 
 const adrFiles = existsSync(path.join(ROOT, 'docs/decisions'))
@@ -85,7 +96,7 @@ for (const file of markdownFiles) {
   const text = readFileSync(file, 'utf8');
   const rel = path.relative(ROOT, file);
 
-  for (const match of text.matchAll(LINK_RE)) {
+  for (const match of stripCode(text).matchAll(LINK_RE)) {
     const target = match[1].trim().split(/\s+/)[0];
     if (
       /^(https?:|mailto:|tel:|#)/.test(target) ||

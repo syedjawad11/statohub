@@ -7,11 +7,6 @@ Status: TODO
 - **Repo:** `Desktop/statohub/` (where the work happens)
 - **Created:** <YYYY-MM-DD> by Claude
 
-<!-- Authoring note (Claude): keep this file plain ASCII. Use `--` not an em
-dash, `->` not an arrow, `...` not an ellipsis. Codex reads these files through
-a Windows codepage; non-ASCII punctuation renders as mojibake and breaks its
-apply_patch matching. -->
-
 ---
 
 ## Brief  *(Claude writes -- what Codex needs to execute)*

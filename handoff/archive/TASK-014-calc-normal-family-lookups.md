@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-014 -- Normal family + lookups + shared CDF math module
@@ -102,3 +102,14 @@ module that these and TASK-016 depend on.
 
 **Notes / what to improve:**
 - <specifics if sending back; or what was good if closing>
+
+---
+
+## Closure  *(Claude, 2026-09-06)*
+
+- **Verdict:** CLOSED -- superseded.
+
+Superseded: every engine this brief specifies already shipped (src/calc/_stats-math.ts, normal-distribution.ts, z-table.ts, t-table.ts, p-value.ts) and is
+registered in `src/calc/registry.ts` with tests under `src/calc/__tests__/`. The
+task file sat `TODO` since 2026-06-18 only because it was never formally closed.
+Archived for the audit trail per [[0004-codex-builds-claude-reviews]].

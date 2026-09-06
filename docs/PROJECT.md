@@ -115,12 +115,8 @@ without a new decision record superseding the parked one:
   "Lesson 3 of 12" framing). Articles stay articles; a course layer is a
   future horizon, not a current build target.
 
-## Non-negotiable technical rules (see CLAUDE.md for the authoritative list)
+## Non-negotiable technical rules
 
-- Flat trailing-slash URLs (`/{slug}/`, `/{category}/`, `/calculators/{tool}/`)
-  -- every URL ends in `/`.
-- Zero internal redirects/404s, enforced at build time
-  (`src/lib/links.ts` + `scripts/check-links.mjs`).
-- Wrangler v3 pinned (Node 20.8.0 breaks Wrangler v4); uPlot lazy-loaded; MDX.
-- Calculator engines in `src/calc/**` stay pure (no DOM/network) so one
-  config dual-deploys as both a standalone page and an in-article embed.
+They are not restated here. `docs/ARCHITECTURE.md` is the authority on the URL
+scheme, the link-safety system, the stack lock and the content model; each is
+backed by an ADR indexed in `docs/decisions/README.md`.

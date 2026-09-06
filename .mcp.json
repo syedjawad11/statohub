@@ -2,15 +2,43 @@
   "mcpServers": {
     "codex": {
       "type": "stdio",
-      "command": "codex.cmd",
+      "command": "codex",
       "args": [
         "mcp-server",
-        "-c", "model=\"gpt-5.6-sol\"",
-        "-c", "model_reasoning_effort=\"xhigh\"",
-        "-c", "sandbox_mode=\"read-only\"",
-        "-c", "approval_policy=\"never\""
+        "-c",
+        "model=\"gpt-5.6-sol\"",
+        "-c",
+        "model_reasoning_effort=\"xhigh\"",
+        "-c",
+        "sandbox_mode=\"read-only\"",
+        "-c",
+        "approval_policy=\"never\""
       ],
       "env": {}
+    },
+    "cf-docs": {
+      "type": "http",
+      "url": "https://docs.mcp.cloudflare.com/mcp"
+    },
+    "cf-bindings": {
+      "type": "http",
+      "url": "https://bindings.mcp.cloudflare.com/mcp"
+    },
+    "cf-observability": {
+      "type": "http",
+      "url": "https://observability.mcp.cloudflare.com/mcp"
+    },
+    "cf-dns-analytics": {
+      "type": "http",
+      "url": "https://dns-analytics.mcp.cloudflare.com/mcp"
+    },
+    "cf-ai-gateway": {
+      "type": "http",
+      "url": "https://ai-gateway.mcp.cloudflare.com/mcp"
+    },
+    "cloudflare": {
+      "type": "http",
+      "url": "https://mcp.cloudflare.com/mcp"
     }
   }
 }

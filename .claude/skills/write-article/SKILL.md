@@ -13,8 +13,8 @@ pick the recommended next one.
 1. **Pick the article.**
    - If a slug was given, use it.
    - Else run `python content-ops/content_db.py next` and use its pick.
-   - Refuse `research_pending`/flagged stubs (e.g. `permutations-and-combinations`,
-     `validity-in-statistics`) — they need a keyword pass first. Surface that and stop.
+   - Refuse `research_pending`/flagged stubs (e.g. `validity-in-statistics`) — they
+     need a keyword pass first. Surface that and stop.
 
 2. **Brief + mark drafting.**
    ```

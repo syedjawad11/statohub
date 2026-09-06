@@ -2,6 +2,11 @@
 ### Verdict, architecture, and implementation plan
 *July 2026*
 
+> **Status: implemented (2026-09-06).** Every file §14 specifies now exists and
+> is in use, and `scripts/check-docs.mjs` is the validation gate it called for.
+> This document is kept as the rationale for the structure, not as an open
+> project thread -- nothing here needs re-checking at session start.
+
 ---
 
 ## 1. Executive summary and headline verdicts

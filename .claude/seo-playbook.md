@@ -11,23 +11,13 @@ educators teach with no tools. Every article does both.
 
 ### How rules are enforced — three tiers
 
-Not every rule is equal. The pipeline (the mechanical QA gate in
-`content-ops/cloud-routine/publish-next-article.md` and the reviewer) sorts every
-SEO check into one of three tiers. Each rule below is tagged with its tier.
+Every rule below is tagged with its tier; §8 is the enumerated checklist.
 
 - **[HARD]** — objective indexing / accessibility / build breakers. **Blocks
-  publish** (non-zero exit; reviewer returns CHANGES_REQUESTED). Examples: exactly
-  one H1, primary keyword in `<title>`, title present and not truncated, meta
-  description present **and 110-160 characters** (see §7 — this is now a
-  schema + build-time check, not just a review note), slug contains the primary
-  keyword, no broken external link, plus the §7 build contracts.
-- **[WARN]** — soft ranking signals. **Logged and annotated, never blocks.** Fix
-  when reasonable. Examples: too few external links, primary keyword missing from
-  the first 100 words, generic/bare-URL anchor text, a skipped heading level,
-  keyword stuffing in headings, title length outside the ideal range.
-- **[ADVISORY]** — stylistic nudges. **Reported only.** Examples: a shorter `h1`
-  variation vs the SEO title, exact-match keyword in the H1, link distribution
-  beyond the minimum, semantic/related-keyword coverage.
+  publish**: non-zero exit, reviewer returns CHANGES_REQUESTED.
+- **[WARN]** — soft ranking signals. **Logged and annotated, never blocks.**
+  Fix when reasonable.
+- **[ADVISORY]** — stylistic nudges. **Reported only.**
 
 ---
 
@@ -214,5 +204,5 @@ to CHANGES_REQUESTED on their own.
 **ADVISORY (note only):**
 - A shorter `h1` variation vs the SEO title; exact-match keyword in the H1.
 - Link distribution beyond the minimum; semantic/related-keyword coverage.
-- AI-writing tells (see the `content-quality-editor` agent for the optional final
-  polish pass).
+- AI-writing tells — folded into the reviewer's own scoring pass; there is no
+  separate editor agent.

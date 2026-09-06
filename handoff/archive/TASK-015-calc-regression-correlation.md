@@ -1,4 +1,4 @@
-Status: TODO
+Status: CLOSED
 <!-- TODO | IN_PROGRESS | DONE | CHANGES_REQUESTED | CLOSED -->
 
 # TASK-015 -- Regression and correlation (paired x/y inputs)
@@ -83,3 +83,14 @@ non-empty, equal length, and finite; otherwise return `value: null` with a clear
 
 **Notes / what to improve:**
 - <specifics if sending back; or what was good if closing>
+
+---
+
+## Closure  *(Claude, 2026-09-06)*
+
+- **Verdict:** CLOSED -- superseded.
+
+Superseded: every engine this brief specifies already shipped (src/calc/correlation.ts, linear-regression.ts, _regression-core.ts) and is
+registered in `src/calc/registry.ts` with tests under `src/calc/__tests__/`. The
+task file sat `TODO` since 2026-06-18 only because it was never formally closed.
+Archived for the audit trail per [[0004-codex-builds-claude-reviews]].

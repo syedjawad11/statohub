@@ -4,7 +4,7 @@ Each standalone `/calculators/{slug}/` page gets a short teaching block (intro +
 how-to + worked example + small FAQ) rendered below the tool, authored as an MDX
 file at `src/content/calculator-content/{slug}.mdx`.
 
-**The cloud routine** [`../cloud-routine/publish-next-calc-prose.md`](../cloud-routine/publish-next-calc-prose.md)
+**The cloud routine** [`../../docs/legacy/cloud-routine/publish-next-calc-prose.md`](../../docs/legacy/cloud-routine/publish-next-calc-prose.md) (retired)
 processes ONE calculator per run, in the order below. "Next" = the first row whose
 teaching file does not yet exist as published (`draft: false`). The routine flips
 the `status` here to `done` after a green build + push.

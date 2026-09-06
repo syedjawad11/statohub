@@ -10,12 +10,10 @@ true` gating, no fabrication, no keyword cannibalization, the build contracts
 in seo-playbook §7 — is **inherited unchanged**. Where this file states a
 number or rule that differs from seo-playbook, this file wins for Applied.
 
-An article's section comes from its **category**, not the article itself:
-`src/pages/[slug]/index.astro` reads `categoryEntry.data.section` and renders
-`AppliedArticleLayout` instead of `ArticleLayout` when it is `'applied'`.
-Assign the article to one of the four Applied categories and the layout,
-breadcrumb, and TOC follow automatically — there is no `section` field on the
-article's own frontmatter.
+An article's section comes from its **category**, never its own frontmatter:
+`src/pages/[slug]/index.astro` reads `categoryEntry.data.section` and swaps
+`ArticleLayout` for `AppliedArticleLayout`. Assign one of the four Applied
+categories and the layout, breadcrumb and TOC follow automatically.
 
 ### Three tiers (same model as seo-playbook)
 - **[HARD]** — blocks publish; reviewer returns CHANGES_REQUESTED.
@@ -27,32 +25,28 @@ article's own frontmatter.
 ## 1. The calculator exemption (ADR-0015 — read this first)
 
 **Applied articles are exempt from the wedge's required-calculator rule.**
-[[0001-wedge-model]] requires every *teaching* article with a matching
-calculator to embed a live `<StatCalc>`. [[0015-wedge-scoped-to-learn]] scopes
-that requirement to the Learn vertical and the standalone calculator pages —
-**it does not apply to Applied.** `calculator` stays optional in
-`src/content/config.ts`; most Applied articles should leave it unset. Do not
-force a contrived embed (e.g. a mean calculator on an A/B-test-design article)
-to satisfy a rule that no longer governs this section.
+[[0015-wedge-scoped-to-learn]] scopes [[0001-wedge-model]]'s embed requirement
+to Learn and the standalone calculator pages — it does not govern Applied.
+`calculator` stays optional in `src/content/config.ts` and most Applied
+articles should leave it unset; never force a contrived embed (a mean
+calculator on an A/B-test-design article) to satisfy it.
 
-A reviewer that flags an Applied article for "missing a calculator" is wrong
-— point it at [[0015-wedge-scoped-to-learn]]. Applied reinforces the wedge
-**indirectly**: it links out to Learn articles and calculator pages for the
-underlying method (§7), which is the required mechanism, not an embed. A
-genuine calculator match may still be embedded if it adds real value — it
-just isn't mandatory.
+**A reviewer that flags an Applied article for "missing a calculator" is
+wrong** — point it at [[0015-wedge-scoped-to-learn]]. Applied reinforces the
+wedge *indirectly*, by linking out to the Learn article and calculator page
+for the underlying method (§7). A genuine calculator match may still be
+embedded when it adds real value; it just isn't mandatory.
 
 ## 2. Length & scope
 - **3,000–4,500 words** [HARD floor at 3,000; WARN below 3,200 or above
   4,800]. Word count is body prose; components don't inflate it artificially,
   but the prose around them counts.
-  - **Exception — the outsource pillar floor is 1,500**, not 3,000. Vendor
-    drafts run shorter than this standard and padding them would violate the
+  - **Exception — the outsource pillar floor is 1,500**, not 3,000, applying
+    *only* to articles coming through `outsource-content/`; internally written
+    ones keep the 3,000 floor. Padding a short vendor draft would violate the
     no-fabrication rule below. Enforced by `OUTSOURCE_WORD_FLOOR` in
-    `outsource-content/check_sanitized.py`, and it applies *only* to articles
-    coming through `outsource-content/`. Internally written articles keep the
-    3,000 floor. This is a deliberate quality concession — see
-    [[0019-outsource-word-floor]] for what it costs.
+    `outsource-content/check_sanitized.py`; rationale and cost in
+    [[0019-outsource-word-floor]].
 - **Practitioner-focused**: the reader applies a method on the job (analyst,
   experimenter, forecaster, ML engineer), not a first-time learner. Assume
   they know what a p-value or confidence interval is; teach *how to use it in
@@ -99,33 +93,19 @@ just isn't mandatory.
 
 ## 5. Module components — `src/components/applied/`
 
-Import the same way Learn articles do from `src/content/articles/*.mdx`:
-`import X from '../../components/applied/X.astro';`. Props below are the
-actual interfaces — do not invent props.
+Import from `src/content/articles/*.mdx` the same way Learn articles do:
+`import X from '../../components/applied/X.astro';`.
 
-```ts
-KeyTakeaways { variant?: 'table' | 'bullets'; heading?: string;             // default 'Key takeaways'
-                rows?: { point: string; details: string }[];               // required, non-empty, if variant='table'
-                bullets?: string[] }                                        // required, non-empty, if variant='bullets'
-Callout      { variant?: 'tip' | 'note' | 'quote'; title?: string;         // default 'tip'
-                source?: string; sourceHref?: string }                      // quote variant: "Source: <a>"
-Checklist    { title: string;                                               // required, renders as H2 in the card
-                items: (string | { text: string; detail?: string })[];      // required
-                style?: 'numbered' | 'check'; id?: string }                 // default 'numbered'
-DataTable    { headers: string[]; rows?: (string | number)[][]; caption?: string;
-                align?: ('left' | 'center' | 'right')[];                    // per column index
-                badgeColumns?: number[] }                                    // columns auto-styled pass/warn/fail/critical
-                                                                              // when cell text matches those words
-Sources      { items: { text: string; href: string; org?: string }[];      // required, non-empty
-                heading?: string }                                          // default 'Sources'
-FAQ          { items: { question: string; answer: string }[]; heading?: string }  // also emits FAQPage JSON-LD
-Figure       { caption: string; number?: number; id?: string }             // numbered-caption wrapper
-```
+Available: `KeyTakeaways`, `Callout`, `Checklist`, `DataTable`, `Sources`,
+`FAQ`, `Figure`. **The prop interfaces are the `.astro` files themselves** —
+read the component before using it rather than trusting a copy here, and never
+invent a prop. Confirmed live usage of every module and infographic is in
+`src/pages/dev/applied-preview/index.astro`.
 
 `TableOfContents` is used internally by `AppliedArticleLayout` — never
 hand-author one in article MDX.
 
-Usage shape (KeyTakeaways before the first H2, `## Sources`/`## FAQ` under
+Usage shape (KeyTakeaways before the first H2; `## Sources` / `## FAQ` under
 their literal headings):
 
 ```mdx
@@ -152,28 +132,13 @@ their literal headings):
 ## 6. SVG infographics — `src/components/applied/infographics/`
 
 Static SSG SVG, prop-driven, theme-aware via CSS custom properties — never
-hand-write markup or hex colors. Import each directly (not `_SvgFrame`,
-internal-only); always wrap in `<Figure>` for a numbered caption. Every
-component requires `title`/`desc` (accessible SVG `<title>`/`<desc>` — the
-visible caption is `Figure`'s `caption` prop, a separate string).
+hand-write markup or hex colors. Available: `ProcessFlow`, `TaxonomyTree`,
+`ComparisonMatrix`, `DecisionTree`, `Scorecard`, `AnnotatedChart`. Import each
+directly (never `_SvgFrame`, which is internal); prop interfaces are the source
+files.
 
-```ts
-ProcessFlow      { title: string; desc: string; steps: { label: string; detail?: string }[];  // >=1
-                    direction?: 'horizontal' | 'vertical' }                                    // default horizontal
-TaxonomyTree     { title: string; desc: string; root: string;
-                    branches: { label: string; children?: string[] }[] }                       // >=1 branch
-ComparisonMatrix { title: string; desc: string; columns: string[];
-                    rows: { label: string; values: number[] }[];        // values.length === columns.length
-                    scaleMax?: number }                                  // default: max value in the data
-DecisionTree     { title: string; desc: string;
-                    root: { label: string; yes?: DecisionNode; no?: DecisionNode }; maxDepth?: number }  // default 3
-Scorecard        { title: string; desc: string;
-                    metrics: { label: string; value: number; max: number; threshold?: number;  // max != 0
-                               status: 'pass' | 'warn' | 'fail' | 'critical'; unit?: string }[] } // >=1 metric
-AnnotatedChart   { title: string; desc: string; type?: 'bar' | 'line';   // default 'bar'
-                    points: { label: string; value: number; annotation?: string }[];            // >=1
-                    xLabel?: string; yLabel?: string }
-```
+Every component requires `title`/`desc` (the accessible SVG `<title>`/`<desc>`).
+Always wrap in `<Figure>`, whose `caption` is a separate visible string:
 
 ```mdx
 <Figure number={1} caption="Two-step pipeline from data collection to response.">
@@ -184,10 +149,7 @@ AnnotatedChart   { title: string; desc: string; type?: 'bar' | 'line';   // defa
 
 `Scorecard`'s `status` drives color via the `--status-pass/warn/fail/critical`
 tokens — use it for genuine severity data, not decoration. One infographic
-satisfies the HARD requirement; a normal article uses 1–2. Live usage syntax
-for every module and infographic is confirmed in
-`src/pages/dev/applied-preview/index.astro` — check it if a usage question
-isn't answered here.
+satisfies the HARD requirement; a normal article uses 1–2.
 
 ## 7. External links, evidence & internal linking
 - **≥ 6 resolving external links in `## Sources` [HARD]**, same curl-check
@@ -281,4 +243,5 @@ a fix-list, never flip the verdict alone.
   multi-infographic article.
 - Self-contained-passage spot check: does each H2 read standalone without the
   rest of the page (the core GEO citability test)?
-- AI-writing tells — see `content-quality-editor` for an optional final pass.
+- AI-writing tells — folded into the reviewer's own scoring pass; there is no
+  separate editor agent.

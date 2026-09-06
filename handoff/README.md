@@ -21,31 +21,27 @@ live ones.
 
 ## For Codex (picking up work)
 
-1. Read [`../AGENTS.md`](../AGENTS.md) and [`../BUILD-PLAN.md`](../BUILD-PLAN.md) first.
+1. Read [`../AGENTS.md`](../AGENTS.md) and [`../docs/legacy/BUILD-PLAN.md`](../docs/legacy/BUILD-PLAN.md) first.
 2. Pick the lowest-numbered task with status `TODO` (or any
    `CHANGES_REQUESTED`). Set its status to `IN_PROGRESS`.
 3. Do the work in **this** repo (`Desktop/statohub/`). Build strictly to the
-   brief and the BUILD-PLAN spec. Stay in scope.
+   brief and `docs/ARCHITECTURE.md`. Stay in scope.
 4. When done, fill the **Work Log** section (what changed + where + how to
    verify + anything blocked) and set status to `DONE`.
-5. Do **not** edit `CLAUDE.md` — that's Claude's session log. Record everything
-   in the task file instead.
+5. Do **not** edit `CLAUDE.md` — that's Claude's map, maintained by the
+   orchestrator. Record everything in the task file instead.
 
 ## For Claude (writing + reviewing)
 
 - Create tasks from `TEMPLATE.md`, fill the **Brief**, leave status `TODO`.
 - Review `DONE` tasks: check the real files, fill **Review**, set `CLOSED` or
   `CHANGES_REQUESTED`.
-- Once `CLOSED`, fold the outcome into this repo's `CLAUDE.md` session log.
+- Once `CLOSED`, fold the outcome into [`../docs/status/NOW.md`](../docs/status/NOW.md).
 
 ## Conventions
 
 - Number tasks sequentially: `TASK-001-...`, `TASK-002-...`.
-- Keep closed tasks here for history; archive to `handoff/archive/` only if the
-  folder gets noisy.
+- Archive every `CLOSED` task to [`archive/`](archive/); this folder holds only
+  live ones.
 - **One folder, one agent at a time.** Don't run Claude and Codex on this repo
   concurrently.
-- **Plain ASCII in task files.** Codex reads these `.md` files through a Windows
-  codepage, so UTF-8 punctuation (em dash, arrow, ellipsis) renders as mojibake
-  and breaks its `apply_patch` text matching. When writing a brief/review, use
-  `--` not an em dash, `->` not an arrow, `...` not an ellipsis.

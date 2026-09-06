@@ -31,7 +31,7 @@ work unfinished or made a non-trivial decision. A session that only published
 already-queued content, or ran an existing plan with no new decision, does
 **not** need one — update the relevant tracker/queue instead and note that.
 
-Use the `MEMORY-SYSTEM.md` §7 template (target: under 40 lines):
+Use the `docs/MEMORY-SYSTEM.md` §7 template (target: under 40 lines):
 
 ```markdown
 # Session: <topic> — <date>
@@ -55,7 +55,7 @@ If the session made a decision that future sessions must not relitigate, add a
 new ADR in `docs/decisions/` rather than only noting it in the session file:
 
 - Next number in sequence (never renumber or rewrite an existing ADR body).
-- Use the `MEMORY-SYSTEM.md` §8 format (`number`, `title`, `type`, `status`,
+- Use the `docs/MEMORY-SYSTEM.md` §8 format (`number`, `title`, `type`, `status`,
   `date`, then Context / Options / Decision / Reasoning / Consequences /
   Revisit-when / Related).
 - Add a row to `docs/decisions/README.md`'s index table.
@@ -85,7 +85,7 @@ Skip it for content-only or edit-only sessions.
 
 Session snapshots live under `docs/status/sessions/`; at month-end, files older
 than ~30 days move to `docs/status/sessions/archive/` (immutable snapshots,
-per `MEMORY-SYSTEM.md` §7). If you notice top-level session files from a prior
+per `docs/MEMORY-SYSTEM.md` §7). If you notice top-level session files from a prior
 month still sitting outside `archive/`, flag it in the summary — don't silently
 reorganize history mid-session unless the user asks.
 

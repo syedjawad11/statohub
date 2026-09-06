@@ -52,7 +52,7 @@ is marked `approved` — this pipeline never writes to `content.db`, and
 - `check_sanitized.py` — the deterministic, fail-closed gate that actually
   blocks a bad article before it can publish (see the script's own header
   for the full check list).
-- `cloud-routine/` — the autonomous scheduled-publish routine spec, once the
+- `cloud-routine/` — retired to `docs/legacy/cloud-routine/`; once the
   first article has been manually verified (see repo root `CLAUDE.md` /
   `docs/status/NOW.md` for whether it's active).
 

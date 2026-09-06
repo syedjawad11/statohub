@@ -41,7 +41,7 @@ at publish time too (human visibility).
 2. **Write** — deploy **3 subagents in parallel**, one per slug. Each subagent writes
    ONLY its own `src/content/calculator-content/<slug>.mdx` as **`draft: true`**,
    following the binding spec in
-   [`../cloud-routine/publish-next-calc-prose.md`](../cloud-routine/publish-next-calc-prose.md)
+   [`../../docs/legacy/cloud-routine/publish-next-calc-prose.md`](../../docs/legacy/cloud-routine/publish-next-calc-prose.md) (retired)
    (Steps 2–3), the gold-standard pilot
    [`../../src/content/calculator-content/standard-deviation.mdx`](../../src/content/calculator-content/standard-deviation.mdx),
    the schema in [`../../src/content/config.ts`](../../src/content/config.ts), and the
