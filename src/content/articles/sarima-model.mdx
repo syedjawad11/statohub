@@ -1,0 +1,277 @@
+---
+title: "Students: Master SARIMA Model Diagnostics with a Monthly Example"
+description: "SARIMA primer for students: interpret ACF/PACF, pick differencing, check residuals, and run a monthly (m=12) forecasting example."
+category: time-series-forecasting
+primaryKeyword: sarima model
+keywords:
+  - sarima model
+  - sarima model diagnostics
+  - sarima
+phase: 1
+related: []
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Sources from '../../components/applied/Sources.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+<KeyTakeaways variant="bullets" bullets={[
+  "SARIMA models combine seasonal and non-seasonal ARIMA components, with seasonal differencing rarely exceeding D=1 and d+D staying low to prevent instability.",
+  "Proper data preparation, including seasonal and ordinary differencing based on trend and seasonality, is crucial for stationarity before modeling.",
+  "Residual diagnostics, especially ACF plots and Ljung-Box tests, are essential for confirming a good fit rather than relying solely on AIC or AICc.",
+  "Overfitting occurs when too many AR, MA, or seasonal terms are added; model simplicity and validation on holdout data improve forecast reliability.",
+  "Automated tools like auto_arima assist but must be guided by expert judgment and residual analysis to avoid overfitting and non-stationarity issues."
+]} />
+
+## What Is a SARIMA Model?
+
+A SARIMA model is an ARIMA model extended with seasonal autoregressive, differencing, and moving-average terms, written as (p,d,q)(P,D,Q)m. Use it when a single time series shows a repeating cycle of fixed length m, such as monthly retail sales or quarterly energy demand, and the seasonal pattern is too structured for exponential smoothing alone. The rest of this guide walks through identifying orders, fitting the model, and checking whether it earned its keep.
+
+## What Does the SARIMA Model Notation (p,d,q)(P,D,Q)m Mean?
+
+The seven numbers in a SARIMA specification each answer a distinct modeling question, and confusing one for another is the single most common source of student error. The non-seasonal block (p,d,q) behaves exactly like ordinary ARIMA: p counts autoregressive terms tied to recent lags, d counts how many times you difference the series to remove trend, and q counts moving-average terms that model shocks from recent errors. The seasonal block (P,D,Q)m repeats that same logic, but at multiples of the season length m instead of at lags 1, 2, 3.
+
+Consider monthly data with m = 12. A seasonal AR term of P = 1 says this January's value relates to last January's value. A seasonal difference of D = 1 subtracts the observation from twelve months earlier to strip out the yearly cycle. A seasonal MA term of Q = 1 lets a shock from twelve months ago still echo into today's forecast error.
+
+A few practical clarifications separate students who use SARIMA correctly from those who fit it blindly:
+
+- **Multiplicative, not additive.** The seasonal and non-seasonal polynomials multiply together rather than add, which is why the model produces predictors at combined lags like 1, 12, and 13 rather than only at 1 and 12.
+- **D rarely exceeds 1.** Seasonal differencing is aggressive; a second seasonal difference is almost never needed and often destabilizes the fit.
+- **d + D should stay low.** Most well-behaved seasonal series need d = 0 or 1 and D = 0 or 1. Anything higher usually signals a data problem rather than a genuinely complex process.
+- **Intercepts and trend terms interact with differencing.** Once D = 1, a constant term implies a linear drift in the seasonally adjusted series, so most software drops the intercept by default once any differencing is applied.
+
+Software packages label this slightly differently. [Statsmodels' SARIMAX class](https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) takes `order=(p,d,q)` and `seasonal_order=(P,D,Q,m)` as separate arguments, while R's `arima()` and `Arima()` functions use a `seasonal` list. The math underneath is identical; only the calling convention changes.
+
+## How Does the SARIMA Equation Work in Lag Operator Form?
+
+Writing the model in lag operator notation makes the multiplicative structure concrete instead of abstract. The canonical form is:
+
+φ(L)Φ(Lᵘ)(1 − L)ᵍ(1 − Lᵘ)ᴰ yₜ = θ(L)Θ(Lᵘ)εₜ
+
+Here L is the lag operator (Lyₜ = yₜ₋₁), and m is written as *s* in most textbook notation for the season length. φ(L) is the non-seasonal AR polynomial of order p, Φ(Lˢ) is the seasonal AR polynomial of order P, θ(L) and Θ(Lˢ) are the corresponding moving-average polynomials, and εₜ is white noise. The (1 − L)ᵍ and (1 − Lˢ)ᴰ terms are the differencing operators doing the trend and seasonal removal described above.
+
+The reason this matters practically, not just academically, comes down to what happens when you multiply Φ(Lˢ) by φ(L). Multiplying a seasonal polynomial by a non-seasonal one does not just stack two separate effects. It generates cross terms at combined lags. A model as simple as ARIMA(0,0,1)×(0,0,1)₁₂ produces a moving-average polynomial with nonzero coefficients at lags 1, 11, 12, and 13, because the seasonal MA term at lag 12 multiplies against the non-seasonal MA term at lag 1. That interaction is [documented clearly in Penn State's STAT 510 course materials](https://online.stat.psu.edu/stat510/Lesson04), and it explains why a SARIMA autocorrelation function almost never looks like two clean, separate spikes at lag 1 and lag 12.
+
+This is the direct link between the algebra and the diagnostic plots you will read in the next section. If your correlogram shows a spike at lag 1, another at lag 12, and a third at lag 13 that neither pattern alone predicts, that is not noise. It is the multiplicative structure of the model working exactly as the lag operator form says it should. Students who skip the algebra tend to interpret that lag-13 spike as a mistake in their data; students who understand the multiplication know to expect it.
+
+## How Do You Prepare Seasonal Data for SARIMA Modeling?
+
+SARIMA assumes the series is stationary once differenced, meaning its statistical properties (mean, variance, autocorrelation) don't drift over time. Raw seasonal data almost never satisfies that on its own, so preparation is not optional groundwork. It is the step that determines whether d and D get set correctly, and a wrong choice here poisons every later stage.
+
+Two separate problems require two separate tools. A trending series needs ordinary differencing; a series with a repeating annual or quarterly cycle needs seasonal differencing. Seasonal differencing computes yₜ − yₜ₋ₛ, subtracting each observation from its value one full season earlier, which cancels the recurring cycle without touching the underlying trend. Ordinary differencing computes yₜ − yₜ₋₁ and removes trend without touching seasonality. As [Duke's Decision 411 course notes](https://people.duke.edu/~rnau/Decision411_2007/Class10notes.htm) put it, these two operations address distinct sources of non-stationarity, and applying the wrong one, or applying too much of either, tends to introduce artificial autocorrelation rather than remove it.
+
+A workable sequence for most students:
+
+1. Plot the raw series and look for an obvious trend and a repeating seasonal shape.
+2. Run a seasonal decomposition to visually separate trend, seasonal, and residual components.
+3. Apply a seasonal difference (D = 1) if the seasonal component is strong and stable across years.
+4. Re-plot the differenced series. If a trend remains, apply one ordinary difference (d = 1).
+5. Confirm stationarity with an Augmented Dickey-Fuller (ADF) test for a unit root and a KPSS test, which tests the opposite null hypothesis and helps avoid conflicting conclusions from a single test.
+6. Recheck the ACF and PACF after each differencing step before moving on.
+
+Functions like `unitroot_ndiffs()` and `unitroot_nsdiffs()` in the [fpp3 framework](https://otexts.com/fpp3/seasonal-arima.html) automate steps 3 through 5 by testing directly for the minimum number of differences needed, which is a useful cross-check even if you prefer to reason through it visually first.
+
+**Pro Tip:** *Difference only as much as the data demands. Over-differencing is one of the quietest ways to sabotage a SARIMA fit: it adds spurious negative autocorrelation at lag 1, inflates variance, and pushes your model toward orders that look plausible but forecast poorly. If you're unsure whether you need d = 1 or d = 0, fit both and compare the residual ACF before deciding.*
+
+## How Do You Read ACF and PACF Plots to Choose SARIMA Orders?
+
+The autocorrelation function (ACF) and partial autocorrelation function (PACF) are still the most reliable diagnostic tools for choosing p, q, P, and Q, even in an era of automated model search. Reading them means checking two separate zones on the same plot: the low lags (1, 2, 3) for non-seasonal signal, and the lags at multiples of m (12, 24, 36 for monthly data) for seasonal signal.
+
+The classic signatures apply at both zones, just at different lag positions:
+
+<DataTable caption="ACF and PACF signatures" headers={["ACF/PACF pattern", "Indication"]} rows={[
+  [
+    "A PACF that cuts off sharply after lag p, with a slowly decaying ACF",
+    "points to an AR(p) process."
+  ],
+  [
+    "An ACF that cuts off sharply after lag q, with a slowly decaying PACF",
+    "points to an MA(q) process."
+  ],
+  [
+    "A significant spike at lag m in the PACF, with decay at 2m, 3m",
+    "suggests seasonal AR (P = 1)."
+  ],
+  [
+    "A significant spike at lag m in the ACF, with decay at higher seasonal multiples",
+    "suggests seasonal MA (Q = 1)."
+  ]
+]} />
+
+Real data rarely hands you a textbook-clean pattern. Because seasonal and non-seasonal polynomials multiply together, combined models generate spikes at compound lags like 1, 11, 12, and 13 rather than isolated spikes at 1 and 12 alone. Expect that mixed signature and don't discard a candidate model just because the ACF looks busier than the simple rules predict.
+
+> Modelers who keep a short, ACF/PACF-guided candidate list and compare those candidates by AICc and residual diagnostics tend to get better out-of-sample results than modelers who search blindly through dozens of high-order combinations, according to guidance in Forecasting: Principles and Practice.
+
+Automated routines like R's `auto.arima()` or Python's `pmdarima.auto_arima()` search this space for you using a stepwise or exhaustive AICc comparison, and they're genuinely useful for narrowing dozens of combinations down to a handful. But automation is not a substitute for judgment. Practitioner guidance consistently warns that stepwise selection can land on an overfitted model that scores well in-sample and forecasts poorly out-of-sample, which is exactly why the next section on residual diagnostics is not optional, no matter how you arrived at your candidate orders.
+
+## What Is the Practical Workflow for Fitting a SARIMA Model?
+
+A reproducible SARIMA workflow follows the same sequence every time, regardless of whether you work in Python or R:
+
+<Checklist id="sarima-fitting-workflow" title="SARIMA fitting workflow" style="numbered" items={[
+  "Split the data into a training period and a holdout period reserved strictly for evaluation.",
+  "Difference the training series (d, D) until it looks stationary.",
+  "Inspect ACF and PACF on the differenced series to shortlist two or three candidate order combinations.",
+  "Fit each candidate and record AIC or AICc.",
+  "Run residual diagnostics on the leading candidates, not just the single best AIC score.",
+  "Select the model that balances low AICc with clean, white-noise residuals, favoring the simpler model when scores are close."
+]} />
+
+In Python, statsmodels' SARIMAX class handles the fitting. The `order` argument takes (p,d,q) and `seasonal_order` takes (P,D,Q,m). A few parameters matter more than the documentation's brevity suggests:
+
+- `enforce_stationarity` and `enforce_invertibility` default to `True`, which restricts estimation to the region where the AR and MA polynomials behave well; disable them only if you have a specific reason.
+- `simple_differencing` changes how the model handles the first few observations and the dimension of the underlying state space, which can shift parameter estimates slightly compared to leaving differencing inside the state-space representation.
+- The class offers a choice between Hamilton and Harvey state-space representations. They are mathematically equivalent, but statsmodels' own documentation notes they can produce slightly different log-likelihood values, which matters if you're comparing AIC across differently configured fits.
+
+In R, `Arima()` from the forecast package (or `ARIMA()` in the fable package) takes the same seven parameters through an `order` and `seasonal` argument pair, and `auto.arima()` layers automated order selection on top, using unit-root tests internally to help decide d and D before searching over p, q, P, and Q.
+
+Two convergence issues come up often enough to flag directly. First, optimization convergence warnings usually mean the model is overparameterized relative to what the data can support. Second, always check coefficient p-values after fitting: a seasonal AR or MA term with a large standard error relative to its estimate is a candidate for removal, not a badge of model sophistication. When in doubt, simplify. A slightly worse AICc with stable, interpretable coefficients beats a marginally better AICc built on a term the data barely supports.
+
+## How Do You Know If a SARIMA Model Is Any Good?
+
+Fitting a model is the easy half. Confirming it earned the fit is where most of the real statistical judgment happens, and it comes down to two separate questions: are the residuals white noise, and does the model generalize to data it hasn't seen?
+
+Residual diagnostics answer the first question:
+
+- Plot the residual ACF. Significant spikes at any lag, especially at seasonal multiples of m, mean the model left structure on the table.
+- Run a Ljung-Box test on the residuals. A low p-value means you can reject the null of no autocorrelation, which is bad news for your model, not good news.
+- Check individual coefficient significance again after any respecification, since removing one term can change whether others remain necessary.
+
+Model selection trades off fit quality against complexity. AIC and its small-sample-corrected variant, AICc, penalize additional parameters, which discourages you from chasing a marginal likelihood gain by adding a fourth seasonal MA term nobody needs. Parsimony isn't a stylistic preference here; simpler models with clean residuals consistently forecast better on unseen data than complex models that merely fit the training period closely.
+
+Forecast accuracy is the second, and ultimately more important, question. Prediction intervals widen with horizon, reflecting genuine uncertainty rather than a flaw in the math, and a SARIMA forecast that reports a point estimate without an interval is telling you less than half the story. Backtesting, refitting the model repeatedly on expanding or rolling windows and scoring each forecast against the actual holdout, is the most honest way to judge accuracy. A guide to <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics</Link> breaks down when MAE, RMSE, and MAPE each tell you something different: MAE treats all errors equally, RMSE penalizes large misses more heavily, and MAPE expresses error as a percentage, which helps compare accuracy across series of different scales.
+
+## Worked Example: Forecasting Monthly Data With SARIMA
+
+Picture a monthly series, retail sales for a mid-sized product category over several years, with a visible upward trend and a sharp December spike every year. The season length is m = 12. A time plot immediately shows two things worth modeling: gradual growth and a repeating annual bump.
+
+Seasonal decomposition confirms both components are present and stable across the five years, with the seasonal shape barely changing year to year. That stability is itself useful information: it suggests D = 1 will do most of the work, and you likely won't need a second seasonal difference. Applying one seasonal difference (subtracting each month from the same month a year earlier) removes most of the December spike from the plot. A residual upward drift remains, so one ordinary difference (d = 1) follows. After both differences, the series oscillates around a stable mean with roughly constant variance, which an ADF test on the differenced series confirms by rejecting the unit-root null.
+
+<Figure number={1} caption="From raw series to SARIMA-ready">
+  <ProcessFlow
+    title="From raw series to SARIMA-ready"
+    desc="Five steps: original series, seasonal differencing, ordinary differencing, stationary series, and SARIMA(0,1,1)(0,1,1)[12]."
+    direction="vertical"
+    steps={[
+  {
+    "label": "Original series",
+    "detail": "upward trend + December spike"
+  },
+  {
+    "label": "Seasonal differencing (m=12)",
+    "detail": "removes most December spike"
+  },
+  {
+    "label": "Ordinary differencing",
+    "detail": "removes residual upward drift"
+  },
+  {
+    "label": "Stationary series",
+    "detail": "oscillates around stable mean"
+  },
+  {
+    "label": "SARIMA(0,1,1)(0,1,1)[12]",
+    "detail": "lag1 cutoff; lag12 spike"
+  }
+]}
+  />
+</Figure>
+
+The ACF and PACF on the doubly differenced series show a sharp cutoff at lag 1 in the ACF (suggesting a non-seasonal MA term) and a mild but real spike at lag 12 in the ACF as well (suggesting a seasonal MA term), with no strong seasonal AR pattern. That points toward three reasonable candidates:
+
+The first candidate wins on both counts: the lowest AICc and a Ljung-Box p-value comfortably above 0.05, meaning there's no meaningful evidence of leftover autocorrelation in its residuals. The second candidate's extra AR term doesn't earn its added complexity, since AICc barely improves and the coefficient turns out statistically insignificant on inspection. The third candidate's low p-value signals structure the model failed to capture.
+
+With SARIMA(0,1,1)(0,1,1)₁₂ selected, the non-seasonal MA coefficient captures short-term noise correction from month to month, while the seasonal MA coefficient captures how a shock in one December still echoes faintly into the next.
+
+That widening interval isn't a weakness in the model. It's an honest statement that forecasting January of next year with data through this December carries real uncertainty about the trend's continuation, uncertainty a single point forecast would hide entirely.
+
+## When Should You Actually Use SARIMA?
+
+SARIMA earns its complexity when three conditions hold together: you have a single series, the seasonal pattern is stable and repeats at a fixed, known period, and you have enough history, ideally several full seasonal cycles, to estimate the seasonal terms reliably. Short of that, simpler tools often forecast just as well with far less fitting overhead.
+
+Consider alternatives seriously before committing to a full seasonal search:
+
+- If the seasonal shape barely changes and you mainly need a quick, robust baseline, Holt-Winters exponential smoothing often matches SARIMA's accuracy with a fraction of the specification work.
+- If you have external predictors driving the outcome (promotions, holidays, weather), a regression model with seasonal dummy variables can outperform SARIMA precisely because it uses information SARIMA structurally ignores.
+- If you're forecasting many related series at once and need automation over precision on any single one, machine learning approaches built for panel or hierarchical data may be worth the added complexity.
+
+SARIMA's real limitation is that it's a single-series method built on a stationarity assumption; it doesn't natively use outside information, and its coefficients, while interpretable to a trained eye, don't hand a non-technical stakeholder an obvious story the way "sales grow 3% a year and spike 40% every December" does in plain language.
+
+Statohub's <Link to={routes.learnLanding()}>Learn</Link> section covers the stationarity and autocorrelation foundations this guide assumes, and the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub carries more forecasting walkthroughs to practice against.
+
+## How Should You Handle Missing Data and Outliers Before Fitting SARIMA?
+
+SARIMA's differencing operators are unforgiving toward gaps and spikes, since a single missing or extreme observation propagates through both the seasonal and non-seasonal difference at every lag it touches. Address both problems before you touch model orders, not after.
+
+For missing values, avoid simply dropping rows. That breaks the fixed spacing SARIMA depends on to interpret lag m correctly. Linear interpolation works for short, isolated gaps. For gaps that span a meaningful stretch, seasonal interpolation, borrowing the shape from the same point in neighboring cycles, preserves the pattern differencing needs to remove. State-space methods can also estimate missing values directly during fitting in some software implementations, which avoids introducing an artificial interpolation choice altogether.
+
+For outliers, first ask whether the extreme value reflects a real, recurring event (a holiday spike) or a one-off data error (a sensor glitch, a reporting mistake). A real recurring event belongs in the seasonal pattern itself and shouldn't be smoothed away. A genuine anomaly should be flagged and either corrected against a trusted source or replaced with an interpolated estimate before differencing. Left uncorrected, a single large outlier can inflate residual variance across the entire fitted period and distort both your AICc comparisons and your coefficient estimates. Statohub's guide on <Link to={routes.categoryHub('data-analysis')}>handling outliers in a dataset</Link> walks through detection methods that apply directly here, before the series ever reaches a SARIMA specification.
+
+## How Does SARIMA Compare to ETS, TBATS, and Prophet?
+
+SARIMA's core advantage is interpretability: every parameter maps to a specific, explainable dynamic, and the diagnostic toolkit (ACF, PACF, Ljung-Box) is mature and well understood. That makes it a strong choice when you need to defend a forecast's reasoning to a technical audience, not just deliver a number.
+
+ETS (error, trend, seasonal) models, the state-space generalization behind exponential smoothing, tend to fit faster and require less manual order-picking, making them a strong default when you need many quick, reliable baseline forecasts rather than one carefully tuned model. TBATS extends that family to handle multiple overlapping seasonal periods, useful for data with both a weekly and yearly cycle, something standard SARIMA struggles to represent cleanly with a single m. Prophet, built for business time series with holidays and irregular events, trades statistical transparency for ease of use and handles missing data and outliers more forgivingly out of the box, but its seasonal and trend components don't offer the same hypothesis-testable structure SARIMA's coefficients do.
+
+None of these categorically outperforms SARIMA; they trade differently on interpretability, automation, and flexibility to multiple seasonal periods. A reasonable default: reach for SARIMA when you have one clean seasonal period and need explainable coefficients, and reach for ETS or TBATS when speed and multiple seasonalities matter more than diagnosability.
+
+## How Should You Refine a SARIMA Model After the First Fit?
+
+Treat your first accepted model as a draft, not a conclusion. Refinement is iterative, and the discipline is in what you check, and in what order.
+
+Start with the residuals, again. If the Ljung-Box test passed but a specific seasonal lag still shows a borderline ACF spike, consider whether a single additional seasonal term (moving from Q = 0 to Q = 1, for instance) resolves it without meaningfully hurting AICc. Next, examine forecast errors specifically during the holdout period rather than only in-sample residuals; a model can pass every in-sample diagnostic and still forecast poorly if the seasonal pattern is drifting over time, something a static D = 1 term can't adapt to.
+
+If accuracy stalls, resist the instinct to keep adding AR or MA terms. Instead, revisit the data preparation stage. Has a structural change, a new product launch, a shift in reporting method, changed the series partway through the sample? If so, a model trained on the full history may be diluted by a regime that no longer applies, and restricting the training window can improve accuracy more than any additional parameter would. Refit periodically as new data arrives rather than treating the original fit as permanent, and re-run the same ACF/PACF checks each time rather than assuming the original orders still hold.
+
+## What Are the Most Common Pitfalls in SARIMA Modeling?
+
+Two mistakes account for most poor SARIMA forecasts, and both are avoidable with discipline rather than more advanced math.
+
+Overfitting is the first. It's tempting to keep adding AR, MA, seasonal AR, or seasonal MA terms as long as AIC keeps improving, but a model that chases every wiggle in the training residuals typically forecasts worse on new data, not better. The fix is procedural: always compare candidates on a holdout period, not just AICc on the training fit, and prefer the simpler model when scores are close.
+
+Parameter non-identifiability is the second, and it's subtler. Certain SARIMA specifications, particularly ones with both a non-seasonal MA term and a seasonal MA term at compatible lags, can have multiple different parameter combinations that produce nearly identical likelihoods. When that happens, optimization can converge to different estimates depending on starting values, and standard errors balloon because the data genuinely can't distinguish between the competing explanations. The practical sign is a convergence warning paired with a coefficient whose standard error is close to or larger than the coefficient itself. When you see that combination, simplify the model rather than trying to force convergence with different starting parameters.
+
+Two smaller but persistent pitfalls round out the list: applying more differencing than the data needs (checked in the preparation section above), and trusting an automated search's top AICc result without ever looking at its residual plot. Both are cheap to check and expensive to skip.
+
+## Author Perspective: Common Student Mistakes and Practical Habits
+
+The single most common mistake among students learning SARIMA is treating model selection as a search for the lowest AIC number rather than a search for a model whose residuals are actually white noise. AIC narrows the field; it doesn't replace the Ljung-Box test or a visual residual check, and a model can win on AIC while still leaving obvious seasonal structure behind.
+
+A short troubleshooting habit worth building: every time you fit a candidate, immediately plot the residual ACF before recording the AICc. If a spike sits at lag m, stop and revise before comparing further candidates. Keep a simple log of what you differenced and why. It's the fastest way to catch over-differencing after the fact. Practicing on Statohub's applied forecasting examples and checking your accuracy calculations against a <Link to={routes.calculatorsHub()}>calculator</Link> builds the instinct that eventually replaces the checklist.
+
+## Ready to Practice SARIMA Forecasting Step by Step?
+
+Reading about lag polynomials and ACF spikes only gets you so far. The gap between understanding SARIMA and being able to fit one confidently closes fastest with repeated, guided practice on real seasonal data. Statohub's Applied Statistics hub is built for exactly that: forecasting walkthroughs that pair the statistical reasoning from this guide with concrete datasets, so you can see how differencing choices and order selection actually play out beyond a single worked example.
+
+The Forecasting & Time Series category maps directly onto the workflow covered here, decomposition, differencing, diagnostics, evaluation, and the calculators section gives you a fast way to check accuracy metrics and other statistics without building the math from scratch each time. If you need to shore up the stationarity or autocorrelation fundamentals first, the Learn library covers those concepts in plain language before you bring them back to a SARIMA fit.
+
+## Sources
+
+<Sources items={[
+  { text: "9.9 Seasonal ARIMA models | Forecasting: Principles and Practice (3rd ed.)", href: "https://otexts.com/fpp3/seasonal-arima.html" },
+  { text: "STAT 510 Lesson 4 — Seasonal ARIMA models", href: "https://online.stat.psu.edu/stat510/Lesson04" },
+  { text: "statsmodels.tsa.statespace.sarimax.SARIMAX - statsmodels 0.14.6", href: "https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html" },
+  { text: "Decision411 class notes — seasonal differencing", href: "https://people.duke.edu/~rnau/Decision411_2007/Class10notes.htm" },
+  { text: "statsmodels documentation — Stationarity and detrending (ADF/KPSS)", href: "https://www.statsmodels.org/stable/examples/notebooks/generated/stationarity_detrending_adf_kpss.html" },
+  { text: "statsmodels documentation — Ljung-Box test of autocorrelation in residuals", href: "https://www.statsmodels.org/stable/generated/statsmodels.stats.diagnostic.acorr_ljungbox.html" },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.article('regression-assumptions')}>Linear Regression Assumptions: What They Are & How to Check</Link>
+
+## FAQ
+
+<FAQ items={[
+  { question: "When Should You Actually Use SARIMA?", answer: "SARIMA earns its complexity when three conditions hold together: you have a single series, the seasonal pattern is stable and repeats at a fixed, known period, and you have enough history, ideally several full seasonal cycles, to estimate the seasonal terms reliably. Short of that, simpler tools often forecast just as well with far less fitting overhead." },
+  { question: "How Should You Handle Missing Data and Outliers Before Fitting SARIMA?", answer: "SARIMA's differencing operators are unforgiving toward gaps and spikes, since a single missing or extreme observation propagates through both the seasonal and non-seasonal difference at every lag it touches. Address both problems before you touch model orders, not after. For missing values, avoid simply dropping rows. That breaks the fixed spacing SARIMA depends on to interpret lag m correctly. Linear interpolation works for short, isolated gaps. For gaps that span a meaningful stretch, seasonal interpolation, borrowing the shape from the same point in neighboring cycles, preserves the pattern differencing needs to remove. State-space methods can also estimate missing values directly during fitting in some software implementations, which avoids introducing an artificial interpolation choice altogether." },
+  { question: "How Should You Refine a SARIMA Model After the First Fit?", answer: "Treat your first accepted model as a draft, not a conclusion. Refinement is iterative, and the discipline is in what you check, and in what order. Start with the residuals, again. If the Ljung-Box test passed but a specific seasonal lag still shows a borderline ACF spike, consider whether a single additional seasonal term (moving from Q = 0 to Q = 1, for instance) resolves it without meaningfully hurting AICc. Next, examine forecast errors specifically during the holdout period rather than only in-sample residuals; a model can pass every in-sample diagnostic and still forecast poorly if the seasonal pattern is drifting over time, something a static D = 1 term can't adapt to." },
+]} />

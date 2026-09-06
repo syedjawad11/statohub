@@ -1,0 +1,191 @@
+---
+title: "Why 89% Accuracy Can Lie: Confusion Matrix Explained"
+description: "A practical beginner-to-intermediate guide to confusion matrices. Learn to interpret errors, match metrics to real error costs, and practice with Statohub..."
+category: machine-learning-statistics
+primaryKeyword: confusion matrix explained
+keywords:
+  - confusion matrix explained
+  - confusion matrices
+phase: 1
+related: []
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+<KeyTakeaways variant="bullets" bullets={["Accuracy can be misleading on imbalanced datasets where false positives or false negatives carry different costs, so choose metrics carefully.", "Precision is crucial when false positives are expensive, such as in fraud detection, while recall matters when missing positives is costly, like in disease screening.", "Adjusting the classification threshold impacts the tradeoff between recall and precision, with ROC curves and AUC providing insights over different thresholds.", "Understanding the axes and cell counts in a confusion matrix is essential to correctly interpret the model's performance and identify specific confusion patterns.", "The most important step is assessing the real-world costs of errors and selecting metrics aligned with those costs, rather than relying solely on accuracy or F1 scores."]} />
+
+## Confusion Matrix Basics: The Layout and the Four Cells
+
+A confusion matrix is a table that lines up a classifier's predictions against the actual labels, splitting outcomes into true positives, true negatives, false positives, and false negatives. It matters because accuracy alone hides which kind of mistake a model makes. Reading the matrix correctly tells you whether to trust a classifier for the decision it's actually making.
+
+
+A binary [confusion matrix](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html) is a 2×2 grid. One axis lists the actual class, the other lists what the model predicted. Every observation lands in exactly one of four cells, and each cell answers a different question about model behavior.
+
+Before you interpret any matrix, check which axis is which. There's no universal convention, and older documentation, dashboards, and textbooks sometimes flip rows and columns, putting predicted labels where you'd expect actual labels. Get this backward and precision and recall swap meaning without you noticing.
+
+Once the axes are confirmed, the four cells break down like this:
+
+- **True positive (TP):** the model predicted positive, and the actual label was positive. The model caught what it was supposed to catch.
+- **True negative (TN):** the model predicted negative, and the actual label was negative. The model correctly ignored a non-case.
+- **False positive (FP):** the model predicted positive, but the actual label was negative. This is a false alarm, sometimes called a Type I error.
+- **False negative (FN):** the model predicted negative, but the actual label was positive. This is a miss, sometimes called a Type II error.
+
+Two totals sit behind the grid: P (all actual positives, meaning TP + FN) and N (all actual negatives, meaning TN + FP). These totals matter because they reveal class balance. A dataset with 950 negatives and 50 positives will produce a very different matrix, and very different metric behavior, than a balanced 500/500 split, even if the raw cell counts look similar in shape.
+
+## Metrics Derived From the Confusion Matrix
+
+Every classification metric you'll encounter is arithmetic performed on those four cells. Knowing the formula matters less than knowing when each metric tells the truth and when it lies to you.
+
+**Accuracy** is (TP + TN) divided by (TP + TN + FP + FN), the share of all predictions the model got right. **Precision** is TP divided by (TP + FP), telling you how often a positive prediction is actually correct. **Recall**, also called sensitivity, is TP divided by (TP + FN), telling you what fraction of real positives the model actually caught. **Specificity** is TN divided by (TN + FP), the negative-class mirror of recall. **F1 score** is the harmonic mean of precision and recall, calculated as 2 × (precision × recall) / (precision + recall).
+
+<DataTable
+  headers={["Metric", "Formula", "Answers the question"]}
+  rows={[["Accuracy", "(TP + TN) / (TP + TN + FP + FN)", "What share of predictions were correct overall?"], ["Precision", "TP / (TP + FP)", "When the model says \"positive,\" how often is it right?"], ["Recall (sensitivity)", "TP / (TP + FN)", "Of all real positives, how many did the model catch?"], ["Specificity", "TN / (TN + FP)", "Of all real negatives, how many did the model correctly clear?"], ["F1 score", "2 × (Precision × Recall) / (Precision + Recall)", "How balanced is the model between catching positives and avoiding false alarms?"], ["MCC", "Uses all four cells symmetrically", "How reliable is the model even when classes are heavily imbalanced?"]]}
+/>
+
+Accuracy is the metric most beginners reach for first, and it's also the one most likely to mislead. [Google Developers' machine learning glossary](https://developers.google.com/machine-learning/glossary/metrics) notes that accuracy hides error-type frequency entirely, which is a real problem once one class dominates the dataset.
+
+> **Statistic Callout:** Accuracy = (TP + TN) / (TP + TN + FP + FN). That formula treats a false positive and a false negative as equally costly, even though in most real decisions, they never are.
+
+Precision matters more when a false positive is expensive, such as flagging a legitimate transaction as fraud. Recall matters more when a false negative is dangerous, such as missing a disease case. The [Matthews correlation coefficient](https://en.wikipedia.org/wiki/Confusion_matrix), or MCC, and balanced accuracy both weigh all four cells more evenly, making them steadier single-number summaries when your classes aren't close to a 50/50 split.
+
+## A Worked Binary Example: Computing Metrics by Hand
+
+Picture a screening test for a rare condition, run on 200 patients. The confusion matrix comes out to TP = 18, FN = 2, FP = 20, TN = 160.
+
+1. **Accuracy:** (18 + 160) / 200 = 178/200 = 0.89, or 89%.
+2. **Precision:** 18 / (18 + 20) = 18/38 ≈ 0.474, or about 47%.
+3. **Recall:** 18 / (18 + 2) = 18/20 = 0.90, or 90%.
+4. **Specificity:** 160 / (160 + 20) = 160/180 ≈ 0.889, or about 89%.
+5. **F1 score:** 2 × (0.474 × 0.90) / (0.474 + 0.90) ≈ 0.621, or about 62%.
+6. **MCC:** working through the full formula with these counts lands around 0.55, a moderate positive correlation between predicted and actual labels.
+
+Look at what those numbers actually say. In a screening context, that tradeoff is usually acceptable. Missing a real case (a false negative) tends to carry a much higher cost than ordering an unnecessary follow-up test (a false positive), so a model tuned for high recall, even at the expense of precision, is often the right call here.
+
+**Pro Tip:** *Compute precision and recall separately before you ever look at the F1 score. The F1 number alone can hide a model that's lopsided in one direction and still average out to something that looks respectable.*
+
+## Multi-Class Matrices: Reading an N×N Grid
+
+A confusion matrix isn't limited to two classes. For a model predicting among five product categories, you get a 5×5 grid, and the same reading logic applies at larger scale. The matrix generalizes cleanly: the diagonal holds correct predictions, and every off-diagonal cell records a specific type of confusion, one predicted class mistaken for another actual class.
+
+Per-class metrics still apply here. You can compute precision and recall for each class individually, treating that class as "positive" and everything else as "negative." Two averaging approaches then combine those per-class scores:
+
+- **Macro averaging** takes the simple mean across classes, treating every class equally regardless of how many examples it has.
+- **Micro averaging** pools all TP, FP, and FN counts across classes first, then computes the metric once, which favors the metric that dominant classes achieve.
+
+The real diagnostic power shows up in the off-diagonal cells. If a matrix shows that "shirts" get misclassified as "jackets" 40 times but almost never as "shoes," that's a targeted signal. It suggests the model is confusing two visually or texturally similar categories, and it tells you exactly where to focus new training examples or feature engineering, rather than guessing at the model's weaknesses in the abstract.
+
+## Computing and Visualizing a Confusion Matrix With Code
+
+Building a matrix by hand from a handful of predictions is a good learning exercise, but nobody tallies thousands of rows manually. In practice, you compare two arrays: one holds the true labels, one holds the model's predictions, and you count agreements and disagreements programmatically.
+
+- **scikit-learn's `confusion_matrix()`** function takes `y_true` and `y_pred` arrays and returns the grid directly, and its documentation is the standard reference most practitioners cite.
+- **`classification_report()`** builds on that same output to print precision, recall, and F1 per class in one pass, saving you from computing each metric separately.
+- **Normalization options** let you express each cell as a proportion of its row (recall-style), its column (precision-style), or the full matrix, which matters when class sizes differ wildly.
+- **Heatmap visualization**, typically through Seaborn or Matplotlib, color-codes each cell so the diagonal stands out visually and dense off-diagonal clusters jump out immediately.
+
+[IBM's overview](https://www.ibm.com/think/topics/confusion-matrix) of the confusion matrix notes it's a standard feature across mature data-science libraries, which is why hand-computation should stay a teaching tool rather than a production habit.
+
+## When Accuracy Misleads: Imbalance and Metric Choice
+
+Imagine a fraud-detection model scoring 10,000 transactions, only 50 of which are actually fraudulent. A lazy model that predicts "not fraud" every single time achieves [99.5%](https://rajeshscribe.com/blogs/the-99-4-accurate-model-that-caught-zero-fraud) accuracy while catching zero fraud cases. That number looks excellent on a dashboard and is completely worthless as a measure of the model's actual job.
+
+This is the core failure mode behind accuracy on skewed data: it rewards a model for correctly ignoring the majority class while saying nothing about whether it does anything useful with the minority class you actually care about.
+
+Matching the metric to the cost of each error type fixes this:
+
+<Checklist
+  title="Matching the metric to the cost of each error type"
+  style="check"
+  items={["Prioritize recall when a false negative is the expensive mistake, as in disease screening or fraud detection where a missed case causes real harm.", "Prioritize precision when a false positive is the expensive mistake, as in spam filtering where flagging a legitimate email erodes trust.", "Build a cost matrix when the two error types carry genuinely different dollar values, and optimize the model against that weighted cost rather than a single symmetric metric."]}
+/>
+
+Google Developers' guidance on classification metrics makes this same point directly: the right metric is task-dependent, not universal. For a deeper look at how summary metrics can flatter a model that's actually failing where it matters, Statohub's guide to <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics</Link> covers the same trap from a time-series angle.
+
+**Pro Tip:** *Before you pick a metric, write down in plain language what a false positive costs you and what a false negative costs you. If you can't answer that question, you're not ready to choose a metric yet.*
+
+<Figure number={1} caption="Class distribution: Not fraud 99.5%; Fraud 0.5%.">
+  <AnnotatedChart
+    title="Class distribution"
+    desc="Not fraud accounts for 99.5% and Fraud accounts for 0.5%."
+    type="bar"
+    yLabel="Share (%)"
+    points={[
+      { label: 'Not fraud', value: 99.5 },
+      { label: 'Fraud', value: 0.5 },
+    ]}
+  />
+</Figure>
+
+## Thresholds, ROC Curves, and Calibration Checks
+
+Most classifiers output a probability, not a label. A threshold, often 0.5 by default, converts that probability into a positive or negative prediction, and every confusion matrix you build depends entirely on where that threshold sits.
+
+Move the threshold down and you'll catch more true positives, but you'll also pull in more false positives. Move it up and false positives drop, but false negatives climb. This recall precision tradeoff is unavoidable. Every classifier faces it, and the "correct" threshold depends on the same cost analysis from the previous section, not on whatever the default happens to be.
+
+- **ROC curves** plot the true positive rate against the false positive rate across every possible threshold, and **AUC** summarizes that curve into a single number between 0.5 and 1.
+- ROC/AUC can be misleading on heavily imbalanced datasets, where a precision-recall curve tends to give a more honest picture.
+- **Calibration checks**, often visualized as reliability diagrams, tell you whether a predicted 80% probability actually corresponds to an 80% real-world event rate, which matters if you plan to use the raw scores rather than just the labels.
+
+> **Statistic Callout:** An AUC near 0.5 means the model performs no better than a coin flip at ranking positives above negatives. AUC near 1.0 means near-perfect ranking, but neither number tells you what threshold to actually deploy.
+
+## What the Confusion Matrix Can't Tell You
+
+A confusion matrix is a snapshot, not a diagnosis. It shows you what happened on one batch of labeled data, but it says nothing about *why* the model made those errors, and nothing about whether tomorrow's data will look like today's.
+
+Two real risks sit outside the matrix's frame. Label noise means some of your "ground truth" labels are themselves wrong, which quietly corrupts every metric built on top of them. Concept drift means the relationship between inputs and outputs shifts over time, so a matrix computed last quarter can understate today's error rate; Statohub's guide to <Link to={routes.article('data-drift-detection')}>data drift detection</Link> covers how to monitor for that shift in production.
+
+For readers working with multi-label problems, where an example can belong to several classes at once, or soft-label settings, extensions like the transport-based confusion matrix adapt the same TP/FP/FN logic to those messier, overlapping cases.
+
+## Statohub's Practical Resources and Next Steps
+
+Statohub's <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link> hub covers the statistical reasoning behind model evaluation in more depth, and the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub walks through real datasets step by step if you want to see these metrics computed on something other than a toy example.
+
+To build real fluency, try this three-step exercise: compute a confusion matrix from any labeled dataset you have on hand, shift the classification threshold up and down to watch precision and recall trade off against each other, then plot the resulting ROC curve to see the full tradeoff at once. Statohub's <Link to={routes.calculator('probability')}>probability calculator</Link> and <Link to={routes.calculator('chi-square')}>chi-square calculator</Link> are useful companions for the underlying calculations once you're comfortable with the concepts.
+
+## Why Metric Selection Matters More Than the Matrix Itself
+
+The conventional advice on this topic stops at "compute the matrix and check accuracy," and that's exactly where most classification mistakes get made. The matrix itself is just arithmetic. The judgment call, deciding whether a false positive or a false negative costs you more, is where the actual statistical thinking happens, and it's the step most tutorials skip entirely.
+
+Beginners tend to over-trust a single number, whether that's accuracy or F1, because a single number feels like a verdict. It isn't. A model with [90%](https://www.evidentlyai.com/classification-metrics/accuracy-precision-recall) accuracy on a screening task can still be dangerous if it's missing the false negatives that matter most, and a model with mediocre-looking precision can still be the right deployment choice if the cost of a false alarm is trivial compared to the cost of a miss.
+
+Start with the cost question, not the metric formula. Write down what each error type costs before you touch a single calculation. The matrix will still be there once you know what you're actually optimizing for.
+
+> *— Statohub*
+
+## Sources
+
+<Sources items={[
+  { text: "sklearn.metrics.confusion_matrix — scikit-learn documentation", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html" },
+  { text: "Classification: accuracy, recall, precision, and related metrics — Google Developers", href: "https://developers.google.com/machine-learning/glossary/metrics" },
+  { text: "What is a confusion matrix? — IBM", href: "https://www.ibm.com/think/topics/confusion-matrix" },
+  { text: "Confusion matrix — Wikipedia", href: "https://en.wikipedia.org/wiki/Confusion_matrix" },
+  { text: "classification_report — per-class precision, recall, F1, and averaging", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html", org: "scikit-learn" },
+  { text: "Model evaluation — classification metrics and balanced accuracy", href: "https://scikit-learn.org/stable/modules/model_evaluation.html", org: "scikit-learn" },
+  { text: "Probability calibration — calibration curves and reliability diagrams", href: "https://scikit-learn.org/stable/modules/calibration.html", org: "scikit-learn" },
+  { text: "Tuning the decision threshold for class prediction", href: "https://scikit-learn.org/stable/modules/classification_threshold.html", org: "scikit-learn" },
+  { text: "matthews_corrcoef — Matthews correlation coefficient", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.matthews_corrcoef.html", org: "scikit-learn" },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link>
+- <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>Reliability in Statistics: Cronbach's Alpha & Cohen's Kappa</Link>
+
+## FAQ
+
+<FAQ items={[
+  { question: "What is a confusion matrix?", answer: "A confusion matrix is a table that lines up a classifier's predictions against the actual labels, splitting outcomes into true positives, true negatives, false positives, and false negatives. It matters because accuracy alone hides which kind of mistake a model makes. Reading the matrix correctly tells you whether to trust a classifier for the decision it's actually making." },
+  { question: "What should I check before interpreting a confusion matrix?", answer: "Before you interpret any matrix, check which axis is which. There's no universal convention, and older documentation, dashboards, and textbooks sometimes flip rows and columns, putting predicted labels where you'd expect actual labels. Get this backward and precision and recall swap meaning without you noticing." },
+  { question: "How does changing the classification threshold affect errors?", answer: "Move the threshold down and you'll catch more true positives, but you'll also pull in more false positives. Move it up and false positives drop, but false negatives climb. This recall precision tradeoff is unavoidable. Every classifier faces it, and the \"correct\" threshold depends on the same cost analysis from the previous section, not on whatever the default happens to be." },
+]} />

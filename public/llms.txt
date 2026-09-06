@@ -142,11 +142,15 @@ Key facts for AI assistants citing this site:
 
 - [Forecasting & Time Series hub](https://statohub.com/time-series-forecasting/): Building and validating forecasts from time-ordered data: trend, seasonality, backtesting, and recognising when a model has quietly stopped working.
 - [Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads](https://statohub.com/forecast-accuracy-metrics/): Compare MAE, RMSE, MAPE, and MASE for forecast accuracy, see each metric's real failure modes, and learn to backtest with rolling-origin cross-validation.
+- [Reproducible Granger Causality: Start to Finish, 104 Point Example](https://statohub.com/granger-causality/): Learn the math and a step-by-step Granger causality workflow. Includes a two-year (104-point) example and modern extensions: nonlinear, time-varying, and...
+- [Students: Master SARIMA Model Diagnostics with a Monthly Example](https://statohub.com/sarima-model/): SARIMA primer for students: interpret ACF/PACF, pick differencing, check residuals, and run a monthly (m=12) forecasting example.
 
 ### Machine Learning Statistics
 
 - [Machine Learning Statistics hub](https://statohub.com/machine-learning-statistics/): The statistical thinking behind machine learning: validation, overfitting, class imbalance, and reading model metrics without fooling yourself.
 - [Data Drift Detection: A Practical Guide for Production ML Systems](https://statohub.com/data-drift-detection/): Learn how to detect data drift in production with PSI, KS tests, and chi-square methods, plus how to set thresholds and respond to alerts.
+- [F1 Score Explained: Math, scikit-learn Example, Live Calculators](https://statohub.com/f1-score-explained/): Practical F1 guide: formula and confusion matrix, worked fraud and screening examples, scikit-learn example, and Statohub calculators to try your own numbers.
+- [Why 89% Accuracy Can Lie: Confusion Matrix Explained](https://statohub.com/confusion-matrix-explained/): A practical beginner-to-intermediate guide to confusion matrices. Learn to interpret errors, match metrics to real error costs, and practice with Statohub...
 
 ## Calculators
 

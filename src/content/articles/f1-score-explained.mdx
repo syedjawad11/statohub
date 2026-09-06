@@ -1,0 +1,213 @@
+---
+title: "F1 Score Explained: Math, scikit-learn Example, Live Calculators"
+description: "Practical F1 guide: formula and confusion matrix, worked fraud and screening examples, scikit-learn example, and Statohub calculators to try your own numbers."
+category: machine-learning-statistics
+primaryKeyword: f1 score explained
+keywords:
+  - f1 score explained
+  - f1 score
+  - f1 guide
+  - scikit-learn example
+phase: 1
+related: []
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ComparisonMatrix from '../../components/applied/infographics/ComparisonMatrix.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+<KeyTakeaways variant="bullets" bullets={[
+  "An F1 score provides a balanced measure of model performance but is highly sensitive to the trade-off between precision and recall, which change with decision thresholds.",
+  "Comparing F1 scores across models requires careful consideration of the averaging method, class support, and the chosen positive class, especially in multiclass scenarios.",
+  "F1 ignores true negatives, so it can be misleading when the negative class is important, and it fluctuates with threshold changes, unlike threshold-independent metrics like ROC-AUC.",
+  "A high F1 score does not guarantee good negative class handling or well-calibrated probabilities; additional metrics like MCC or balanced accuracy are recommended for comprehensive evaluation.",
+  "Proper reporting of F1 involves clarifying the class treated as positive, the decision threshold used, and the averaging method, alongside the complete confusion matrix.",
+]} />
+
+## Understanding F1 Score: The Confusion Matrix Behind It
+
+The F1 score is the harmonic mean of precision and recall, giving a single number between 0 and 1 that summarizes how well a classifier balances false positives against false negatives. Higher is better. Analysts reach for it most often on imbalanced classification problems, where accuracy alone would flatter a model that simply predicts the majority class.
+
+Before the F1 formula makes sense, you need the four building blocks that feed it. Every binary classifier's predictions land in one of four buckets, and analysts arrange these buckets into what's called a **confusion matrix**:
+
+- **True positive (TP):** the model predicts positive, and it actually is positive (a fraud detector flags a fraudulent transaction).
+- **False positive (FP):** the model predicts positive, but the case is actually negative (it flags a legitimate purchase as fraud).
+- **False negative (FN):** the model predicts negative, but the case is actually positive (it lets real fraud through).
+- **True negative (TN):** the model predicts negative, and it actually is negative.
+
+From those four counts come the two ingredients of F1. **Precision** asks: of everything the model flagged, how much was correct? Precision = TP / (TP + FP). **Recall**, also called sensitivity, asks: of everything that was actually positive, how much did the model catch? Recall = TP / (TP + FN). Say a model reviews 100 transactions, correctly flags 8 fraud cases (TP), wrongly flags 4 legitimate ones (FP), and misses 2 real fraud cases (FN). Precision comes out to 8/12, or 0.67. Recall comes out to 8/10, or 0.80.
+
+## The F1 Score Formula and Why It Uses a Harmonic Mean
+
+The F1 score formula is:
+
+**F1 = 2 × (precision × recall) / (precision + recall)**
+
+There's also a version built directly from the confusion matrix counts, which is handy when you want to skip the intermediate precision and recall steps: **F1 = 2TP / (2TP + FP + FN)**. Both forms are [algebraically equivalent](https://en.wikipedia.org/wiki/F-score), and either one will get you to the same answer.
+
+Why the harmonic mean instead of a simple average? Because an arithmetic mean rewards imbalance in a way that misrepresents model quality. A model with 0.99 precision and 0.01 recall would average to roughly 0.50 under a plain average, which looks passable but describes a model that catches almost nothing. The harmonic mean punishes that gap harder: it pulls the score toward whichever number is lower, so F1 in that same case drops to about 0.02. That's a much more honest read on a model that's essentially useless for the positive class.
+
+<Figure number={1} caption="Arithmetic mean vs F1: precision 0.99, recall 0.01, arithmetic mean approximately 0.50, and harmonic mean approximately 0.02.">
+  <ComparisonMatrix
+    title="Arithmetic mean vs F1"
+    desc="The comparison shows precision of 0.99 and recall of 0.01, with an arithmetic mean of approximately 0.50 and harmonic mean (F1) of approximately 0.02."
+    columns={['Value']}
+    scaleMax={1}
+    rows={[
+      { label: 'Precision', values: [0.99] },
+      { label: 'Recall', values: [0.01] },
+      { label: 'Arithmetic mean (avg), approximate', values: [0.50] },
+      { label: 'Harmonic mean (F1), approximate', values: [0.02] },
+    ]}
+  />
+</Figure>
+
+One detail worth knowing: this exact formula, applied to image or pixel overlap rather than classification labels, is called the Dice coefficient; for guidance on evaluating such metrics in real-world scenarios, see how to evaluate whether an [AI analytics platform is accurate enough](https://brainiacconsulting.io/evaluate-ai-analytics-platform-accuracy). Segmentation researchers and classification analysts are often computing the identical quantity under two different names.
+
+## F1 Score Example: Working Through the Numbers
+
+Numbers make this concrete faster than any explanation. Here's a full walkthrough using the fraud scenario above, plus what happens when you shift the model's decision threshold.
+
+1. **Baseline case.** TP = 8, FP = 4, FN = 2. Precision = 8/12 = 0.67. Recall = 8/10 = 0.80. F1 = 2 × (0.67 × 0.80) / (0.67 + 0.80) = 0.73.
+2. **Lower the threshold to catch more fraud.** The model flags more transactions as suspicious, increasing true positives and false positives, and decreasing false negatives. Precision and recall are recalculated accordingly, and the F1 score changes based on these values.
+
+> **F1 dropped from 0.73 to 0.64 even though recall improved.** That's the harmonic mean doing its job: it refuses to let a recall gain mask a much bigger precision loss.
+
+The lesson generalizes beyond fraud detection. Moving a classifier's threshold almost always trades precision for recall in one direction or the other, and F1 gives you a fast way to check whether that trade was actually worth it, or whether you just shuffled errors from one column of the confusion matrix to another.
+
+## Multiclass F1: Micro, Macro, Weighted Averages, and Fβ
+
+Binary classification is the easy case. Once you have three or more classes, spam versus not-spam versus promotional email, say, you need a rule for combining per-class F1 scores into one number, and the [three standard averaging methods](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html) give very different answers:
+
+- **Micro-average** pools every TP, FP, and FN across all classes first, then computes one global F1. It's dominated by your largest classes and works well when you care about overall correctness across every prediction.
+- **Macro-average** computes F1 separately for each class, then takes a plain average across classes. Every class counts equally, so a tiny class matters just as much as your biggest one.
+- **Weighted average** also computes F1 per class, but weights each by its support (the number of true instances of that class), which keeps large classes from being drowned out while still reporting per-class performance.
+
+There's also **Fβ**, a generalization that lets you decide precision and recall don't deserve equal weight. F2 weights recall four times more heavily than precision, useful when missing a positive case (a cancer screening, a security breach) is far costlier than a false alarm. F0.5 does the reverse, weighting precision higher, useful when false alarms are expensive and misses are more tolerable. Choosing between F1, F2, or F0.5 comes down to which error type actually costs you more in your specific domain.
+
+## Interpreting F1 Score: What Counts as "Good"?
+
+There's no universal cutoff for a good F1 score, and treating 0.80 as a magic threshold across every domain will mislead you. A spam filter with F1 of 0.75 might be perfectly adequate; a sepsis-detection model with the same score could be dangerous, because missing a true positive there carries a far higher cost than an inbox false alarm.
+
+Context sets the bar. Fraud detection teams often tolerate lower F1 scores in exchange for very high recall, because a missed fraud case is expensive and a false alarm just means a customer gets an extra verification step. Medical screening tools lean the same direction. Spam filtering, by contrast, usually favors precision, since flagging a legitimate email as spam annoys users more than the occasional missed spam message.
+
+As a loose heuristic, higher F1 scores generally indicate stronger performance on binary tasks, but that number means little without knowing the class balance and the base rate of the positive class. That's why credible reporting never shows F1 alone. Show precision and recall alongside it, so a reader can see [which error type is driving the score](https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall), rather than one composite number that hides the trade-off.
+
+<Figure number={2} caption="F1: priorities by context.">
+  <DataTable
+    headers={['Context', 'Priority', 'Why', 'Tolerate']}
+    rows={[
+      ['Fraud', 'High recall', 'Missed fraud is costly', 'Lower precision'],
+      ['Medical', 'High recall', 'Missing positives is dangerous', 'Lower precision'],
+      ['Spam', 'High precision', 'Avoid flagging legit mail', 'Missed spam'],
+    ]}
+  />
+</Figure>
+
+## When F1 Score Misleads You
+
+F1 has a structural blind spot: it never looks at true negatives. That's fine when you're only interested in the positive class, but it means F1 says nothing about how well your model handles the negative class, and two models with identical F1 can behave very differently on the negatives.
+
+A few other limits worth flagging before you lean on F1 as your only metric:
+
+- **F1 is threshold-dependent.** Change your decision threshold and F1 changes with it, so comparing F1 across models tuned at different thresholds is comparing apples to oranges. ROC-AUC avoids this by evaluating ranking quality across every possible threshold at once.
+- **F1 says nothing about calibration.** A model can hit a strong F1 while producing probability outputs that are wildly overconfident or underconfident.
+- **Consider Matthews correlation coefficient (MCC) or balanced accuracy** when you want a metric that accounts for all four confusion matrix cells at once, particularly on severely imbalanced data.
+
+**Pro Tip:** *Never report F1 in isolation. Pull up the full confusion matrix alongside it, and check at least one threshold-independent metric like ROC-AUC before deciding a model is production-ready.*
+
+## How to Calculate F1 Score in scikit-learn
+
+Python's scikit-learn makes F1 a one-line call once you have true labels and predictions:
+
+```
+from sklearn.metrics import f1_score
+f1_score(y_true, y_pred, average='binary')
+```
+
+For multiclass or multilabel problems, the `average` parameter controls which aggregation method you get, matching the [micro, macro, and weighted definitions](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html) above. A few things trip up newcomers:
+
+- `average='binary'` only works when there are exactly two classes and you've specified which one is positive via `pos_label` (it defaults to 1).
+- For multiclass work, you must pick `'micro'`, `'macro'`, or `'weighted'` explicitly, since scikit-learn won't guess which aggregation you want.
+- When a class has zero predicted or zero actual positives, precision or recall becomes undefined. scikit-learn's default behavior sets F1 to 0.0 in that case and raises an `UndefinedMetricWarning`; the `zero_division` parameter lets you silence that warning or set a different fallback value.
+- `f1_score` expects hard class predictions, not probabilities, so apply your decision threshold to convert probability outputs into labels before calling the function.
+
+## A Worked Example: Screening Model End to End
+
+Picture a hospital screening tool that flags patients for follow-up testing on a rare condition. Out of 500 patients screened, the model produces this confusion matrix: TP = 18, FP = 32, FN = 7, TN = 443.
+
+<Checklist
+  id="screening-model-steps"
+  title="Screening model steps"
+  style="numbered"
+  items={[
+    { text: "Calculate precision and recall.", detail: "Precision is calculated as the ratio of true positives to the sum of true positives and false positives. Recall is calculated as the ratio of true positives to the sum of true positives and false negatives." },
+    { text: "Calculate F1.", detail: "The F1 score is calculated as the harmonic mean of precision and recall." },
+    { text: "Adjust the threshold to favor recall.", detail: "Lowering the flagging threshold catches more true cases but increases false alarms. Precision and recall are recalculated accordingly, and the F1 score changes based on these values." },
+  ]}
+/>
+
+> **F1 fell from 0.48 to 0.44 despite recall jumping from 0.72 to 0.88** because precision collapsed faster than recall improved. In a screening context, that trade might still be the right call: missing a real case (FN) is often far costlier than an unnecessary follow-up test (FP), which is exactly the kind of situation where F2 (weighting recall higher) tells a more useful story than plain F1.
+
+The next step isn't to chase a higher F1 blindly. It's to ask what an FP and an FN actually cost in this setting, decide whether F1, F2, or F0.5 reflects that cost structure, then tune the threshold against the metric that matches your priorities, not just the one that's easiest to compute.
+
+## Reporting F1 Score Correctly: Assumptions to State
+
+A reported F1 score without context is close to meaningless. Before you share a number, document three things: **which class you treated as positive** (flipping this can swing F1 substantially on imbalanced data), **what decision threshold produced the predictions**, and **which averaging method you used** for any multiclass result.
+
+Skipping these details causes a common comparison mistake: putting a macro-averaged F1 from one model next to a weighted-averaged F1 from another and treating the difference as meaningful. They're not measuring the same thing. Whenever you publish an F1 score, include the full confusion matrix and the per-class support counts alongside it, so anyone reviewing your work can verify the calculation rather than take the single number on faith.
+
+## Where to Learn and Calculate F1 Score on Statohub
+
+Statohub's <Link to={routes.home()}>educational guides</Link> walk through statistical concepts like precision, recall, and harmonic means in plain English, without skipping the math that makes them work. The <Link to={routes.calculator('z-score')}>interactive calculators</Link> let you punch in numbers and see results instantly, and the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> connects metrics like F1 to the real decisions analysts and researchers make with them every day.
+
+## The Overlooked Problem With How Teams Use F1
+
+Most explainers treat F1 as a finish line: compute it, compare it across models, pick the winner. That misses the actual value of the metric. F1's real job is to force a conversation about which error costs more in your specific context, a false positive or a false negative, and the single number is only useful once that conversation has happened.
+
+Where the conventional advice falls short is the reflex to treat 0.80 or higher as a universal marker of a "good" model. A screening tool with F1 of 0.60 that catches [95%](https://www.openlayer.com/blog/f1-score-precision-recall-balance) of true positives may be doing exactly what it should, while a spam filter with F1 of 0.85 that misses too many legitimate emails might be failing its actual users. The number needs a domain attached to it before it means anything.
+
+If there's one habit worth adopting, it's this: compute precision and recall first, understand what each one is telling you about your model's failure mode, and only then look at F1 as the summary. Readers who reverse that order, chasing the single number without inspecting its parts, end up optimizing the wrong thing more often than not.
+
+> *— Statohub*
+
+## Try the Math Yourself With Statohub's Calculators
+
+Reading formulas is one thing. Plugging in your own confusion matrix numbers and watching precision, recall, and F1 update in real time is what actually makes the concept stick. Statohub's <Link to={routes.calculatorsHub()}>calculators page</Link> lets you do exactly that, no spreadsheet setup or Python environment required, just your TP, FP, and FN counts.
+
+If you're working through a classification project and want more worked examples beyond binary fraud and screening scenarios, the <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics hub</Link> covers related evaluation concepts like ROC curves, cross-validation, and class imbalance in the same plain-English style. For a broader refresher on the statistical reasoning behind these metrics, the Applied Statistics section connects the math to real decisions analysts face daily. Start with your own confusion matrix numbers, run them through the calculator, and see how your F1 score shifts as you adjust the threshold.
+
+## Sources
+
+<Sources items={[
+  { text: "sklearn.metrics.f1_score — scikit-learn", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html", org: "scikit-learn" },
+  { text: "F-score", href: "https://en.wikipedia.org/wiki/F-score", org: "Wikipedia" },
+  { text: "Classification: Accuracy, recall, precision, and related metrics", href: "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall", org: "Google Developers" },
+  { text: "F-beta score: weighting precision and recall", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.fbeta_score.html", org: "scikit-learn" },
+  { text: "Probability calibration", href: "https://scikit-learn.org/stable/modules/calibration.html", org: "scikit-learn" },
+  { text: "ROC-AUC score", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html", org: "scikit-learn" },
+  { text: "Matthews correlation coefficient", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.matthews_corrcoef.html", org: "scikit-learn" },
+  { text: "Balanced accuracy score", href: "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.balanced_accuracy_score.html", org: "scikit-learn" },
+]} />
+
+## Recommended
+
+- <Link to={routes.calculator('z-score')}>Z-Score Calculator</Link>
+- <Link to={routes.calculator('t-test')}>T-Test Calculator</Link>
+- <Link to={routes.calculator('p-value')}>P Value Calculator</Link>
+- <Link to={routes.calculator('linear-regression')}>Linear Regression Calculator</Link>
+
+## FAQ
+
+<FAQ items={[
+  { question: "What is the F1 score?", answer: "The F1 score is the harmonic mean of precision and recall, giving a single number between 0 and 1 that summarizes how well a classifier balances false positives against false negatives. Higher is better. Analysts reach for it most often on imbalanced classification problems, where accuracy alone would flatter a model that simply predicts the majority class." },
+  { question: "Why does F1 use a harmonic mean?", answer: "Why the harmonic mean instead of a simple average? Because an arithmetic mean rewards imbalance in a way that misrepresents model quality. A model with 0.99 precision and 0.01 recall would average to roughly 0.50 under a plain average, which looks passable but describes a model that catches almost nothing. The harmonic mean punishes that gap harder: it pulls the score toward whichever number is lower, so F1 in that same case drops to about 0.02. That's a much more honest read on a model that's essentially useless for the positive class." },
+  { question: "What should you report alongside an F1 score?", answer: "A reported F1 score without context is close to meaningless. Before you share a number, document three things: which class you treated as positive (flipping this can swing F1 substantially on imbalanced data), what decision threshold produced the predictions, and which averaging method you used for any multiclass result." },
+]} />
