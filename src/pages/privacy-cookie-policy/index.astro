@@ -25,7 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         We do not provide user accounts, sign-in areas, comments, or user
         profiles.
       </p>
-      <p><strong>Last updated:</strong> August 16, 2026</p>
+      <p><strong>Last updated:</strong> September 6, 2026</p>
 
       <h2>Privacy Policy</h2>
 
@@ -34,8 +34,9 @@ const breadcrumbs: BreadcrumbItem[] = [
         Statohub does not ask you to create an account, sign in, or submit
         personal profile information. Calculator inputs are processed in your
         browser by client-side code and are not intentionally sent to Statohub as
-        calculator submissions. We do not sell personal data. The site does carry
-        third-party advertising, which is described under
+        calculator submissions. We do not sell personal data. The site does use
+        analytics, described under <a href="#analytics">Analytics</a> below, and
+        does carry third-party advertising, described under
         <a href="#advertising">Advertising</a> below.
       </p>
 
@@ -48,12 +49,38 @@ const breadcrumbs: BreadcrumbItem[] = [
         operating, securing, and delivering the site.
       </p>
 
-      <h3>Analytics</h3>
+      <h3 id="analytics">Analytics</h3>
       <p>
-        Statohub does not currently include an analytics script in this repo. If
-        we use privacy-respecting analytics in the future, we will use it to
-        understand aggregate site usage, not to build advertising profiles or
-        sell personal data.
+        Statohub uses two analytics services to understand aggregate site usage,
+        such as which pages are read and where visitors arrive from. We do not
+        use analytics data to build advertising profiles, and we do not sell
+        personal data.
+      </p>
+      <ul>
+        <li>
+          <strong>Google Analytics 4</strong> (measurement ID
+          <code>G-PVHDLYC7T4</code>) sets first-party cookies in your browser --
+          typically named <code>_ga</code> and <code>_ga_*</code> -- to tell
+          repeat visits apart and to measure traffic sources. It may also
+          process your IP address, device and browser type, and the pages you
+          view. Google's description of how it handles this data is at
+          <a href="https://policies.google.com/technologies/partner-sites"
+            >policies.google.com/technologies/partner-sites</a
+          >.
+        </li>
+        <li>
+          <strong>Ahrefs Web Analytics</strong> is a page-view measurement
+          script which, according to Ahrefs, does not use cookies and does not
+          track individuals across sites.
+        </li>
+      </ul>
+      <p>
+        You can opt out of Google Analytics on every site you visit by
+        installing Google's
+        <a href="https://tools.google.com/dlpage/gaoptout"
+          >Google Analytics Opt-out Browser Add-on</a
+        >, or by blocking cookies for this site as described under
+        <a href="#control-cookies">How to view and control cookies</a>.
       </p>
 
       <h3 id="advertising">Advertising</h3>
@@ -106,11 +133,17 @@ const breadcrumbs: BreadcrumbItem[] = [
       <h3 id="consent">Consent in the EEA, the UK, and Switzerland</h3>
       <p>
         If you are in the European Economic Area, the United Kingdom, or
-        Switzerland, advertising and measurement cookies are set only after you
-        agree to them. Consent is collected through a Google-certified consent
-        management platform, which shows a message the first time you visit and
-        records your choice in your browser so you are not asked again on every
-        page.
+        Switzerland, advertising cookies are set only after you agree to them.
+        Consent is collected through a Google-certified consent management
+        platform, which shows a message the first time you visit and records
+        your choice in your browser so you are not asked again on every page.
+      </p>
+      <p>
+        The analytics cookies described under
+        <a href="#analytics">Analytics</a> above are not yet wired into that
+        consent message. Until they are, you can prevent them by using the
+        Google Analytics opt-out add-on linked in that section, or by blocking
+        cookies for this site in your browser.
       </p>
       <p>
         You can change or withdraw that choice at any time using the privacy or
@@ -160,12 +193,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
       <h3>Cookies set by Statohub</h3>
       <p>
-        Statohub does not set any cookies of its own. The site's dark-mode
-        preference is stored with browser localStorage under the key
-        <code>theme</code>. localStorage is not a cookie, and this preference
-        stays on your device unless you clear it in your browser. The cookies you
-        will actually encounter on Statohub come from Google's advertising stack
-        and from our host, described next.
+        Statohub sets no cookies of its own for advertising or profiling. The
+        first-party cookies you may find on this domain are set by Google
+        Analytics -- typically <code>_ga</code> and <code>_ga_*</code> --
+        described under <a href="#analytics">Analytics</a> above. They hold an
+        anonymous identifier used to count visits, not a profile built from
+        personal details you have given us.
+      </p>
+      <p>
+        The site's dark-mode preference is stored with browser localStorage
+        under the key <code>theme</code>. localStorage is not a cookie, and this
+        preference stays on your device unless you clear it in your browser. The
+        remaining cookies you will encounter on Statohub come from Google's
+        advertising stack and from our host, described next.
       </p>
 
       <h3>Advertising and consent cookies</h3>

@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-06 (agentic-workflow restructure -- see below).
+**Last updated:** 2026-09-06 (agentic-workflow restructure; AdSense audit).
 
 **Known quirk:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
@@ -48,9 +48,9 @@ upstream topic list rather than import them.
 - **Rotate the GitHub PAT.** The classic `ghp_` token in `~/.claude.json` is
   plaintext and was printed into a 2026-09-01 transcript. Git no longer needs it;
   the MCP server does. Replace with a fine-grained, repo-scoped token.
-- **AdSense paused pending Google's review** -- loader, CSP, `ads.txt`, privacy
-  disclosure and CMP tag live, no ad units placed; decision 2026-08-23 was to
-  stop debugging. `docs/status/sessions/2026-08-23-adsense-consent-csp-fix.md`.
+- **AdSense review: no technical blocker** (2026-09-06 audit -- loader, `ads.txt`,
+  CSP, crawler access all verified clean; false privacy policy now fixed). **5
+  fixes deferred** -- see `docs/status/sessions/2026-09-06-adsense-audit.md`.
 
 ## Parked (do not silently resume)
 
