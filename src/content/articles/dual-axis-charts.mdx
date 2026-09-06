@@ -1,0 +1,208 @@
+---
+title: "Avoid Misleading Dual-Axis Charts: Stats-First Checks for Analysts"
+description: "When a dual-axis chart is justified, how to index or synchronize axes, and the percent-change checks that catch a misleading one before you publish."
+category: data-analysis
+phase: 1
+primaryKeyword: dual axis charts
+keywords:
+  - dual axis charts
+  - when to use dual axis charts
+  - dual axis chart best practices
+  - misleading dual axis charts
+  - secondary axis chart
+  - dual axis chart examples
+related:
+  - data-visualization-best-practices
+  - exploratory-data-analysis
+  - correlation-vs-causation
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A dual-axis chart plots two series with different units or scales against a shared horizontal axis, using a left axis for one series and a right axis for the other. The core rule of thumb: use one only when the metrics genuinely need different units and your audience can read axes carefully; otherwise, an indexed chart or small multiples will serve you better and mislead no one.
+
+<KeyTakeaways rows={[
+  { point: 'When it is justified', details: 'Only when two metrics are measured in incompatible units that cannot share a single axis.' },
+  { point: 'The core failure mode', details: 'Adjusting axis ranges distorts the perceived relationship, especially when axes do not start at zero or are not synchronized.' },
+  { point: 'Keep it readable', details: 'Cap the chart at two series and annotate any line crossover with the actual numbers.' },
+  { point: 'Prefer the alternatives', details: 'Small multiples and indexed charts usually compare more clearly and leave less room to mislead.' },
+  { point: 'Check before publishing', details: 'Verify axis ranges, compare percent change for both series, and confirm the chart matches the numbers.' },
+]} />
+
+## What a Dual-Axis Chart Is and When It Earns Its Place
+
+A dual-axis chart pairs two vertical scales on one plot so you can track two metrics that would otherwise need separate charts. You will also see it called a "combo chart," "twin-axis chart," or "secondary-axis chart," depending on the software.
+
+The classic use cases share one trait: the metrics are related but measured in incompatible units.
+
+- **Price and trading volume** on a stock chart, where dollars and shares do not belong on the same scale.
+- **Temperature and rainfall** in a climate chart, mixing degrees and millimeters.
+- **Revenue and unit sales** for a product line, where dollars dwarf item counts.
+
+When both series share a unit, like two currencies or two percentages, a dual axis usually adds risk without adding insight. Save it for the cases where a single axis is mathematically impossible. The same encoding priorities that govern any <Link to={routes.article('data-visualization-best-practices')}>chart design decision</Link> still apply here: the reader is judging position and length, and a second axis quietly changes what those lengths mean.
+
+<Figure number={1} caption="When a dual-axis chart earns its place, and when a shared or indexed axis is the honest choice.">
+  <DecisionTree
+    title="Dual-axis decision"
+    desc="A decision tree: if two series share a unit, use one shared axis. If not, use a dual axis or a table only when exact absolute values are required; otherwise index both series to 100 and compare slopes."
+    root={{
+      label: 'Do the two series share a unit?',
+      yes: { label: 'Use one shared single axis' },
+      no: {
+        label: 'Must you show exact absolute values?',
+        yes: { label: 'Dual axis or table; synchronize and label both axes' },
+        no: { label: 'Index both series to 100; compare slopes' },
+      },
+    }}
+  />
+</Figure>
+
+## Why Analysts Are Told to Be Cautious
+
+The dual-axis chart survives mainly because of one failure mode: whoever sets the axis ranges controls how the two lines relate to each other visually, and small changes in those ranges can flip the apparent story. Stretch or compress either axis and a mild correlation can look like a dramatic one, or a real divergence can vanish entirely.
+
+Datawrapper's design guidance points to axis-range manipulation as the central hazard, especially when neither axis starts at zero. Line crossovers compound the problem. When two lines cross on a dual-axis chart, readers instinctively read that intersection as a meaningful event, a tipping point where one metric overtakes the other. Often it is nothing more than an artifact of how the two scales happen to line up, which is a classic case of reading a pattern into a picture that the data does not support, the same trap covered in <Link to={routes.article('correlation-vs-causation')}>correlation versus causation</Link>.
+
+> User studies on superimposed and dual-axis displays, including work referenced by Stephen Few's Perceptual Edge critique, find that readers are slower and less accurate at extracting correct comparisons from these charts than from separated or indexed alternatives.
+
+That is not a minor usability quibble. It is evidence that the format actively works against the reader's ability to judge magnitude correctly.
+
+## A Design Checklist for Safer Dual-Axis Charts
+
+If your situation truly calls for a dual-axis chart, treat it as a design problem with real stakes, not a default combo-chart button. Work through these steps in order.
+
+1. **Anchor bar and area encodings at zero.** Baselines carry visual weight; distort one and every bar reads as bigger or smaller than it is.
+2. **Explain any non-zero baseline for line series.** If a line axis does not start at zero, say so in a caption or footnote.
+3. **Synchronize or index the axes when units allow it.** Comparable numeric types, like two currencies, should use a synchronize-axis option or an indexed transform rather than two arbitrary ranges.
+4. **Separate the encodings visually.** Pair bars with a line rather than two lines or two bar sets, so the eye has an immediate cue for which axis belongs to which series.
+5. **Color-match every axis label to its series.** Code the left axis text the same color as its line or bars, and do the same on the right.
+6. **Cap the series count.** Two is the practical limit; a third metric belongs in a separate chart.
+7. **Annotate crossovers explicitly.** Label the point with the actual numbers so readers do not infer significance from geometry alone.
+
+> **Pro tip:** Before publishing, cover the chart title and axis labels with your hand and ask a colleague what story the lines tell. If their answer changes once you reveal the axis ranges, the chart is misleading by design, not by accident.
+
+## Building Dual-Axis Charts in Excel, Sheets, Tableau, and Code
+
+Every major tool supports dual axes, but the setup steps and default pitfalls differ enough to trip up analysts moving between platforms.
+
+- **Excel**: Insert a combo chart, then assign one data series to the secondary axis under "Format Data Series." A column-plus-line combination reads more clearly than two overlapping lines.
+- **Google Sheets**: Choose the Combo chart type, then open Customize and set the relevant series to the right axis. Sheets defaults to a shared axis, so this step is easy to skip. Google's [chart editing help](https://support.google.com/docs/answer/63824?hl=en) walks through the series options.
+- **Tableau**: Drag a second measure onto the opposite side of the view, or right-click an existing pill and select Dual Axis. Use the [synchronize-axis toggle](https://help.tableau.com/current/pro/desktop/en-gb/multiple_measures.htm) whenever both measures share comparable numeric ranges.
+- **Chart.js and Highcharts**: Assign each dataset a distinct y-axis ID and turn off the second axis's grid lines to avoid a cluttered background. The [Chart.js multi-axis sample](https://www.chartjs.org/docs/master/samples/line/multi-axis.html) shows the configuration pattern, and the [Highcharts combo demo](https://www.highcharts.com/demo/highcharts/combo-dual-axes) covers the equivalent line-plus-column setup.
+
+Whichever tool you use, check the output against the design checklist above before you call it finished. Software defaults optimize for "it renders," not "it is honest."
+
+## Alternatives to Try First
+
+A dual-axis chart is not the only way to show two metrics side by side, and in most cases it is not the best one.
+
+- **Small multiples** work well when you need both the actual magnitude of each series and the pattern over time. You get two clean, single-axis charts stacked or placed side by side, at the cost of a bit more horizontal space.
+- **Indexed or normalized charts** rescale each series to a common starting point, usually 100, so the lines show percent change from that baseline. This is the strongest option for comparing growth rates, since it preserves relative slopes without any arbitrary axis-scaling decision. It is the same normalization habit that shows up in <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics</Link> when you compare series of different sizes.
+- **Connected scatterplots** plot one variable against the other directly, with a line connecting points in time order. They suit cases where the <Link to={routes.article('what-is-correlation')}>relationship between the two variables</Link> matters more than their trajectory over time.
+
+Each trades some of the dual axis's compactness for a chart that cannot be reshaped into a misleading story just by nudging an axis range.
+
+## How to Read Someone Else's Dual-Axis Chart
+
+Reading someone else's dual-axis chart calls for the same skepticism you would apply to building your own.
+
+- Confirm which series maps to which axis; color-coded labels should make this immediate, and if they do not, treat the chart as unverified.
+- Check whether the axes are synchronized, indexed, or simply set to whatever range made the chart "look right."
+- Treat any line crossover as a visual coincidence until you see the underlying numbers or an explicit annotation confirming it means something.
+- If the chart still feels ambiguous after those checks, pull the raw numbers and re-plot them normalized or as two separate charts.
+
+> **Pro tip:** A fast gut check: compute the percent change of both series over the period shown. If the dual-axis chart implies a very different relationship than the percent-change numbers do, trust the numbers.
+
+## Choosing Based on the Claim You Are Making
+
+The decision between a dual-axis chart and an alternative is really a question about what claim you are making. If you need to report absolute values, like exact revenue in dollars alongside exact unit counts, a dual axis or a table may be unavoidable. If you are making a claim about growth or trend, relative values matter more than absolutes, and that is exactly what an indexed series is built to show honestly. Working through this on real data as part of an <Link to={routes.article('exploratory-data-analysis')}>exploratory data analysis workflow</Link> builds the habit faster than reasoning about it in the abstract, and Statohub's <Link to={routes.calculatorsHub()}>calculators</Link> handle the percent-change and average steps in seconds.
+
+<DataTable
+  caption="Which chart matches the claim you are making"
+  headers={['Claim you are making', 'Chart that shows it honestly', 'What it preserves']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Absolute values (exact dollars and unit counts)', 'Dual-axis chart or a table', 'Exact magnitudes shown side by side'],
+    ['Growth or trend comparison', 'Indexed series, both starting at 100', 'Relative slopes, no arbitrary axis scaling'],
+    ['Magnitude plus pattern over time', 'Small multiples', 'Single-axis accuracy for each series'],
+    ['How two variables move together', 'Connected scatterplot', 'The pairwise relationship, in time order'],
+  ]}
+/>
+
+Before publishing either version, run the sanity checks below.
+
+<Checklist
+  id="dual-axis-pre-publish"
+  title="Pre-publish dual-axis checklist"
+  style="check"
+  items={[
+    { text: 'Compute percent change for both series across the period shown', detail: 'This is the number the chart should agree with.' },
+    { text: 'Rebuild the same data as an indexed chart, both series starting at 100', detail: 'Compare the story it tells to the dual-axis version.' },
+    { text: 'Confirm each axis starts where it should', detail: 'Bars and areas at zero; any non-zero line baseline stated in the caption.' },
+    { text: 'Check that axes are synchronized or indexed, not set to whatever looked right', detail: 'Two arbitrary ranges are the main way this chart misleads.' },
+    { text: 'Limit the chart to two series and colour-match each axis label to its series', detail: 'A third metric belongs in a separate chart.' },
+    { text: 'Annotate any crossover with the actual values', detail: 'Do not let readers infer a tipping point from geometry alone.' },
+    { text: 'If the indexed and dual-axis versions contradict each other, publish the indexed one', detail: 'The dual-axis version is probably the misleading one.' },
+  ]}
+/>
+
+## Statohub's Perspective
+
+Statohub's editorial default leans toward indexed charts and small multiples for the same reason Stephen Few's Perceptual Edge critique does: most audiences read growth comparisons more accurately without a second axis in the picture. The exception is narrow but real. When two metrics genuinely live in different units, dollars and units sold, degrees and millimeters, and the axes are synchronized or clearly labeled, a dual-axis chart earns its place.
+
+Every check in this guide, percent change, indexing, axis synchronization, gets easier with repetition on real numbers rather than abstract rules. Pair the judgment calls here with Statohub's <Link to={routes.learnLanding()}>Learn</Link> guides for the statistical reasoning behind each transform, and the rest of the <Link to={routes.appliedLanding()}>Applied Statistics</Link> guides for cases like this with real numbers attached. If you need a baseline figure before indexing your series, start with the <Link to={routes.calculator('average')}>average calculator</Link>, then index a two-series dataset you already have on hand and compare it to a dual-axis version of the same data. The gap between what each chart implies is often the fastest way to see why the choice matters.
+
+## Recommended
+
+- <Link to={routes.categoryHub('data-analysis')}>Data Analysis</Link>
+- <Link to={routes.article('data-visualization-best-practices')}>Data Visualization Best Practices</Link>
+- <Link to={routes.article('exploratory-data-analysis')}>Exploratory Data Analysis: A Practical Workflow</Link>
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'What to consider when creating dual-axis charts', href: 'https://www.datawrapper.de/blog/dual-axis-charts-guide', org: 'Datawrapper Blog' },
+  { text: 'Stephen Few, "Dual-Scaled Axes in Graphs: Are They Ever the Best Solution?"', href: 'https://www.perceptualedge.com/articles/visual_business_intelligence/dual-scaled_axes.pdf', org: 'Perceptual Edge' },
+  { text: 'How to create a chart with two different y-axes', href: 'https://www.datawrapper.de/blog/dualaxis', org: 'Datawrapper Blog' },
+  { text: 'Multi-axis line chart configuration sample', href: 'https://www.chartjs.org/docs/master/samples/line/multi-axis.html', org: 'Chart.js documentation' },
+  { text: 'Combination chart with dual axes (line plus column) demo', href: 'https://www.highcharts.com/demo/highcharts/combo-dual-axes', org: 'Highcharts' },
+  { text: 'Compare and synchronize measures using dual axes', href: 'https://help.tableau.com/current/pro/desktop/en-gb/multiple_measures.htm', org: 'Tableau Help' },
+  { text: 'Data visualisation guidance for charts and axes', href: 'https://service-manual.ons.gov.uk/data-visualisation', org: 'UK Office for National Statistics' },
+  { text: 'Graphical Techniques: By Problem Category (EDA)', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda33.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: 'Add & edit a chart or graph (combo charts and series axes)', href: 'https://support.google.com/docs/answer/63824?hl=en', org: 'Google Docs Editors Help' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'When should you use a dual-axis chart?',
+    answer: 'Use one only when the two metrics are related but measured in incompatible units that cannot share a single axis, such as price and trading volume, temperature and rainfall, or revenue and unit sales. If both series share a unit, like two currencies or two percentages, a dual axis adds risk without adding insight, and a single shared axis is the better choice. Reserve the format for cases where a single axis is mathematically impossible and your audience can be expected to read two axes carefully.',
+  },
+  {
+    question: 'Why are dual-axis charts considered misleading?',
+    answer: 'Whoever sets the axis ranges controls how the two lines relate to each other visually. Stretching or compressing either axis can make a mild correlation look dramatic or make a real divergence disappear, especially when neither axis starts at zero. Line crossovers make it worse: readers treat the intersection as a tipping point when it is often just an artifact of how the two scales line up. User studies find people are slower and less accurate reading these charts than reading separated or indexed alternatives.',
+  },
+  {
+    question: 'What is a better alternative to a dual-axis chart?',
+    answer: 'Small multiples give you two clean single-axis charts side by side when you need both magnitude and pattern over time. Indexed or normalized charts rescale each series to a common starting point, usually 100, so the lines show percent change from that baseline; this is the strongest option for comparing growth rates because it preserves relative slopes without any arbitrary axis scaling. Connected scatterplots plot one variable against the other when the relationship matters more than the trajectory over time.',
+  },
+  {
+    question: 'How do you read someone else\'s dual-axis chart without being fooled?',
+    answer: 'Confirm which series maps to which axis; if the labels are not colour-coded, treat the chart as unverified. Check whether the axes are synchronized, indexed, or simply set to whatever range made the chart look right. Treat any line crossover as a visual coincidence until you see the underlying numbers or an explicit annotation. If the chart still feels ambiguous, pull the raw values and re-plot them normalized or as two separate charts.',
+  },
+  {
+    question: 'How do you check whether a dual-axis chart is honest before publishing?',
+    answer: 'Compute the percent change of both series across the period shown, then rebuild the same data as an indexed chart with both series starting at 100. Compare the story the indexed chart tells to the story the dual-axis chart tells. If they contradict each other, the dual-axis version is probably misleading and you should publish the indexed one. Also confirm bars and areas start at zero, cap the chart at two series, and annotate any crossover with the actual values.',
+  },
+]} />
