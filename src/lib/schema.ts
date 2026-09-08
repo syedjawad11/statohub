@@ -75,6 +75,24 @@ export function faqPageSchema(items: FaqItem[]) {
   };
 }
 
+/**
+ * The named byline every article carries. It is a real editorial group rather
+ * than a person, so it is modelled as an Organization under the publisher and
+ * points at /about/, where the team, its process and its corrections policy are
+ * described. Keep the name in step with the visible byline in the layouts.
+ */
+export const EDITORIAL_TEAM_NAME = 'Statohub Editorial Team';
+
+export function editorialTeamRef(site: URL) {
+  return {
+    '@type': 'Organization',
+    '@id': new URL('#editorial-team', site).href,
+    name: EDITORIAL_TEAM_NAME,
+    url: absoluteRoute(routes.about(), site),
+    parentOrganization: { '@id': new URL('#organization', site).href },
+  };
+}
+
 export function articleSchema(input: ArticleSchemaInput, site: URL) {
   const organizationRef = { '@id': new URL('#organization', site).href };
   const websiteRef = { '@id': new URL('#website', site).href };
@@ -85,7 +103,7 @@ export function articleSchema(input: ArticleSchemaInput, site: URL) {
     headline: input.headline,
     description: input.description,
     mainEntityOfPage: absoluteRoute(routes.article(input.id), site),
-    author: organizationRef,
+    author: editorialTeamRef(site),
     publisher: organizationRef,
     isPartOf: websiteRef,
   };

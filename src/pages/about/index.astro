@@ -2,31 +2,194 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
-import type { BreadcrumbItem } from '../../lib/schema';
+import { EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../../lib/schema';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
   { label: 'About', route: routes.about() },
 ];
+
+const hubs = [
+  { id: 'foundations' as const, label: 'Foundations' },
+  { id: 'descriptive-statistics' as const, label: 'Descriptive statistics' },
+  { id: 'probability-distributions' as const, label: 'Probability distributions' },
+  { id: 'inferential-statistics' as const, label: 'Inferential statistics' },
+  { id: 'regression-correlation' as const, label: 'Regression and correlation' },
+  { id: 'combinatorics' as const, label: 'Combinatorics' },
+  { id: 'data-analysis' as const, label: 'Data analysis' },
+  { id: 'experiments-causality' as const, label: 'Experiments and causality' },
+  { id: 'time-series-forecasting' as const, label: 'Time series and forecasting' },
+  { id: 'machine-learning-statistics' as const, label: 'Machine learning statistics' },
+];
 ---
 
 <BaseLayout
-  title="About | Statohub"
-  description="About Statohub, a static statistics education site pairing plain-English guides with working calculators so readers learn a method and run their own numbers."
+  title="About Statohub | Who writes our statistics guides"
+  description="Who writes Statohub, how our statistics guides and calculators are built and checked, what we refuse to publish, and how to send us a correction."
   canonicalPath={routes.about()}
   breadcrumbs={breadcrumbs}
 >
-  <section class="max-w-3xl">
+  <article class="max-w-3xl">
     <p class="page-kicker">About</p>
     <h1 class="page-title">Statistics you can read and run.</h1>
     <p class="page-lede">
-      Statohub pairs plain-English statistics guides with working calculators so
-      readers can understand the method and compute with their own numbers in
-      the same place.
+      Statohub pairs plain-English statistics guides with working calculators, so
+      you can understand a method and put your own numbers through it without
+      leaving the page.
     </p>
+
+    <div class="article-prose">
+      <h2>Why this site exists</h2>
+      <p>
+        Search for almost any statistics term and you land in one of two places.
+        Either a wall of notation that assumes you already know the answer, or a
+        bare calculator that hands you a number with no explanation of what it
+        means or whether you should trust it. Neither helps much when you are
+        stuck on a real problem at eleven at night.
+      </p>
+      <p>
+        Statohub is built on the assumption that those two things belong
+        together. A guide here explains the method in ordinary language, works a
+        realistic example through by hand so you can follow the arithmetic, and
+        then — where a calculator makes sense — gives you the same computation as
+        a tool you can run on your own data. The explanation and the tool live at
+        the same URL because that is how people actually use them.
+      </p>
+      <p>
+        We also try to be honest about limits. Most statistics writing tells you
+        how to compute something. The harder and more useful question is when the
+        method misleads you, and what to reach for instead. Our guides are
+        expected to answer that too.
+      </p>
+
+      <h2>Who writes Statohub</h2>
+      <p>
+        Everything here is published under the byline of the
+        <strong>{EDITORIAL_TEAM_NAME}</strong> — the small group responsible for
+        commissioning, writing, checking and maintaining this site. We use a
+        team byline rather than individual author names because no guide here is
+        the work of one person start to finish: topics are researched and
+        drafted, then independently reviewed against a written checklist, then
+        cross-checked against the calculator that implements the same maths.
+        The team, not any single contributor, is accountable for what ships.
+      </p>
+      <p>
+        Some guides in our applied section are commissioned from outside
+        subject-matter writers. Those drafts are not published as they arrive.
+        They are edited for house style, stripped of promotional links, checked
+        for accuracy and overlap with our existing coverage, and only then
+        published under the same team byline and the same standard as everything
+        else.
+      </p>
+
+      <h2>How a guide gets made</h2>
+      <p>
+        Every article moves through the same four stages before it goes live.
+      </p>
+      <ol>
+        <li>
+          <strong>Brief.</strong> We decide what question the page has to answer
+          and which related questions belong on it. One topic gets one page. If
+          a subject is already covered elsewhere on the site, the new draft links
+          to it rather than restating it — this keeps pages from competing with
+          each other and keeps each one genuinely about its own subject.
+        </li>
+        <li>
+          <strong>Draft.</strong> The guide is written to the brief, with at
+          least one example worked all the way through in real units, plus the
+          failure modes and edge cases that a reader will actually hit.
+        </li>
+        <li>
+          <strong>Review.</strong> A separate review pass grades the draft
+          against a fixed editorial checklist: is the arithmetic right, is the
+          structure sound, are the internal links valid, are there any invented
+          statistics or fabricated citations. Drafts that fail come back with a
+          specific fix list rather than being waved through.
+        </li>
+        <li>
+          <strong>Publish and revisit.</strong> Guides carry a visible last
+          updated date. We revise pages when we find an error, when an
+          explanation is not landing, or when we can replace a generic example
+          with a better one.
+        </li>
+      </ol>
+
+      <h2>How the calculators are built</h2>
+      <p>
+        The calculators are not embedded third-party widgets. Each one is a
+        small, self-contained function written and maintained in this codebase,
+        and every one of them is covered by an automated test suite that runs
+        before the site can be deployed. Those tests check the results against
+        values worked out independently, including the awkward cases — empty
+        inputs, single values, ties, negative numbers, sample versus population
+        formulas — that are the usual source of quietly wrong answers.
+      </p>
+      <p>
+        They also run entirely in your browser. Numbers you type into a
+        calculator here are computed on your own device; they are not sent to us,
+        stored, or logged as calculator submissions. There are no accounts to
+        create and nothing to sign in to. The full detail is in our
+        <Link to={routes.privacyCookiePolicy()}>privacy and cookie policy</Link>.
+      </p>
+
+      <h2>What we will not publish</h2>
+      <p>
+        A few things are ruled out on purpose, and it is worth saying so plainly.
+      </p>
+      <ul>
+        <li>
+          <strong>No gambling or betting-odds calculators.</strong> The maths
+          overlaps with probability, and the traffic would be good. We do not
+          publish them, because a tool that helps someone bet is not statistics
+          education and we are not willing to build that audience.
+        </li>
+        <li>
+          <strong>No invented evidence.</strong> We do not cite studies we have
+          not read or quote statistics we cannot source. Where a guide uses
+          numbers to demonstrate a method, they are presented as a worked
+          scenario, never dressed up as a real-world finding.
+        </li>
+        <li>
+          <strong>No advice that needs a professional.</strong> Statohub teaches
+          methods. It is not medical, legal, or financial advice, and it is not a
+          substitute for a statistician who can see your actual data.
+        </li>
+      </ul>
+
+      <h2>What is covered</h2>
+      <p>
+        The site is organised into two sections. <Link to={routes.learnLanding()}>Learn</Link>
+        covers the concepts and methods themselves, from the vocabulary up.
+        <Link to={routes.appliedLanding()}>Applied</Link> covers using them on
+        real problems — experiment design, model diagnostics, forecasting and the
+        rest. Both are grouped into ten subject hubs:
+      </p>
+      <ul>
+        {hubs.map((hub) => (
+          <li><Link to={routes.categoryHub(hub.id)}>{hub.label}</Link></li>
+        ))}
+      </ul>
+      <p>
+        Every calculator on the site is also listed together in the
+        <Link to={routes.calculatorsHub()}>calculator directory</Link> if you
+        would rather start from the tool than the explanation.
+      </p>
+
+      <h2>Corrections</h2>
+      <p>
+        If you find a mistake — a wrong number, a broken formula, an explanation
+        that is misleading — please tell us. Corrections to the maths are treated
+        as urgent and we would much rather hear about them from you than leave
+        them up. Write to
+        <!--email_off--><a href="mailto:admin@statohub.com">admin@statohub.com</a><!--/email_off-->
+        with the page address and what looks wrong. When we correct something
+        substantive, the page's updated date changes with it.
+      </p>
+    </div>
+
     <div class="mt-8 flex flex-wrap gap-3">
       <Link to={routes.calculatorsHub()} class="btn btn-primary">Browse calculators</Link>
-      <Link to={routes.categoryHub('foundations')} class="btn">Explore foundations</Link>
+      <Link to={routes.categoryHub('foundations')} class="btn">Start with foundations</Link>
     </div>
-  </section>
+  </article>
 </BaseLayout>

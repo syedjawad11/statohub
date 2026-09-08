@@ -1,6 +1,6 @@
 ---
 title: "Mean vs Average - Are They the Same Thing?"
-description: "Mean vs average — are they the same? In most cases yes, but formally 'average' also covers the median and mode. Learn when they differ and how to use each."
+description: "Mean and average are usually the same number, but 'average' is the umbrella term that also covers median and mode. Here's when they diverge."
 category: descriptive-statistics
 primaryKeyword: mean vs average
 keywords:
@@ -16,7 +16,12 @@ keywords:
   - mean is the same as average
 phase: 1
 calculator: mean
-related: []
+related:
+  - what-is-an-average
+  - median-vs-average
+  - how-to-find-the-mean
+pubDate: 2026-02-14
+updatedDate: 2026-09-09
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -25,249 +30,186 @@ import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-The **mean vs average** question comes up constantly in school, at work, and in everyday conversation — and most of the time the answer is simple: they are the same thing. Both refer to adding up all the values in a data set and dividing by the count. But in formal statistics, "average" is a broader umbrella term that also covers the median and the mode, while "mean" points specifically to the arithmetic mean. Knowing when is mean the same as average — and when it is not — prevents the kind of quiet misreading that can distort how you interpret a statistic.
+Ask most people about **mean vs average** and the honest answer is: they're the same number. Add up the values, divide by how many there are, and you've calculated both at once. The catch only shows up in formal statistics, where "average" is a broader label that also covers the median and the mode — "mean" names one specific calculation, the arithmetic one. Mixing the two up rarely matters for a class average, but it matters a lot when a headline says "average" and means something you'd calculate very differently.
 
-This guide explains the arithmetic mean formula, unpacks what "average" actually means across different contexts, and works through complete numerical examples so you can check every calculation yourself.
+This page draws a clean line between the terms: what the arithmetic mean actually computes, the handful of situations where "average" quietly stops meaning "mean," and how to tell which one you're looking at. For the mechanics of computing a mean by hand, see <Link to={routes.article('how-to-find-the-mean')}>how to find the mean</Link>; for the median specifically, see <Link to={routes.article('median-vs-average')}>median vs average</Link>.
 
-## What Is the Arithmetic Mean?
+## "Average" Is the Umbrella Term, "Mean" Is One Measure
 
-The arithmetic mean is the most widely used summary number in all of statistics. To find it, you add every value in your data set and divide by the total count of values. That single result represents what the data looks like "on average" in the additive sense.
+In statistics, an **average** is any single value that represents the center of a dataset. Three calculations qualify:
 
-According to the [NIST/SEMATECH e-Handbook of Statistical Methods — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm), the arithmetic mean is defined as the sum of all observations divided by the number of observations and is the most common measure of the center of a sample or population.
+- **Mean** — sum the values, divide by the count.
+- **Median** — sort the values, take the middle one.
+- **Mode** — report the value that occurs most often.
 
-### The Mean Formula
-
-For a sample of `n` values — call them x₁, x₂, through xₙ — the arithmetic mean (written x̄, pronounced "x-bar") is:
-
-```
-x̄ = (x₁ + x₂ + ... + xₙ) / n
-
-   = Σxᵢ / n      (sum over i = 1 to n)
-```
-
-When the values are an entire population rather than a sample, the same calculation is used but the result is written as μ (the Greek letter mu). The formula is identical; only the symbol changes to signal population versus sample.
-
-### Worked Example — Test Scores
-
-Five students sit a quiz and score 72, 85, 90, 68, and 95 points. Their arithmetic mean (average) score is:
-
-```
-x̄ = (72 + 85 + 90 + 68 + 95) / 5
-   = 410 / 5
-   = 82 points
-```
-
-Every student contributed one-fifth of the total, so the mean captures the equal-share center of the group. If someone asked "what was the average score?" you would answer 82 — and that is exactly the mean.
+All three are legitimately "an average." Is average the same as mean, then? In practice, almost always — when someone says "the average" without qualifying it, they mean the arithmetic mean roughly 95% of the time, and every spreadsheet function named `AVERAGE()` computes the mean by default, not the median or mode. So is mean average? For daily use, yes. The distinction only earns its keep once the data stops being well-behaved — which is the rest of this article.
 
 <RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average" intro="Worth reading next" />
 
-## What Does "Average" Mean in Statistics?
+## The Arithmetic Mean, in One Line
 
-Most people use "average" as a direct synonym for the arithmetic mean, and in most everyday settings that is perfectly correct. But in formal statistical terminology, "average" is a collective label for any measure of central tendency — any value that summarizes where the bulk of a data set lies.
+The formula behind "the mean" never changes:
 
-The three most common averages are:
+```
+x̄ = (x₁ + x₂ + ... + xₙ) / n
+   = Σxᵢ / n
+```
 
-- **Arithmetic mean** — sum divided by count; the one people almost always intend when they say "average."
-- **Median** — the middle value when all observations are sorted from lowest to highest. Half the data fall below it, half above it.
-- **Mode** — the value that appears most often in the data set.
+x̄ ("x-bar") is the sample mean; swap it for μ (mu) when the data is a full population rather than a sample, and n for N. The arithmetic stays identical either way.
 
-So is the mean the average? Yes — and technically so is the median, and so is the mode. The mean just happens to be the most commonly reported average, which is why the two words are so often treated as exact synonyms.
+**Worked example.** A spice packer checks fill weight on eight sachets labeled "50 g net": 50.2, 49.8, 50.5, 50.1, 49.6, 50.3, 50.0, and 49.9 grams.
 
-### Other Types of Mean
+```
+Sum = 50.2 + 49.8 + 50.5 + 50.1 + 49.6 + 50.3 + 50.0 + 49.9
+    = 400.4
 
-Beyond the arithmetic mean, statisticians recognise several other "means" — each suited to a particular kind of data:
+Mean = 400.4 / 8 = 50.05 g
+```
 
-- **Geometric mean** — the nth root of the product of n values. Used in finance for compound growth rates and in any context where values multiply together rather than add.
-- **Harmonic mean** — the reciprocal of the arithmetic mean of reciprocals. Used for averaging rates such as speeds over equal distances.
-- **Weighted mean** — an arithmetic mean where some values count more than others. A grade book that weights the final exam at 40 % uses a weighted mean.
+The mean fill is 50.05 g against a 50 g label — the line is running true, with normal scale noise on either side. Nobody would flag this as anything other than "the average weight," and here mean is the same as average by any definition you pick, because the eight readings are tightly clustered with no lopsided outlier pulling the number around.
 
-None of these is "the" arithmetic mean, but all of them are legitimately called a "mean" or an "average" in appropriate contexts. This is why the word "average" is technically broad even though it almost always points to the arithmetic variety.
+<RelatedLink to={routes.article('how-to-find-the-mean')} label="How to Find the Mean" intro="For a related calculation" />
 
-## Mean vs Average — When They Are the Same
-
-For the vast majority of everyday uses, the answer is direct:
-
-- **Is average and mean the same?** Yes.
-- **Is average the same as mean?** Yes.
-- **Is mean same as average?** Yes.
-- **Mean is the same as average** — correct in practically every ordinary context.
-
-Whenever a teacher reports an "average score," a company publishes an "average salary," or a weather service announces an "average temperature," they are almost certainly reporting the arithmetic mean. Software confirms this: the `AVERAGE()` function in Excel and Google Sheets, `numpy.mean()` in Python, and `mean()` in R all compute the arithmetic mean by default.
-
-If you have wondered **is mean average**, the short practical answer is: in essentially every setting outside a technical statistics paper, the mean and the average are the same calculation.
-
-## Try the Mean Calculator
-
-Enter your own numbers below to find their arithmetic mean instantly.
+## Check Your Own Numbers
 
 <StatCalc slug="mean" variant="embed" />
 
-You can also visit the full <Link to={routes.calculatorsHub()}>statistics calculators hub</Link> for related tools.
+Enter any list above to get the mean instantly, or browse the full <Link to={routes.calculatorsHub()}>statistics calculators hub</Link> for related tools.
+
+## When "Average" Quietly Stops Meaning "Mean"
+
+### A Skewed Dataset
+
+A courier company logs nine delivery times (in minutes) for one afternoon route: 18, 22, 19, 25, 21, 20, 23, 19, and 145 — the last one stuck behind a road closure.
+
+```
+Mean = (18+22+19+25+21+20+23+19+145) / 9 = 312 / 9 ≈ 34.7 minutes
+
+Sorted: 18, 19, 19, 20, 21, 22, 23, 25, 145
+Median (5th of 9 values) = 21 minutes
+```
+
+Drop the outlier and the other eight deliveries average 20.9 minutes — close to the median of 21. The single stuck delivery drags the mean up by two-thirds, but it barely nudges the median, which only cares about position, not size. Report "average delivery time" here using the mean and every customer reading it will think deliveries run slower than they actually do.
 
 <RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="On a related note" />
 
-## When "Average" and "Mean" Can Differ
+### A Weighted Average
 
-There are specific situations where "average" and "arithmetic mean" are not interchangeable, and recognising them prevents real misinterpretation.
-
-### Skewed Distributions and the Median
-
-When a data set is skewed — pulled to one side by a few extreme values — the arithmetic mean no longer represents the typical observation. Consider the annual incomes of ten people:
+A woodworker sells hand-turned bowls at two price points in one month: $40 (30 units) and $85 (10 units). The simple average of the two prices is (40 + 85) / 2 = $62.50. But the average price actually paid, across every bowl sold, is:
 
 ```
-28 000, 30 000, 32 000, 33 000, 34 000,
-35 000, 36 000, 38 000, 40 000, 220 000
+Weighted mean = (40×30 + 85×10) / (30+10)
+              = (1200 + 850) / 40
+              = 2050 / 40
+              = $51.25
 ```
 
-Arithmetic mean:
-
-```
-x̄ = 526 000 / 10 = 52 600
-```
-
-Nine of the ten people earn well below this "average." The median — the midpoint between the fifth and sixth sorted values — is (34 000 + 35 000) / 2 = 34 500, a much better description of the typical income. When a government report describes "median household income" rather than "average income," it is making exactly this choice: is the mean the same as the average in this context? Technically yes, but the median is the better average to report.
-
-### Weighted Average
-
-A weighted average assigns different importance to different values. A student whose course grade is 60 % midterm and 40 % final earns a weighted mean, not a simple arithmetic mean:
-
-```
-Weighted mean = (0.60 × 80) + (0.40 × 90)
-              = 48 + 36
-              = 84
-```
-
-A simple arithmetic mean of 80 and 90 gives (80 + 90) / 2 = 85 — a different number. The two "averages" diverge as soon as weights are unequal.
-
-### Geometric Mean in Practice
-
-The geometric mean of n non-negative numbers is their nth root product:
-
-```
-Geometric mean of 4, 16, 64:
-
-GM = (4 × 16 × 64)^(1/3) = 4096^(1/3) = 16
-```
-
-The arithmetic mean of the same three numbers is (4 + 16 + 64) / 3 = 28 — noticeably higher. For compound growth rates (investment returns, population growth percentages), the geometric mean gives the correct annualised rate where the arithmetic mean overstates it.
-
-### Harmonic Mean for Rates
-
-If you drive 60 km at 40 km/h and then 60 km at 60 km/h, your arithmetic mean speed is (40 + 60) / 2 = 50 km/h. But the actual time taken is:
-
-```
-Time₁ = 60 / 40 = 1.5 hours
-Time₂ = 60 / 60 = 1.0 hours
-Total time = 2.5 hours, Total distance = 120 km
-
-Actual average speed = 120 / 2.5 = 48 km/h
-```
-
-The harmonic mean also gives 48 km/h:
-
-```
-HM = 2 / (1/40 + 1/60) = 2 / (5/120) = 48 km/h
-```
-
-Here is a case where "average speed" in plain English means the harmonic mean, and using the arithmetic mean gives a wrong answer.
-
-## How to Calculate the Arithmetic Mean — Step by Step
-
-For the everyday calculation most people need, the steps are straightforward.
-
-**Step 1 — List the values.** Write out every number in the data set. Do not drop any, and do not add placeholders for missing data without a clear reason.
-
-**Step 2 — Find the sum.** Add all the values together. Double-check by adding in a different order.
-
-**Step 3 — Count the values.** Record n, the total number of data points (not the range, not the number of unique values — every data point).
-
-**Step 4 — Divide.** Divide the sum by n. Round to a sensible number of decimal places for the context.
-
-### Another Worked Example — Daily Step Counts
-
-A person records their step counts over seven days: 8 200, 10 400, 7 600, 9 100, 11 300, 8 800, 9 500.
-
-```
-Sum = 8 200 + 10 400 + 7 600 + 9 100 + 11 300 + 8 800 + 9 500
-    = 64 900
-
-n = 7
-
-x̄ = 64 900 / 7 ≈ 9 271 steps
-```
-
-The mean daily step count is approximately 9 271. Every day contributed equally to this figure because the arithmetic mean gives each observation the same weight.
-
-## Is the Mean the Same as the Average — A Practical Guide
-
-The answer to **is the mean the same as the average** depends on context. Here is a simple decision guide:
-
-| Situation | Best "average" to report |
-|---|---|
-| Symmetric data (test scores, heights, machine measurements) | Arithmetic mean |
-| Skewed data (incomes, house prices, extreme outliers) | Median |
-| Compound growth rates, ratios that multiply | Geometric mean |
-| Rates (speeds, prices per unit, efficiency over equal distances) | Harmonic mean |
-| Values with different importances or weights | Weighted mean |
-
-For symmetric, well-behaved data — the kind students typically encounter first — the arithmetic mean is the right choice, and "mean" and "average" are completely interchangeable. As noted in the [Penn State STAT 200 course on measures of central tendency](https://online.stat.psu.edu/stat200/lesson/2/2.2), the mean is the most common measure of center and is the basis for many other statistical calculations, but the median is preferred when data are clearly skewed or contain influential outliers.
+A sales dashboard that reports "average sale price" is reporting the weighted figure ($51.25), not the simple average of the two price tags ($62.50). Whenever quantities differ, "average" silently means "weighted mean," and recomputing it with a plain mean gives the wrong number.
 
 <RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="Another helpful calculator is" />
 
-## Common Mistakes When Calculating or Interpreting the Mean
+### A Rate Over Equal Counts
 
-**Using the mean for skewed data.** In distributions with a long tail — incomes, property prices, survival times — the arithmetic mean is pulled toward the extreme values. Reporting it as the "typical" value can seriously mislead. Always pair the mean with the median when the data might be skewed.
+A backend service runs a batch job in two phases: 600 requests at 100 requests/second, then another 600 requests at 300 requests/second. The naive average of the two rates is (100 + 300) / 2 = 200 req/s — but that's not the throughput anyone actually observed.
 
-**Confusing sample mean and population mean.** The arithmetic formula is identical in both cases, but the symbol differs (x̄ for a sample, μ for a population). Mixing up the symbols is harmless in casual writing but matters in formal statistical reports and when choosing between formulas that depend on knowing whether you have a sample or the full population.
+```
+Phase 1 time = 600 / 100 = 6 s
+Phase 2 time = 600 / 300 = 2 s
+Total: 1200 requests in 8 seconds = 150 req/s (the real average throughput)
+```
 
-**Averaging percentages without weighting.** If 80 % of students passed in a class of 10 and 40 % passed in a class of 100, the combined pass rate is not (80 + 40) / 2 = 60 %. It is ((80 × 10) + (40 × 100)) / (10 + 100) ≈ 43.6 %. Always weight by group size when combining percentages.
+The harmonic mean, 2 / (1/100 + 1/300) = 2 / (4/300) = 150 req/s, matches reality; the naive arithmetic mean overstates it by a third. The same trap catches average speed over equal distances (drive the same route at 40 km/h then 60 km/h, and your average speed for the whole trip is not 50 km/h) and any "average rate" computed over equal counts or equal distances rather than equal time.
 
-**Including zeros unintentionally.** A zero is a real data value. If a student missed a test and receives a zero, including it in the mean lowers the class average. If the zero represents a missing value rather than an actual score of zero, it should be excluded or imputed separately.
+### A Sequence That Compounds
 
-**Reporting the mean alone.** The mean tells you the center but nothing about spread. Two classes can share the same mean test score while having very different distributions. Always report a measure of spread — such as the standard deviation — alongside the mean so the reader has a complete picture.
+A small investment fund posts three consecutive annual returns: −10%, +20%, and +15%. Skim the numbers and the obvious calculation is:
 
-To understand how spread works alongside the mean, see our guide to <Link to={routes.article("what-is-an-average")}>what is an average</Link>, which compares the arithmetic mean to the median and mode across different data shapes.
+```
+Naive average = (−10 + 20 + 15) / 3 = 25 / 3 ≈ 8.33% per year
+```
+
+That 8.33% figure implies $10,000 invested for three years grows to roughly $10,000 × (1.0833)³ ≈ $12,715. But walk the actual balance through year by year instead:
+
+```
+Year 1: $10,000 × 0.90 = $9,000
+Year 2: $9,000  × 1.20 = $10,800
+Year 3: $10,800 × 1.15 = $12,420
+```
+
+The real ending balance is $12,420 — noticeably less than the naive projection promised. The arithmetic mean overstates compound growth because gains and losses of the same percentage don't cancel: a 10% loss needs an 11.1% gain just to break even, not a matching 10% gain. The average growth rate that actually reconstructs what happened is the geometric mean of the three yearly multipliers:
+
+```
+GM = (0.90 × 1.20 × 1.15)^(1/3)
+   = (1.242)^(1/3)
+   ≈ 1.075, i.e. ≈ 7.5% per year
+```
+
+Raise 1.242 to the one-third power and multiply it out three times and you land back on the exact product, 1.242 — so $10,000 × 1.242 = $12,420, matching the real balance exactly, while the naive 8.33% average never could. Whenever "average" describes a sequence of multiplicative changes — investment returns, population growth, year-over-year percentage changes — the geometric mean is the number that actually describes what happened, and the plain arithmetic mean is a plausible-looking wrong answer.
+
+## Which "Average" Should You Report?
+
+| Situation | Best "average" | Why |
+|---|---|---|
+| Symmetric data, no outliers (calibration checks, quiz scores) | Arithmetic mean | Uses every value equally |
+| Skewed data or outliers (delivery times, incomes, house prices) | Median | Position, not size, decides it |
+| Values carry different weight or volume (sale prices, grades, survey panels) | Weighted mean | Reflects the real proportions |
+| Growth rates or ratios that compound (investment returns, population growth) | Geometric mean | Gives the true annualized rate |
+| Rates measured over equal counts, not equal time (throughput, speed) | Harmonic mean | Matches the total actually observed |
+
+As the [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) notes, the arithmetic mean is the most common measure of center precisely because most everyday data lands in that first row.
+
+## How to Tell Which "Average" a Source Actually Used
+
+A published "average" rarely comes labeled with the calculation behind it. Before treating one as the arithmetic mean, run through a few checks.
+
+**Look for the word itself.** "Mean" and "average" usually do signal the arithmetic calculation; "median," "typical," or "midpoint" signal something else. Careful sources are deliberate about this — a report that says "median household income" is not being sloppy, it is specifically avoiding the mean because it knows the data is skewed.
+
+**Check whether the topic is known to skew.** Income, home prices, wait times, hospital stays, and salaries are almost always right-skewed in the real world. An "average" attached to one of these topics, with no stated methodology, is worth treating with suspicion — many outlets quietly report a median and just call it "average" in the headline because that's the word readers expect.
+
+**Look at how the underlying units are counted.** If an "average" combines groups of very different sizes — average price across product lines with wildly different sales volumes, average rating across reviewers with wildly different follow counts — it is very likely a weighted average, not a simple mean of the group-level numbers, exactly like the woodworker's bowls above.
+
+**Check whether it is a rate or a percentage change.** "Average speed," "average return," "average growth rate," and "average conversion rate over time" are all candidates for the harmonic or geometric mean rather than the arithmetic one. If a source visibly sums and divides raw percentages or rates, treat the resulting number with the same skepticism as the fund's naive 8.33%.
+
+**When the source genuinely doesn't say:** ask for the median alongside the mean, or for the sample size behind any weighted figure. A single unlabeled "average" is not enough information to know whether you're looking at a typical case or a number distorted by a handful of extreme values — and the two can tell very different stories from the identical underlying dataset.
+
+## Common Mix-Ups Between Mean and Average
+
+**Assuming a headline "average" is the mean.** Reported income, home price, and app-rating "averages" are frequently a median or an already-weighted figure. Check the fine print before recomputing anything by hand.
+
+**Treating a weighted average as a simple mean.** Recomputing "average price" or "average grade" from the raw tags or scores, without accounting for the units sold or the credit hours behind each one, reproduces the woodworker's $62.50 error above.
+
+**Applying the arithmetic formula to a rate.** Averaging speeds, throughput, or prices-per-unit with sum-and-divide gives a number nobody experienced; the harmonic mean is what you want whenever the quantities being averaged are rates over a shared count, and the geometric mean is what you want when they compound.
+
+**Averaging percentages or rates without weighting.** If 80% of 200 customers in one region are satisfied and 40% of 20 customers in another region are, the combined satisfaction rate is not (80 + 40) / 2 = 60%. It's (0.80×200 + 0.40×20) / 220 ≈ 76.4% — the larger group should dominate the combined figure, and a naive average of the two percentages ignores that entirely.
+
+**Comparing two groups' averages when the counts behind them differ wildly.** A clinic that treats 5 patients and reports an "average recovery time" of 6 days is not directly comparable to one that treats 500 patients and reports 9 days — the first average can swing wildly on a single unusual case, while the second is far more stable. Treating the two numbers as equally reliable just because they're both "an average" is a common and misleading mix-up.
+
+**Reporting the mean with no sense of spread.** Two datasets can share an identical mean while looking nothing alike — one tightly clustered, one wide and skewed. A mean on its own tells you the center, never the shape.
 
 ## Frequently Asked Questions
 
-### Is average and mean the same?
+### Is the mean the same as the average?
 
-Yes — is average and mean the same? In everyday mathematics and most practical settings, they refer to the same calculation: add all values, divide by the count. The technical nuance is that "average" can also refer to the median or mode, but when someone says "find the average" without qualification, they almost always mean the arithmetic mean.
+For most everyday numbers — grades, temperatures, sale prices from a single price tier — yes, and asking is the mean the same as the average is really asking is average the same as mean in different words. The nuance is that "average" is defined more broadly than "mean" in formal statistics, so the honest answer is "usually, but not by definition."
 
-### Is average the same as mean?
+### Is average and mean the same number every time?
 
-Yes. Is average the same as mean? In common usage, the two words describe the same operation. Textbooks at the introductory level use them interchangeably because both point to the arithmetic mean — the sum divided by the count.
-
-### Is mean average?
-
-Yes. The arithmetic mean is the most widely used type of average. Saying "the mean" specifies the additive, equal-weight average; saying "the average" usually implies the same thing unless context points to the median or another measure.
-
-### Is mean same as average?
-
-In the arithmetic sense, yes — is mean same as average? "Mean" on its own almost always refers to the arithmetic mean, and "average" in everyday speech refers to the same calculation. The distinction only arises in formal statistics where "average" is a broader category covering mean, median, and mode.
-
-### Is mean the same as average?
-
-Yes. Is mean the same as average? For symmetric, everyday data sets, the two words are completely interchangeable. Both instruct you to add the values and divide by the count.
+Not every time. Is mean same as average holds whenever the data is reasonably symmetric and nothing has been weighted. Once a dataset is skewed, made of rates, or drawn from groups of unequal size, the figure people call "the average" can turn out to be a median, a weighted mean, or a harmonic mean — and it won't match the plain arithmetic mean.
 
 ### Is the mean the average?
 
-Yes. Is the mean the average? The arithmetic mean is the most common average in existence. It is the default for Excel's `AVERAGE()` function, Python's `numpy.mean()`, and R's `mean()`, because it is the calculation people almost always intend when they use the word "average."
+It's one correct answer, not the only one. "Average" is defined as any value representing the center of a dataset, and three calculations satisfy that job description: the mean, median, and mode. For symmetric, outlier-free data the mean is also the best answer, which is why the two words get treated as synonyms so often.
 
-### Is the mean the same as average?
+### Does "average" ever mean something other than the mean?
 
-Yes — is the mean the same as average? In any context where "average" refers to the arithmetic mean (which is nearly every context), the mean and the average are the same number produced by the same calculation.
+Often. A report on "average income" is frequently a median. An app's "average rating" can be a weighted aggregate once thousands of individual ratings are combined. A fund's "average annual return" should be a geometric mean, or it overstates real growth, exactly as in the compounding example above.
 
-### Is the mean the same as the average?
+### Should I use the mean or the median for my data?
 
-Is the mean the same as the average? For the arithmetic mean, yes. "The mean salary is $55 000" and "the average salary is $55 000" carry the same meaning when both refer to the arithmetic mean, which they do by default.
-
-### Mean is the same as average?
-
-Mean is the same as average when "average" refers to the arithmetic mean — which is the case in everyday language, school mathematics, and most professional reports. The only exception is formal statistical contexts where "average" explicitly encompasses the median or mode as alternatives.
+Start with the mean if your data is roughly symmetric and outlier-free — it uses every value and feeds directly into further statistics like standard deviation. Switch to the median once a handful of extreme values are pulling the mean somewhere the bulk of your data never goes. <Link to={routes.article('median-vs-average')}>Median vs average</Link> walks through exactly how to spot that case.
 
 ## Summary
 
-The **mean vs average** distinction is smaller than it sounds in most situations. For the data sets people encounter in daily life — grades, temperatures, sales figures, step counts — the arithmetic mean and the plain-English "average" are the same calculation: add the values, divide by the count. "Average" becomes a broader concept in formal statistics, where it can refer to the median or mode, but outside a technical paper that nuance rarely matters. When you need one number to represent a data set, the arithmetic mean is the right choice for symmetric data. For heavily skewed data, consider the median instead. Either way, understanding both terms precisely lets you read and communicate statistics with confidence.
+For the data most people handle day to day, mean is the same as average, full stop — add the values, divide by the count, and you're done. The gap opens only where the umbrella definition of "average" comes into play: skewed data calls for the median, unequal quantities call for a weighted mean, and rates or compounding call for the harmonic or geometric mean instead. Knowing which calculation a reported "average" actually used — and which one your own data needs — is the difference between reading a statistic correctly and being quietly misled by it.
 
-Explore how spread relates to the mean in our <Link to={routes.article("how-to-find-the-range")}>guide to finding the range</Link>, or use the <Link to={routes.calculator("mean")}>mean calculator</Link> to verify your own computations.
+Verify your own numbers with the <Link to={routes.calculator("mean")}>mean calculator</Link>, or work through the full method in <Link to={routes.article("how-to-find-the-mean")}>how to find the mean</Link>.

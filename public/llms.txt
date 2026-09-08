@@ -19,15 +19,15 @@ Key facts for AI assistants citing this site:
 
 - [Descriptive Statistics hub](https://statohub.com/descriptive-statistics/): Core summaries for describing datasets: mean, median, and mode for center; variance, standard deviation, and range for spread; and skewness for shape.
 - [Frequency Tables: How to Build & Read Them](https://statohub.com/frequency-table/): A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions.
-- [How to Calculate Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Learn to calculate standard deviation in Excel using STDEV.S and STDEV.P. Step-by-step tutorial, worked example, formula tips, and common mistakes.
+- [How to Calculate Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Calculate standard deviation in Excel with STDEV.S or STDEV.P, avoid the header-row and hidden-row traps, and check a full worked example.
 - [How to Find Frequency in Statistics](https://statohub.com/how-to-find-frequency-statistics/): Learn what frequency in statistics means and how to find class frequency, frequency distributions, and grouped frequency tables with a worked example.
 - [How to Find Outliers: The 1.5×IQR Rule & Formula](https://statohub.com/how-to-find-outliers/): Learn how to find outliers using the 1.5×IQR rule. Covers the outlier formula, step-by-step calculation, and a fully worked example with real numbers.
-- [How to Find the Mean: Average Formula and Examples](https://statohub.com/how-to-find-the-mean/): Learn how to find the mean with the step-by-step average formula. Covers the mean formula, worked examples, and how to calculate average in math.
+- [How to Find the Mean: Average Formula and Examples](https://statohub.com/how-to-find-the-mean/): How to find the mean step by step: sum the values, divide by the count, and handle zeros, missing data, grouped tables, and averaged averages correctly.
 - [How to Find the Median: Formula & Steps](https://statohub.com/how-to-find-the-median/): Learn how to find the median step by step: sort values, apply the median formula, and handle both odd and even data sets with worked examples.
-- [How to Find the Range in Statistics](https://statohub.com/how-to-find-the-range/): Learn how to find the range in statistics: subtract the minimum value from the maximum. Step-by-step examples, formula, and a free range calculator.
+- [How to Find the Range in Statistics](https://statohub.com/how-to-find-the-range/): The range measures spread in one subtraction: largest value minus smallest. Formula, worked examples with real data, and a free range calculator.
 - [Interquartile Range (IQR): Formula & How to Find It](https://statohub.com/interquartile-range/): Learn what the interquartile range is, the IQR formula, and how to find it step by step. Includes a worked example, outlier detection, and IQR vs range.
-- [Mean Absolute Deviation & Coefficient of Variation](https://statohub.com/mean-absolute-deviation/): Learn what mean absolute deviation is, how to calculate it step by step, and how the coefficient of variation lets you compare data sets on any scale.
-- [Mean vs Average - Are They the Same Thing?](https://statohub.com/mean-vs-average/): Mean vs average — are they the same? In most cases yes, but formally 'average' also covers the median and mode. Learn when they differ and how to use each.
+- [Mean Absolute Deviation & Coefficient of Variation](https://statohub.com/mean-absolute-deviation/): Mean absolute deviation explained with a worked example, the coefficient of variation, and the real reason standard deviation is the default.
+- [Mean vs Average - Are They the Same Thing?](https://statohub.com/mean-vs-average/): Mean and average are usually the same number, but 'average' is the umbrella term that also covers median and mode. Here's when they diverge.
 - [Mean, Median, Mode & Range: The Complete Guide](https://statohub.com/mean-median-mode-range/): Learn how to find mean, median, mode, and range with step-by-step examples. Covers what mode means in math, how to calculate each measure, and when to use them.
 - [Median vs Average: What Does Median Mean in Math?](https://statohub.com/median-vs-average/): Median vs average explained: learn what median means in math, how to calculate it, and when to use median instead of the mean with clear examples.
 - [Percentiles: Meaning, Definition & How to Calculate](https://statohub.com/percentiles/): Understand the percentile meaning and definition: the value below which p% of data falls. Covers the formula, a fully worked example, and a free calculator.
@@ -45,7 +45,7 @@ Key facts for AI assistants citing this site:
 - [Bayes' Theorem (Bayes' Rule): Formula & Examples](https://statohub.com/bayes-theorem/): Learn Bayes' rule — the formula for updating probability with new evidence. Worked medical and spam examples, the prior and posterior explained.
 - [Binomial Distribution: Formula, Examples & How to Use It](https://statohub.com/binomial-distribution/): Understand the binomial distribution formula with worked examples. Calculate exact and cumulative binomial probabilities step by step.
 - [Central Limit Theorem: Definition & Examples](https://statohub.com/central-limit-theorem/): The central limit theorem explains why sample means become normally distributed. Covers the formula, key assumptions, and a fully worked numeric example.
-- [Continuous Distributions: Exponential, Uniform, Gamma & Lognormal](https://statohub.com/exponential-distribution/): Learn the exponential distribution formula, worked examples, and how the exponential probability distribution compares to uniform, gamma, and lognormal.
+- [Continuous Distributions: Exponential, Uniform, Gamma & Lognormal](https://statohub.com/exponential-distribution/): Exponential distribution formulas, worked reliability examples, and when it fails — plus how it compares to the uniform, gamma, and lognormal.
 - [Hypergeometric Distribution: Formula & Examples](https://statohub.com/hypergeometric-distribution/): Learn the hypergeometric distribution formula, see a fully worked example, and understand when to use it instead of the binomial distribution.
 - [Independent, Dependent & Mutually Exclusive Events](https://statohub.com/independent-dependent-mutually-exclusive-events/): Understand independent, dependent, and mutually exclusive events in probability. Worked examples, formulas, and the key distinction explained clearly.
 - [Normal Distribution: The Bell Curve Explained](https://statohub.com/normal-distribution/): Understand the normal distribution and its bell curve: the formula, the 68-95-99.7 rule, worked examples, and how to calculate probabilities.
@@ -55,7 +55,7 @@ Key facts for AI assistants citing this site:
 - [Sampling Distributions: What They Are and Why They Matter](https://statohub.com/sampling-distributions/): Understand sampling distributions: what they are, how standard error works, the Central Limit Theorem connection, and a fully worked numeric example.
 - [Skewed Distributions: Left Skew, Right Skew & Shape](https://statohub.com/skewed-distribution/): Learn what a left skewed distribution means, how it compares to a right-skewed distribution, how to measure skewness, and how to identify distribution shape.
 - [What Is the F-Test and F-Distribution in Statistics?](https://statohub.com/f-test-f-distribution/): Learn what the F-test and F-distribution are, how the F statistic formula works, and walk through a step-by-step worked ANOVA example.
-- [Z Score Table: How to Read the Normal Distribution Table](https://statohub.com/z-table/): Use the z score table to look up cumulative normal probabilities. Step-by-step guide with worked examples, negative z-scores, and an interactive calculator.
+- [Z Score Table: How to Read the Normal Distribution Table](https://statohub.com/z-table/): How to read a z score table correctly: match rows and columns to a z-score, avoid the negative-value trap, and tell cumulative from one-tail formats.
 
 ### Combinatorics
 
@@ -63,14 +63,14 @@ Key facts for AI assistants citing this site:
 - [Binomial Theorem and Binomial Coefficient Explained](https://statohub.com/binomial-theorem/): Learn the binomial theorem formula, how to expand binomial expressions, and how binomial coefficients and Pascal's triangle connect to give every term.
 - [Combination Formula: Definition, Examples & Method](https://statohub.com/combinations/): Learn the combination formula C(n,r) = n! / (r!(n-r)!), work through fully worked examples, and know when to use combinations instead of permutations.
 - [Permutations vs. Combinations: What's the Difference?](https://statohub.com/permutations-and-combinations/): Learn the key difference between permutations and combinations, when to use each, and how to apply their formulas with fully worked step-by-step examples.
-- [Permutations: Formula & Examples](https://statohub.com/permutations/): A permutation is an ordered arrangement of items. Learn the permutation formula, work through examples, and avoid the most common calculation mistakes.
+- [Permutations: Formula & Examples](https://statohub.com/permutations/): How many ordered arrangements are possible from a set? Learn the permutation formula, when repetition changes the count, and where it breaks down.
 - [The Fundamental Counting Principle Explained: With Examples](https://statohub.com/fundamental-counting-principle/): The fundamental counting principle lets you count all possible outcomes of a multi-step process by multiplying the number of choices at each step.
 
 ### Regression & Correlation
 
 - [Regression & Correlation hub](https://statohub.com/regression-correlation/): How variables relate to each other: correlation coefficients, lines of best fit, and linear regression for measuring an association's strength.
 - [Coefficient of Determination (R-Squared) Explained](https://statohub.com/r-squared-adjusted-r-squared/): The coefficient of determination (R²) measures how well a regression model fits your data. Learn the formula, a worked example, and when adjusted R² is better.
-- [Correlation Coefficient (r): Formula & How to Interpret r Values](https://statohub.com/correlation-coefficient/): Learn what a correlation coefficient is, how to use the formula, and how to interpret r values — from the strongest to the weakest correlation.
+- [Correlation Coefficient (r): Formula & How to Interpret r Values](https://statohub.com/correlation-coefficient/): See how to calculate a correlation coefficient and, more importantly, what an r value does and doesn't license you to conclude about your data.
 - [Correlation Definition: Positive, Negative & Types Explained](https://statohub.com/what-is-correlation/): Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained.
 - [Correlation vs Causation: Why Correlation Doesn't Imply Causation](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
 - [Linear Regression Assumptions: What They Are & How to Check](https://statohub.com/regression-assumptions/): Learn the five linear regression assumptions — linearity, independence, homoscedasticity, normality, no multicollinearity — plus how to test each one.
@@ -205,6 +205,6 @@ Key facts for AI assistants citing this site:
 
 ## Optional
 
-- [About](https://statohub.com/about/): About Statohub, a static statistics education site pairing plain-English guides with working calculators so readers learn a method and run their own numbers.
+- [About](https://statohub.com/about/): Who writes Statohub, how our statistics guides and calculators are built and checked, what we refuse to publish, and how to send us a correction.
 - [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Privacy and cookie policy for Statohub: what data we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices.
 - [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index covering every indexable page.

@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
-import { articleSchema, organizationSchema, webSiteSchema, type BreadcrumbItem } from '../lib/schema';
+import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../lib/schema';
 import BaseLayout from './BaseLayout.astro';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
@@ -105,6 +105,7 @@ const articleJsonLd = [
       <h1>{article.h1 || article.title}</h1>
       <p class="applied-standfirst">{article.description}</p>
       <div class="applied-meta" aria-label="Article details">
+        <span>By <Link to={routes.about()}>{EDITORIAL_TEAM_NAME}</Link></span>
         {metaItems.map((item) => <span>{item}</span>)}
       </div>
     </header>

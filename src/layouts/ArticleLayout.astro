@@ -4,7 +4,7 @@ import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
 import BaseLayout from './BaseLayout.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
-import { articleSchema, organizationSchema, webSiteSchema, type BreadcrumbItem } from '../lib/schema';
+import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../lib/schema';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
 
@@ -138,6 +138,7 @@ const articleJsonLd = [
           {readingTime && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>{readingTime}</span>}
           {hasCalculator && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9" /></svg>1 calculator</span>}
           {formattedDate && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20a8 8 0 1 0-8-8" /><path d="M12 8v4l3 2" /></svg>Updated {formattedDate}</span>}
+          <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /><path d="M4 20a8 8 0 0 1 16 0" /></svg>By <Link to={routes.about()}>{EDITORIAL_TEAM_NAME}</Link></span>
         </div>
       </header>
 
