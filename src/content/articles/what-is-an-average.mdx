@@ -1,6 +1,6 @@
 ---
 title: "What Is an Average? Mean Definition, Types & Meaning"
-description: "An average is a single number that represents a set of values. Learn the average definition, mean formula, and when to use mean, median, or mode."
+description: "An average is one number standing in for many, and mean, median, and mode can each give a different answer. Learn what average means and how to choose."
 category: descriptive-statistics
 primaryKeyword: what is the average
 keywords:
@@ -17,7 +17,12 @@ keywords:
   - what is average
 phase: 1
 calculator: mean
-related: []
+related:
+  - mean-vs-average
+  - how-to-find-the-mean
+  - mean-median-mode-range
+pubDate: 2026-02-14
+updatedDate: 2026-09-09
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -26,336 +31,162 @@ import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-**What is the average?** It is a single number that stands in for an entire set of values — the one figure that best represents all the others taken together. When a news article reports that the average household income is $75,000 a year, or a teacher posts a class average of 74 on an exam, they are using one number to describe many. The concept of an average is one of the first skills in statistics, and it appears constantly in everyday life, from sports analytics to scientific research to public policy debates.
+**What is the average, exactly?** It is a single number chosen to represent an entire set of values — but that one word hides three different calculations, and picking the wrong one is how honest data ends up telling a misleading story. Say "on average, commutes take 27 minutes" and everyone assumes you added every commute and divided by the count. Say "the average house on this street sold for $410,000" and the number could easily be a median instead, chosen specifically because one $2 million teardown-and-rebuild would have wrecked a straight mean. Both sentences use the word "average"; only one of them, most likely, used the arithmetic mean.
 
-This article covers the precise average definition, the three main types of average used in statistics (mean, median, and mode), the formula and a fully worked numeric example for each, the distinction between a sample mean and a population mean, and what a grand average is and when you need one.
-
----
-
-## What Does "Average" Mean?
-
-The word *average* has two distinct uses: a casual everyday sense and a precise mathematical definition.
-
-**In everyday language**, "on average" means "typically" or "usually." When someone says they walk on average three miles a day, they are describing a general habit, not an exact figure for every single day. Used this way, the average meaning is simply "a representative level."
-
-**In mathematics and statistics**, the average meaning becomes more precise: it refers to any measure of central tendency — a number that summarises the centre of a dataset. The three main measures are the mean, the median, and the mode. Each answers the question "what value is most typical in this data?" in a different way.
-
-When people say "the average" without specifying which type, they almost always mean the **arithmetic mean** — the sum of all values divided by the count. But knowing when to use the mean versus the median or mode is part of reading statistics critically.
+This page is about the definition itself: what "average" means as a concept, why it splits into mean, median, and mode, and the part most explainers skip — how to decide which of the three to report for *your own* data, not just how to spot which one someone else already used. If you specifically want to know whether "mean" and "average" are interchangeable, <Link to={routes.article('mean-vs-average')}>mean vs average</Link> covers that question in depth; if you already know you want the mean and just need the computation steps, <Link to={routes.article('how-to-find-the-mean')}>how to find the mean</Link> walks through it.
 
 ---
 
-## Average Definitions: The Three Main Types
+## What "Average" Actually Means
 
-There are several average definitions you will encounter in statistical work, but three are fundamental:
+In everyday language, average meaning blurs together with words like "typical" or "usual." Saying you spend on average 45 minutes at the gym doesn't promise exactly 45 minutes every visit — it describes a general pattern, not a guarantee for any single case. That casual sense is fine for conversation, but it isn't precise enough for data.
 
-1. **Mean** — add all values and divide by the count. Equal weight is given to every data point.
-2. **Median** — sort the values and take the middle one. If there is an even count of values, the median is the mean of the two middle values.
-3. **Mode** — the value that appears most frequently. A dataset can have one mode, multiple modes, or no mode if all values appear equally often.
+In statistics, "average" is an umbrella term for **measures of central tendency** — any single value meant to summarize where a dataset centers. To define average precisely, you have to name which measure you mean, because the word by itself doesn't specify a formula. It specifies a *job*: take many numbers and hand back one that represents them.
 
-These average definitions share the same goal — to represent many numbers with one — but they behave very differently when the data contains extreme values (outliers) or is not symmetrically distributed. Choosing among them is one of the core judgment calls in descriptive statistics. The open-access textbook [OpenStax, *Introductory Statistics* — 2.5 Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) compares the mean, median, and mode with worked examples if you want a second walkthrough.
+## Average Definitions: Mean, Median, and Mode
+
+Statistics offers several average definitions, but only three do the actual work:
+
+- **Mean** — add every value, divide by the count. Every data point pulls on the result equally.
+- **Median** — sort the values, take the one in the middle. Position decides it, not size, so extreme values barely move it.
+- **Mode** — report whichever value occurs most often. It's the only one of the three that works on non-numeric labels, since you can't sum "red" and "blue" but you can count which color showed up most.
+
+All three legitimately answer "what is the average?" for the same dataset, and — as the worked example below shows — they can give three genuinely different numbers from identical data. The reason the field kept all three, instead of settling on one, is that summarizing data always throws information away on purpose: a dataset of a thousand values is too much to hold in your head, and a single average makes it usable at the cost of hiding everything except one property of that data. The mean protects total magnitude — you can always recover the sum by multiplying it back out. The median protects rank order — where a value falls relative to the rest. The mode protects frequency — how often something happens. No single number can preserve all three properties at once, which is exactly why "the average" needs a second word after it before it means anything precise. The open-access [OpenStax *Introductory Statistics*, 2.5 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) compares all three with its own worked examples if you want a second walkthrough.
 
 <RelatedLink to={routes.article('mean-vs-average')} label="Mean vs Average" intro="Worth reading next" />
 
----
+## One Dataset, Three Answers: How to Choose
 
-## The Arithmetic Mean: The Core Average Definition
+Numbers make the choice concrete faster than rules do. Here is one dataset that produces three different, equally correct answers — and a business reason to pick each one.
 
-The arithmetic mean is the average definition most people learn first. It gives every value equal influence over the result, making it sensitive to outliers but also maximally informative when the data is well-behaved. For the formal treatment, the [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the mean and related measures of location as used by statisticians and engineers.
+Mara runs PrintKind, a one-person Etsy shop that 3D-prints custom keychains. On Monday she shipped 11 orders; the number of keychains in each order was:
 
-### Mean Formula
+**3, 4, 3, 5, 3, 12, 4, 3, 5, 4, 3**
+
+Order six was a wholesale request from a wedding planner buying party favors; the rest were ordinary retail orders of a handful of keychains each.
+
+**The mean.** Add all eleven order sizes and divide by 11:
+
+```
+Sum = 3 + 4 + 3 + 5 + 3 + 12 + 4 + 3 + 5 + 4 + 3 = 49
+Mean = 49 / 11 ≈ 4.45 keychains per order
+```
+
+**The median.** Sort the same eleven values:
+
+```
+3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 12
+```
+
+With 11 values, the middle position is (11 + 1) / 2 = 6th, which lands on **4**.
+
+**The mode.** Count how often each size shows up: 3 appears five times, 4 appears three times, 5 appears twice, and 12 appears once. The mode is **3**.
+
+Three calculations, three different numbers — 4.45, 4, and 3 — from the exact same eleven orders. None of them is wrong. Each answers a different question:
+
+- To know how much filament to buy for next Monday, Mara needs the **mean**, because filament use scales with the *total* number of keychains, and mean × order count reconstructs that total (4.45 × 11 ≈ 49, the real sum).
+- To write "our typical order is about X keychains" on her shop's FAQ page, the **median** (4) is the more honest number — half her orders were smaller, half larger, and it isn't dragged upward by the one wedding order the way the mean is.
+- To decide which size of packaging to stock in the largest quantity, the **mode** (3) is the actual answer — it's the single most common order she fills, regardless of what "the average order" looks like on paper.
+
+That's the rule underneath every "which average should I use" decision: **decide what the number is for before you calculate it.**
+
+| What the number is for | Best average | Why |
+|---|---|---|
+| A total or a projection (filament, budget, staffing) | Mean | Preserves the sum — mean × count reconstructs the total |
+| A "typical case" description when outliers exist | Median | Position-based, so it ignores how far an outlier sits |
+| The single most common outcome, or non-numeric data | Mode | The only average that works without a numeric scale |
+
+The gap between the mean and the median is also a diagnostic in its own right: the further apart they sit, the more skewed the underlying data. Here the mean (4.45) sits above the median (4) because one large order pulls it upward — a mean that exceeds the median is the signature of a right-skewed dataset, exactly the pattern behind "average income" headlines that outstrip what a typical household actually earns.
+
+**What happens if the wedding order never came in?** Drop it and Mara's ten remaining orders are 3, 4, 3, 5, 3, 4, 3, 5, 4, 3. Sum them and divide: (49 − 12) / 10 = 3.7. Sort them and the median is the average of the 5th and 6th values, (3 + 4) / 2 = 3.5. The mode stays exactly 3, unmoved, because removing the single "12" changed nothing about which value repeats most. One outlier shifted the mean by 0.75 — a 17% swing — nudged the median by only 0.5, and left the mode untouched. That ordering, from most sensitive to least, holds for outliers in general: the mean feels every value, the median only feels position, and the mode doesn't notice an outlier unless it happens to tie the leading count.
+
+<RelatedLink to={routes.article('mean-median-mode-range')} label="Mean, Median, Mode & Range" intro="You may also find this useful" />
+
+## The Arithmetic Mean, in Brief
+
+When someone says "the average" without qualifying it, they mean the arithmetic mean roughly 95% of the time — it's the default in spreadsheets, the default in casual speech, and the default this article assumes from here on unless stated otherwise. The formula:
 
 ```
 x̄ = (x₁ + x₂ + ... + xₙ) / n
+  = Σxᵢ / n
 ```
 
-Using summation notation:
+`x̄` ("x-bar") denotes a sample mean; swap it for `μ` (mu) and `n` for `N` when the data covers an entire population rather than a subset of it — more on that distinction below. Geometrically, the mean is the balance point of the dataset: if every value were an equal weight sitting on a beam at its numeric position, x̄ is exactly where the beam balances. The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the mean and the other measures of location this way for both engineers and statisticians.
 
-```
-x̄ = Σxᵢ / n
-```
-
-Where:
-- `x̄` (read "x-bar") is the sample mean
-- `Σxᵢ` is the sum of all values
-- `n` is the count of values in the sample
-
-When the data covers an entire population (every member, not a selected subset), the population mean uses the Greek letter mu (μ) with a capital N for the count:
-
-```
-μ = Σxᵢ / N
-```
-
-Mathematically, the mean is the balance point of the dataset. If you imagined the data values as equal weights placed on a beam at positions corresponding to their numeric values, the mean is the exact fulcrum that balances the beam. This property is why the mean is used so widely: it accounts for every value, including how far each one sits from the centre.
-
-### How to Calculate the Mean — Three Steps
-
-1. **Add** all the values to get the total.
-2. **Count** how many values there are.
-3. **Divide** the total by the count.
-
-### Fully Worked Example
-
-A student records the following scores on seven weekly quizzes:
-
-**58, 72, 65, 88, 70, 91, 76**
-
-**Step 1 — Add all the values.**
-
-58 + 72 + 65 + 88 + 70 + 91 + 76 = 520
-
-**Step 2 — Count the values.**
-
-There are 7 scores, so n = 7.
-
-**Step 3 — Divide the total by the count.**
-
-```
-x̄ = 520 / 7 ≈ 74.29
-```
-
-The student's mean quiz score is approximately **74.3**. You would say that, on average, the student scored about 74 out of 100.
-
-Notice that 74.3 does not appear in the original list — the mean is a computed representative value, not necessarily one that was observed. Also notice that the extreme values at both ends (58 and 91) each pull the mean slightly: if the score of 91 did not exist, the mean would drop to (520 − 91) / 6 ≈ 71.5. This sensitivity to extreme values is both a strength (it uses all the information) and a weakness (one outlier can distort the result).
-
----
+For the full four-step procedure, how zeros differ from missing values, grouped or frequency-table data, and the classic average-of-averages trap, <Link to={routes.article('how-to-find-the-mean')}>how to find the mean</Link> works through all of it with checkable numbers.
 
 ## Try the Mean Calculator
 
-Enter any list of numbers below and the calculator returns the mean instantly, along with the sum and count so you can verify each step yourself.
+Enter any list of numbers below and the calculator returns the mean instantly, along with the sum and count, so you can verify Mara's arithmetic above — or your own — by hand.
 
 <StatCalc slug="mean" variant="embed" />
 
-For a larger, dedicated interface, open the <Link to={routes.calculator('mean')}>mean calculator</Link> page. All our statistics tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+For a larger, dedicated interface, open the <Link to={routes.calculator('mean')}>mean calculator</Link> page. All statistics tools are listed on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
-<RelatedLink to={routes.article('median-vs-average')} label="Median vs Average" intro="On a related note" />
+## Sample Mean vs. Population Mean
 
----
+The x̄-versus-μ split is where casual arithmetic turns into formal mean statistics. A **population mean (μ)** covers every member of a defined group — every invoice a company issued last year, every seed in one batch. A **sample mean (x̄)** covers only a subset of that group, used to estimate μ when measuring the whole population isn't practical.
 
-## Median: The Middle-Value Average
+The arithmetic is identical either way — sum, divide by count — only the symbol and the claim behind it change. A sample mean is a **statistic**: recompute it from a different sample and you'll likely get a slightly different number. A population mean is a **parameter**: one fixed, usually unknown, true value. Draw two different 5-invoice samples out of the same 10,000-invoice population and you can easily get two different x̄ values — say $412 from one sample and $429 from the other — and both are legitimate estimates of the single, fixed μ neither sample can see directly. Almost all the data anyone actually works with is a sample, which is why x̄ shows up far more often in practice than μ — and why careful writing reports x̄ as an *estimate* of μ, never as if the two were guaranteed to match.
 
-The median is the value that sits exactly in the middle when all data points are arranged in order. Half of the values fall below it, half above. Because it depends only on position — not on the actual numeric values — the median is not pulled by extreme values the way the mean is.
+The <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link> covers the parallel σ-versus-s notation used for spread.
 
-**To find the median:**
+## Grand Average, in One Sentence
 
-1. Sort all values in ascending (or descending) order.
-2. If the count `n` is **odd**, the median is the single middle value at position `(n + 1) / 2`.
-3. If `n` is **even**, the median is the mean of the two values at positions `n / 2` and `(n / 2) + 1`.
+A **grand average** (or grand mean) is the average of several *group* averages rather than of raw individual values — for example, averaging three factories' output figures into one company-wide number. It matters mainly for one reason: you can only combine group averages directly when every group is the same size, and the moment group sizes differ, a plain average of averages is quietly wrong, over- or under-crediting whichever group happens to be a different size than the rest. <Link to={routes.article('how-to-find-the-mean')}>How to find the mean</Link> works through exactly why, and by how much, using a delivery-route example you can check by hand.
 
-**Continuing the quiz score example** (7 scores, n is odd):
+<RelatedLink to={routes.article('how-to-find-the-mean')} label="How to Find the Mean" intro="See also" />
 
-Sorted: **58, 65, 70, 72, 76, 88, 91**
+## Weighted Average, in Brief
 
-Middle position: (7 + 1) / 2 = 4th value → **72**
+A weighted average gives some values more influence than others before combining them — a final exam worth 40% of a grade should outweigh a quiz worth 10%, and the formula `x̄_w = Σ(wᵢ·xᵢ) / Σwᵢ` handles that automatically. It's the right tool whenever the things being averaged carry different importance or represent groups of different sizes: GPA credit hours, portfolio allocations, survey panels weighted by demographic share. <Link to={routes.article('weighted-average')}>Weighted average</Link> covers the full formula, the step-by-step method, and worked GPA and portfolio examples.
 
-The median is 72. Compare that to the mean of 74.3. The two are close, which suggests a roughly symmetric distribution. When the mean and median differ substantially, it usually signals a skewed distribution or the presence of outliers.
+<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="Another helpful calculator is" />
 
-### When the Median Is a Better Average
+## Common Mistakes With "Average," at the Definition Level
 
-The median is a better measure than the mean when:
+These are the mix-ups that happen before any arithmetic is even wrong — misunderstanding what kind of claim "average" is making in the first place.
 
-- **The data is skewed.** Household income is a classic case. A city's mean household income can be inflated dramatically by a handful of very high earners. The median income — the level that half the households fall above and half below — tells a more accurate story about what a typical resident actually earns.
-- **Outliers are present.** A single extreme value shifts the mean but leaves the median unchanged. If the student's lowest quiz score had been 5 (instead of 58), the mean drops to about 65 while the median stays near 72.
-- **The data is ordinal** — ranked categories such as survey responses ("poor / fair / good / excellent"). You can identify a middle rank but you cannot meaningfully add the labels together.
+**Assuming "average" always means "mean."** It's the safest guess, but not a certainty — a report on "average income" is frequently a median, chosen precisely because income is skewed. <Link to={routes.article('mean-vs-average')}>Mean vs average</Link> has a full checklist for telling which one a source actually used.
 
----
+**Forgetting the mode exists for categorical data.** If you survey 200 people about their favorite movie genre, you cannot compute a mean genre — there's no numeric scale to sum. The mode (the most-selected genre) is the only one of the three averages that applies. Assigning arbitrary numbers to categories and averaging those numbers is mathematically meaningless without a genuine ordinal scale behind them.
 
-## Mode: The Most Frequent Average
+**Reading "on average" as a promise for every individual case.** "Patients recover, on average, in 12 days" describes the center of a distribution, not a floor or a ceiling — some patients recover faster, some slower, and the phrase says nothing about how wide that spread is.
 
-The mode is the value that appears most often in a dataset. It is the simplest of the average definitions to find: scan the data and identify which value has the highest frequency.
-
-**Example:** A shoe retailer records the sizes sold in one week:
-
-7, 8, 9, 10, 9, 8, 11, 9, 10, 8, 9, 7, 9
-
-Count the appearances: 7→2, 8→3, 9→5, 10→2, 11→1
-
-The mode is **size 9** — sold five times, more than any other.
-
-A dataset can be:
-- **Unimodal** (one mode) — one value dominates.
-- **Bimodal** (two modes) — two values tie for most frequent. This often indicates the data comes from two different groups.
-- **Multimodal** — more than two modes.
-- **No mode** — every value appears exactly once.
-
-### Why the Mode Matters
-
-The mode is the only measure of average that applies to **categorical (non-numeric) data**. You cannot add political party affiliations or product colour preferences together, so a mean is impossible. But you can identify which option appeared most often — that is the mode.
-
-In numeric datasets, the mode is especially useful in quality control (which defect type recurs most?), retail (which product sells most?), and any domain where "most common" is the operationally important question.
-
-<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="For a related calculation" />
-
----
-
-## Weighted Average: When Values Have Different Importance
-
-A plain arithmetic mean treats every data point equally. A weighted average assigns a weight to each value, giving more important or more numerous values a greater share of the final result.
-
-### Weighted Mean Formula
-
-```
-x̄_w = Σ(wᵢ · xᵢ) / Σwᵢ
-```
-
-Where `wᵢ` is the weight assigned to value `xᵢ`.
-
-**Example — Grade Point Average (GPA):**
-
-A student's semester results:
-
-| Course | Grade points | Credits (weight) | Grade × Credits |
-|--------|-------------|-----------------|-----------------|
-| Statistics | 4.0 | 4 | 16.0 |
-| Writing | 3.3 | 3 | 9.9 |
-| Lab | 3.7 | 1 | 3.7 |
-| History | 2.7 | 3 | 8.1 |
-| **Total** | | **11** | **37.7** |
-
-Weighted GPA = 37.7 / 11 ≈ **3.43**
-
-A simple (unweighted) mean of the four grades = (4.0 + 3.3 + 3.7 + 2.7) / 4 = 3.43 — in this case they agree by coincidence. But if the lab were worth 4 credits instead of 1, the weighted result would shift noticeably because that course carries more of the overall load.
-
-Weighted averages arise in financial index calculations (stocks weighted by market capitalisation), opinion polling (groups weighted by demographic share), and any scenario where the items being averaged do not all carry the same significance.
-
----
-
-## Mean Statistics: Sample Mean vs. Population Mean
-
-When you study statistics formally, the distinction between the sample mean and the population mean becomes essential. The two are calculated the same way — sum divided by count — but they represent different things and are given different symbols.
-
-**Population mean (μ):** The average of every member of the defined population. A population is whatever complete group you are studying — every student in a school, every batch of a manufactured product, every county in a country. When you can measure all of them, you compute μ directly. Greek letters are used for population parameters because they represent fixed, true values that describe the whole group.
-
-**Sample mean (x̄):** The average computed from a subset of the population. Because measuring every member of a population is usually impossible, researchers draw a representative sample and compute x̄ as an estimate of μ. Latin letters are used for sample statistics because they are estimates derived from collected data.
-
-The sample mean is a **statistic** — it varies from sample to sample. The population mean is a **parameter** — fixed and (usually) unknown. Inferential statistics is largely the science of using x̄ to make reliable inferences about μ: how close is the sample mean likely to be to the true population mean, and how confident can we be in that estimate?
-
-In practice, the data you encounter is almost always a sample. When you read μ in a textbook problem, the problem is either treating a small dataset as a population for simplicity, or it is describing a theoretical distribution such as N(μ, σ²). In real-world work, you compute x̄ and acknowledge that it estimates — but does not equal — the true μ.
-
-The <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link> explains the parallel notation for spread (σ for population, s for sample) using the same Greek-versus-Latin convention.
-
----
-
-## Grand Average: The Average of Group Means
-
-A **grand average** (also called the grand mean or overall mean) is the result of averaging several group averages together. It arises in any situation where data is naturally divided into groups and you want a single summary across all of them.
-
-**Example:** Three factories produce the same metal rod. A quality inspector measures a sample from each factory and records the mean diameter:
-
-| Factory | Sample Mean (mm) | Sample Size |
-|---------|-----------------|-------------|
-| Factory A | 50.2 | 40 |
-| Factory B | 50.6 | 60 |
-| Factory C | 49.9 | 25 |
-
-**Simple grand average** (ignoring group sizes):
-
-```
-Grand average = (50.2 + 50.6 + 49.9) / 3 = 150.7 / 3 ≈ 50.23 mm
-```
-
-**Weighted grand average** (accounting for group sizes):
-
-```
-Grand mean = (50.2×40 + 50.6×60 + 49.9×25) / (40 + 60 + 25)
-           = (2008 + 3036 + 1247.5) / 125
-           = 6291.5 / 125
-           ≈ 50.33 mm
-```
-
-The weighted grand average (50.33) is pulled slightly toward Factory B's value (50.6) because Factory B produced the largest share of the sample. The simple grand average (50.23) gives Factory C, which had the smallest sample, the same influence as Factory B — which is often misleading.
-
-**Rule of thumb:** Use the weighted grand average whenever the groups differ in size. Use the simple grand average only when every group has exactly the same number of observations, because in that case both calculations give the same result.
-
-Grand averages appear throughout experimental design, analysis of variance (ANOVA), industrial quality control, and educational assessment — anywhere multiple groups contribute data to a single overall conclusion.
-
-<RelatedLink to={routes.calculator('average')} label="average calculator" intro="Another helpful calculator is" />
-
----
-
-## When to Use Each Type of Average
-
-Selecting the right type of average is as important as knowing how to calculate it. The table below summarises the decision:
-
-| Data situation | Best average | Reason |
-|----------------|-------------|--------|
-| Symmetric numeric data, no outliers | Arithmetic mean | Uses all information equally |
-| Skewed numeric data or outliers present | Median | Resistant to extreme values |
-| Categorical (non-numeric) data | Mode | Only average applicable to labels |
-| Values have unequal importance or size | Weighted mean | Reflects the relative importance |
-| Several group averages to summarise | Grand mean | Aggregates across groups correctly |
-
-A practical test: whenever you encounter "the average" in a headline or report, ask yourself which type is being used and whether it is the most appropriate one for the situation. Income statistics, house prices, and standardised test scores are frequently reported as means — but the median is often a more honest representation of the typical person's experience.
-
----
-
-## Common Mistakes When Working With Averages
-
-### Confusing the Mean With the Median
-
-Reporting the mean when the median would be more informative — or vice versa — is the most common misuse of averages. If a dataset has outliers or is skewed, the mean can give a misleading picture. Always plot or at least scan your data before deciding which average to report.
-
-### Using the Wrong Denominator
-
-The mean divides by the **count of values** (n), not the highest value, not the sum. A frequent arithmetic error in manual calculations is accidentally using n + 1 or counting only non-zero values when zeros should be included.
-
-### Averaging Percentages Without Weighting
-
-Suppose two exam groups scored 80% (n = 25 students) and 60% (n = 5 students). The unweighted average of the two percentages is 70%, but the actual combined average is:
-
-```
-Combined mean = (80×25 + 60×5) / (25 + 5) = (2000 + 300) / 30 ≈ 76.7%
-```
-
-Whenever groups have different sizes, you must compute a weighted mean rather than a simple average of the group averages.
-
-### Treating the Grand Average as the Overall Mean
-
-The grand average (average of group means) equals the overall raw-data mean only when every group has the same size. With unequal group sizes, the weighted grand average is correct; the simple grand average introduces a systematic bias.
-
-### Applying the Mean to Categorical Data
-
-If you survey 200 people asking for their favourite movie genre, you cannot compute a mean genre. The mode (most-selected genre) is the appropriate average for categorical responses. Attempting to assign numbers to categories (1 = Action, 2 = Comedy, …) and averaging them is mathematically arbitrary and statistically meaningless without a principled ordinal or interval scale.
-
----
+**Assuming two datasets with the same average look alike.** Ten patients recovering in exactly 12 days each and ten patients recovering in anywhere from 2 to 30 days can share the identical mean of 12. The average tells you the center; it says nothing about the shape of the data around it. That's a job for a measure of spread, not another average.
 
 ## Frequently Asked Questions
 
-### What is the average in simple terms?
+### What is the average, in simple terms?
 
-The average is a single number chosen to represent a group of numbers. The most common method — the arithmetic mean — adds all values together and divides by how many there are. If five friends are 20, 24, 26, 28, and 32 years old, their average age is (20 + 24 + 26 + 28 + 32) / 5 = 26.
+It's a single number chosen to represent a group of numbers. The most common method — the arithmetic mean — adds every value together and divides by how many there are. Five friends aged 20, 24, 26, 28, and 32 have an average age of (20 + 24 + 26 + 28 + 32) / 5 = 26.
 
-### What is average meaning in a statistics context?
+### What's the difference between "what is average" and "what is the average"?
 
-In statistics, average meaning refers to any measure of central tendency — a number describing the centre or typical value of a distribution. The arithmetic mean is the most commonly used, but the median and mode are also valid averages for different situations. Statisticians are precise about which type they report because each can give a different answer for the same data.
+They point at the same concept from two angles. "What is average?" asks for the average meaning in general — the definition covered on this page. "What is the average?" usually asks for the calculated result of one specific dataset. Either way, the underlying idea is the same: a single value standing in for a set of numbers.
 
-### How do I define average for a non-technical audience?
+### What does "on average" mean in a sentence?
 
-Define average as: the number you would get if you spread the total evenly across every member of the group. If a sports team scores a total of 350 points across 10 games, the average (mean) score per game is 35 — what each game would show if every game had the same score.
+It signals that the number following it is a representative or typical value across many observations, not a guaranteed result for any one case. "Commuters spend, on average, 27 minutes traveling to work" means the mean commute time across everyone surveyed is 27 minutes — some commutes run shorter, many run longer.
 
 ### What is a sample mean?
 
-A sample mean (written x̄, pronounced "x-bar") is the arithmetic mean calculated from a sample — a selected subset of a larger population. Because measuring every member of a population is usually impractical, researchers compute x̄ from a representative sample and use it to estimate the true population mean μ. The formula is the same as the plain mean: sum the sample values and divide by the sample count.
+A sample mean (written x̄, pronounced "x-bar") is the arithmetic mean calculated from a sample — a subset drawn from a larger population — rather than from every member of that population. Researchers compute x̄ because measuring an entire population is usually impractical, and use it as an estimate of the true population mean, μ.
 
-### What is the definition of average vs. the definition of mean?
+### What is a grand average, and when do I need one?
 
-In everyday language, "average" and "mean" are synonyms. In technical statistics, "mean" specifically denotes the sum-divided-by-count formula, while "average" is a broader umbrella term that includes mean, median, and mode. When you want to be precise in a statistics context, say "mean," "median," or "mode" rather than just "average."
+A grand average (grand mean) is the average of several group means rather than of raw data. You need it whenever your data comes from distinct groups and you want one overall summary across all of them — and you need the *weighted* version of it the instant those groups differ in size, or the result quietly favors whichever group happens to be smallest.
 
-### What does "on average" mean in a statement?
+### Why is there more than one definition of average?
 
-"On average" signals that the number following it is a representative or typical value across many observations, not a guaranteed result for any specific case. "Commuters on average spend 27 minutes travelling to work" means the mean commute time across all surveyed commuters is 27 minutes — some commutes are shorter, many are longer.
+Because "average" was never meant to name one formula — it names a goal: represent many numbers with one. Mean, median, and mode all pursue that goal but make different tradeoffs (equal weight to every value, resistance to outliers, applicability to non-numeric data), so a single definition of average would have to pick a tradeoff the word itself doesn't specify. That's why textbooks list several average definitions rather than one.
 
-### What is a grand average and when do you use it?
+### Does an average tell you anything about how spread out the data is?
 
-A grand average (grand mean) is the average of several group means. You compute it when data comes from distinct groups and you need a single overall summary. If the groups differ in size, use a weighted grand average — multiply each group mean by the group size, sum those products, and divide by the total count across all groups.
-
-### How is what is average different from what is the average?
-
-They refer to the same concept. "What is average?" asks for the average meaning in everyday or mathematical terms. "What is the average?" often refers to the calculated result for a specific dataset. In both cases, the answer starts with the same idea: a single value representing a set of numbers.
+No, and that's the most common thing people forget about any average. A mean, median, or mode names the center of a dataset; it says nothing about how tightly the values cluster around that center or how far they scatter. Two groups can share the exact same average and still look nothing alike — one tightly bunched, one wildly variable. The <Link to={routes.article('standard-deviation')}>standard deviation</Link> is the usual next number to check once you have an average, because it measures exactly what the average leaves out.
 
 ---
 
 ## Summary
 
-An average — in its everyday average meaning and its technical average definition — is a tool for reducing many numbers to one representative value. The arithmetic mean (sum divided by count) is the default and works best with symmetric, outlier-free numeric data. The median is the right choice when data is skewed or when outliers would distort the mean. The mode applies to categorical data and is the only average that works without a numeric scale. Weighted averages handle situations where values carry different importance, and the grand average aggregates group means into a single overall figure.
-
-Understanding what is the average in any given context — which type, computed from a sample or a full population, weighted or unweighted — is the starting point for interpreting any statistical summary you encounter, from a research paper to a news headline.
+An average is a tool for reducing many numbers to one — but "average" names a goal, not a single formula, and mean, median, and mode can each satisfy that goal with a different answer for identical data. The arithmetic mean is the default because it uses every value and feeds directly into further statistics, but it isn't automatically the *right* answer: the median resists outliers and skew, and the mode is the only average that works on categories rather than numbers. The real skill isn't memorizing which one is "the average" — it's asking what the number needs to do (total a quantity, describe a typical case, or name the most common outcome) and picking the measure built for that job, the way PrintKind's mean, median, and mode each answered a different question from the same eleven orders.

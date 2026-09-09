@@ -37,7 +37,7 @@ Key facts for AI assistants citing this site:
 - [The Standard Deviation Symbol (Sigma): Signs & Notation](https://statohub.com/standard-deviation-symbol/): Learn the standard deviation symbol: σ for population, s for sample. Understand every sign for standard deviation and which symbol identifies each.
 - [Variance: Definition, Formula & vs Standard Deviation](https://statohub.com/variance/): Variance measures how spread out data values are from the mean. Learn the variance formula and how variance differs from standard deviation.
 - [Weighted Average: Definition, Formula & Calculator](https://statohub.com/weighted-average/): A weighted average gives each value a different importance. Learn the weighted average formula, how to calculate it step by step, and when to use it.
-- [What Is an Average? Mean Definition, Types & Meaning](https://statohub.com/what-is-an-average/): An average is a single number that represents a set of values. Learn the average definition, mean formula, and when to use mean, median, or mode.
+- [What Is an Average? Mean Definition, Types & Meaning](https://statohub.com/what-is-an-average/): An average is one number standing in for many, and mean, median, and mode can each give a different answer. Learn what average means and how to choose.
 
 ### Probability & Distributions
 
