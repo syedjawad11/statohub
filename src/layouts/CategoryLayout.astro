@@ -40,7 +40,7 @@ const guides: CategoryGuide[] = (await getCollection('articles'))
 ---
 
 <BaseLayout
-  title={`${category.title} | Statohub`}
+  title={`${category.seoTitle ?? category.title} | Statohub`}
   description={category.description}
   canonicalPath={routes.categoryHub(slug)}
   breadcrumbs={breadcrumbs}

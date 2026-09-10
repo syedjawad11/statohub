@@ -120,7 +120,14 @@ files are gitignored, so CI never sees them ([[0018-sqlite-boards-as-sql-dumps]]
 `src/lib/schema.ts` (pure JSON-LD builders: `BreadcrumbList`, `Article`,
 `SoftwareApplication`, `WebSite`, `Organization`) wire into `BaseLayout.astro` via
 optional props. Every URL field in generated JSON-LD routes through `url()` -- same
-link-safety rule as prose links. `public/_headers` sets security headers (HSTS, CSP,
+link-safety rule as prose links.
+
+Every page's `<title>` renders as `{title} | Statohub` and targets **45-60 rendered
+characters**. Where the SERP title and the visible label must differ, the content
+model splits them rather than compromising one for the other: articles take an
+optional shorter `h1`, and category hubs / section landings take an optional longer
+`seoTitle` -- their `title` stays the H1, breadcrumb, footer-nav label and
+`llms.txt` heading, so a keyword-bearing SERP title never bloats site navigation. `public/_headers` sets security headers (HSTS, CSP,
 X-Frame-Options, etc.) since Wrangler/Cloudflare Pages can't set these any other way
 for a Direct Upload project.
 

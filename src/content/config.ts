@@ -8,6 +8,10 @@ const categories = defineCollection({
   type: 'data', // YAML/JSON, no prose body
   schema: z.object({
     title: z.string(),
+    // `title` is the visible label: H1, breadcrumb, footer nav, llms.txt heading.
+    // `seoTitle` (optional) drives the <title> tag only, so a hub can carry a
+    // longer keyword-bearing SERP title without bloating every nav link.
+    seoTitle: z.string().optional(),
     description: metaDescription,
     section: z.enum(['learn', 'applied']).default('learn'),
     order: z.number().int().default(0),       // nav ordering

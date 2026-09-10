@@ -11,11 +11,13 @@ type CategoryEntry = CollectionEntry<'categories'>;
 interface Props {
   section: 'learn' | 'applied';
   title: string;
+  // Optional longer <title>-tag variant; `title` stays the H1 and breadcrumb label.
+  seoTitle?: string;
   description: string;
   canonicalPath: RouteRef;
 }
 
-const { section, title, description, canonicalPath } = Astro.props as Props;
+const { section, title, seoTitle, description, canonicalPath } = Astro.props as Props;
 const categories = (await getCollection('categories'))
   .filter((entry: CategoryEntry) => entry.data.section === section)
   .sort((a: CategoryEntry, b: CategoryEntry) => a.data.order - b.data.order);
@@ -27,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ---
 
 <BaseLayout
-  title={`${title} | Statohub`}
+  title={`${seoTitle ?? title} | Statohub`}
   description={description}
   canonicalPath={canonicalPath}
   breadcrumbs={breadcrumbs}

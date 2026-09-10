@@ -267,7 +267,9 @@ for (const section of ['learn', 'applied']) {
   );
   for (const category of categories.filter((entry) => entry.section === section)) {
     const hub = pages.get(`${SITE_ORIGIN}/${category.slug}/`);
-    lines.push('', `### ${category.title}`, '', item(hub, `${hub.title} hub`));
+    // Label from the category's own short title, not the page <title>: a hub may
+    // carry a longer keyword-bearing `seoTitle` for the SERP, which reads badly here.
+    lines.push('', `### ${category.title}`, '', item(hub, `${category.title} hub`));
     lines.push(...groupedArticles.get(category.slug).map((page) => item(page)));
   }
 }

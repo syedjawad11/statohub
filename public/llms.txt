@@ -18,6 +18,7 @@ Key facts for AI assistants citing this site:
 ### Descriptive Statistics
 
 - [Descriptive Statistics hub](https://statohub.com/descriptive-statistics/): Core summaries for describing datasets: mean, median, and mode for center; variance, standard deviation, and range for spread; and skewness for shape.
+- [Empirical Rule in Statistics: 68-95-99.7](https://statohub.com/empirical-rule/): Learn the empirical rule in statistics: 68%, 95%, and 99.7% of normal data fall within 1, 2, and 3 standard deviations of the mean. Worked examples included.
 - [Frequency Tables: How to Build & Read Them](https://statohub.com/frequency-table/): A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions.
 - [How to Calculate Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Calculate standard deviation in Excel with STDEV.S or STDEV.P, avoid the header-row and hidden-row traps, and check a full worked example.
 - [How to Find Frequency in Statistics](https://statohub.com/how-to-find-frequency-statistics/): Learn what frequency in statistics means and how to find class frequency, frequency distributions, and grouped frequency tables with a worked example.
@@ -33,7 +34,6 @@ Key facts for AI assistants citing this site:
 - [Percentiles: Meaning, Definition & How to Calculate](https://statohub.com/percentiles/): Understand the percentile meaning and definition: the value below which p% of data falls. Covers the formula, a fully worked example, and a free calculator.
 - [Sample Variance Formula: Definition, Equation & Examples](https://statohub.com/sample-variance-formula/): Learn the sample variance formula s² = Σ(xᵢ − x̄)² ÷ (n − 1), step by step. Covers the equation, a fully worked example, and common mistakes to avoid.
 - [Standard Deviation: Meaning, Formula & How to Calculate](https://statohub.com/standard-deviation/): Learn what standard deviation means, see the full formula, and follow a worked example to find it for any dataset — sample or population.
-- [The Empirical Rule in Statistics: A 68-95-99.7 Guide](https://statohub.com/empirical-rule/): Learn the empirical rule in statistics: 68%, 95%, and 99.7% of normal data fall within 1, 2, and 3 standard deviations of the mean. Worked examples included.
 - [The Standard Deviation Symbol (Sigma): Signs & Notation](https://statohub.com/standard-deviation-symbol/): Learn the standard deviation symbol: σ for population, s for sample. Understand every sign for standard deviation and which symbol identifies each.
 - [Variance: Definition, Formula & vs Standard Deviation](https://statohub.com/variance/): Variance measures how spread out data values are from the mean. Learn the variance formula and how variance differs from standard deviation.
 - [Weighted Average: Definition, Formula & Calculator](https://statohub.com/weighted-average/): A weighted average gives each value a different importance. Learn the weighted average formula, how to calculate it step by step, and when to use it.
@@ -43,7 +43,7 @@ Key facts for AI assistants citing this site:
 
 - [Probability & Distributions hub](https://statohub.com/probability-distributions/): Probability rules, from single events to conditional probability, plus the normal, binomial, and Poisson distributions that model random outcomes.
 - [Bayes' Theorem (Bayes' Rule): Formula & Examples](https://statohub.com/bayes-theorem/): Learn Bayes' rule — the formula for updating probability with new evidence. Worked medical and spam examples, the prior and posterior explained.
-- [Binomial Distribution: Formula, Examples & How to Use It](https://statohub.com/binomial-distribution/): Understand the binomial distribution formula with worked examples. Calculate exact and cumulative binomial probabilities step by step.
+- [Binomial Distribution: Formula & Examples](https://statohub.com/binomial-distribution/): Understand the binomial distribution formula with worked examples. Calculate exact and cumulative binomial probabilities step by step.
 - [Central Limit Theorem: Definition & Examples](https://statohub.com/central-limit-theorem/): The central limit theorem explains why sample means become normally distributed. Covers the formula, key assumptions, and a fully worked numeric example.
 - [Continuous Distributions: Exponential, Uniform, Gamma & Lognormal](https://statohub.com/exponential-distribution/): Exponential distribution formulas, worked reliability examples, and when it fails — plus how it compares to the uniform, gamma, and lognormal.
 - [Hypergeometric Distribution: Formula & Examples](https://statohub.com/hypergeometric-distribution/): Learn the hypergeometric distribution formula, see a fully worked example, and understand when to use it instead of the binomial distribution.
@@ -60,8 +60,8 @@ Key facts for AI assistants citing this site:
 ### Combinatorics
 
 - [Combinatorics hub](https://statohub.com/combinatorics/): Counting methods for probability and statistics: permutations, combinations, factorials, and binomial coefficients for tallying outcomes systematically.
-- [Binomial Theorem and Binomial Coefficient Explained](https://statohub.com/binomial-theorem/): Learn the binomial theorem formula, how to expand binomial expressions, and how binomial coefficients and Pascal's triangle connect to give every term.
-- [Combination Formula: Definition, Examples & Method](https://statohub.com/combinations/): Learn the combination formula C(n,r) = n! / (r!(n-r)!), work through fully worked examples, and know when to use combinations instead of permutations.
+- [Binomial Theorem and Pascal's Triangle Explained](https://statohub.com/binomial-theorem/): Learn the binomial theorem formula, how to expand binomial expressions, and how binomial coefficients and Pascal's triangle connect to give every term.
+- [Combination Formula: Definition & Examples](https://statohub.com/combinations/): Learn the combination formula C(n,r) = n! / (r!(n-r)!), work through fully worked examples, and know when to use combinations instead of permutations.
 - [Permutations vs. Combinations: What's the Difference?](https://statohub.com/permutations-and-combinations/): Learn the key difference between permutations and combinations, when to use each, and how to apply their formulas with fully worked step-by-step examples.
 - [Permutations: Formula & Examples](https://statohub.com/permutations/): How many ordered arrangements are possible from a set? Learn the permutation formula, when repetition changes the count, and where it breaks down.
 - [The Fundamental Counting Principle Explained: With Examples](https://statohub.com/fundamental-counting-principle/): The fundamental counting principle lets you count all possible outcomes of a multi-step process by multiplying the number of choices at each step.
@@ -70,9 +70,9 @@ Key facts for AI assistants citing this site:
 
 - [Regression & Correlation hub](https://statohub.com/regression-correlation/): How variables relate to each other: correlation coefficients, lines of best fit, and linear regression for measuring an association's strength.
 - [Coefficient of Determination (R-Squared) Explained](https://statohub.com/r-squared-adjusted-r-squared/): The coefficient of determination (R²) measures how well a regression model fits your data. Learn the formula, a worked example, and when adjusted R² is better.
-- [Correlation Coefficient (r): Formula & How to Interpret r Values](https://statohub.com/correlation-coefficient/): See how to calculate a correlation coefficient and, more importantly, what an r value does and doesn't license you to conclude about your data.
+- [Correlation Coefficient Formula: Interpreting r](https://statohub.com/correlation-coefficient/): See how to calculate a correlation coefficient and, more importantly, what an r value does and doesn't license you to conclude about your data.
 - [Correlation Definition: Positive, Negative & Types Explained](https://statohub.com/what-is-correlation/): Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained.
-- [Correlation vs Causation: Why Correlation Doesn't Imply Causation](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
+- [Correlation vs Causation: The Key Differences](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
 - [Linear Regression Assumptions: What They Are & How to Check](https://statohub.com/regression-assumptions/): Learn the five linear regression assumptions — linearity, independence, homoscedasticity, normality, no multicollinearity — plus how to test each one.
 - [Linear Regression: Equation, Formula & How It Works](https://statohub.com/linear-regression/): Understand linear regression: the regression equation, slope and intercept formula, and how to fit a least-squares line with a fully worked numeric example.
 - [Multicollinearity & Variance Inflation Factor (VIF) Explained](https://statohub.com/multicollinearity-vif/): Learn what multicollinearity is, why it distorts regression results, and how the Variance Inflation Factor (VIF) detects and measures it, with a worked example.
@@ -83,9 +83,9 @@ Key facts for AI assistants citing this site:
 ### Inferential Statistics
 
 - [Inferential Statistics hub](https://statohub.com/inferential-statistics/): Hypothesis tests, confidence intervals, p-values, and the reasoning for drawing conclusions about a population from a limited sample.
-- [Chi-Square Distribution: Shape, Table & Probability Density](https://statohub.com/chi-square-distribution/): The chi-square distribution explained: shape, formula, and how to read the chi square value table. Covers the chi squared probability density function.
-- [Chi-Square Test: Formula, Equation & How to Use It](https://statohub.com/chi-square-test/): Learn the chi-square test formula, chi squared equation, and step-by-step worked examples to test independence or goodness-of-fit with categorical data.
-- [Confidence Interval: Formula & How to Calculate a 95% CI](https://statohub.com/confidence-interval/): Learn the confidence interval formula and how to calculate a 95% CI step by step, with a fully worked example, calculator embed, and common-mistake guide.
+- [Chi-Square Distribution: Shape, Table & Density](https://statohub.com/chi-square-distribution/): The chi-square distribution explained: shape, formula, and how to read the chi square value table. Covers the chi squared probability density function.
+- [Chi-Square Test Formula, Examples & How to Use It](https://statohub.com/chi-square-test/): Learn the chi-square test formula, chi squared equation, and step-by-step worked examples to test independence or goodness-of-fit with categorical data.
+- [Confidence Interval Formula: Calculate a 95% CI](https://statohub.com/confidence-interval/): Learn the confidence interval formula and how to calculate a 95% CI step by step, with a fully worked example, calculator embed, and common-mistake guide.
 - [Effect Size: What It Means & How to Interpret It](https://statohub.com/effect-size/): Understand what effect size means in statistics, how to calculate Cohen's d for group comparisons, and how to interpret effect sizes in statistical research.
 - [Kruskal-Wallis Analysis of Variance: Formula & Uses](https://statohub.com/kruskal-wallis-test/): Learn the Kruskal-Wallis analysis of variance: formula, step-by-step example, assumptions, and when to use it over one-way ANOVA.
 - [Mann-Whitney U Test: Formula & When to Use It](https://statohub.com/mann-whitney-u-test/): Learn the Mann-Whitney U test formula, how it ranks values to compare two independent groups, and when to use this Wilcoxon rank-sum alternative to the t-test.
