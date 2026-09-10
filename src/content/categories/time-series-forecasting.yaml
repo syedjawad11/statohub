@@ -1,4 +1,5 @@
 title: Forecasting & Time Series
+seoTitle: "Forecasting & Time Series: Models and Accuracy"
 description: "Building and validating forecasts from time-ordered data: trend, seasonality, backtesting, and recognising when a model has quietly stopped working."
 section: applied
 order: 9
