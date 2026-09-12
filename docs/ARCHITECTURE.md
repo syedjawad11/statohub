@@ -125,9 +125,13 @@ link-safety rule as prose links.
 Every page's `<title>` renders as `{title} | Statohub` and targets **45-60 rendered
 characters**. Where the SERP title and the visible label must differ, the content
 model splits them rather than compromising one for the other: articles take an
-optional shorter `h1`, and category hubs / section landings take an optional longer
-`seoTitle` -- their `title` stays the H1, breadcrumb, footer-nav label and
-`llms.txt` heading, so a keyword-bearing SERP title never bloats site navigation. `public/_headers` sets security headers (HSTS, CSP,
+optional `h1` (the visible heading when it should differ from the SEO `title`
+-- outsourced articles keep the vendor's hook there), and category hubs / section
+landings take an optional longer `seoTitle` -- their `title` stays the H1,
+breadcrumb, footer-nav label and `llms.txt` heading, so a keyword-bearing SERP
+title never bloats site navigation. For outsourced articles the title contract
+(`primaryKeyword` in `title` and `description`, rendered `<title>` <= 60) is
+enforced by `outsource-content/check_sanitized.py`. `public/_headers` sets security headers (HSTS, CSP,
 X-Frame-Options, etc.) since Wrangler/Cloudflare Pages can't set these any other way
 for a Direct Upload project.
 

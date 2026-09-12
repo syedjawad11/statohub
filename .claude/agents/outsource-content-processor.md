@@ -115,13 +115,28 @@ article below that floor.
       body text already answers (never invent new claims to answer with).
 
 ## Frontmatter
-- `title`: babylovegrowth's own title, unless it's substantively different
-  from the calendar topic name (`outsource_db.py show`'s `title`) — if it
-  looks like a mismatch (wrong topic entirely), stop and flag it rather
-  than guessing which is right; that likely means the `map` linked the
-  wrong babylovegrowth article.
-- `description`: from `meta_description`, trimmed/padded to fit 110-160
-  characters if it's outside that range (a length fix, not a rewrite).
+- `title`: **the SEO title, written by you — never the vendor's title
+  verbatim.** Vendor titles lead with a hook or an audience tag ("$3,050
+  Example Shows...", "...for Students & Analysts") and run 63-81 chars, so
+  the keyword is buried and `| Statohub` is truncated in the SERP. Rules,
+  all gated by `check_sanitized.py`:
+  - `primaryKeyword` appears in the title, ideally as the first words;
+  - the title plus ` | Statohub` (11 chars) is **≤ 60 chars**, i.e. the
+    title itself is ≤ 49;
+  - plain, searchable phrasing — no dollar figures, sample counts, or
+    audience tags ("for Students", "for Analysts") in the title.
+  First confirm the vendor title is the same topic as the calendar topic
+  name (`outsource_db.py show`'s `title`); if it looks like a different
+  topic entirely, stop and flag it rather than guessing — that likely means
+  the `map` linked the wrong babylovegrowth article.
+- `h1`: the vendor's original title, **only if** it reads well as an on-page
+  heading (a concrete hook like "Why 89% Accuracy Can Lie: Confusion Matrix
+  Explained" does; "Students: Master SARIMA..." does not). Trim any
+  audience tag off it. Omit `h1` when the vendor title adds nothing — the
+  layout then falls back to `title`.
+- `description`: from `meta_description`, rewritten so it **contains
+  `primaryKeyword` verbatim** and fits 110-160 characters. Keep the
+  vendor's claims — this is a phrasing edit, not new content.
 - `category`: the calendar row's `category_slug` — authoritative, don't
   derive it from the content.
 - `primaryKeyword`: the calendar topic name, lowercased.
@@ -133,7 +148,7 @@ article below that floor.
   decision). Leave empty if fewer than 3 exist yet.
 - `draft: true` — always, on every write from you. Only the reviewer flips
   this, and only after the real build gate passes.
-- Omit `ogImage`, `h1`, `pubDate`, `updatedDate`, `calculator` (Applied
+- Omit `ogImage`, `pubDate`, `updatedDate`, `calculator` (Applied
   articles are exempt from the calculator requirement — see playbook §1;
   never force a contrived embed).
 

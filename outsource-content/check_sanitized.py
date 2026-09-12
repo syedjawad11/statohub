@@ -39,6 +39,13 @@ REQUIRED_FRONTMATTER = (
 # fabricating prose, which is a HARD violation in its own right. This is a
 # real quality concession -- see [[0019-outsource-word-floor]] for the cost.
 OUTSOURCE_WORD_FLOOR = 1500
+# The layouts render `<title>` as `{title} | Statohub`; the whole string has
+# to fit the SERP's ~60-char budget or the suffix (and often the topic) is
+# cut off. Vendor titles lead with a hook or an audience tag and routinely
+# run 63-81 chars, so the SEO title is rewritten keyword-first and the
+# vendor's hook, if worth keeping, moves to `h1`.
+TITLE_SUFFIX = " | Statohub"
+TITLE_MAX_LENGTH = 60
 VENDOR_HOSTS = {
     "babylovegrowth.ai",
     "www.babylovegrowth.ai",
@@ -337,6 +344,43 @@ def run_checks(path, verbose=False):
         f"description length is {description_length}; expected 110-160",
     )
 
+    title = frontmatter.get("title")
+    title_text = title if isinstance(title, str) else ""
+    rendered_title_length = len(title_text + TITLE_SUFFIX) if title_text else 0
+    record(
+        15,
+        bool(title_text) and rendered_title_length <= TITLE_MAX_LENGTH,
+        f"rendered <title> length is {rendered_title_length} characters",
+        (
+            f"rendered <title> '{title_text}{TITLE_SUFFIX}' is "
+            f"{rendered_title_length} characters; expected at most {TITLE_MAX_LENGTH}"
+        ),
+    )
+
+    # Hyphens and spaces are interchangeable ("box-cox transformation" matches
+    # "box cox transformation") so house punctuation never fails the gate.
+    def _fold(value):
+        return re.sub(r"[\s-]+", " ", value.lower()).strip()
+
+    primary_keyword = frontmatter.get("primaryKeyword")
+    keyword_text = primary_keyword.strip().lower() if isinstance(primary_keyword, str) else ""
+    keyword_in_title = bool(keyword_text) and _fold(keyword_text) in _fold(title_text)
+    record(
+        16,
+        keyword_in_title,
+        f"primaryKeyword '{keyword_text}' appears in the title",
+        f"primaryKeyword '{keyword_text}' does not appear in the title '{title_text}'",
+    )
+
+    description_text = description if isinstance(description, str) else ""
+    keyword_in_description = bool(keyword_text) and _fold(keyword_text) in _fold(description_text)
+    record(
+        17,
+        keyword_in_description,
+        f"primaryKeyword '{keyword_text}' appears in the description",
+        f"primaryKeyword '{keyword_text}' does not appear in the description",
+    )
+
     record(
         3,
         frontmatter.get("draft") is True,
@@ -489,7 +533,7 @@ def run_checks(path, verbose=False):
         ),
     )
 
-    for number, passed, message in results:
+    for number, passed, message in sorted(results):
         if verbose or not passed:
             prefix = "PASS" if passed else "FAIL"
             print(f"{prefix}: [{number}] {message}")

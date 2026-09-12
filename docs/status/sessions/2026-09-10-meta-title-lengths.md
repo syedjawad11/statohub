@@ -1,7 +1,10 @@
 # Meta title lengths -- audit finding, decision deferred
 
-**Date:** 2026-09-10. **Status:** noted, not actioned. The user asked for this
-to be recorded and left open ("we will think about it if we need to change").
+**Date:** 2026-09-10. **Status:** group 1 actioned 2026-09-12 (titles and
+descriptions of all 19 outsourced articles rewritten keyword-first, vendor hook
+kept as `h1` where it read well; `check_sanitized.py` checks 15-17 now gate
+title length and keyword placement; processor agent rewrites titles instead of
+copying the vendor's). Groups 2 and 3 remain open.
 
 ## What was done this session
 

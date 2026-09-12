@@ -23,7 +23,7 @@ const articles = defineCollection({
   type: 'content', // MDX - filename = flat slug
   schema: z.object({
     title: z.string(),
-    h1: z.string().optional(),                  // optional shorter visible H1; falls back to title
+    h1: z.string().optional(),                  // visible H1 when it should differ from the SEO title; falls back to title
     description: metaDescription,               // meta description
     category: reference('categories'),
     primaryKeyword: z.string(),

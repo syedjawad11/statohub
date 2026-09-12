@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-10 (meta title lengths; see Parked).
+**Last updated:** 2026-09-12 (outsourced SEO titles fixed + gated; see Parked).
 
 **Known quirk:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
@@ -52,8 +52,8 @@ upstream topic list rather than import them.
 
 ## Parked (do not silently resume)
 
-- Meta title lengths -- 91 of 138 pages outside 45-60 chars (the 19 outsourced
-  articles worst); `docs/status/sessions/2026-09-10-meta-title-lengths.md`.
+- Meta title lengths -- outsourced 19 fixed + gated 2026-09-12; still open: ~50
+  Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
 - Article schema `image` missing -- `articleSchema()` in `src/lib/schema.ts`.
 - `how-to-find-the-range` refresh -- 5 range keywords in DB, unused in copy.
 - `relative frequency` / `cumulative frequency` -- uncovered Learn candidates;
