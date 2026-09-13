@@ -1,0 +1,199 @@
+---
+title: "Misleading Graphs: How to Spot Them"
+h1: "6 to 15 Times More Deceptive: Misleading Graphs That Fool Viewers"
+description: "Misleading graphs can make readers misjudge trends 6 to 15 times more often. Use this 30-second SCAM checklist to spot axis and scale tricks fast."
+category: data-analysis
+primaryKeyword: misleading graphs
+keywords:
+  - misleading graphs
+  - how to spot misleading graphs
+  - SCAM checklist
+  - axis and scale tricks
+  - chart distortions
+phase: 1
+related:
+  - data-visualization-best-practices
+  - dual-axis-charts
+  - exploratory-data-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import Scorecard from '../../components/applied/infographics/Scorecard.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A misleading graph is a visualization built from accurate numbers that still leads readers to the wrong conclusion, usually through axis manipulation, scale distortion, or selective framing. The underlying data can be entirely correct while the visual encoding does the deceiving. If you check the axis baseline, the source, and whether area or length is encoding the actual value, you catch the majority of bad charts in seconds.
+
+<KeyTakeaways rows={[
+  { point: 'What counts as misleading', details: 'A misleading graph uses accurate numbers but a distorted visual encoding — truncated axes, mismatched scales, or selective framing — to push readers toward the wrong conclusion.' },
+  { point: 'Not all distortions are equal', details: 'Inverted axes and irregular time intervals cause 6 to 15 times more misreading than an honest chart; 3D effects and dual-axis mismatches cause 3 to 4 times more; minor labeling gaps roughly double the error rate.' },
+  { point: 'Disclaimers do not fix it', details: 'Labeling a truncated axis reduces but does not eliminate the distortion — viewers still overestimate the size of a difference even after being told the axis was cut.' },
+  { point: 'Run the 30-second SCAM check', details: 'Source, Chart, Axes, Message — a short, repeatable routine that catches most misleading graphs before you share or act on one.' },
+]} />
+
+## What Makes a Graph Misleading, and Which Techniques Do It
+
+A graph misleads when its visual encoding, not its numbers, tells a false story, and this distinction matters because it means fact checkers who only verify the underlying data often miss the problem entirely. The data can pass every audit and the chart can still be a lie of proportion, scale, or omission.
+
+Analysts who study deceptive charts generally sort the offending techniques into a handful of repeat offenders. Each one changes what the eye perceives without technically altering a single number.
+
+- **Truncated or non-zero baselines.** Cutting off the y-axis below zero turns a modest 3% difference into a bar that looks three times taller than its neighbor, because bar length is supposed to represent the full value from zero.
+- **Inverted or irregular axes.** Flipping an axis so "down" reads as "up," or spacing time intervals unevenly, changes the direction or slope of a trend without changing a single data point.
+- **Dual axes with mismatched scales.** Plotting two series on separate y-axes lets a chart maker line up any two trends visually, including ones that have no real relationship, simply by adjusting where each scale starts and ends.
+- **Omitted data and cherry-picked time windows.** Showing only the months or years that support the narrative, while cropping out the period right before or after, is one of the easiest distortions to produce and one of the hardest for a casual reader to catch.
+- **3D effects, pictograms, and area or volume encoding.** When a bar becomes a stack of oil barrels or a 3D column tilted in perspective, the reader's brain compares the wrong dimension, area or volume, instead of the single value the height was supposed to show.
+- **Chart type mismatches.** Pie charts that don't sum to 100%, line charts drawn across unrelated categories, or bar charts missing units and labels all obscure what is actually being measured.
+
+Some of these happen by accident, a spreadsheet's default settings, a designer's aesthetic preference. Others are deliberate rhetorical choices dressed up as neutral data. Either way, [Wikipedia's taxonomy of misleading graph methods](https://en.wikipedia.org/wiki/Misleading_graph) traces most of these tricks back decades, including the truncated-axis tactics Darrell Huff documented in his classic critique of statistical persuasion. The techniques are old. What's changed is how fast they now spread through social media screenshots stripped of any context.
+
+## What the Research Says About Which Distortions Deceive Most
+
+Not every misleading technique does equal damage, and the research on this is more specific than most graph literacy advice suggests.
+
+A study comparing 14 misleading graph types found that [high-impact distortions, like inverted y-axes and irregular time intervals, reduced viewer accuracy by a factor of 6 to 15 compared with honest versions of the same chart](https://escholarship.org/content/qt0kk6b4cn/qt0kk6b4cn_noSplash_989ca89348d6fab80850a2e58b6e3fd7.pdf). Medium-impact tricks, largely 3D effects and inconsistent scaling, produced 3 to 4 times the misinterpretation, while low-impact issues like minor labeling gaps only doubled error rates. That's a meaningful hierarchy: not all red flags deserve the same level of suspicion.
+
+<Callout variant="quote" source="eScholarship — comparison of 14 misleading graph types" sourceHref="https://escholarship.org/content/qt0kk6b4cn/qt0kk6b4cn_noSplash_989ca89348d6fab80850a2e58b6e3fd7.pdf">
+The accuracy gap is not subtle: readers shown an inverted-axis or irregular-interval chart misjudged the underlying trend at rates 6 to 15 times higher than readers shown the same data honestly plotted.
+</Callout>
+
+A separate 2020 ACM study with 329 participants tested truncated axes, 3D perspectives, and arbitrary sizing across bar, line, pie, and bubble charts. The result held regardless of the participant's prior coursework or self-reported comfort with graphs: deceptive design tactics impaired comprehension consistently, across chart type and across viewer expertise. Statistical training didn't fully immunize anyone.
+
+That finding lines up with a second, less comfortable result: labeling a truncated axis reduces but does not eliminate the distortion. Multiple experiments found viewers still overestimated the size of a difference even after being told the axis didn't start at zero. A disclaimer helps. It's not a fix.
+
+<Figure number={1} caption="Large-impact distortions (inverted axes, irregular intervals, extreme truncation) push viewer misjudgment 6 to 15 times higher than an honest chart of the same data; medium-impact distortions raise it 3 to 4 times; small labeling issues roughly double it.">
+  <Scorecard
+    title="Misinterpretation multipliers by distortion severity"
+    desc="A horizontal bar scorecard shows three severity tiers: large-impact distortions raise viewer misjudgment 6 to 15 times, medium-impact distortions 3 to 4 times, and small-impact distortions about 2 times, each relative to an honestly plotted chart."
+    metrics={[
+      { label: 'Large impact', value: 15, max: 15, threshold: 6, status: 'critical', unit: '×' },
+      { label: 'Medium impact', value: 4, max: 15, threshold: 3, status: 'warn', unit: '×' },
+      { label: 'Small impact', value: 2, max: 15, status: 'pass', unit: '×' },
+    ]}
+  />
+</Figure>
+
+The practical hierarchy, then, looks roughly like this:
+
+<DataTable
+  caption="Deceptive-impact hierarchy: which distortions do the most damage"
+  headers={['Impact tier', 'Techniques', 'Accuracy-misjudgment multiplier']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Large', 'Inverted axes, irregular time intervals, extreme truncation', '6–15×'],
+    ['Medium', '3D effects, dual-axis mismatches, arbitrary sizing', '3–4×'],
+    ['Small', 'Missing units, inconsistent decimal precision, minor label gaps', '~2×'],
+  ]}
+/>
+
+When you're scanning a chart under time pressure, spend your suspicion on the first category first.
+
+## Real-World Examples of Misleading Graphs in the Wild
+
+Seeing the mechanics abstractly is one thing. Watching them play out in an actual chart is where the pattern clicks.
+
+1. **The truncated-axis sales bar chart.** A retailer's quarterly report shows revenue "surging" from $98 million to $102 million, with bars that look like the second is triple the first. The y-axis starts at $95 million instead of zero. Redraw it from a true zero baseline and the bars look almost identical, because a 4% increase should look like a 4% increase.
+2. **The dual-axis correlation chart.** A viral social media post plots ice cream sales against a completely unrelated metric, say local crime reports, on two separate y-axes scaled so both lines rise together. The visual implies causation. Nothing about the underlying numbers supports it; the scales were simply chosen to make the lines converge.
+3. **The pictogram exaggeration.** A chart compares two minimum wage figures using dollar-bill icons sized to height. One wage is 25% higher than the other, but because the icon scales both height and width, the visual area difference looks closer to 60%. This is the area-versus-length trap in its most literal form.
+4. **The cherry-picked time window.** A climate or stock market chart starts its x-axis at an unusually high or low point, right after a spike or dip, so the following trend looks more dramatic than the full historical record would show. Zoom the window out to ten years instead of six months, and the "alarming trend" often turns out to be normal variation.
+5. **The unlabeled log-scale chart.** A COVID-era case-count chart uses a logarithmic y-axis without saying so. Case counts that grew exponentially appear to flatten into a gentle, reassuring curve, because each gridline represents a tenfold jump rather than an equal step.
+
+Not all of these come from bad intent. [Data visualization commentators note that overly dramatic or overly reassuring charts often signal narrative-driven design rather than a faithful attempt at representation](https://www.dwrl.utexas.edu/2017/12/29/when-data-visualization-goes-wrong/), and plenty of truncated-axis charts are simply the default output of whatever spreadsheet tool built them, with nobody adjusting the settings before hitting publish. A newsroom intern using Excel's auto-scale feature and a political operative cherry-picking a favorable date range can produce visually identical distortions. The chart doesn't tell you which one you're looking at. Only the source and the surrounding context do.
+
+## A 30-Second Checklist for Spotting a Misleading Graph
+
+You don't need a statistics degree to catch most misleading charts. You need a short, repeatable routine you run every single time, before you accept a claim, before you share it.
+
+Visualization practitioners have formalized this into a checklist often called **SCAM**, standing for Source, Chart, Axes, and Message:
+
+<Checklist
+  id="scam-checklist"
+  title="The SCAM checklist"
+  style="check"
+  items={[
+    { text: 'Source', detail: 'Who produced this data, and do they publish their methodology? A chart with no visible source, or a source with an obvious stake in the conclusion, deserves extra skepticism.' },
+    { text: 'Chart', detail: "Is this chart type appropriate for the data? A pie chart that doesn't sum to 100%, or a line chart connecting unrelated categories, is a structural red flag before you even look at the numbers." },
+    { text: 'Axes', detail: 'Does the baseline start at zero for a bar chart? Are time intervals even? Is a log scale labeled as such? Is there a second axis hiding a scale mismatch?' },
+    { text: 'Message', detail: 'Does the headline or title overstate what the chart actually shows? Are sample sizes and totals displayed anywhere, or is the reader meant to take the trend on faith?' },
+  ]}
+/>
+
+Tableau's own guidance formalizes this SCAM approach specifically to interrupt the snap judgment a dramatic chart is designed to produce.
+
+If you only have thirty seconds, narrow it down to three checks: the value axis baseline, the time range shown, and whether area or volume is standing in for a single number. [Analyst guidance built around one real dataset found a truncated axis alone can turn an actual 1.8 times difference into a visual gap of nearly 17 times](https://michaelnocito.github.io/analyst-prep-kit/guides/how-charts-mislead/), which tells you where most of the deception budget in a bad chart actually gets spent.
+
+<Callout variant="tip" title="Pro tip">
+When a chart's framing feels too convenient, don't argue with the visual. Ask for the raw numbers or a plain table instead. A misleading graph almost always survives your scrutiny; the underlying data rarely does.
+</Callout>
+
+## How to Design a Graph That Doesn't Mislead Anyone
+
+Building an honest chart takes barely more effort than building a deceptive one. The discipline is in the defaults you choose before you ever add color.
+
+1. **Publish your sources, units, totals, and sample sizes** directly on or beside the chart, not buried in a footnote three scrolls away.
+2. **Start bar charts at zero.** If a log scale is genuinely necessary for the data's range, label it explicitly on the axis itself.
+3. **Avoid 3D effects and pictograms** where size scales in more than one dimension. They almost always misrepresent the ratio you're trying to show.
+4. **Split mismatched dual-axis charts into two separate charts**, or index both series to a common baseline of 100 so relative change is comparable without rescaling tricks.
+5. **Show uncertainty** with error bars or confidence intervals when the data has meaningful variance, rather than presenting a single point estimate as settled fact.
+6. **Display the full time series**, or explicitly explain why a shorter window was chosen, so readers can judge whether the window itself is doing the persuading.
+
+<Callout variant="tip" title="Pro tip">
+Before publishing any chart, ask one question out loud: "If I redrew this from a zero baseline with the full time range, would it still make the same point?" If the answer is no, the chart was doing the arguing, not the data.
+</Callout>
+
+Statohub offers resources structured around the principle that interpretation matters as much as computation. This article draws on peer-reviewed comparisons of graph distortion types, the ACM's controlled study on chart design tactics, and established visualization checklists, not casual opinion, to rank which red flags actually deserve your attention.
+
+Charts move faster than fact checks, and a distorted axis reaches more eyes in a day than any correction ever will. The habit of checking a baseline before believing a headline is small, but it protects every decision built on top of that chart, yours included. Educational resources can help make that habit easier to build, one guide at a time.
+
+## Keep Building Your Chart-Reading Skills
+
+Spotting a truncated axis is a skill, and like any skill, it gets sharper with repetition rather than a single checklist read once and forgotten. Statohub's <Link to={routes.learnLanding()}>Learn Statistics</Link> hub walks through the foundational concepts, mean versus median, distribution shape, sampling, that explain why certain chart choices distort perception in the first place. For a more hands-on look at how raw numbers become the charts you scrutinize, the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub connects theory to the kind of real datasets, reports, and dashboards you actually encounter at work.
+
+If you want to practice the habit directly, Statohub's <Link to={routes.article('exploratory-data-analysis')}>exploratory data analysis guide</Link> walks through inspecting a series for gaps, anomalies, and the kind of missing periods that often show up later as a cherry-picked chart window. And the next time a number in a chart looks too clean or too dramatic, run it through the <Link to={routes.calculator('average')}>average calculator</Link> yourself before you trust the visual over the arithmetic.
+
+## Recommended
+
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.article('simpsons-paradox')}>Simpson's Paradox: Definition, Examples, and Why It Happens</Link>
+- <Link to={routes.article('correlation-vs-causation')}>Correlation vs Causation: Why Correlation Doesn't Imply Causation</Link>
+- <Link to={routes.article('effect-size')}>Effect Size: What It Means & How to Interpret It</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'Various Misleading Visual Features in Misleading Graphs: Do They Truly Deceive Us?', href: 'https://escholarship.org/content/qt0kk6b4cn/qt0kk6b4cn_noSplash_989ca89348d6fab80850a2e58b6e3fd7.pdf', org: 'eScholarship, University of California' },
+  { text: 'How Charts Mislead: Eight Distortions, Worked on One Real Table', href: 'https://michaelnocito.github.io/analyst-prep-kit/guides/how-charts-mislead/', org: 'Analyst Prep Kit' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.3 Graphical Techniques: Alphabetic', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda33.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Stephen Few, "Dual-Scaled Axes in Graphs: Are They Ever the Best Solution?"', href: 'https://www.perceptualedge.com/articles/visual_business_intelligence/dual-scaled_axes.pdf', org: 'Perceptual Edge' },
+  { text: 'Darrell Huff, How to Lie with Statistics (1954)', href: 'https://archive.org/details/howtoliewithstat00huff', org: 'Internet Archive' },
+  { text: 'Misleading Axes — Calling Bullshit', href: 'https://callingbullshit.org/tools/tools_misleading_axes.html', org: 'Carl Bergstrom & Jevin West, University of Washington' },
+  { text: 'Data Visualization: Design Principles Guide', href: 'https://guides.library.jhu.edu/datavisualization/design', org: 'Johns Hopkins University Libraries' },
+  { text: 'Misleading Graph', href: 'https://en.wikipedia.org/wiki/Misleading_graph', org: 'Wikipedia' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is an example of a misleading graph?',
+    answer: 'A common example is a bar chart with a truncated y-axis starting above zero, making a small difference between two bars look much larger, such as one bar appearing three times taller than the other, despite the actual percentage difference being modest, around 3%.',
+  },
+  {
+    question: 'What are three ways graphs can be misleading?',
+    answer: 'The three most damaging techniques are truncated or non-zero axis baselines, inverted or irregularly spaced time intervals, and area or volume encodings (like pictograms) that distort a single value by scaling more than one dimension.',
+  },
+  {
+    question: 'What are some examples of misleading graphs in the news?',
+    answer: 'News charts often mislead through cherry-picked time windows, showing only the months of a trend that support a headline, or through unlabeled logarithmic scales that make exponential growth look like a gentle curve.',
+  },
+  {
+    question: 'What are some examples of misleading graphs in sports?',
+    answer: 'Sports broadcasts frequently use 3D bar charts or dual-axis comparisons to compare player statistics, exaggerating small performance gaps by tilting the perspective or mismatching the two axis scales so the lines appear to converge dramatically.',
+  },
+]} />
