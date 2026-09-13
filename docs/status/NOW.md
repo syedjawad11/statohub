@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-12 (outsourced SEO titles fixed + gated; see Parked).
+**Last updated:** 2026-09-13 (outsource batch 4: 8 published; ADR 0023).
 
 **Known quirk:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
@@ -14,12 +14,11 @@ is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
 Routers are maps now, one canonical home per rule, delegation ceremony dropped;
 playbooks and outsource engine untouched. [[0022-routers-are-maps-not-rulebooks]].
 
-**Cloud routines: RETIRED** to `docs/legacy/cloud-routine/`. The
-`content-ops/cloud-routine/PAUSED` marker stays at its old path on purpose (both
-specs gate on it in Step 0). **The claude.ai schedules were never deleted and
-still wake nightly** -- disable them in claude.ai -> Routines.
+**Cloud routines: RETIRED** to `docs/legacy/cloud-routine/`; the `PAUSED`
+marker stays put. **claude.ai schedules still wake nightly** -- disable them in
+claude.ai -> Routines.
 
-**Baseline** (2026-09-10): 140 pages, 5,546 links, 121 tests, 0 violations.
+**Baseline** (2026-09-13): 147 pages, 5,909 links, 121 tests, 0 violations.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
@@ -31,16 +30,15 @@ started -- topics were never chosen.** Governed by
 `docs/ideas/homepage-redesign-mock-2026-08-16.png`. `time-series-forecasting`
 and `machine-learning-statistics` hold 1 article each.
 
-## Outsource pipeline: 19 published, 6 queued
+## Outsource pipeline: 27 published, 10 queued
 
-Detail: `docs/status/sessions/2026-09-02-outsource-batch-3.md`; the reviewer-only
-traps and the "never pick by `queue_position`" rule live in the agent and skill.
+Batch 4 detail: `docs/status/sessions/2026-09-13-outsource-batch-4.md`.
+**Partner backlinks are never stripped** -- [[0023-outsource-keeps-partner-backlinks]].
 
-**Board and upstream do not line up.** Only **3 of the 10 queued exist upstream**:
-`data-visualization-best-practices`, `confusion-matrix-explained`,
-`f1-score-explained` (the two ML ones need a cannibalization check against *each
-other*). 5 live upstream articles have no board row; the user plans to revise the
-upstream topic list rather than import them.
+**Only publish rows whose vendor dashboard status is DRAFT.** At close,
+`histogram-vs-boxplot` and `multiple-regression-diagnostics` were still
+GENERATING upstream -- re-`fetch` before processing; the other 8 queued rows do
+not exist upstream yet. Batches of 2-3, one reviewer at a time, report between.
 
 ## Blocked / waiting
 
@@ -52,7 +50,9 @@ upstream topic list rather than import them.
 
 ## Parked (do not silently resume)
 
-- Meta title lengths -- outsourced 19 fixed + gated 2026-09-12; still open: ~50
+- Sanitizer gaps: processors drop "Statohub's Take"/CTA and leave bare `{` in
+  prose (MDX ReferenceError); neither is a `check_sanitized.py` check yet.
+- Meta title lengths -- outsourced fixed + gated 2026-09-12; still open: ~50
   Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
 - Article schema `image` missing -- `articleSchema()` in `src/lib/schema.ts`.
 - `how-to-find-the-range` refresh -- 5 range keywords in DB, unused in copy.
