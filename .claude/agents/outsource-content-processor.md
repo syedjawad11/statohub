@@ -82,12 +82,21 @@ paraphrase around it. `check_sanitized.py` is the final backstop for this
 check, so a stray miss will surface there rather than publish silently — but
 make a genuine pass, not a token one.
 
+**Every other external link stays — no exceptions (owner rule, 2026-09-13).**
+The vendor places outbound links deliberately as backlinks for partner
+sites. A link is not yours to judge: keep it even if the target looks
+commercial, tangential, off-topic, or is hyperlinked on odd anchor text
+(a donation page linked from "95%" is intentional, not spam). Preserve the
+original anchor text and href verbatim. The only hrefs you may strip are
+babylovegrowth's own; the only hrefs you may *rewrite* are internal
+`statohub.com/...` links, which become `<Link>`/`routes.*` components.
+
 ## Step 3 — Sources: keep genuine ones, top up if needed, never fabricate
 The playbook requires a literal `## Sources` H2 with **≥ 6** resolving
 external links. Stripping babylovegrowth's own citations can drop a real
 article below that floor.
-- Keep any surviving citation that is NOT a babylovegrowth property and is a
-  legitimate source for a claim in the text.
+- Keep every surviving citation that is NOT a babylovegrowth property (see
+  Step 2 — external links are never removed).
 - If the count is still short of 6, add real citations **for claims already
   present in the surviving text** — same sourcing bar as the site's own
   writer agent: `.gov`/`.edu`, NIST/SEMATECH e-Handbook, a peer-reviewed
