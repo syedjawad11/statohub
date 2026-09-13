@@ -1,0 +1,298 @@
+---
+title: "Conditional Probability Exercises With Solutions"
+h1: "Learn Conditional Probability by Doing: Trees, Tables, 3 Exercises"
+description: "A hands-on guide to conditional probability exercises: worked formulas, tree diagrams, joint probability tables, and three solved practice problems."
+category: data-analysis
+primaryKeyword: conditional probability exercises
+keywords:
+  - conditional probability exercises
+  - conditional probability
+  - conditional probability formula
+  - tree diagrams
+  - joint probability tables
+  - practice problems
+related:
+  - box-cox-transformation
+  - confidence-interval-vs-prediction-interval
+  - confidence-level-vs-significance-level
+phase: 1
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Conditional probability tells you how likely event A is once you already know event B happened, and it is calculated as P(A|B) = P(A ∩ B) / P(B), where P(B) must be greater than zero. This single formula lets you revise a probability estimate the moment new information arrives. You will use it constantly: reading diagnostic test results, drawing cards without replacement, or analyzing how one marketing metric relates to another.
+
+<KeyTakeaways rows={[
+  { point: 'Context changes the odds', details: 'Dependent events — drawing marbles or cards without replacement — shift the odds more than independent events like coin flips, where conditioning changes nothing.' },
+  { point: 'Small samples make estimates unstable', details: 'Conditioning on a rare or near-zero-frequency event produces a conditional estimate that should be treated with caution, not reported as a firm number.' },
+  { point: 'Trees and tables catch arithmetic errors', details: 'Visual tools are the fastest way to verify joint and conditional probabilities before you trust a final answer.' },
+  { point: 'Joint probability and conditional probability answer different questions', details: 'They share the same numerator but divide by a different denominator — confusing the two is one of the most common analytical errors in reporting.' },
+]} />
+
+## Conditional Probability Defined: The Formula Behind P(A|B)
+
+Statisticians write conditional probability as P(A|B), read "the probability of A given B." That notation is not decorative. It signals that you have narrowed your universe of outcomes down to only those where B is true, and you are asking what fraction of that narrower universe also satisfies A. The [formal definition from MIT OpenCourseWare](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class03-prep.pdf) states it plainly: P(A|B) = P(A ∩ B) / P(B), valid only when P(B) > 0.
+
+Why does this hold? Picture the full sample space as a rectangle. Event B carves out a region inside it. Once you know B occurred, everything outside that region is irrelevant, so your new "whole" is B itself, not the original sample space. The joint probability P(A ∩ B), the chance both events happen together, gets rescaled against this smaller whole.
+
+Rearranging that formula gives the multiplication rule, one of the most useful identities in probability theory: P(A ∩ B) = P(A|B) · P(B). This works in reverse too: P(A ∩ B) = P(B|A) · P(A). Both versions describe the same joint event; they just build it from different starting conditions.
+
+The P(B) > 0 requirement is not a technicality to skip past. Dividing by zero is undefined, so conditioning on an impossible event breaks the formula entirely.
+
+- If B has zero probability in theory (like hitting an exact continuous value), you need a different mathematical framework, covered later in this guide.
+- If B has near-zero probability in a real dataset (only two or three observations), the resulting conditional estimate becomes unstable and should be treated with caution rather than reported as a firm number.
+
+## Worked Examples: Coins, Marbles, and Cards
+
+Numbers make this concept click faster than notation does. Three classic examples show conditional probability at three different levels of complexity.
+
+1. **Coin toss.** Flip a fair coin twice. What's P(both heads | first flip is heads)? The full sample space is \{HH, HT, TH, TT\}, each with probability 0.25. Conditioning on "first flip is heads" restricts you to \{HH, HT\}, so your new denominator is P(first is heads) = 0.5. Only HH satisfies both conditions, so P(HH ∩ first is heads) = 0.25. Applying the formula: 0.25 / 0.5 = 0.5. Knowing the first flip landed heads doesn't change the second flip's odds, which makes sense since coin flips do not influence each other.
+2. **Marbles without replacement.** A bag holds 5 red marbles and 3 blue marbles. You draw one, don't replace it, then draw a second. What's P(second is blue | first is blue)? After removing one blue marble, 7 marbles remain: 5 red, 2 blue. So P(second is blue | first is blue) = 2/7. The denominator shrank because the first draw physically changed the contents of the bag, making this a textbook dependent-event scenario.
+3. **Two-card draw.** From a standard 52-card deck, draw two cards without replacement. What's P(second card is a spade | first card is a spade)?
+
+**Statistic to remember:** After removing one spade from the deck, 51 cards remain, only 12 of them spades, giving P(second is spade | first is spade) = 12/51, or about 23.5%. Compare that to the unconditional probability of drawing a spade, 13/52, or exactly [25%](https://math.uni.edu/~campbell/mdm/prob.html). The gap is small here, but it demonstrates that removing a card without replacement always shifts the odds for the next draw. For more on building these probability fractions from scratch, a <Link to={routes.article('probability-formula')}>probability formula guide</Link> walks through the counting rules step by step.
+
+## Independence vs. Dependent Events
+
+Independence has a precise test, not a gut feeling. Two events A and B are independent exactly when P(A|B) = P(A), meaning knowing B happened tells you nothing new about A. Algebraically, this collapses the general multiplication rule into a simpler one: P(A ∩ B) = P(A) · P(B), with no conditioning term required.
+
+The coin toss above is a clean example of independence. Each flip is a self-contained event with no memory of the previous one, so knowing the first result gives zero information about the second.
+
+The marble and card examples are the opposite: dependent events, where removing an item from a finite pool changes the composition of what's left. That's the entire reason casinos track card counts and why sampling without replacement behaves differently from sampling with replacement in statistical theory.
+
+- Independent: two separate customers' purchase decisions on unrelated products, most weather events on non-adjacent days, results from a fair, well-shuffled random number generator.
+- Dependent: drawing cards or marbles without replacement, medical test results linked to a shared risk factor, stock returns during a market shock.
+
+<Callout variant="tip" title="Pro tip">
+Before assuming two events are independent, test it with real numbers: calculate P(A), then calculate P(A|B). If they match, you've confirmed independence rather than assumed it. A guide on <Link to={routes.article('independent-dependent-mutually-exclusive-events')}>independent, dependent, and mutually exclusive events</Link> has additional worked comparisons.
+</Callout>
+
+## Multiplication Rule and the Law of Total Probability
+
+The multiplication rule is your main tool for building joint probabilities out of conditionals, and it scales beyond two events. For three events, it expands into P(ABC) = P(A) · P(B|A) · P(C|AB), where each new term conditions on everything that came before it.
+
+The law of total probability solves a different problem: computing P(B) when you only know conditional pieces of it. If B can only happen alongside one of several mutually exclusive events A1, A2, A3 (a partition of the sample space), then:
+
+- P(B) = P(B|A1)·P(A1) + P(B|A2)·P(A2) + P(B|A3)·P(A3)
+
+Say a factory has three machines producing [50%](https://www.khanacademy.org/math/ka-math-class-12/x6f66cbee9a2f805b:probability-ncert-new/x6f66cbee9a2f805b:baye-s-theorem/v/probability-of-manufacturing-defected-items), 30%, and 20% of output, with defect rates of 2%, 5%, and 10% respectively. The overall defect probability is P(defect) = (0.02)(0.50) + (0.05)(0.30) + (0.10)(0.20) = 0.01 + 0.015 + 0.02 = 0.045, or 4.5%. You'll lean on this law constantly when a denominator in Bayes' theorem is not handed to you directly and must be assembled from partition pieces.
+
+## Bayes' Theorem: Flipping the Condition Around
+
+Bayes' theorem answers a question the multiplication rule can't: what if you know P(B|A) but actually need P(A|B)? The formula, as MIT's lecture notes present it, is P(A|B) = P(B|A) · P(A) / P(B). Statisticians label the three pieces: P(A) is the **prior** (what you believed before new evidence), P(B|A) is the **likelihood** (how probable the evidence is if A is true), and P(A|B) is the **posterior** (your updated belief after seeing the evidence).
+
+Here's the classic illustration, and it's the one that trips up almost every beginner. A disease affects [1%](https://www.ncbi.nlm.nih.gov/books/NBK430867/) of a population. A patient tests positive. What's the actual probability they have the disease?
+
+1. Imagine 10,000 people. 100 are sick (1%), 9,900 are healthy.
+2. Among the 100 sick people, 99% test positive: 99 true positives.
+3. Among the 9,900 healthy people, 5% test positive anyway: 495 false positives.
+4. Total positive tests: 99 + 495 = 594.
+5. P(disease | positive test) = 99 / 594 ≈ **16.7%**, far below the 99% accuracy figure that made the test sound nearly certain.
+
+That gap between the test's stated accuracy and the actual posterior is the base-rate fallacy in action, and [MIT's worked examples](https://math.mit.edu/~dav/05.dir/class3-prep.pdf) use this exact structure to show how a low prior probability can swamp even a highly accurate test. A full <Link to={routes.article('bayes-theorem')}>Bayes' theorem guide</Link> breaks down more variations on this setup and explains how the posterior shifts as prevalence changes.
+
+## Tree Diagrams and Tables: Your Error-Checking Toolkit
+
+Trees and tables aren't just teaching aids. They're the fastest way to catch a math mistake before it costs you a wrong answer on an exam or a wrong conclusion in a report.
+
+Building a tree diagram is mechanical once you know the sequence:
+
+- Start with a single root node representing the full sample space.
+- Draw branches for the first event's possible outcomes, labeling each with its probability (these should sum to 1 across the branches from that node).
+- From each of those branches, draw child branches for the second event, but label them with the *conditional* probability given the parent branch, not the joint probability.
+- Multiply along each complete path to get the joint probability for that specific outcome sequence.
+
+Joint tables work well when you have exactly two categorical variables. Rows represent one variable's categories, columns the other, and each cell holds a joint probability. Summing across a row or column gives you a marginal probability, and dividing any cell by its row or column total gives you the conditional probability for that slice.
+
+<Callout variant="tip" title="Pro tip">
+Before trusting any tree or table calculation, check two things: do the branches from each node sum to 1, and does dividing your joint probability by the correct marginal reproduce the conditional probability you started with? These two checks catch most arithmetic slips. A <Link to={routes.categoryHub('probability-distributions')}>probability and distributions guide</Link> covers marginal and joint distributions in more depth.
+</Callout>
+
+## Common Pitfalls That Wreck Conditional Probability Calculations
+
+Most conditional probability errors trace back to a handful of repeat offenders, and knowing them in advance saves you from repeating them.
+
+- **Confusing P(A|B) with P(B|A).** These are almost never equal, and swapping them is the exact mistake that produces the base-rate fallacy in the medical test example above.
+- **Treating a low prior as irrelevant.** A highly accurate test applied to a rare condition still produces mostly false positives among all positive results, simply because healthy people vastly outnumber sick ones.
+- **Conditioning on near-zero-frequency events.** If your conditioning event only appears two or three times in a dataset, the resulting conditional estimate is numerically unstable; widening your data categories or reporting the uncertainty is safer than presenting a precise-looking number built on a handful of observations.
+- **Placing joint probabilities on tree branches instead of conditional ones.** This single labeling mistake throws off every downstream multiplication.
+
+<Checklist
+  id="conditional-probability-validation"
+  title="Before you trust a conditional probability answer"
+  style="check"
+  items={[
+    { text: 'Confirm P(B) > 0', detail: 'The conditioning event must be possible, not just plausible, before you divide by it.' },
+    { text: 'Confirm branch or row probabilities sum to 1', detail: 'Check this at every node in a tree, and across every row or column in a joint table.' },
+    { text: 'Recheck which event is the condition', detail: 'P(A|B) and P(B|A) are almost never equal — verify which one the question is actually asking for.' },
+    { text: 'Weight a rare event by its prior', detail: 'A highly accurate test on a rare condition still produces mostly false positives among all positive results.' },
+    { text: 'Sanity-check the final number against intuition', detail: "If a rare event's posterior comes back higher than its prior with no strong evidence to justify it, recheck your work." },
+  ]}
+/>
+
+## Practice Problems to Test Your Understanding
+
+Try solving each before reading the solution.
+
+1. **Coin-toss counting.** Flip three fair coins. What's P(exactly two heads | at least one head)? Solution: The sample space has 8 equally likely outcomes; "at least one head" excludes only TTT, leaving 7 outcomes. Among those 7, exactly three have two heads (HHT, HTH, THH). So the answer is 3/7.
+2. **Two-card draw.** Draw two cards without replacement from a 52-card deck. What's P(both are aces)? Solution: P(first is ace) = 4/52. Given the first was an ace, P(second is ace | first is ace) = 3/51. Multiply: (4/52)(3/51) = 12/2652 ≈ 0.45%.
+3. **Bayes test example.** A factory's two lines produce 60% and 40% of output, with defect rates of 3% and 7%. Given a random defective item, what's the probability it came from line 2? Solution: P(defect) = (0.03)(0.60) + (0.07)(0.40) = 0.018 + 0.028 = 0.046. P(line 2 | defect) = 0.028 / 0.046 ≈ 60.9%.
+
+<DataTable
+  caption="Practice-problem answer key: technique and final answer for each exercise"
+  headers={['Problem', 'Core technique', 'Final answer']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Coin-toss counting', 'Sample-space reduction', '3/7'],
+    ['Two-card draw (aces)', 'Multiplication rule', '≈0.45%'],
+    ['Factory defect (Bayes)', 'Law of total probability + Bayes', '≈60.9%'],
+  ]}
+/>
+
+## Where to Practice Next on Statohub
+
+Reading through the formula is only half the job; running your own numbers is what makes it stick. A <Link to={routes.calculator('probability')}>probability calculator</Link> lets you plug in joint and marginal values and check conditional results instantly, which is useful for verifying homework or a quick workplace estimate.
+
+From here, two guides extend what you've covered:
+
+- The <Link to={routes.article('bayes-theorem')}>Bayes' theorem guide</Link> goes deeper into prior selection and multiple-hypothesis versions of the formula.
+- The <Link to={routes.article('independent-dependent-mutually-exclusive-events')}>independence, dependence, and mutually exclusive events guide</Link> covers edge cases the P(A|B)=P(A) test alone doesn't fully resolve.
+
+Beyond the site, Railbird's [solver-backed probability exercises](https://railbird.gg/) offer a different kind of applied practice, using decision trees in a game context rather than a textbook one, which can sharpen the same conditioning intuition from an unfamiliar angle.
+
+## Conditional Probability vs. Joint Probability: Don't Mix Them Up
+
+Joint probability, P(A ∩ B), answers "what fraction of the *entire* sample space satisfies both A and B?" Conditional probability, P(A|B), answers "what fraction of *just the B region* also satisfies A?" They share the same numerator but divide by different denominators, and that difference in denominator is the entire distinction.
+
+Take a table of 200 patients, split by smoking status and a health outcome. A statement like "60% of smokers had the outcome" and a statement like "12% of all 200 patients were smokers with the outcome" can both be true at once; they just answer different questions about different denominators.
+
+This mismatch is exactly why headlines misreport statistics. Confusing the two is one of the most common analytical errors in public health reporting, and it is functionally the same mistake as reversing P(A|B) and P(B|A) in Bayes' theorem.
+
+When you see a probability statement, always ask which variable defines the denominator. If the sentence structure is "of the people who X, what fraction Y," you're looking at a conditional probability with X as the condition. If it's "what fraction of everyone did both X and Y," that's joint.
+
+## Conditional Probability With Continuous Distributions
+
+Everything above assumes discrete outcomes: coins, cards, marbles, factory lines. Continuous distributions, like height, temperature, or reaction time, break the P(B) > 0 requirement in a specific way: the probability of hitting any exact single value is technically zero.
+
+The workaround is conditioning on a range rather than a point. Instead of asking "what's P(A | X = 5.0)," which is undefined for a continuous variable, you ask "what's P(A | 4.9 ≤ X ≤ 5.1)," a small interval with positive probability. As that interval shrinks toward a point, the conditional probability approaches a well-defined limit called the conditional density function, f(x|y), which behaves like a probability density rather than a probability mass.
+
+This matters in practice more than it sounds. Regression analysis, at its core, is built on conditional expectation: predicting the expected value of a continuous outcome variable given a specific value (or range) of a predictor. When you fit a line to scatter data, you're implicitly estimating E[Y|X=x] for each x, a continuous cousin of the discrete conditional probability formula covered earlier in this guide.
+
+Confidence intervals also rely on conditional reasoning over continuous ranges.
+
+## Expectation and Variance Under Conditioning
+
+Conditional probability doesn't stop at single-event calculations; it extends naturally into conditional expectation and conditional variance, both essential once you start working with real datasets instead of coin flips.
+
+Conditional expectation, written E[X|Y=y], asks: given that Y took a specific value, what's the average value of X? If you're studying salary (X) conditioned on education level (Y), E[X | Y = "graduate degree"] gives the average salary specifically within that subgroup, ignoring everyone outside it. This is precisely what a pivot table computes when you group by a category and average a numeric column; you are computing a conditional expectation without necessarily calling it that.
+
+Conditional variance, Var(X|Y=y), measures how spread out X is *within* that same subgroup. A subgroup can have a similar average to the overall population but a much tighter or wider spread, and that distinction shows up constantly in real analysis. Two sales regions might have nearly identical average deal sizes but wildly different variances, meaning one region is consistent and the other is a mix of tiny and huge deals.
+
+The law of total variance ties these pieces together: overall variance equals the average of the within-group variances plus the variance of the within-group means. That decomposition is the statistical backbone of ANOVA and many machine-learning feature-importance techniques, both of which are really asking "how much does conditioning on this variable explain?"
+
+## Why Conditional Probability Feels Counterintuitive
+
+The base-rate fallacy from the Bayes' theorem section isn't a one-off trick question; it reflects a genuine, well-documented gap between how conditional probability actually works and how people instinctively reason about it. Most people anchor on the accuracy of a test or claim and forget to weight it against how common the underlying condition actually is.
+
+A second common misconception is assuming conditioning always makes an event more likely. It doesn't. Conditioning can raise, lower, or leave a probability completely unchanged, depending entirely on whether the two events are positively associated, negatively associated, or independent. Drawing a red card first slightly lowers your chance of drawing another red card second (fewer reds remain), while drawing an ace first slightly raises your chance the next card is a face card in some game contexts, depending on how the deck is defined.
+
+A third misconception, closely tied to the difference-from-joint-probability section above, is treating "most people with trait A have trait B" as equivalent to "most people with trait B have trait A." These statements reverse the conditioning direction and are usually not numerically close, exactly as the smoker and health-outcome example demonstrated. The clearest fix for all three misconceptions is the same one recommended throughout this guide: build a small table or tree with concrete numbers before trusting an intuitive answer.
+
+<Figure number={1} caption="Habits that keep a conditional-probability read defensible, versus the three shortcuts that most often wreck one.">
+  <TaxonomyTree
+    title="Building sound conditional-probability judgment"
+    desc="A root node splits into two branches, Do and Avoid. Do lists building a small table or tree with numbers, including base rates when evaluating accuracy, and checking the conditioning direction explicitly. Avoid lists relying only on a test's stated accuracy, assuming conditioning always increases the probability, and treating P(A given B) as the same as P(B given A)."
+    root="Building sound conditional-probability judgment"
+    branches={[
+      { label: 'Do', children: ['Build a small table or tree with numbers', 'Include base rates when evaluating accuracy', 'Check the conditioning direction explicitly'] },
+      { label: 'Avoid', children: ["Relying only on a test's stated accuracy", 'Assuming conditioning always increases the probability', 'Treating P(A|B) as the same as P(B|A)'] },
+    ]}
+  />
+</Figure>
+
+## Nested and Multiple Conditioning Events
+
+Real-world questions rarely stop at one conditioning event. You might want P(A | B, C), the probability of A given that both B and C occurred, or even deeper nesting like P(A | B, C, D).
+
+The extended multiplication rule handles this directly. For four events: P(ABCD) = P(A) · P(B|A) · P(C|AB) · P(D|ABC), where each new factor conditions on the full accumulated history of everything before it. Order doesn't change the final joint probability, though the individual conditional terms along the way will look different depending on which order you choose to condition in.
+
+<Figure number={2} caption="Each added condition in the extended multiplication rule builds on everything conditioned on before it.">
+  <ProcessFlow
+    title="Extended multiplication rule"
+    desc="A four-step horizontal sequence: P(A), the unconditional probability of A; P(B given A), B conditioned on A; P(C given A and B), C conditioned on A and B; P(D given A, B, and C), D conditioned on A, B, and C."
+    steps={[
+      { label: 'P(A)', detail: 'Unconditional probability of A.' },
+      { label: 'P(B|A)', detail: 'B conditioned on A.' },
+      { label: 'P(C|A,B)', detail: 'C conditioned on A and B.' },
+      { label: 'P(D|A,B,C)', detail: 'D conditioned on A, B, and C.' },
+    ]}
+  />
+</Figure>
+
+A practical example: a loan applicant's default risk might depend on income bracket, credit history, and employment status simultaneously. You'd want P(default | low income, poor credit, unemployed), not three separate two-variable conditional probabilities computed in isolation. Each additional conditioning variable further restricts the sample space, and with enough conditions, your subgroup can shrink to a handful of observations, reviving the near-zero-frequency instability problem covered in the pitfalls section.
+
+This is also where Bayesian networks and more advanced graphical models come in, though that's a topic for a separate guide. For now, the core habit to build is this: when a question involves conditioning on multiple facts at once, write out the full product expansion before trying to shortcut it, since skipping steps here is where nested conditional probability calculations most often go wrong.
+
+## The Statohub Take: Formula Fluency Isn't the Same as Conditional Reasoning
+
+The conventional approach to teaching this topic treats P(A|B) = P(A ∩ B)/P(B) as the finish line. It isn't. Plenty of students can recite the formula and still misapply it the moment a word problem hides which event is the condition and which is the target, exactly the confusion between P(A|B) and P(B|A) that produces the base-rate fallacy.
+
+What actually builds durable understanding is the habit this guide leaned on repeatedly: translate the question into a tree or table with real numbers before touching the formula. The factory-defect and medical-test examples above are not simplified toy problems. They mirror the exact reasoning error that shows up in fraud detection models, clinical screening debates, and A/B test interpretation, wherever a rare event meets an imperfect test.
+
+If there's one thing worth prioritizing over formula memorization, it's this: get comfortable asking "what's my denominator, and does it represent the group I actually care about?" That single question resolves most of the confusion between conditional and joint probability, and it's the question every strong data analyst asks by instinct before running a single calculation.
+
+## Recommended
+
+- <Link to={routes.article('probability-formula')}>Probability Formula: How to Calculate Probability Step by Step</Link>
+- <Link to={routes.article('fundamental-counting-principle')}>The Fundamental Counting Principle Explained: With Examples</Link>
+- <Link to={routes.article('bayes-theorem')}>Bayes' Theorem (Bayes' Rule): Formula & Examples</Link>
+- <Link to={routes.categoryHub('combinatorics')}>Combinatorics</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'Conditional probability — MIT OpenCourseWare (18.05 class prep)', href: 'https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class03-prep.pdf', org: 'MIT OpenCourseWare' },
+  { text: 'Conditional probability exercises and visualization — MIT (class prep)', href: 'https://math.mit.edu/~dav/05.dir/class3-prep.pdf', org: 'MIT' },
+  { text: 'Probability of a manufacturing defect (Bayes’ theorem worked example)', href: 'https://www.khanacademy.org/math/ka-math-class-12/x6f66cbee9a2f805b:probability-ncert-new/x6f66cbee9a2f805b:baye-s-theorem/v/probability-of-manufacturing-defected-items', org: 'Khan Academy' },
+  { text: 'Prevalence — StatPearls', href: 'https://www.ncbi.nlm.nih.gov/books/NBK430867/', org: 'NCBI Bookshelf' },
+  { text: 'Probability and the additive rule (discrete mathematics notes)', href: 'https://math.uni.edu/~campbell/mdm/prob.html', org: 'University of Northern Iowa' },
+  { text: 'Two Basic Rules of Probability — Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability', org: 'OpenStax' },
+  { text: 'Conditional Probability and Independent Events', href: 'https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introductory_Statistics_(Shafer_and_Zhang)/03%3A_Basic_Concepts_of_Probability/3.03%3A_Conditional_Probability_and_Independent_Events', org: 'Statistics LibreTexts' },
+  { text: 'Conditional Probability', href: 'https://mathworld.wolfram.com/ConditionalProbability.html', org: 'Wolfram MathWorld' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the formula for conditional probability?',
+    answer: 'P(A|B) = P(A ∩ B) / P(B), read as "the probability of A given B," valid only when P(B) is greater than zero. It rescales the joint probability of A and B against the narrower sample space where B is already known to have happened, rather than the full original sample space.',
+  },
+  {
+    question: 'What is the difference between conditional probability and joint probability?',
+    answer: 'Joint probability, P(A ∩ B), is the fraction of the entire sample space where both A and B happen. Conditional probability, P(A|B), is the fraction of just the B region where A also happens. They share a numerator but divide by different denominators, which is the entire distinction between them.',
+  },
+  {
+    question: 'How do I test whether two events are independent?',
+    answer: 'Calculate P(A), then calculate P(A|B). If the two values match, the events are independent — knowing B happened told you nothing new about A. If they differ, the events are dependent, and conditioning genuinely changes the probability of A.',
+  },
+  {
+    question: 'Why does a highly accurate test still produce mostly false positives for a rare condition?',
+    answer: "This is the base-rate fallacy. Out of 10,000 people with a 1% disease prevalence and a 99%-accurate test, roughly 99 true positives get swamped by around 495 false positives from the much larger healthy population, so the actual probability of disease given a positive result lands near 17%, not 99%.",
+  },
+  {
+    question: 'Can you calculate a conditional probability for a continuous variable?',
+    answer: 'Not by conditioning on a single exact point, since the probability of hitting any one value is technically zero for a continuous variable. Instead you condition on a small interval around that point, and as the interval shrinks the result approaches a conditional density function rather than a single probability.',
+  },
+]} />
