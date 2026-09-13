@@ -1,0 +1,315 @@
+---
+title: "Cohen's d Calculation and Interpretation"
+h1: "Compute Cohen's d: Step by Step, Hedges' g"
+description: "Compute Cohen's d with step by step formulas, worked examples, and small sample correction (Hedges' g). Convert d to U3, probability, or NNT."
+category: data-analysis
+primaryKeyword: "cohen's d"
+keywords:
+  - cohen's d
+  - cohen's d formula
+  - cohen's d calculation
+  - cohen's d interpretation
+  - hedges' g
+related:
+  - box-cox-transformation
+  - confidence-interval-vs-prediction-interval
+  - confidence-level-vs-significance-level
+phase: 1
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Cohen's d is the standardized mean difference between two groups: it reports how many pooled standard deviations separate two means. A d of 0.5 means the groups sit half a standard deviation apart, regardless of the original units. That number only becomes meaningful once you account for your field's typical effect sizes, your sample size, and whether the normality and equal-variance assumptions behind it actually hold.
+
+<KeyTakeaways rows={[
+  { point: 'What it measures', details: "Cohen's d expresses a difference between two means in pooled standard deviation units, making it comparable across studies that used different scales." },
+  { point: 'Match the formula to the design', details: 'Independent groups use a pooled SD; paired designs use the SD of the difference scores; a reported t and n can substitute for raw means.' },
+  { point: 'Correct for small samples', details: "Hedges' g multiplies d by a correction factor J and should replace d whenever either group has fewer than about 20 observations." },
+  { point: 'Report uncertainty, not just d', details: "A 95% confidence interval built from d's standard error shows how much the finding could vary; a wide CI on a large d is still an uncertain result." },
+]} />
+
+## What Is Cohen's D? Formula, Notation, and Variants
+
+Cohen's d strips away the original measurement units (dollars, points, milliseconds) and expresses a difference in a universal currency: standard deviation units. That is what makes it comparable across studies that measured completely different things.
+
+For two independent groups, the canonical formula is:
+
+**d = (M₁ − M₂) / SD_pooled**
+
+Here M₁ and M₂ are the sample means, and SD_pooled is the pooled standard deviation, a weighted average of the two groups' variability. The pooled SD formula is:
+
+**SD_pooled = √[((n₁ − 1)SD₁² + (n₂ − 1)SD₂²) / (n₁ + n₂ − 2)]**
+
+Each group's variance gets weighted by its degrees of freedom (n − 1), so a larger sample contributes more to the pooled estimate. This matters when your two groups have very different sizes; a naive average of the two SDs would give equal weight to a group of 200 and a group of 20, which distorts the result.
+
+Cohen's d shows up in a few related forms depending on your design:
+
+1. **Independent-groups d** (shown above) compares two separate samples, like a treatment group and a control group.
+2. **One-sample d** compares a single sample mean to a known or hypothesized value: d = (M − μ) / SD, using the sample's own standard deviation.
+3. **Paired-samples d** (sometimes called d_z) uses the standard deviation of the difference scores rather than a pooled SD: d = M_diff / SD_diff, where M_diff is the mean of the paired differences.
+4. **d from a reported t statistic**, useful when a paper gives you t and n but not raw means: for independent groups, d = t × √(1/n₁ + 1/n₂); for a paired or one-sample design, d = t / √n.
+
+<DataTable
+  caption="Cohen's d formula by study design"
+  headers={['Design', 'Formula', 'When to use']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Independent groups', 'd = (M₁ − M₂) / SD_pooled', 'Comparing two separate samples, such as a treatment group and a control group.'],
+    ['One-sample', 'd = (M − μ) / SD', 'Comparing a single sample mean to a known or hypothesized value.'],
+    ['Paired samples (d_z)', 'd = M_diff / SD_diff', 'Before/after or matched-pairs designs, using the SD of the difference scores.'],
+    ['From a reported t (independent)', 'd = t × √(1/n₁ + 1/n₂)', 'A source reports t and n but not the raw means, independent-groups design.'],
+    ['From a reported t (paired/one-sample)', 'd = t / √n', 'A source reports t and n but not the raw means, paired or one-sample design.'],
+  ]}
+/>
+
+On direction and sign: decide up front which group is "first" (M₁) and keep that convention consistent across every comparison in your paper. A positive d typically means the first group scored higher; a negative d means the reverse. Sign flips are a common source of confusion when readers compare your effect sizes to earlier studies, so state the direction explicitly in your write-up rather than assuming the reader will infer it. Statohub's <Link to={routes.article('effect-size')}>broader guide to effect size</Link> walks through how d relates to other standardized measures if you need that context before diving into the arithmetic.
+
+## Calculating Cohen's D Step by Step
+
+Computing d by hand is mostly bookkeeping. Follow this sequence for an independent-groups design:
+
+1. Collect each group's mean, standard deviation, and sample size (M₁, SD₁, n₁ and M₂, SD₂, n₂).
+2. Compute the pooled variance using the formula above, weighting each group's variance by its degrees of freedom (n − 1).
+3. Take the square root of the pooled variance to get SD_pooled.
+4. Subtract the second mean from the first: M₁ − M₂.
+5. Divide that difference by SD_pooled to get d.
+
+For a paired design, skip the pooling step entirely. Calculate the difference score for each pair, find the mean and standard deviation of those differences, then divide the mean difference by the SD of the differences.
+
+If you only have a t statistic and sample sizes, the conversion formulas from the [Campbell Collaboration's effect size equations](https://www.campbellcollaboration.org/calculator/equations) let you skip straight to d without the raw means at all.
+
+A few places where hand calculations go wrong:
+
+- Using n instead of n − 1 in the pooled variance formula, which slightly understates variability.
+- Mixing up which SD belongs to which sample, especially when copying numbers from a summary table.
+- Rounding intermediate steps too aggressively. Carry at least four decimal places until the final answer.
+- Forgetting to check whether a reported "SD" is actually a standard error, which will inflate d dramatically if used by mistake.
+
+<Callout variant="tip" title="Pro tip">
+Compute the pooled SD twice, once by hand and once by plugging the same n's and SDs into a calculator. A mismatch almost always traces back to a degrees-of-freedom or rounding slip, not a formula error.
+</Callout>
+
+The <Link to={routes.calculatorsHub()}>Statohub calculators</Link> take means, standard deviations, and sample sizes as inputs and return d, Hedges' g, the standard error, a 95% confidence interval, and common conversions like U3 and probability of superiority, so you can check your hand calculation against a clean second source before you write it into a report.
+
+## Hedges' G and Confidence Intervals for Cohen's D
+
+Cohen's d has a small upward bias in small samples, which means it tends to overstate the true population effect when your groups are small. Hedges' g corrects for that bias with a straightforward adjustment.
+
+The correction factor J is applied directly to d:
+
+**g = d × J**, where **J ≈ 1 − 3 / (4(n₁ + n₂) − 9)**
+
+J is always slightly less than 1, so g is always slightly smaller than d. The Campbell Collaboration's calculator documentation lays out this correction alongside the variance and standard error formulas researchers use for meta-analysis. As a practical rule, when either group has fewer than about 20 observations, [report Hedges' g rather than d](https://pmc.ncbi.nlm.nih.gov/articles/PMC6736231/); once both groups reach 20 or more, d and g converge closely enough that the distinction rarely changes your conclusion.
+
+Reporting a point estimate without its uncertainty tells only half the story, though. Here's how to get there:
+
+1. Compute the approximate variance of d using the sample sizes: Var(d) ≈ (n₁ + n₂) / (n₁ × n₂) + d² / (2(n₁ + n₂)).
+2. Take the square root of that variance to get the standard error, SE(d).
+3. Build an approximate 95% confidence interval as d ± 1.96 × SE(d).
+4. For Hedges' g, apply the same correction factor J to the variance before taking the square root.
+
+That normal-approximation CI is convenient but not always accurate in small samples. Exact confidence intervals built from the noncentral t distribution, or bootstrap intervals, tend to perform better when sample sizes are small, so treat the normal-approximation formula as a reasonable default rather than the final word when n is under 20 per group. Statohub's <Link to={routes.calculator('confidence-interval')}>confidence interval guide</Link> walks through the general logic of building and reading a 95% CI if this is your first time constructing one by hand. A wide confidence interval, one that spans from a negligible effect to a large one, often tells you more about the reliability of your finding than the point estimate does on its own.
+
+## How to Interpret Cohen's D: Benchmarks That Depend on Context
+
+Jacob Cohen's original benchmarks commonly treat d values around 0.2 as small, around 0.5 as medium, and around 0.8 as large. Cohen proposed these as flexible conventions rather than fixed cutoffs, meant to give researchers a rough sense of scale when no better reference existed, not a rulebook to apply blindly.
+
+<DataTable
+  caption="Cohen's original small/medium/large benchmarks"
+  headers={['Label', "Cohen's d", 'Note']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Small', '≈ 0.2', "Cohen's own flexible convention, not a fixed cutoff."],
+    ['Medium', '≈ 0.5', 'A moderate, visually noticeable difference between groups.'],
+    ['Large', '≈ 0.8', 'A substantial separation between the two group distributions.'],
+  ]}
+/>
+
+That distinction gets lost constantly. A d of 0.4 in a field where published effects routinely land above 0.6 is a weak result. The same d of 0.4 in a field where most effects hover around 0.15 is unusually strong. Some working patterns by field:
+
+- Social psychology experiments often produce effects in the 0.2 to 0.4 range, so even "small" d values can represent real, replicable findings.
+- Educational interventions frequently report d around 0.3 to 0.5 for a semester-long program, given how many other factors influence learning outcomes.
+- Clinical trials for well-established treatments sometimes show d above 1.0 for physiological outcomes, though behavioral and psychological outcomes in medicine tend to run smaller.
+- Cognitive psychology tasks measured in milliseconds can produce very large d values (1.0+) because the outcome is tightly controlled and measurement noise is low.
+
+<Figure number={1} caption="Typical Cohen's d magnitudes vary by field — the same d value can be small in one literature and large in another.">
+  <AnnotatedChart
+    title="Typical Cohen's d by field"
+    desc="Bar chart of typical Cohen's d ranges across four research fields: social psychology 0.2 to 0.4, educational interventions 0.3 to 0.5, clinical physiological outcomes 1.0 or higher, and cognitive task studies 1.0 or higher."
+    type="bar"
+    xLabel="Field"
+    yLabel="Cohen's d"
+    points={[
+      { label: 'Social psychology', value: 0.4, annotation: '0.2–0.4' },
+      { label: 'Educational interventions', value: 0.5, annotation: '0.3–0.5' },
+      { label: 'Clinical (physiological)', value: 1.0, annotation: '1.0+' },
+      { label: 'Cognitive task studies', value: 1.0, annotation: '1.0+' },
+    ]}
+  />
+</Figure>
+
+The safer approach is comparing your d to a meta-analytic baseline or a distribution of published effects in your specific subfield rather than using Cohen's generic labels. When you report a result, a sentence like "the intervention produced a medium-to-large effect (d = 0.62, 95% CI [0.31, 0.93]), consistent with prior meta-analyses in this area" provides more context than simply writing "d = 0.62 (medium effect)." The first version tells the reader you checked your result against the literature; the second just applies a label.
+
+## Assumptions Behind Cohen's D and What to Do When They Break
+
+Cohen's d assumes your data come from roughly normal distributions with similar variances in each group. Those two conditions, normality and homoscedasticity (equal variances), are what let d translate cleanly into intuitive metrics like percentage overlap between distributions.
+
+When either assumption breaks down, the math still produces a number, but that number stops meaning what you think it means. Distribution overlap and probability-of-superiority conversions drift the furthest from their usual interpretation when distributions are skewed or when one group's variance dwarfs the other's, since the SD_pooled figure ends up describing a "typical" spread that neither group actually has.
+
+Check these before trusting your d at face value:
+
+- Plot both groups' distributions (histograms or a simple boxplot comparison) rather than relying on summary statistics alone.
+- Run a Levene's test or Brown-Forsythe test to check whether the variance assumption holds; a significant result flags trouble.
+- Look for skew or heavy tails, particularly in small samples where a single outlier can shift the mean noticeably.
+- If either check fails, do not abandon d outright, but pair it with a robustness check.
+
+<Callout variant="tip" title="Pro tip">
+When variances differ by more than roughly a factor of two between groups, report the common-language effect size or a rank-based measure like the probability of superiority alongside d, not instead of it. Readers get the standardized comparison they expect plus a number that does not depend on the pooled-variance assumption.
+</Callout>
+
+Rank-based alternatives, including stochastic dominance measures and the common-language effect size, sidestep the normality requirement entirely because they compare individual observations across groups rather than summarizing each group into a single mean and SD. Reporting both d and one of these alternatives costs you a sentence but buys real transparency about how much your conclusion depends on distributional assumptions.
+
+## Converting Cohen's D Into Plain-English Numbers
+
+A raw d value means little to a reader outside statistics. Converting it into overlap or superiority metrics translates the same information into something intuitive.
+
+**U3** answers "what percentage of the control group falls below the average person in the treatment group?" It is calculated as Φ(d), the cumulative standard normal distribution evaluated at d. **Probability of superiority** (also called the common-language effect size, CL) answers a related question: if you picked one person at random from each group, what is the probability the treatment-group person scores higher? It equals Φ(d / √2). **Overlap (OVL)** describes the percentage of the two distributions that overlap directly, and shrinks as d grows.
+
+<DataTable
+  caption="Converting Cohen's d into overlap and superiority metrics"
+  headers={['Metric', 'Formula', 'Question it answers']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['U3', 'Φ(d)', 'What percentage of the control group falls below the average person in the treatment group?'],
+    ['Probability of superiority (CL)', 'Φ(d / √2)', 'If you pick one person at random from each group, what is the probability the treatment-group person scores higher?'],
+    ['Overlap (OVL)', 'Shrinks as d grows', 'What percentage of the two distributions overlap directly?'],
+  ]}
+/>
+
+These conversions, along with visual explanations of what each one looks like on overlapping bell curves, are laid out clearly on [R Psychologist's interactive Cohen's d visualizer](https://rpsychologist.com/cohend/), which is worth bookmarking for classroom use.
+
+Converting to **number needed to treat (NNT)** or a **log odds ratio** requires one more piece of information: the control group's baseline event rate, since a standardized mean difference does not by itself tell you how a continuous effect translates into a binary outcome. The Campbell Collaboration's conversion equations provide the logit-based approximation most commonly used for this step. As an example, a d of 0.5 with a control event rate near [50%](https://www.cebm.ox.ac.uk/resources/ebm-tools/number-needed-to-treat-nnt) corresponds to an NNT in the range of 6 to 7, meaning roughly one additional favorable outcome for every 6 to 7 people who receive the treatment instead of the control.
+
+## Worked Examples: Independent Groups and Paired Data
+
+**Independent-samples example.** A study compares test scores for two teaching methods. Group A (n₁ = 25) has a mean of 82 with SD₁ = 8. Group B (n₂ = 25) has a mean of 76 with SD₂ = 9.
+
+1. Pooled variance: ((24 × 64) + (24 × 81)) / 48 = 72.5
+2. SD_pooled = √72.5 = 8.52
+3. d = (82 − 76) / 8.52 = 0.70
+4. Correction factor J ≈ 1 − 3/(4×50 − 9) = 0.984
+5. Hedges' g = 0.70 × 0.984 = 0.69
+6. SE(d) ≈ √[(50/625) + (0.49/100)] = 0.30
+7. 95% CI: 0.70 ± (1.96 × 0.30) = [0.11, 1.29]
+
+Reporting sentence: "Group A outperformed Group B with a medium-to-large effect, d = 0.70, [95%](https://metricgate.com/blogs/how-to-report-effect-sizes/) CI [0.11, 1.29]."
+
+**Paired-samples example.** Ten participants complete a task before and after training. The mean of their difference scores (after minus before) is 4.2, with a standard deviation of the differences of 5.0.
+
+- d_z = 4.2 / 5.0 = 0.84
+- With such a small n, Hedges' g correction matters more here than in the independent-samples case above.
+- SE and CI follow the one-sample formulas, substituting n = 10 for the paired sample size.
+
+Paste either example's raw inputs, means, SDs, and sample sizes, into the Statohub calculators to confirm the arithmetic and get the CI and conversions without redoing the algebra by hand.
+
+## Reporting Cohen's D Correctly in a Paper
+
+A results section should give the reader everything needed to recompute your effect size independently. That means reporting the means, standard deviations, and sample sizes for each group, the value of d with its sign, Hedges' g when your sample is small, the standard error or [95%](https://www.editage.com/blog/effect-size/) confidence interval, and the accompanying test statistic and p-value.
+
+A usable template: "Participants in the treatment condition (M = 82.0, SD = 8.0, n = 25) scored higher than the control condition (M = 76.0, SD = 9.0, n = 25), t(48) = 2.47, p = .017, d = 0.70, 95% CI [0.11, 1.29]."
+
+- Never claim practical importance from d alone; a large d in a low-stakes outcome can matter less than a small d in a high-stakes one.
+- Do not drop the confidence interval just because the point estimate looks impressive; a wide CI on a "large" d is still an uncertain finding.
+- State the direction of the effect explicitly rather than assuming readers will infer it from the sign.
+
+<Callout variant="tip" title="Pro tip">
+If a reviewer or reader can't recompute your d from the numbers in your table, your reporting is incomplete, regardless of how clean the write-up sounds.
+</Callout>
+
+## Key Takeaways on Cohen's D
+
+Cohen's d converts a raw mean difference into standard deviation units, giving you a comparable effect size across studies and measurement scales. Before you report one, run through this short checklist:
+
+<Checklist
+  id="report-cohens-d-checklist"
+  title="Before you report Cohen's d"
+  style="check"
+  items={[
+    { text: 'Match the formula to your design', detail: 'Independent-groups pooled SD, paired difference scores, or a t-based conversion.' },
+    { text: 'Check normality and equal variances', detail: 'Before leaning on overlap-based interpretations like U3 or probability of superiority.' },
+    { text: 'Report the standard error and 95% confidence interval', detail: 'Not just the point estimate.' },
+    { text: "Switch to Hedges' g", detail: 'Whenever either group has fewer than about 20 observations.' },
+    { text: 'Translate d for non-statisticians', detail: 'Use U3 or probability of superiority to make the number concrete.' },
+  ]}
+/>
+
+Statohub's <Link to={routes.learnLanding()}>Learn</Link> hub and calculators cover each of these steps in more depth if you want to practice on your own data.
+
+## Why We Teach Cohen's D This Way
+
+Most explanations of Cohen's d stop at the formula and the 0.2/0.5/0.8 labels, which leaves readers able to compute a number but not confident about what to do with it. That gap, between calculation and judgment, is where most misreporting happens: a d of 0.3 gets called "small" in a write-up when the surrounding literature would call it meaningful, simply because nobody checked.
+
+Statohub builds its guides around formulas paired with calculators and reporting templates for a reason. Working through a calculation by hand teaches you where the numbers come from; running the same inputs through a calculator confirms you didn't drop a degree of freedom somewhere along the way. Conversions like U3 and probability of superiority matter for the same reason worked examples matter: they force an abstract standardized number back into something concrete enough to explain to a committee, a client, or a co-author who has never heard of a pooled standard deviation.
+
+Try your own numbers in the calculators below before you commit them to a paper.
+
+## Compute Cohen's D, Hedges' G, and CIs Without the Manual Arithmetic
+
+Hand-calculating pooled standard deviations and correction factors is good practice once, but doing it every time you analyze a new dataset invites the kind of small rounding errors that quietly distort a reported effect size. The Statohub calculators take your raw means, standard deviations, and sample sizes and return d, Hedges' g, the standard error, a 95% confidence interval, and conversions like U3 and probability of superiority in one pass, so you spend your time interpreting the result instead of re-deriving it.
+
+If you want the underlying theory before you calculate, the Learn hub covers the statistical reasoning behind standardized effect sizes, and the <Link to={routes.appliedLanding()}>Applied Statistics</Link> section shows how researchers use effect sizes to make real decisions from real datasets. Open a calculator, enter the numbers from your own study, and check your reported d against the confidence interval it returns before you write your results section.
+
+## Sources
+
+For deeper reading beyond this guide, the PMC review on interpreting Cohen's d covers benchmark guidance in more detail, while the analysis of standardized mean differences under non-normal or heteroscedastic conditions explains when overlap-based interpretations break down. The Campbell Collaboration's equations page documents the formulas for pooled SD, Hedges' g, and conversions referenced throughout this guide, and R Psychologist's visualizer offers an interactive way to see what different d values look like graphically. Statohub's own <Link to={routes.article('effect-size')}>effect size guide</Link> and <Link to={routes.calculatorsHub()}>calculators</Link> round out the practical side of this topic.
+
+<Sources items={[
+  { text: "Effect Size Guidelines, Sample Size Calculations, and Statistical Power in Gerontology (PMC)", href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6736231/' },
+  { text: 'Sullivan, G. M. & Feinn, R. — "Using Effect Size—or Why the P Value Is Not Enough"', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3444174/', org: 'Journal of Graduate Medical Education / PMC' },
+  { text: 'Effect Size Calculator – Campbell Collaboration (equations and formulas)', href: 'https://www.campbellcollaboration.org/calculator/equations' },
+  { text: 'Levene Test for Equality of Variances', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35a.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: 'Cohen, J. — Statistical Power Analysis for the Behavioral Sciences (2nd ed.)', href: 'https://www.routledge.com/Statistical-Power-Analysis-for-the-Behavioral-Sciences/Cohen/p/book/9780805802832', org: 'Routledge' },
+  { text: "Interpreting Cohen's d | R Psychologist", href: 'https://rpsychologist.com/cohend/' },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('effect-size')}>Effect Size: What It Means & How to Interpret It</Link>
+- <Link to={routes.article('post-hoc-tests')}>Post-Hoc Tests: Tukey, Bonferroni & When to Use Them</Link>
+- <Link to={routes.calculator('t-test')}>T-Test Calculator</Link>
+- <Link to={routes.article('pearson-correlation-coefficient')}>Pearson Correlation Coefficient: Formula, Covariance & Spearman</Link>
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: "What is Cohen's d?",
+    answer: "Cohen's d is the standardized mean difference between two groups: it reports how many pooled standard deviations separate two means. A d of 0.5 means the groups sit half a standard deviation apart, regardless of the original measurement units, which makes it comparable across studies that measured different things.",
+  },
+  {
+    question: "How do I interpret a Cohen's d value?",
+    answer: "Cohen's original convention treats d around 0.2 as small, 0.5 as medium, and 0.8 as large, but these are flexible guidelines, not fixed cutoffs. The safer approach is comparing your d to a meta-analytic baseline or the distribution of published effects in your specific subfield, since a d of 0.4 can be weak in one literature and unusually strong in another.",
+  },
+  {
+    question: "When should I use Hedges' g instead of Cohen's d?",
+    answer: "Cohen's d has a small upward bias in small samples. When either group has fewer than about 20 observations, report Hedges' g, which multiplies d by a correction factor J that is always slightly less than 1. Once both groups reach 20 or more, d and g converge closely enough that the distinction rarely changes your conclusion.",
+  },
+  {
+    question: "What if my data isn't normally distributed or the two groups have unequal variances?",
+    answer: "Plot both groups' distributions instead of relying on summary statistics alone, and run a Levene's or Brown-Forsythe test to check the variance assumption. If either check fails, don't abandon d outright — pair it with a rank-based measure, such as the common-language effect size, which sidesteps the normality requirement entirely.",
+  },
+  {
+    question: "How do I convert Cohen's d into a probability or number needed to treat?",
+    answer: "U3 (Φ(d)) and probability of superiority (Φ(d / √2)) translate d into overlap and superiority questions a non-statistician can grasp. Converting to number needed to treat or a log odds ratio requires one more input — the control group's baseline event rate — since a standardized mean difference alone doesn't specify how a continuous effect maps onto a binary outcome.",
+  },
+]} />

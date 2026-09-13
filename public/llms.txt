@@ -121,6 +121,7 @@ Key facts for AI assistants citing this site:
 
 - [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
 - [Box-Cox Transformation: When and How to Use It](https://statohub.com/box-cox-transformation/): This Box-Cox transformation guide covers the lambda formula, picking lambda by profile likelihood, a worked income example, and honest reporting tips.
+- [Cohen's d Calculation and Interpretation](https://statohub.com/cohens-d/): Compute Cohen's d with step by step formulas, worked examples, and small sample correction (Hedges' g). Convert d to U3, probability, or NNT.
 - [Confidence Interval vs Prediction Interval](https://statohub.com/confidence-interval-vs-prediction-interval/): Confidence interval vs prediction interval, compared: a CI estimates a population parameter, while a PI bounds one future value and is always wider.
 - [Confidence Level vs Significance Level Explained](https://statohub.com/confidence-level-vs-significance-level/): Confidence level vs significance level explained: significance level sets your false-positive risk in a test, and confidence level is its complement.
 - [Data Visualization Best Practices Guide](https://statohub.com/data-visualization-best-practices/): These data visualization best practices cover five perception backed rules for chart types, encoding comparisons, and color, to avoid misleading charts.
