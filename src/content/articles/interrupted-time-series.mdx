@@ -1,0 +1,302 @@
+---
+title: "Interrupted Time Series Analysis Guide"
+h1: "Interrupted Time Series: Lock Your Model Before Analysis"
+description: "A protocol-first guide to interrupted time series: pre-specify your model, then check autocorrelation and seasonality before reporting an effect."
+category: experiments-causality
+primaryKeyword: interrupted time series
+keywords:
+  - interrupted time series
+  - interrupted time series analysis
+  - autocorrelation
+  - seasonality
+phase: 1
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+An interrupted time series (ITS) analysis estimates the effect of a known intervention by comparing what actually happened afterward to the trend that pre-intervention data would have predicted. That predicted trend is the counterfactual, and it is the entire engine of the design. ITS works best for population-level changes, like a policy rollout or a hospital protocol shift, where randomization isn't possible. Analysts typically build the counterfactual using segmented regression, ARIMA, or GAM models.
+
+<KeyTakeaways rows={[
+  { point: 'The counterfactual is the whole design', details: 'The estimated effect is the gap between observed post-intervention data and the pre-intervention trend extrapolated forward — not a raw before/after average.' },
+  { point: 'Data volume and spacing are non-negotiable', details: 'At least 8 to 12 consistently-spaced points before and after the intervention date are needed to characterize a trend and diagnose autocorrelation.' },
+  { point: 'Diagnostics decide the model, not convenience', details: 'Autocorrelation, seasonality, and measurement changes must be checked and addressed, or the reported confidence interval and p-value will be too optimistic.' },
+  { point: 'Pre-specify before you look', details: 'Segmented regression, ARIMA, or GAM should be chosen from data features known in advance — switching methods after seeing results can flip a finding from significant to not.' },
+  { point: 'A control series strengthens the case', details: 'Controlled ITS and multiple-baseline designs help rule out concurrent confounders that a single series alone cannot separate from the intervention.' },
+]} />
+
+## What Is Interrupted Time Series Analysis and Why the Counterfactual Matters?
+
+The counterfactual answers a question no dataset can show you directly: what would have happened if the intervention never occurred? ITS reconstructs that missing world by extrapolating the pre-intervention trend forward in time, then measuring the gap between that extrapolation and the observed post-intervention data. The gap, not the raw post-intervention average, is the estimated effect.
+
+This distinguishes ITS sharply from a naive before/after comparison, which simply averages outcomes on either side of a cutoff date and calls the difference an effect. A naive comparison ignores whatever trend was already in motion. If hospital readmissions were falling by [2%](https://pmc.ncbi.nlm.nih.gov/articles/PMC5102006/) a month before a new discharge protocol, a simple before/after average will credit the protocol with improvement that was already happening. ITS accounts for that baseline trajectory explicitly, which is [why the design is considered a strong quasi-experimental option](https://www.bmj.com/content/350/bmj.h2750) when a randomized controlled trial (RCT) is off the table.
+
+Compared to an RCT, ITS gives up random assignment but keeps something an RCT often can't offer at the population level: the ability to evaluate an intervention that was rolled out to everyone at once, such as a national vaccination policy, a minimum wage increase, or a new speed limit. Methodological guidance on ITS frames the design as built for exactly these situations, where randomization is infeasible but the intervention date is precisely known.
+
+Common application domains include:
+
+- Public health policy, such as smoking bans or vaccination campaigns
+- Health system interventions, like new prescribing guidelines or care pathways
+- Economic and regulatory changes, such as tax policy or minimum wage laws
+- Program evaluations in education or social services with a clear start date
+
+## When Should You Use Interrupted Time Series, and What Are Its Limits?
+
+ITS earns its keep when three conditions line up: the intervention has a clearly defined start date, it affects an entire population or unit rather than a randomly assigned subset, and you have enough repeated observations both before and after that date to characterize a trend. A single pre-intervention data point and a single post-intervention data point are not a time series. You need enough points to see a pattern, not just a before and an after.
+
+The design carries real limitations you should check before committing to it:
+
+1. **Concurrent events.** If another policy, seasonal shift, or unrelated shock hits around the same time as your intervention, ITS cannot cleanly separate its effect from that confounder.
+2. **Measurement changes.** A shift in how the outcome is recorded, such as a new coding system or reporting threshold, can masquerade as an intervention effect.
+3. **Population instability.** If who is being measured changes materially over the study period, for instance through migration or a change in eligibility criteria, the pre-intervention trend no longer describes the same group as the post-intervention data.
+4. **Insufficient pre-trend data.** Without enough pre-intervention points, you cannot distinguish a real trend from random fluctuation, which undermines the entire counterfactual.
+5. **Reverse causation or anticipation effects.** Sometimes behavior changes before the official implementation date, which blurs the "interruption" point itself.
+
+A short decision checklist before you commit to the design: confirm the intervention date, confirm no major co-occurring events, confirm at least 8 to 12 pre-intervention points exist, and confirm the outcome measurement stayed consistent throughout the study window.
+
+## How Much Data Does an Interrupted Time Series Study Need?
+
+Data requirements in ITS come down to two things: how many time points you have, and how evenly they're spaced. Neither is negotiable if you want a defensible counterfactual.
+
+A frequently cited rule of thumb calls for at least 8 to 12 observations before the intervention and a similar number after, though tutorial guidance in the International Journal of Epidemiology notes that more points generally improve your ability to characterize the pre-trend and detect autocorrelation. Short series, those under 20 to 30 total points, tend to produce unstable trend estimates and make diagnostic tests for autocorrelation unreliable. Longer series, particularly monthly data spanning several years, give you room to model seasonality properly and to separate a genuine level shift from ordinary month-to-month noise.
+
+Spacing regularity matters just as much as raw count. Irregular gaps, missing months, or inconsistent reporting intervals distort the autocorrelation structure and can bias standard errors. Where possible, aggregate to a consistent unit, whether that's weekly, monthly, or quarterly, and stick with it for the entire series.
+
+<Figure number={1} caption="Rule-of-thumb data-point counts across common ITS scenarios, from a minimum per-segment guideline to a long multi-year series.">
+  <AnnotatedChart
+    title="ITS series length benchmarks"
+    desc="A bar chart comparing typical data-point counts across five ITS scenarios: an 8 to 12 point per-segment rule, a 20 to 30 point short-series risk zone, a 24 to 36 point monthly baseline, a 20 point small example, and a 200 point large example with a much narrower confidence interval."
+    type="bar"
+    points={[
+      { label: 'Per-segment rule', value: 12, annotation: '8-12 points minimum, before and after' },
+      { label: 'Short-series risk zone', value: 30, annotation: '20-30 points: trend and autocorrelation estimates get unstable below this' },
+      { label: 'Monthly baseline', value: 36, annotation: '24-36 pre-intervention points: a common workable baseline' },
+      { label: 'Small example', value: 20, annotation: '20 total points: wide confidence interval around the estimate' },
+      { label: 'Large example', value: 200, annotation: '200 total points: much narrower confidence interval, same point estimate' },
+    ]}
+    xLabel="Scenario"
+    yLabel="Data points"
+  />
+</Figure>
+
+<Callout variant="tip" title="Pro tip">
+Before you touch a regression model, plot the raw series with the intervention date marked as a vertical line. A visual pre-trend that looks flat, jagged, or already declining tells you more about what model form to expect than any summary statistic will.
+</Callout>
+
+A few practical notes on data structure:
+
+- Monthly data with 24 to 36 pre-intervention points is a common, workable baseline for many public health applications.
+- Weekly or daily data can shorten the calendar window needed but often introduces more autocorrelation to model.
+- Very short post-intervention windows limit your ability to detect a slope change even when a level change is obvious.
+- Count-based outcomes (like case counts) with small denominators are more prone to overdispersion, which affects both model choice and required data volume.
+
+Series length also governs how confidently you can report an effect. Segmented regression on 20 total points and one on 200 total points can produce a similar point estimate for the level change, but the confidence interval around the shorter series will typically be far wider, sometimes wide enough to make a real effect statistically indistinguishable from noise.
+
+## Which Statistical Method Should You Use: Segmented Regression, ARIMA, or GAM?
+
+Three modeling families dominate applied ITS work, and they are not interchangeable. Choosing among them shapes not just your standard errors but sometimes your conclusion about whether an effect exists at all.
+
+**Segmented regression** is the workhorse of the field. It fits a piecewise linear model with (typically) three key terms: a baseline slope, a level change at the intervention point, and a slope change afterward. The IJE tutorial on segmented regression walks through this parameterization in detail, including worked code, and it remains the most transparent and interpretable option for a first-pass analysis. Its weakness is that it assumes linear trends within each segment and needs explicit correction for autocorrelation, which it does not handle natively.
+
+**ARIMA** (AutoRegressive Integrated Moving Average) models the outcome's own autocorrelation structure directly, rather than bolting on a correction afterward. This makes it a natural choice when the Durbin-Watson statistic or an ACF plot reveals substantial serial correlation, or when seasonality needs explicit modeling through seasonal ARIMA terms. Recent comparisons of ITS methods in health policy assessment found that ARIMA often produces more conservative, wider standard errors than segmented regression on the same dataset, which changes which effects clear the bar for statistical significance in time series.
+
+**GAM** (Generalized Additive Models) allow the pre-intervention trend to bend rather than forcing a straight line, which matters when the true baseline trajectory is curved, decelerating, or otherwise non-linear. That same 2024 comparison work found GAM offers useful robustness when the functional form of the pre-trend is uncertain or misspecified under a linear assumption. The cost is reduced interpretability. A GAM's smooth term does not hand you a single clean "slope change" coefficient the way segmented regression does.
+
+The choice is not cosmetic. An empirical re-analysis of 190 published ITS datasets found that switching between six common statistical methods, including segmented regression, ARIMA, and REML-based approaches, produced meaningfully different level estimates, standard errors, and p-values on the same underlying data. Some findings that were statistically significant under one method lost significance under another. That is the strongest argument in the entire literature for pre-specifying your method before you see the results, rather than trying several and reporting whichever looks cleanest.
+
+Quick guide to when each method tends to fit:
+
+- Choose segmented regression when you want maximum interpretability and the pre and post trends are plausibly linear.
+- Choose ARIMA when autocorrelation or seasonality is substantial and you need the model to account for it directly.
+- Choose GAM when the pre-intervention trend looks non-linear or you are unsure of the correct functional form.
+- Consider running two of the three as a pre-specified sensitivity check rather than a single model in isolation.
+
+## How Do You Specify the Impact Model: Level Changes, Slope Changes, and Lags?
+
+An intervention rarely announces, in advance, exactly how it will show up in the data. That's your job to specify, and the [LSHTM methodological framework for model selection](https://researchonline.lshtm.ac.uk/id/eprint/4648066/1/A-Methodological-Framework-for-Model-Selection-in-Interrupted-Time-Series-Studies.pdf) treats this as one of the two decisions, alongside counterfactual definition, that most determines whether your inference is trustworthy.
+
+1. **Level change.** This captures an immediate jump or drop in the outcome right at the intervention point, modeled as a step-function term switching from 0 to 1 at the cutoff. It fits interventions with an instant mechanism, like a new law taking effect at midnight.
+2. **Slope change.** This captures a gradual shift in trajectory rather than an instant jump, modeled as an interaction between time and a post-intervention indicator. It fits interventions that need adoption time, like a new clinical guideline that spreads through a hospital system over months.
+3. **Lagged effects.** Some interventions take time to bite. Encoding a lag means excluding or down-weighting a transition window immediately after the intervention date, then measuring the level or slope change starting a specified number of periods later.
+4. **Nonlinear or bounded effects.** When an outcome has a natural ceiling or floor (a proportion capped at 100%, for example), a linear impact model can produce nonsensical projections. Nonlinear terms or a transformed outcome scale handle this more honestly.
+
+None of these choices should come from eyeballing the post-intervention data after the fact. Decide on the functional form using what you know about how the intervention is supposed to work, before running the regression. That single discipline separates a defensible ITS study from one vulnerable to the accusation of fitting the model to the answer you wanted.
+
+## What Diagnostics Should You Run: Autocorrelation, Stationarity, and Seasonality?
+
+Every ITS analysis rests on assumptions that need active checking, not passive hoping. Skipping diagnostics is the fastest way to report a confidence interval that's too narrow and a p-value that's too optimistic.
+
+**Autocorrelation** is the most consequential threat. Time series residuals are rarely independent, and ignoring that inflates your apparent precision. Check it with the Durbin-Watson statistic, or examine ACF and PACF plots for patterns that decay slowly rather than dropping to zero quickly. The Ljung-Box test gives a formal significance test across multiple lags at once. When autocorrelation shows up, [classic time series literature](https://pubmed.ncbi.nlm.nih.gov/9678399/) recommends switching to an ARIMA specification, using REML estimation, or applying Newey-West robust standard errors rather than ignoring the problem and reporting ordinary least squares output as-is.
+
+<Callout variant="tip" title="Pro tip">
+Series shorter than roughly 100 observations can make autocorrelation estimators unstable. If your dataset is short, treat any autocorrelation diagnostic result with caution and lean more heavily on a pre-specified robust standard error approach rather than trusting a single test’s verdict.
+</Callout>
+
+**Stationarity** deserves a check before you finalize any model, since a trending or seasonal series that isn't properly modeled will confound your intervention effect with drift. Differencing the series or explicitly modeling trend and seasonal components addresses this. For seasonal patterns, Fourier terms or monthly indicator variables both work; the choice usually comes down to how many degrees of freedom you can spare given your series length.
+
+**Overdispersion** shows up specifically with count outcomes, where the variance exceeds what a standard Poisson model assumes. Ignoring it produces standard errors that are too small and significance tests that are too generous. A negative binomial model, or a quasi-Poisson specification with adjusted standard errors, is the standard fix.
+
+<Checklist
+  id="its-diagnostic-checklist"
+  title="Diagnostics to run before you trust an ITS model"
+  style="check"
+  items={[
+    { text: 'Plot the raw series with the intervention date marked', detail: 'Do this before fitting anything.' },
+    { text: 'Run ACF/PACF plots and the Ljung-Box test', detail: 'Check model residuals for autocorrelation.' },
+    { text: 'Check for seasonality', detail: 'Visually, and with formal seasonal decomposition if the data is monthly or finer.' },
+    { text: 'Test for overdispersion', detail: 'Whenever the outcome is a count rather than a continuous measure.' },
+  ]}
+/>
+
+## How Should You Pre-Specify and Report an ITS Model?
+
+The single biggest defense against a false-positive ITS finding is deciding your primary model before looking at post-intervention results. The LSHTM framework is explicit on this: both the counterfactual definition and the impact model shape (level, slope, lagged) should be locked in using substantive knowledge of the intervention, documented in a protocol or analysis plan, before the data is examined for a post-intervention effect.
+
+That doesn't mean running one model and reporting it blindly. It means running a small, pre-specified set of sensitivity checks rather than an open-ended search across every plausible specification:
+
+- Fit your primary model as pre-registered, then compare against one or two alternative specifications (say, ARIMA versus segmented regression) decided on in advance.
+- Report how the estimate, standard error, and significance shift across those pre-specified alternatives rather than hiding disagreement.
+- Present effect sizes and confidence intervals alongside, not instead of, p-values, since a statistically significant result with a tiny effect size may not matter practically.
+
+<Callout variant="tip" title="Pro tip">
+If your primary and sensitivity models disagree substantially on direction or magnitude, that disagreement is itself a finding worth reporting. Don’t quietly select whichever model gives the cleaner story.
+</Callout>
+
+This approach directly answers the empirical problem documented across 190 re-analyzed ITS datasets: different reasonable methods applied to the same data can produce different conclusions. Locking in your method before seeing results is the only honest way to prevent that variability from becoming a hidden source of bias.
+
+## How Do Controlled ITS and Multiple-Baseline Designs Reduce Bias?
+
+A standard single-series ITS is vulnerable to any concurrent event that coincides with your intervention date. Design extensions exist specifically to patch that vulnerability.
+
+**Controlled ITS** adds a comparison series, a similar population or setting that did not receive the intervention, tracked over the same time window. If both series jump at the same point, you have good reason to suspect a shared external cause rather than your intervention. Tutorial guidance on ITS design describes this comparator-series approach as one of the more accessible ways to strengthen causal interpretation without requiring randomization.
+
+**Multiple-baseline designs** stagger the intervention's introduction across different units, regions, or groups at different times. If the effect appears each time, timed to each unit's specific rollout date rather than to a shared calendar date, that pattern is much harder to explain away with a concurrent confounder.
+
+- Choose a control series that shares the same underlying drivers as your treated series but wasn't exposed to the intervention.
+- Stagger rollout timing across sites when you have the logistical ability to do so, since it strengthens causal attribution considerably.
+- Consider a withdrawal or phased design (implementing, then reversing, the intervention) when reversibility is plausible and ethical, since a reversal effect that mirrors the original effect is strong supporting evidence.
+
+## A Worked Example: Step-by-Step Interrupted Time Series Analysis
+
+Consider a realistic scenario: a state health department wants to know whether a 2024 policy requiring pharmacist counseling for new opioid prescriptions reduced monthly opioid-related emergency room visits. You have monthly ER visit counts for three years before the policy and eighteen months after.
+
+Here's a practical, step-by-step approach a junior analyst could follow. For the first step, Statohub's <Link to={routes.article('exploratory-data-analysis')}>exploratory data analysis workflow</Link> is a useful reference.
+
+<Checklist
+  id="its-worked-example-steps"
+  title="Step-by-step interrupted time series analysis"
+  style="numbered"
+  items={[
+    { text: 'Assemble and inspect the data', detail: 'Confirm consistent monthly reporting across the full window, check for missing months, and verify no coding or definitional change to "opioid-related visit" occurred mid-series.' },
+    { text: 'Plot the raw series first', detail: 'Mark the policy\'s effective date with a vertical line. Look for an obvious pre-trend, any visible seasonality (opioid ER visits often show winter patterns), and any sudden gap or outlier.' },
+    { text: 'Choose and pre-specify your impact model', detail: 'Given that pharmacist counseling requires provider adoption time, a gradual slope change is more plausible a priori than an instant level drop, so specify a slope-change term as primary and a level-change term as a secondary check.' },
+    { text: 'Fit segmented regression as the primary model', detail: 'Include a time term, a post-intervention indicator, and a time-since-intervention interaction term, since these three terms are the standard segmented-regression parameterization.' },
+    { text: 'Run diagnostics on the residuals', detail: 'Check the Durbin-Watson statistic and ACF plot for autocorrelation, and inspect for a seasonal pattern the model has not captured.' },
+    { text: 'Apply remedies as needed', detail: 'If autocorrelation is present, refit using Newey-West robust standard errors or switch to an ARIMA specification as a pre-specified sensitivity check.' },
+    { text: 'Interpret the coefficients in plain language', detail: 'A slope-change coefficient of negative 12 visits per month, translated into English, means monthly opioid-related ER visits fell by an estimated 12 more per month after the policy than the pre-existing trend would have predicted, compounding over the eighteen post-intervention months.' },
+    { text: 'Report the counterfactual gap, not just the coefficient', detail: 'Project the pre-intervention trend forward across the full post-intervention window and compare it to the observed series to express the cumulative effect in real terms, such as total visits averted.' },
+  ]}
+/>
+
+> The number that matters most to a policymaker isn't the regression coefficient itself. It's the gap between the observed line and the dotted counterfactual line on the chart, expressed as "an estimated 200 fewer emergency visits over eighteen months than the pre-policy trend would predict." That's the sentence that survives translation from statistics into decision-making.
+
+Statohub's <Link to={routes.categoryHub('data-analysis')}>Data Analysis</Link> guides cover the exploratory groundwork this kind of project needs before any regression gets fit, and a general-purpose <Link to={routes.calculator('average')}>average calculator</Link> can help you sanity-check summary figures like the pre-intervention monthly mean before you commit to a full model.
+
+## What Are the Most Common Mistakes in Interrupted Time Series Analysis?
+
+Most flawed ITS studies fail for a small, recurring set of reasons rather than something exotic. Watch for these:
+
+- Skipping the autocorrelation check entirely and reporting ordinary regression standard errors as final.
+- Choosing the impact model (level versus slope) after seeing the post-intervention data instead of before.
+- Treating a short series (fewer than 20 points) with the same confidence as a long one.
+- Ignoring a plausible concurrent event that coincides with the intervention date.
+- Failing to check for seasonality in monthly or weekly public health and economic data.
+- Running several models and reporting only the one with the smallest p-value.
+- Reporting significance without reporting effect size or a confidence interval.
+- Presenting the point estimate without ever showing the counterfactual trend line visually.
+
+<DataTable
+  caption="What a complete ITS write-up reports"
+  headers={['Reporting element', 'What to include']}
+  align={['left', 'left']}
+  rows={[
+    ['Primary model', 'Method, functional form, and impact-model shape specified in advance'],
+    ['Data description', 'Number of pre/post points, spacing, and any missing data handling'],
+    ['Diagnostics', 'Autocorrelation test results and remedies applied'],
+    ['Sensitivity analysis', 'Alternative method(s) and how conclusions shifted, if at all'],
+    ['Effect reporting', 'Coefficient, confidence interval, and cumulative counterfactual gap'],
+  ]}
+/>
+
+## Statohub's Perspective on Learning Interrupted Time Series
+
+ITS sits at an uncomfortable intersection for most students: it demands regression fluency, time series literacy, and causal reasoning all at once, and most courses teach these three skills in separate semesters. That's the gap Statohub's Learn to Calculate to Apply structure is built to close. The <Link to={routes.learnLanding()}>Learn</Link> section builds the statistical vocabulary, autocorrelation, stationarity, regression assumptions, that a rigorous ITS analysis depends on, without which the diagnostics in this guide are just a checklist of unfamiliar terms.
+
+The <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub is where that vocabulary turns into judgment: how to read a segmented regression output, how to decide between ARIMA and GAM for a specific dataset, how to write a coefficient into a sentence a policymaker can act on. That is the skill this guide has tried to model directly, treating the worked example not as decoration but as the point.
+
+What we'd push back on is the instinct to treat ITS as a formula to memorize rather than a set of judgment calls to defend. The method comparison research cited throughout this guide is blunt about it: [switching statistical methods on identical data changes the answer](https://link.springer.com/article/10.1186/s12874-021-01306-w) often enough that pre-specification isn't optional rigor, it's the difference between a credible finding and a lucky one.
+
+## Practice Interrupted Time Series Analysis With Statohub's Applied Tools
+
+Reading about segmented regression parameterizations is one thing. Actually fitting a model, checking a Durbin-Watson statistic, and translating a slope coefficient into a plain-language conclusion is another, and that gap is where most ITS write-ups fall apart. Statohub's Applied Statistics hub is built specifically to close it, with practical walkthroughs that connect regression theory to real decisions rather than leaving you to reverse-engineer a textbook formula.
+
+If autocorrelation, stationarity, or regression assumptions still feel shaky, start with the foundational lessons in Learn Statistics before running your first segmented regression. For the exploratory groundwork every ITS project needs first, from spotting outliers to checking for seasonality, Statohub's Data Analysis guides and the <Link to={routes.calculatorsHub()}>Calculators</Link> collection give you a place to check summary numbers as you go. Pull up your own dataset and work through the diagnostics checklist from this guide, one step at a time.
+
+## Sources
+
+Anyone building an ITS study for coursework or publication should read these directly rather than relying on secondhand summaries:
+
+<Sources items={[
+  { text: 'Interrupted time series regression for the evaluation of public health interventions: a tutorial — Bernal, Cummins & Gasparrini, International Journal of Epidemiology (2017)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5407170/', org: 'International Journal of Epidemiology / PMC' },
+  { text: 'Regression based quasi-experimental approach when randomisation is not an option: interrupted time series analysis', href: 'https://www.bmj.com/content/350/bmj.h2750', org: 'BMJ' },
+  { text: 'A Methodological Framework for Model Selection in Interrupted Time Series Studies', href: 'https://researchonline.lshtm.ac.uk/id/eprint/4648066/1/A-Methodological-Framework-for-Model-Selection-in-Interrupted-Time-Series-Studies.pdf', org: 'London School of Hygiene & Tropical Medicine' },
+  { text: 'Comparison of six statistical methods for interrupted time series studies: empirical evaluation of 190 published series', href: 'https://link.springer.com/article/10.1186/s12874-021-01306-w', org: 'BMC Medical Research Methodology' },
+  { text: 'Statistical methodology: V. Time series analysis using autoregressive integrated moving average (ARIMA) models — Nelson, Academic Emergency Medicine (1998)', href: 'https://pubmed.ncbi.nlm.nih.gov/9678399/', org: 'PubMed / Academic Emergency Medicine' },
+  { text: 'How Hospitals Reengineer Their Discharge Processes to Reduce Readmissions — Mitchell et al., Journal for Healthcare Quality (2016)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5102006/', org: 'Journal for Healthcare Quality / PMC' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.3.1 Autocorrelation Plot', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/autocopl.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Cochrane EPOC Resources for Review Authors', href: 'https://epoc.cochrane.org/resources/epoc-resources-review-authors', org: 'Cochrane Effective Practice and Organisation of Care' },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('data-drift-detection')}>Data Drift Detection: A Practical Guide for Production ML Systems</Link>
+- <Link to={routes.article('exploratory-data-analysis')}>Exploratory Data Analysis: A Practical Workflow</Link>
+- <Link to={routes.article('regression-assumptions')}>Linear Regression Assumptions: What They Are & How to Check</Link>
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is interrupted time series analysis?',
+    answer: 'An interrupted time series (ITS) analysis estimates the effect of a known intervention by comparing what actually happened afterward to the counterfactual trend that pre-intervention data would have predicted. The gap between the observed post-intervention data and that extrapolated trend, not the raw post-intervention average, is the estimated effect. ITS works best for population-level changes, such as a policy rollout, where randomization isn\'t possible.',
+  },
+  {
+    question: 'How much data does an interrupted time series study need?',
+    answer: 'A frequently cited rule of thumb calls for at least 8 to 12 observations before the intervention and a similar number after, with consistent spacing between points. Series under 20 to 30 total points tend to produce unstable trend estimates and unreliable autocorrelation diagnostics, while longer monthly series spanning several years give more room to model seasonality and separate a genuine level shift from ordinary noise.',
+  },
+  {
+    question: 'Should I use segmented regression, ARIMA, or GAM?',
+    answer: 'Choose segmented regression when you want maximum interpretability and the pre- and post-intervention trends are plausibly linear. Choose ARIMA when autocorrelation or seasonality is substantial and needs to be modeled directly. Choose GAM when the pre-intervention trend looks non-linear or the correct functional form is uncertain. Pre-specify the method before you see results, since switching methods on identical data can change which effects are statistically significant.',
+  },
+  {
+    question: 'What diagnostics should I run before trusting an ITS result?',
+    answer: 'Check autocorrelation with the Durbin-Watson statistic, ACF/PACF plots, or a Ljung-Box test, since ignoring serial correlation in residuals inflates apparent precision. Check stationarity and seasonality, since an unmodeled trend or seasonal pattern can be confounded with the intervention effect. For count outcomes, test for overdispersion, since a standard Poisson model understates variance and produces overly generous significance tests.',
+  },
+  {
+    question: 'Can I choose the impact model after looking at the post-intervention data?',
+    answer: 'No. Deciding whether to model a level change, a slope change, a lag, or a nonlinear effect should come from what you know about how the intervention is supposed to work, specified before running the regression. Choosing the model shape after seeing the post-intervention results is one of the most common mistakes in ITS analysis and undermines the credibility of the finding.',
+  },
+]} />
