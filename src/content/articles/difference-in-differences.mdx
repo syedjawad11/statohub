@@ -1,0 +1,300 @@
+---
+title: "Difference in Differences Explained"
+h1: "Learn Difference in Differences with a $4,000 Example"
+description: "Practical guidance on difference in differences: the $4,000 worked example, parallel trends checks, and modern estimator choices for staggered treatment timing."
+category: experiments-causality
+primaryKeyword: difference in differences
+keywords:
+  - difference in differences
+  - parallel trends assumption
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+phase: 1
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Difference-in-differences estimates the average effect of an intervention on the group that received it, by comparing how outcomes changed for that group against how they changed for a comparable, untreated group over the same period. The estimate is only trustworthy when the treated and comparison groups would have moved along parallel paths in the absence of treatment. That single condition, the parallel trends assumption, is what separates a credible DiD analysis from a coincidence dressed up as causal evidence.
+
+<KeyTakeaways rows={[
+  { point: 'Compare changes, not levels', details: 'DiD subtracts the control group\'s change from the treated group\'s change, which cancels out any shock that hit both groups equally.' },
+  { point: 'Parallel trends is the load-bearing assumption', details: 'The estimate is only reliable when treated and control groups would have followed the same trajectory absent treatment; more pre-treatment periods make that assumption testable through an event study.' },
+  { point: 'Staggered timing needs modern estimators', details: 'When treatment starts on different dates for different units, plain two-way fixed effects can assign negative weights and even flip the estimate\'s sign — use Callaway and Sant\'Anna or Sun and Abraham instead.' },
+  { point: 'Cluster standard errors and run placebo tests', details: 'Cluster at the unit level, especially with fewer than 40 clusters, and check a placebo period or outcome to validate parallel trends before trusting the headline number.' },
+]} />
+
+## What Is Difference-in-Differences and How Does the Formula Work?
+
+The core idea is deceptively simple: don't compare levels, compare changes. A treated group's outcome might look higher than a control group's outcome for a hundred reasons unrelated to the policy you're studying. But if both groups were tracking each other closely before the intervention, and then diverge right after it, that divergence is a much stronger signal.
+
+The canonical setup uses a 2×2 structure: two groups (treated and control), two time periods (before and after). You calculate the change in the treated group's average outcome, calculate the change in the control group's average outcome, and subtract one from the other:
+
+**DiD estimate = (Treated_after − Treated_before) − (Control_after − Control_before)**
+
+That subtraction removes any shock that hit both groups equally, whether it's a national recession, a seasonal pattern, or a shift in survey methodology. What's left is attributed to the treatment itself, and researchers call this quantity the average treatment effect on the treated, or ATT.
+
+Most applied work runs this through regression rather than by hand, using the interaction-term specification:
+
+**Y = β0 + β1·Time + β2·Treated + β3·(Time × Treated) + ε**
+
+Here, β3 is the DiD estimate. It captures the extra change experienced by the treated group beyond whatever change the control group also experienced, and this framework is documented in [Epidemiology's review of DiD methods](https://pmc.ncbi.nlm.nih.gov/articles/PMC11305929/), which formalizes exactly this interaction structure. A few things worth keeping straight:
+
+- β1 alone tells you the average trend over time-shared by both groups.
+- β2 alone tells you the baseline gap between groups before treatment.
+- β3 is the number you actually care about: the treatment effect.
+- ATT differs from the average treatment effect (ATE) across an entire population; DiD identifies ATT unless you add stronger assumptions about how treatment effects generalize beyond the treated group.
+
+## When Should You Use Difference-in-Differences?
+
+DiD earns its place in the toolkit whenever a policy, program, or shock hits one group and spares another, without anyone flipping a coin to decide who gets treated. That's what makes it a quasi-experimental method rather than a true experiment.
+
+Classic candidates include minimum wage changes that apply to some states but not others, a company rolling out a new feature to some markets first, or a natural disaster affecting one region while a neighboring region continues as normal. Public health researchers have used the design extensively for Medicaid expansions, paid family leave policies, and nutrition assistance programs, precisely because these interventions phase in unevenly across jurisdictions, as documented in the epidemiology literature on policy evaluation.
+
+Your data can arrive as a genuine panel, where you track the same units over time, or as repeated cross-sections, where you sample different individuals from the same populations at each period. Panel data lets you control for unit-specific factors more directly; repeated cross-sections work fine as long as the sampled population's composition stays stable.
+
+Some situations make DiD a poor fit, and recognizing them early saves you from publishing a flawed estimate:
+
+- Treatment assignment based on a unit's prior outcome level (a classic case of reverse causality contaminating the design).
+- Strong spillovers, where the "control" group is indirectly affected by the treatment happening nearby.
+- Very few clusters or treated units, which makes standard inference unreliable regardless of how clean the design looks on paper.
+- Compositional shifts in who's included in the sample between the pre- and post-periods.
+
+If your setting matches any of those red flags, consider <Link to={routes.categoryHub('experiments-causality')}>regression discontinuity or matching methods</Link> instead, or treat DiD results with heavy caveats.
+
+## What Data Do You Need Before Running a DiD Analysis?
+
+Getting the estimate right starts well before you open a regression window. The data structure and a handful of diagnostic checks determine whether your eventual β3 means anything at all.
+
+At minimum, you need one pre-treatment period and one post-treatment period for both the treated and control groups. In practice, more pre-periods are far better than the bare minimum, because a single pre-period gives you no way to check whether the two groups were actually moving in parallel before treatment started. Three or more pre-periods let you run an event-study style check, which is the closest thing to a real test of the parallel trends assumption.
+
+Here's the practical setup sequence:
+
+<Checklist
+  id="did-setup-checklist"
+  title="DiD data setup checklist"
+  style="numbered"
+  items={[
+    { text: 'Decide on unit-level versus aggregated data', detail: 'Individual-level panels give more statistical power and let you control for covariates; aggregated data can be easier to source and less noisy for slow-moving policy outcomes.' },
+    { text: 'Check for composition stability', detail: 'If you are using repeated cross-sections, confirm the sampled population is not shifting in ways correlated with treatment timing.' },
+    { text: 'Address clustering and serial correlation up front', detail: 'Outcomes for the same state or firm are correlated across years — cluster standard errors at the unit level rather than at the observation level.' },
+    { text: 'Plot raw trends before you run any regression', detail: 'A simple line chart of average outcomes by group and period, viewed before you touch the model, catches problems no diagnostic test will flag as clearly.' },
+    { text: 'Test balance on pre-period covariates', detail: 'Confirm the treated and control groups look similar on characteristics that predict the outcome, not just on the outcome itself.' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+If you have fewer than about 30 to 40 clusters, standard cluster-robust standard errors can understate uncertainty badly. Use a wild bootstrap or a randomization-inference approach instead of trusting the default clustered SEs from your regression package.
+</Callout>
+
+## How Do You Estimate a DiD Regression and Interpret the Results?
+
+The regression form does more than replicate the 2×2 arithmetic. It lets you add covariates, absorb fixed effects, and get standard errors that reflect the actual structure of your data.
+
+Start from the baseline specification introduced earlier: Y = β0 + β1·Time + β2·Treated + β3·(Time × Treated) + ε. In applied work, you'll almost always extend this with unit and time fixed effects rather than the simple Time and Treated dummies, written as:
+
+**Y_it = αi + γt + β3·(Treated_i × Post_t) + ε_it**
+
+The unit fixed effects (αi) absorb anything constant about a state, firm, or person that doesn't change over the study window. Time fixed effects (γt) absorb anything that hits everyone in a given period, like a national recession. This is functionally identical to the 2×2 calculation when you have exactly two periods and two groups, but it scales cleanly to settings with many periods and many units.
+
+A few interpretation notes that trip up a lot of first-time users:
+
+- If your outcome is binary (did the person enroll, did the firm close), β3 from a linear probability model gives you a percentage-point change, which is usually the most intuitive unit for policy audiences.
+- If your outcome is a dollar amount or count that's highly skewed, taking logs before running DiD changes β3's interpretation to an approximate percentage change, and you should say so explicitly when reporting results.
+- Adding covariates (demographics, baseline economic conditions) can tighten your standard errors and correct for minor pre-treatment imbalances, but covariates should never be added mechanically. Only include variables that plausibly predict the outcome and aren't themselves affected by treatment.
+- Two-way fixed effects (TWFE) is the standard shorthand for the unit-and-time fixed effects specification, and it works well when you have a single treatment date shared by everyone in the treated group.
+
+<Callout variant="note" title="One number worth remembering">
+When treatment timing is staggered across units, the standard TWFE estimator can assign negative weights to some group comparisons, which means the reported average effect can even flip sign relative to the true effect, a finding documented in [Harvard Business School's working paper on staggered DiD designs](https://www.hbs.edu/ris/Publication%20Files/21-112_8a5a4ab3-b9e7-447d-a0fe-a504b3890fb9.pdf). That single fact is the reason the rest of this guide spends real time on modern estimators.
+</Callout>
+
+On inference: always cluster standard errors at the level treatment varies (state, region, firm), never at the individual observation level, and apply a small-cluster correction such as a wild cluster bootstrap when you have fewer than roughly 40 clusters. Regression basics and diagnostic checks for these models are covered in more depth in a statistics guide to <Link to={routes.categoryHub('regression-correlation')}>regression and correlation</Link>.
+
+## How Do You Test the Parallel Trends Assumption?
+
+Parallel trends says the treated group would have followed the same trajectory as the control group if treatment had never happened. You cannot observe that counterfactual directly, which is exactly why this assumption can never be proven, only made more or less plausible through diagnostics.
+
+Here's a practical sequence for building that case:
+
+1. **Plot raw pre-treatment trends for both groups on the same graph.** If the lines are drifting apart well before treatment starts, your design has a problem no regression trick will fix.
+2. **Run an event-study regression.** Replace the single Post dummy with a full set of period-specific interaction terms (treated group × each individual period, relative to a baseline period), then plot each coefficient with its 95% confidence interval, along with the number of observations behind each point.
+3. **Check whether pre-treatment coefficients hover near zero and are statistically insignificant.** A flat, tight band of pre-period estimates supports the parallel trends story. Coefficients that drift upward or downward before treatment even begins are a warning sign, and this exact diagnostic is standard practice recommended in the epidemiology review of DiD applications.
+4. **Run placebo and falsification tests.** Apply the DiD estimator to an outcome that shouldn't be affected by the treatment, or to a fake treatment date before the real one. A significant "effect" where none should exist tells you something in your design, not the policy, is driving the result.
+5. **Check for anticipation effects.** If units expected the treatment before it formally started (a business preparing for a tax change, a household anticipating a benefit cut), outcomes may shift in the "pre" period, contaminating your baseline.
+
+<Callout variant="tip" title="Pro tip">
+Report the event-study plot even when your main table looks clean. A tidy 2×2 estimate next to a messy pre-trend chart is one of the fastest ways reviewers and readers lose confidence in a paper, and showing the chart anyway builds far more trust than hiding it would.
+</Callout>
+
+When diagnostics fail, you have a few remedies short of abandoning the design entirely: try a different, better-matched comparison group; add group-specific linear trends to absorb divergent pre-trajectories (with caution, since this can also absorb real treatment effects if misapplied); or shift to a matching-based approach that selects control units with genuinely similar pre-trends rather than relying on a whole population as the comparison.
+
+## Why Do Modern Estimators Matter for Staggered Treatment Timing?
+
+Classic TWFE assumes a single treatment date and a constant effect across units. Real policy rollouts rarely cooperate. States adopt minimum wage increases in different years; companies launch features to different markets on different schedules. That mismatch between the tidy textbook model and messy real-world timing is where TWFE quietly breaks down.
+
+The mechanism is worth understanding, not just fearing. TWFE effectively builds its overall estimate from many pairwise 2×2 comparisons between cohorts treated at different times. Some of those comparisons use already-treated units as the "control" for a later-treated group, which is backwards: an already-treated unit isn't a valid stand-in for the untreated counterfactual. When treatment effects change over time or across cohorts (heterogeneous effects), these contaminated comparisons can receive negative weights, and the [Journal of Economic Literature's practitioner's guide](https://www.aeaweb.org/articles?id=10.1257/jel.20251650) walks through exactly how this weighting scheme produces bias.
+
+Three estimator families have become widely recommended as standard responses:
+
+- Callaway and Sant'Anna's approach builds estimates from group-time average treatment effects computed separately for each treatment cohort and time period, then aggregates them thoughtfully, requiring explicit choice of comparison group.
+- Sun and Abraham's interaction-weighted estimator adjusts the event-study regression to weight cohort-specific effects properly, maintaining a familiar output style while reducing bias.
+- Borusyak, Jaravel, and Spiess's imputation method models untreated observations and imputes counterfactuals for treated ones to avoid contaminated comparisons.
+
+Choosing among these depends on your design features. Callaway and Sant'Anna's method offers flexibility useful for many cohorts and long pre-periods. Sun and Abraham's is a lighter adjustment closer to the traditional event-study format.
+
+Regarding comparator choice: never-treated units provide a cleaner counterfactual when they truly remain untreated, though they may be a smaller or less representative subset. Not-yet-treated units enlarge the comparison group but require the assumption that their future treatment does not presently influence behavior. Some studies present results under both comparator choices to confirm robustness.
+
+## Worked Example: Calculating DiD by Hand
+
+Numbers make all of this concrete faster than another paragraph of theory can. Say a state introduces a small business tax credit in year two, and you want to know its effect on average monthly revenue (in thousands of dollars) for small businesses, compared to a neighboring state that didn't adopt the credit.
+
+<DataTable
+  caption="Treated vs. control state revenue before and after the tax credit"
+  headers={['Group', 'Pre-period (Year 1)', 'Post-period (Year 2)', 'Change']}
+  align={['left', 'right', 'right', 'right']}
+  rows={[
+    ['Treated state', '$42.0', '$51.0', '+$9.0'],
+    ['Control state', '$40.0', '$45.0', '+$5.0'],
+  ]}
+/>
+
+Follow these steps to turn that table into a treatment effect:
+
+1. **Calculate the treated group's change:** $51.0 − $42.0 = $9.0 thousand.
+2. **Calculate the control group's change:** $45.0 − $40.0 = $5.0 thousand.
+3. **Subtract the control change from the treated change:** $9.0 − $5.0 = $4.0 thousand.
+4. **Interpret the result:** the tax credit is associated with an average increase of $4,000 per month in small business revenue, holding aside whatever broader economic trend both states experienced.
+
+That $4.0 thousand figure is your ATT under the 2×2 approach. Now check that the regression version lands on the same number. Set up a dataset with four rows: treated/pre, treated/post, control/pre, control/post, with Treated coded 1 for the treated state and Post coded 1 for year two.
+
+Running Y = β0 + β1·Post + β2·Treated + β3·(Post × Treated) + ε on this data produces:
+
+- **β0 (intercept)** = $40.0, the control group's pre-period average.
+- **β1** = $5.0, the change over time common to both groups (the control group's trend).
+- **β2** = $2.0, the baseline gap between treated and control states before the policy ($42.0 − $40.0).
+- **β3** = $4.0, matching the hand-calculated DiD estimate exactly.
+
+That match isn't a coincidence, it's the whole point of the interaction-term specification: β3 always reproduces the 2×2 arithmetic when your data has exactly two groups and two periods.
+
+For a robustness check, add a simple placebo test using a hypothetical earlier period. Suppose you had data from Year 0, before either state changed policy, showing the treated state at $41.0 and the control state at $39.5. Running the same DiD logic on Years 0 and 1 (both pre-treatment) should yield an estimate close to zero, since no policy change occurred between them. Here: ($42.0 − $41.0) − ($40.0 − $39.5) = $1.0 − $0.5 = $0.5 thousand. A small, statistically insignificant placebo estimate like this supports your parallel trends story; a large or significant one would suggest the two states were already diverging before the real treatment period, undermining the $4.0 thousand headline result. Analysts can rebuild this entire walkthrough using Statohub's <Link to={routes.calculator('average')}>average calculator</Link> to check group means before moving into a full regression setup.
+
+<Figure number={1} caption="The DiD estimate decomposes into the treated group's change, the control group's change, and their difference.">
+  <AnnotatedChart
+    title="DiD component changes"
+    desc="A bar chart of three values from the worked example: treated group change of 9.0 thousand dollars, control group change of 5.0 thousand dollars, and the resulting DiD estimate of 4.0 thousand dollars."
+    type="bar"
+    points={[
+      { label: 'Treated change', value: 9.0 },
+      { label: 'Control change', value: 5.0 },
+      { label: 'DiD estimate', value: 4.0 },
+    ]}
+    yLabel="Revenue change ($ thousand)"
+  />
+</Figure>
+
+## How Should You Report DiD Results and Which Robustness Checks Matter Most?
+
+A DiD result is only as convincing as the documentation around it. Readers and reviewers should be able to verify your identifying assumption without re-running your entire analysis.
+
+At minimum, a credible write-up includes:
+
+- A main results table showing the regression coefficients (β1, β2, β3) with clustered standard errors, alongside the raw 2×2 group means.
+- An event-study figure plotting pre- and post-treatment coefficients with 95% confidence intervals, including the observation count behind each point.
+- A pre-period balance table comparing treated and control groups on key covariates before treatment began.
+- A one-paragraph plain-language statement of what β3 means in real-world units, plus an explicit sentence naming the study's main limitation (small sample, potential spillovers, short pre-period).
+
+Here's how the interpretation template might read for the tax credit example above: "The estimated effect of the small business tax credit is a $4,000 monthly revenue increase per business, relative to what would have happened absent the credit, under the assumption that treated and control states would have followed parallel revenue trends otherwise. This estimate should be read cautiously given only one pre-treatment period was available to test that assumption."
+
+<DataTable
+  caption="Reporting checklist for a DiD write-up"
+  headers={['Reporting element', 'Why it matters']}
+  align={['left', 'left']}
+  rows={[
+    ['Event-study plot', 'Shows whether pre-trends were flat before assuming they were'],
+    ['Placebo test', 'Rules out a spurious effect showing up where none should exist'],
+    ['Clustered SEs', 'Prevents overstating precision when outcomes correlate within units'],
+    ['Alternate estimator (if staggered)', "Confirms TWFE bias isn't driving the headline number"],
+  ]}
+/>
+
+Additional robustness checks worth including when your setting allows it: re-estimating with an alternative control group, testing sensitivity to dropping one treated unit at a time (especially valuable with few clusters), and running the analysis on a placebo outcome that theory says shouldn't respond to treatment. For reproducibility, share your code and a data notes file describing every sample restriction you made, and where possible, pre-register your specification before looking at post-treatment outcomes.
+
+## What Are the Most Common DiD Mistakes and How Do You Fix Them?
+
+Most flawed DiD papers fail for a small handful of repeatable reasons, and each one has a fairly direct fix once you know to look for it.
+
+- **Using plain TWFE with staggered treatment timing.** Detect it by checking whether your treated units all start treatment in the same period; if not, decompose the TWFE estimate into its underlying 2×2 comparisons or switch to Callaway and Sant'Anna's estimator.
+- **Ignoring clustering in standard errors.** Detect it by checking whether your outcome is measured repeatedly for the same units over time (it almost always is). Fix it by clustering at the unit level and applying a small-cluster correction if you have fewer than about 40 clusters.
+- **Unstable sample composition across periods.** Detect it by comparing sample sizes and demographic breakdowns in each period. Fix it by restricting to a balanced panel or explicitly modeling the composition shift.
+- **Treating a single pre-period as sufficient evidence of parallel trends.** Detect it by asking whether you could distinguish a real pre-trend from noise with only one data point. Fix it by gathering more historical periods before finalizing the design.
+
+<Callout variant="tip" title="Pro tip">
+Before writing a single line of your results section, run the placebo test on a fake treatment date two periods before the real one. If that placebo estimate comes back large and significant, stop and rethink the comparison group before you draw any conclusions from the real estimate.
+</Callout>
+
+## Statohub's Perspective: How to Actually Learn This Method
+
+The fastest path to competence here isn't reading more papers, it's building the 2×2 case by hand before you ever touch a regression command. Once that intuition sticks, move to fixed-effects regression, then event studies, and only then to the modern staggered-adoption estimators. Skipping straight to Callaway and Sant'Anna without understanding why TWFE breaks in the first place tends to produce researchers who can run code but can't explain what it fixed.
+
+For practice, pull a public dataset with a known staggered policy rollout, using examples of policy changes well-documented in the literature, and try replicating both the naive TWFE estimate and a heterogeneity-robust version side by side. Watching the two diverge is more instructive than any textbook explanation.
+
+Statohub's <Link to={routes.learnLanding()}>Learn</Link> section builds the regression fundamentals this method leans on, and our <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub walks through comparable real-data exercises you can adapt for your own DiD practice.
+
+## Practice DiD Concepts With Statohub's Learning Tools
+
+Working through a DiD design by hand, as this guide walks through, is the fastest way to internalize what β3 actually represents, but you don't have to rebuild every calculator from scratch. Statohub gives you a structured path from the underlying statistics to applied practice, without the paywalls or software licenses that usually gate this kind of methodological depth. Our Experiments & Causality hub covers the broader family of quasi-experimental designs DiD belongs to, so you can see how it compares to matching or regression discontinuity when your data doesn't fit the DiD mold. If you want to check group averages the way the worked example did, Statohub's average calculator handles that step instantly, and the <Link to={routes.calculator('chi-square')}>chi square calculator</Link> is useful for balance-testing categorical covariates before you trust your pre-treatment groups are comparable. Start with <Link to={routes.article('fundamental-statistics')}>Statohub's fundamentals</Link> if regression notation still feels shaky, then build up to the full DiD workflow from there.
+
+## Recommended
+
+- <Link to={routes.article('post-hoc-tests')}>Post-Hoc Tests: Tukey, Bonferroni & When to Use Them</Link>
+- <Link to={routes.article('paired-vs-independent-t-test')}>Paired vs. Independent T-Test: Which One Do You Need?</Link>
+- <Link to={routes.learnLanding()}>Learn Statistics</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'Advances in Difference-in-differences Methods for Policy Evaluation Research (Epidemiology, 2024)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11305929/', org: 'National Library of Medicine' },
+  { text: "Difference-in-Differences Designs: A Practitioner's Guide (Journal of Economic Literature)", href: 'https://www.aeaweb.org/articles?id=10.1257%2Fjel.20251650', org: 'American Economic Association' },
+  { text: 'HBS working paper on staggered DiD and TWFE biases', href: 'https://www.hbs.edu/ris/Publication%20Files/21-112_8a5a4ab3-b9e7-447d-a0fe-a504b3890fb9.pdf', org: 'Harvard Business School' },
+  { text: "Callaway, B. and Sant'Anna, P. H. C. — Difference-in-Differences with Multiple Time Periods", href: 'https://arxiv.org/abs/1803.09015', org: 'arXiv' },
+  { text: 'Sun, L. and Abraham, S. — Estimating Dynamic Treatment Effects in Event Studies with Heterogeneous Treatment Effects', href: 'https://arxiv.org/abs/1804.05785', org: 'arXiv' },
+  { text: 'Borusyak, K., Jaravel, X., and Spiess, J. — Revisiting Event Study Designs: Robust and Efficient Estimation', href: 'https://arxiv.org/abs/2108.12419', org: 'arXiv' },
+  { text: 'Goodman-Bacon, A. — Difference-in-Differences with Variation in Treatment Timing (NBER Working Paper No. 25018)', href: 'https://www.nber.org/papers/w25018', org: 'National Bureau of Economic Research' },
+  { text: 'Cameron, A. C., Gelbach, J. B., and Miller, D. L. — Bootstrap-Based Improvements for Inference with Clustered Errors (NBER Technical Working Paper No. 344)', href: 'https://www.nber.org/papers/t0344', org: 'National Bureau of Economic Research' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What does the difference-in-differences formula actually measure?',
+    answer: 'It measures the average treatment effect on the treated (ATT): the change in the treated group\'s outcome minus the change in the control group\'s outcome over the same period. In the regression form Y = β0 + β1·Time + β2·Treated + β3·(Time × Treated) + ε, β3 is that estimate.',
+  },
+  {
+    question: 'What is the parallel trends assumption in a DiD design?',
+    answer: 'It is the assumption that the treated group would have followed the same trajectory as the control group if treatment had never happened. You cannot observe that counterfactual directly, so the assumption is tested indirectly, usually with pre-treatment event-study coefficients and placebo tests, rather than proven outright.',
+  },
+  {
+    question: 'Why does two-way fixed effects (TWFE) break down with staggered treatment timing?',
+    answer: 'TWFE builds its overall estimate from many pairwise 2×2 comparisons across treatment cohorts, and some of those comparisons use already-treated units as the "control" for a later-treated group. When treatment effects vary over time or across cohorts, those contaminated comparisons can receive negative weights, which can even flip the sign of the reported effect.',
+  },
+  {
+    question: 'How many clusters do I need for reliable standard errors?',
+    answer: 'Cluster standard errors at the level treatment varies (state, firm, region), not at the observation level. With fewer than roughly 30 to 40 clusters, standard cluster-robust errors can understate uncertainty, so use a wild cluster bootstrap or a randomization-inference approach instead.',
+  },
+  {
+    question: 'Should I compare treated units to never-treated or not-yet-treated units?',
+    answer: 'Never-treated units give a cleaner counterfactual when they genuinely remain untreated, though the group may be small or less representative. Not-yet-treated units enlarge the comparison group but require assuming their future treatment does not presently affect their behavior. Presenting results under both is a common robustness check.',
+  },
+]} />
