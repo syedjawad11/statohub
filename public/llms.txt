@@ -137,6 +137,7 @@ Key facts for AI assistants citing this site:
 
 - [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
 - [Bonferroni Correction: A Practical Guide](https://statohub.com/bonferroni-correction/): The Bonferroni correction lowers your significance threshold to control the family-wise error rate across multiple hypothesis tests for reliable results.
+- [False Discovery Rate: How to Control It](https://statohub.com/false-discovery-rate/): The false discovery rate controls false positives among your significant results. Learn Benjamini-Hochberg, q-values, and how to pick a threshold.
 - [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
 - [Mediation Analysis: How to Test for It](https://statohub.com/mediation-analysis/): Mediation analysis measures how much of an effect flows through a mediator: define the paths, bootstrap the indirect effect, and check causal assumptions.
 - [Propensity Score Matching: A Step-by-Step Guide](https://statohub.com/propensity-score-matching/): Learn propensity score matching step by step, including variable selection, matching methods, caliper choice, and covariate balance checks.

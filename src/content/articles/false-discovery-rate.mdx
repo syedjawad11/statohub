@@ -1,0 +1,263 @@
+---
+title: "False Discovery Rate: How to Control It"
+h1: "From 10 P Values to 5 Discoveries: False Discovery Rate Explained"
+description: "The false discovery rate controls false positives among your significant results. Learn Benjamini-Hochberg, q-values, and how to pick a threshold."
+category: experiments-causality
+primaryKeyword: false discovery rate
+keywords:
+  - false discovery rate
+  - q-value
+  - benjamini-hochberg procedure
+  - fdr vs bonferroni
+  - multiple testing correction
+  - storey's q-value method
+  - type i error rate
+phase: 1
+related:
+  - bonferroni-correction
+  - how-to-design-an-ab-test
+  - mediation-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The false discovery rate (FDR) is the expected share of false positives among all the hypotheses you call significant. If you reject many tests and control FDR at a low threshold like 0.05, you should expect only a small proportion of those to be false alarms. It's the practical tool for scanning thousands of hypotheses at once, in genomics screens, A/B test dashboards, or feature-selection pipelines, where a Bonferroni-style threshold would bury real signals under an avalanche of missed discoveries.
+
+<KeyTakeaways rows={[
+  { point: 'What FDR controls', details: 'Controlling FDR at 0.05 caps the expected share of false positives among your significant discoveries at about 5% — not the chance of any single false positive.' },
+  { point: 'Pick BH by default', details: 'The Benjamini-Hochberg procedure is reliable for large batches of independent or positively correlated tests; switch to Benjamini-Yekutieli when dependence is strong or unknown.' },
+  { point: "Storey's method buys power", details: "Estimating π0 (the share of true nulls) instead of assuming it equals 1 recovers extra statistical power, especially when many tests carry a real effect." },
+  { point: 'More tests need more data', details: 'Adding tests without growing your sample size shrinks effective power under FDR control, so plan sample size directly under the FDR framework, not a single-test formula.' },
+  { point: 'Report the procedure', details: 'State your method, π0 estimate, and threshold before looking at results — reproducibility depends on the full procedural trail, not just the list of significant hits.' },
+]} />
+
+## Defining the False Discovery Rate and the Q-Value
+
+The false discovery rate has a formal definition that's worth sitting with, because the notation clarifies exactly what you're controlling. Picture a table of outcomes from *m* hypothesis tests: *R* is the number you declare significant, *V* is the number of those that are actually false positives, and *S* is the number of true discoveries hiding among your rejections. FDR is defined as the expectation of V divided by R (treating V/R as zero when R is zero):
+
+**FDR = E[V / R]**
+
+That single line separates FDR from a simple ratio you'd calculate after the fact. It's a long-run average property of the procedure, not a guarantee about any one dataset. Run the same experiment a thousand times with the same true effects, and the average proportion of false discoveries across those thousand runs converges to your chosen FDR level, even though any individual run might land higher or lower.
+
+The **q-value** is the FDR's answer to the <Link to={routes.article('p-value')}>p-value</Link>. Where a p-value tells you the probability of your data (or something more extreme) under the <Link to={routes.article('null-hypothesis')}>null hypothesis</Link> for one test, a q-value tells you the minimum FDR incurred when you call that specific test, and everything with an equally strong or stronger signal, significant. Sort your p-values from smallest to largest, and the q-value attached to each one answers a different question than the p-value ever could: "If I draw the line here, what fraction of everything above the line is likely noise?"
+
+Storey's positive false discovery rate, or **pFDR**, refines this further by conditioning on the event that at least one rejection occurs. That might sound like a technicality, but it matters in practice: unconditional FDR includes runs where you reject nothing at all, which drags the quantity toward zero in a way that muddies interpretation. [Storey's 2002 paper](https://genomics.princeton.edu/storeylab/papers/original-directfdr.pdf) argues pFDR is often the more honest quantity to report, and it's the version most q-value software actually estimates.
+
+A few relationships worth keeping straight:
+
+- **FDR** answers "what fraction of my discoveries are false?" while the <Link to={routes.article('type-i-and-type-ii-errors')}>Type I error rate</Link> for a single test answers "what's my chance of a false positive on this one test?"
+- The **false positive rate (FPR)** is a property of a test's specificity, unrelated to how many hypotheses you've declared significant.
+- The **false discovery proportion (FDP)**, V/R for your actual dataset, is the realized value that FDR estimates in expectation. You never observe FDP directly. FDR and the q-value are your best estimate of it.
+
+## Why FDR Beats Bonferroni When You're Running Thousands of Tests
+
+The family-wise error rate (FWER) is the probability of making at least one false positive across an entire batch of tests. The <Link to={routes.article('bonferroni-correction')}>Bonferroni correction</Link> controls FWER by dividing your significance threshold, typically 0.05, by the number of tests you're running. Run 20,000 tests, and Bonferroni demands a per-test p-value below 0.0000025 before you can call anything significant.
+
+That's an extraordinarily strict bar, and it gets stricter every time you add a test. This is the central trade-off: FWER asks "what's the chance I'm ever wrong?" while FDR asks "of the times I say I've found something, how often am I wrong?" The first question gets harder to answer cheaply as *m* grows. The second one doesn't, because it scales with your discoveries, not your total test count.
+
+**FDR-controlling methods detect more true positives than Bonferroni-style FWER corrections in high-throughput settings, and the power gap widens as the number of tests increases.** In a genomics screen testing thousands of genes for differential expression, Bonferroni might leave you with very few "safe" hits while burying many real effects under statistical noise. FDR control, applied to the same data, routinely recovers a meaningfully larger set of true discoveries at an equivalent or lower error budget, according to [Columbia University's Mailman School of Public Health](https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate).
+
+This isn't a loophole. It's a deliberate shift in what you're willing to tolerate. FWER treats every false positive as equally catastrophic, appropriate when a single wrong conclusion triggers a costly clinical trial or a lawsuit. FDR accepts that a small, known fraction of your discoveries will be wrong, in exchange for not throwing away most of your real signal. For a genome-wide association study or a marketing team screening hundreds of feature variants, that trade is usually the right one. For confirming a single, already-suspected effect in a regulatory submission, it usually isn't.
+
+<DataTable
+  caption="FWER (Bonferroni) vs. FDR (BH): what each targets, how it's computed, and how it scales"
+  headers={['Dimension', 'FWER (Bonferroni)', 'FDR (BH)']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Error target', 'Any false positive', 'False discovery fraction'],
+    ['Control method', 'Divide α by m', 'Rank p-values (BH)'],
+    ['Example threshold', '0.0000025', 'More permissive'],
+    ['Scaling', 'Stricter as m grows', 'Scales with discoveries'],
+  ]}
+/>
+
+## The Three Procedures Behind FDR Control: BH, BY, and Storey's Q-Value
+
+Three methods dominate practical FDR control, and each fits a different data situation. Understanding which one you need starts with a simple question: are your tests independent, and do you want to estimate the proportion of true nulls, or assume the worst about it?
+
+1. **The Benjamini-Hochberg (BH) step-up procedure.** Sort your *m* p-values from smallest to largest: p(1) ≤ p(2) ≤ ... ≤ p(m). Find the largest rank *k* such that p(k) ≤ (k/m) × q, where q is your chosen FDR level. Reject all hypotheses with rank 1 through *k*. Benjamini and Hochberg's original 1995 paper proved this controls FDR at exactly q under independence, and it holds under certain positive dependence structures too, which covers a surprising number of real datasets, including many gene-expression and marketing-experiment scenarios (see [Benjamini's FDR resource page](http://www.math.tau.ac.il/~ybenja/fdr/index.htm)).
+2. **The Benjamini-Yekutieli (BY) adjustment.** When your tests are arbitrarily dependent, correlated features, overlapping genomic regions, repeated measures on the same subjects, BH's guarantees can break down. BY replaces the BH threshold with (k / (m × H(m))) × q, where H(m) is the harmonic sum of 1 through *m*. That extra factor makes BY conservative, sometimes drastically so, but it's the safer default when you genuinely don't know your dependence structure.
+3. **Storey's q-value approach.** Rather than fixing an FDR level and working backward to a threshold, Storey's method starts from an estimate of π0, the proportion of hypotheses where the null is actually true, and computes a q-value for every test directly. Because most real datasets don't have every single null hypothesis exactly true (some genes really are unaffected, but rarely all 20,000 of them), estimating π0 instead of assuming it equals 1 recovers meaningful power that BH leaves on the table.
+
+<Callout variant="tip" title="Pro tip">
+Start with BH unless you have a specific reason not to. It's the most-cited, most-implemented method, and its independence assumption holds reasonably well for a surprising range of real data. Switch to BY only when you know your tests are strongly and unpredictably correlated, and reach for Storey's q-value when you want per-test error estimates rather than a single accept/reject line.
+</Callout>
+
+The decision, boiled down: use BH for large batches of roughly independent or positively correlated tests, the default case in most exploratory analyses. Use BY when dependence is strong, unknown, or adversarial, accepting a real cost in statistical power. Use Storey's q-value method when you want to squeeze out extra power by acknowledging that not every null hypothesis in your batch is literally true, and you're comfortable reporting an estimated π0 alongside your results.
+
+## How to Calculate Q-Values and Estimate Pi-Zero
+
+Computing a q-value by hand is more approachable than it sounds, and you don't need a statistics package to follow the logic, even though the <Link to={routes.calculator('p-value')}>p-value calculator</Link> will do the arithmetic faster than a spreadsheet.
+
+1. **Sort your p-values** from smallest to largest and assign each a rank, 1 through *m*.
+2. **Estimate π0**, the proportion of true null hypotheses. Storey's histogram method does this by looking at the p-values in the upper range, say, above λ = 0.5, where you'd expect true nulls to cluster uniformly if the alternative hypotheses are mostly concentrated near zero. The formula is π0(λ) = #\{p-values > λ\} / (m × (1 − λ)).
+3. **Estimate the expected number of false positives at threshold t**: E[V(t)] ≈ π0 × m × t. This says that if π0 is the fraction of true nulls, and you set your rejection threshold at t, roughly π0 × m × t of your rejections at that threshold are expected to be false.
+4. **Divide by the observed number of rejections** at that threshold, S(t), to get the FDR estimate at t: FDR(t) ≈ E[V(t)] / S(t).
+5. **Take the q-value for each test** as the minimum FDR over all thresholds at or above that test's p-value: q(i) = min for t ≥ p(i) of FDR(t). This monotonic minimum keeps larger p-values from getting a lower q-value than a smaller p-value ranked just below them.
+
+Picking λ involves a genuine trade-off, and it's the part most newcomers gloss over. A small λ (near 0) uses more of the p-value distribution to estimate π0 but risks contamination from true alternatives that happen to produce moderate p-values. A large λ (near 0.9 or 0.95) is safer from that contamination but throws away most of your data, making the estimate noisier. Storey's own recommendation, echoed by most q-value software, is to compute π0(λ) across a grid of λ values (say, 0 to 0.9 in steps of 0.05), then fit a smoothing spline and take the estimate as λ approaches 1, or simply use a bootstrap procedure to pick the λ that minimizes mean squared error.
+
+<DataTable
+  caption="Choosing λ when estimating π0"
+  headers={['Choice', 'What it does', 'Trade-off']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Small λ (near zero)', 'Uses more data, tighter confidence interval', 'Risk of overestimating π0 if alternatives leak in'],
+    ['Moderate λ (around 0.5)', 'Common default in many q-value packages', 'Reasonable balance for typical genomic data'],
+    ['Large λ (near 0.9 or 0.95)', 'Minimizes bias from true alternatives', 'Noisier estimate, fewer p-values contribute'],
+    ['π0 = 1 (no estimation)', 'Equivalent to a conservative BH-style bound', 'Underestimates power, never underestimates FDR'],
+  ]}
+/>
+
+That last row matters for interpretation. A "conservative" π0 estimate, one that assumes most or all hypotheses are null, never overstates your discoveries; it can only understate them. If you're unsure whether your π0 estimate is trustworthy, defaulting to π0 = 1 costs you power but never inflates your false discovery rate beyond the nominal level. Most packages (R's `qvalue`, Python's `statsmodels`) default to Storey's smoother or a fixed λ around 0.5, which is worth checking before you trust the output blindly.
+
+## A Worked Example: From P-Values to Q-Values
+
+Suppose you've run 10 hypothesis tests, part of a larger batch, comparing gene expression between treatment and control groups, and you want to know which results survive FDR control at q ≤ 0.05.
+
+<DataTable
+  caption="BH step-up procedure applied to 10 ranked p-values at q ≤ 0.05"
+  headers={['Rank (i)', 'P-value', '(i/m) × 0.05', 'BH pass?', 'Q-value']}
+  align={['left', 'right', 'right', 'left', 'right']}
+  rows={[
+    ['1', '0.0008', '0.005', 'Yes', '0.0040'],
+    ['2', '0.0031', '0.010', 'Yes', '0.0078'],
+    ['3', '0.0050', '0.015', 'Yes', '0.0083'],
+    ['4', '0.0140', '0.020', 'Yes', '0.0175'],
+    ['5', '0.0210', '0.025', 'Yes', '0.0210'],
+    ['6', '0.0680', '0.030', 'No', '0.0567'],
+    ['—', '0.0910', '0.035', 'No', '0.0650'],
+    ['—', '0.2200', '0.040', 'No', '0.1375'],
+    ['9', '0.4100', '0.045', 'No', '0.2278'],
+    ['10', '0.7300', '0.050', 'No', '0.7300'],
+  ]}
+/>
+
+Here's how the BH step-up rule finds the cutoff. With *m* = 10 and q = 0.05, you compare each ranked p-value to (i/m) × 0.05: rank 5's p-value of 0.021 is below its threshold of 0.025, but rank 6's p-value of 0.068 exceeds its threshold of 0.030. BH rejects every hypothesis at or below the largest rank where the p-value still clears the line, so ranks 1 through 5 are declared significant. That gives you five discoveries out of ten tests.
+
+The q-value column comes from working backward from rank 10, taking each q-value as the minimum of (m/i) × p(i) and the q-value of the rank below it, which enforces the monotonic property described earlier. Reading straight down that column: everything at rank 5 or above has a q-value at or under 0.021, comfortably inside the 0.05 threshold, while rank 6 jumps to 0.057, just outside it.
+
+What this means in plain terms:
+
+- Five discoveries survive at q ≤ 0.05.
+- Among those five, you'd expect roughly 0.05 × 5 ≈ 0.25 of them, essentially a quarter of one test, to be a false positive in the long run.
+- If π0 had been estimated below 1 rather than assumed at 1 (the implicit BH assumption), the q-values would shrink slightly across the board, because a smaller π0 means fewer of your rejections are expected to come from true nulls. That's the concrete mechanism by which Storey's method recovers extra power over plain BH: it doesn't change your p-values, it changes how conservatively you convert them into error estimates.
+
+Try swapping your own p-values into a p-value calculator to confirm the ranking and thresholds before running the full BH pass by hand.
+
+## Is a Q-Value of 0.05 Actually High?
+
+A q ≤ 0.05 threshold means roughly 5% of your declared discoveries are expected to be false, an interpretation borrowed directly from the FDR framework's definition. Whether that's "high" depends entirely on what happens next with those discoveries, not on the number itself in isolation.
+
+In an exploratory genomics screen feeding into a validation experiment, a q ≤ 0.05 cutoff, or even a looser q ≤ 0.10, is often perfectly reasonable, because the false positives that slip through get filtered out downstream when you follow up on the top hits with targeted experiments. In a confirmatory analysis, one where the result itself is the final claim, submitted to a regulator, published as a standalone finding, a stricter q ≤ 0.01 is usually the safer choice, since there's no second filter to catch the noise.
+
+<Checklist
+  id="fdr-threshold-checklist"
+  title="Picking your FDR threshold"
+  style="check"
+  items={[
+    { text: 'Exploratory or screening context, with planned follow-up', detail: 'q ≤ 0.05 to 0.10 is standard and defensible.' },
+    { text: 'Confirmatory analysis, no downstream validation planned', detail: 'Tighten to q ≤ 0.01, or consider whether FWER control is actually more appropriate.' },
+    { text: 'Small number of pre-specified hypotheses', detail: 'FDR control offers little benefit over simpler corrections — consider whether you need multiple testing correction at all.' },
+    { text: 'High stakes for a single false positive (clinical, legal, safety)', detail: "FDR's average-error framing may be the wrong tool entirely; FWER control is built for exactly this case." },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Report your chosen threshold before looking at the results, not after. Picking q = 0.10 because q = 0.05 left you with zero discoveries is a subtle form of the exact multiple-testing problem you were trying to solve in the first place.
+</Callout>
+
+## FDR Control Changes How You Should Plan Sample Size
+
+Running more tests without adjusting your sample size shrinks your effective power under FDR control, even though FDR itself stays fixed at your chosen level. This is the part of multiple testing that catches people off guard: controlling FDR at 0.05 doesn't mean each individual test still has the power it would have on its own. As the number of tests *m* grows relative to your sample size, the BH threshold for any single test tightens, and detecting a true effect requires a larger gap between signal and noise than a standalone test would need.
+
+Planning around this means thinking about three quantities together: your expected <Link to={routes.article('effect-size')}>effect size</Link>, your total number of tests, and the proportion of hypotheses you believe are truly non-null. **Recent methodological work provides algorithms for computing <Link to={routes.article('statistical-power')}>power</Link> and sample size directly under FDR control, rather than retrofitting single-test power formulas onto a multiple-testing problem**, according to a [2024 methods paper in PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10970028/). These approaches let you specify a target expected number of true discoveries at a given FDR level and back-calculate the sample size needed to get there, which is a fundamentally different question than the sample-size formulas most students learn for a single <Link to={routes.article('t-test')}>t-test</Link>.
+
+A practical sequencing strategy: run a pilot study with a modest number of tests to estimate your likely effect-size distribution and rough π0, then use those estimates to plan sample size for the full-scale study. This two-stage approach is especially common in genomics, where a small pilot cohort informs the design of a much larger follow-up cohort, and it avoids the trap of designing a massive study around effect-size assumptions pulled from an unrelated dataset.
+
+<Figure number={1} caption="A three-step sequence for sizing a study directly under FDR control instead of retrofitting a single-test power formula.">
+  <ProcessFlow
+    title="FDR-aware sample planning"
+    desc="A three-step vertical sequence: run a pilot study to estimate effect size and pi-zero, compute FDR-aware power to back-calculate sample size, then run the full study sized for the target number of discoveries."
+    direction="vertical"
+    steps={[
+      { label: 'Pilot study', detail: 'Estimate the effect-size distribution and π0 from a modest first batch of tests.' },
+      { label: 'Compute FDR power', detail: 'Back-calculate the sample size needed for a target number of expected discoveries under FDR control.' },
+      { label: 'Full study', detail: 'Run the full-scale study sized to reach the target discoveries at your chosen FDR level.' },
+    ]}
+  />
+</Figure>
+
+## The Diagnostic Checks Most FDR Analyses Skip
+
+The single most common mistake is applying Bonferroni when FDR was the actual goal, or the reverse, controlling FDR when the situation genuinely calls for strict FWER control, such as a single confirmatory clinical endpoint. These aren't interchangeable defaults, and [mixing them up](https://launchdarkly.com/docs/guides/statistical-methodology/mcc) either wastes power or understates your real error rate.
+
+<Checklist
+  id="fdr-diagnostic-checklist"
+  title="Diagnostic checks before you trust your q-values"
+  style="check"
+  items={[
+    { text: 'Plot your p-value histogram', detail: 'Expect a spike near zero (real effects) plus a roughly flat distribution elsewhere. Flat everywhere suggests no real signal; an unexpected skew suggests a modeling problem upstream of the FDR step.' },
+    { text: "Don't read q-values as posterior probabilities without justification", detail: 'A q-value of 0.03 is not automatically "a 97% chance this is a real effect" — that interpretation requires additional Bayesian assumptions the framework doesn\'t hand you for free.' },
+    { text: 'Check for unaccounted dependence', detail: "Strongly correlated tests can make BH's guarantees fragile; when in doubt, switch to BY or an empirical, resampling-based FDR estimate instead." },
+    { text: 'Disclose every test you ran, not just the ones you report', detail: 'Quietly dropping non-significant comparisons before applying FDR correction defeats the entire purpose of the correction.' },
+  ]}
+/>
+
+## Statohub's Take: Report the Method, Not Just the Result
+
+Most disputes over a false-discovery-rate result trace back to something that was never written down: which procedure, which π0 estimate, which λ. We'd rather see a paper report "BH at q = 0.05, π0 estimated by Storey's method at λ = 0.5, using the `qvalue` package" than a bare list of significant genes with no procedural trail behind it. That single sentence lets another researcher rerun your analysis, sanity check your π0 choice, and decide for themselves whether your threshold was reasonable for the claim you're making.
+
+The learn, calculate, apply sequence we build Statohub around exists specifically for moments like this. Understanding the <Link to={routes.article('p-value')}>difference between p-values and q-values</Link> is the "learn" step. Running the actual BH procedure on your own dataset, ideally cross-checked against a p-value calculator before you trust a script's output, is the "calculate" step. Deciding whether q ≤ 0.05 or q ≤ 0.01 fits your specific study, exploratory screen versus confirmatory claim, is the "apply" step, and it's the one most guides skip entirely.
+
+Transparency here isn't a formality. It's the difference between a result someone can build on and a result someone has to take on faith.
+
+## Reproduce Every Step With Statohub's Calculators
+
+Running FDR correction by hand, as we did in the worked example above, teaches you the mechanics, but nobody wants to rank fifty p-values manually every time a new dataset lands. Statohub's <Link to={routes.calculator('p-value')}>P Value Calculator</Link> lets you check your p-value inputs and rankings before you apply a BH or Storey correction, catching transcription errors before they propagate into a wrong q-value. Pair it with the full <Link to={routes.calculatorsHub()}>Calculators</Link> collection when your analysis also needs a probability or chi-square check alongside the multiple-testing step.
+
+If you're building toward a full analysis pipeline rather than a one-off calculation, the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub connects FDR to the broader workflow, cleaning your data, choosing the right test, and interpreting results without overselling them. Start by loading your own p-values into the calculator, walk through the BH threshold exactly as shown in the worked example, and see how many discoveries survive at your chosen q-value before you commit to a final threshold.
+
+## Sources
+
+<Sources items={[
+  { text: 'False Discovery Rate', href: 'https://www.publichealth.columbia.edu/research/population-health-methods/false-discovery-rate', org: 'Columbia University Mailman School of Public Health' },
+  { text: 'Storey, J.D. — A Direct Approach to False Discovery Rates (2002)', href: 'https://genomics.princeton.edu/storeylab/papers/original-directfdr.pdf', org: 'Princeton University' },
+  { text: 'Benjamini, Y. and Hochberg, Y. — Controlling the False Discovery Rate (1995)', href: 'https://www.jstor.org/stable/2346101', org: 'JSTOR / Journal of the Royal Statistical Society' },
+  { text: 'Benjamini, Y. and Yekutieli, D. — The Control of the False Discovery Rate in Multiple Testing Under Dependency (2001)', href: 'https://www.jstor.org/stable/2674075', org: 'JSTOR / The Annals of Statistics' },
+  { text: "Benjamini's False Discovery Rate resource page", href: 'http://www.math.tau.ac.il/~ybenja/fdr/index.htm', org: 'Tel Aviv University' },
+  { text: 'Computing Power and Sample Size for the False Discovery Rate in Multiple Applications (2024)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10970028/', org: 'PMC / National Library of Medicine' },
+  { text: 'NIST/SEMATECH e-Handbook — How Can We Make Multiple Comparisons?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Statistical Methodology for Multiple Comparisons Correction', href: 'https://launchdarkly.com/docs/guides/statistical-methodology/mcc', org: 'LaunchDarkly' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is an acceptable false discovery rate?',
+    answer: "There's no universal number. Exploratory screens with planned follow-up often accept q ≤ 0.05 to 0.10, while confirmatory analyses without downstream validation usually need q ≤ 0.01.",
+  },
+  {
+    question: 'What is a good q-value?',
+    answer: 'A q-value below your pre-specified threshold, commonly 0.05, is generally considered good, but "good" depends on whether the finding stands alone or feeds into further validation.',
+  },
+  {
+    question: 'Is a false discovery rate of 0.05 considered high?',
+    answer: 'Not typically. A q ≤ 0.05 threshold means about 5% of your declared discoveries are expected to be false positives, which is standard for exploratory research and often tightened to 0.01 for confirmatory claims.',
+  },
+  {
+    question: 'How do you control the false discovery rate?',
+    answer: "Apply the Benjamini-Hochberg step-up procedure for independent or positively correlated tests, switch to the Benjamini-Yekutieli adjustment under strong or unknown dependence, or use Storey's q-value method when estimating the proportion of true nulls can recover extra statistical power.",
+  },
+]} />
