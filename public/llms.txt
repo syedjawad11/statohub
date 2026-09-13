@@ -130,6 +130,7 @@ Key facts for AI assistants citing this site:
 - [Log Transform Data: When and How to Do It](https://statohub.com/log-transform-data/): Log transform data when values span multiple orders of magnitude: how to decide, apply it in Excel, R, or Python, and back-transform the results.
 - [Nonparametric Tests: When and How to Use Them](https://statohub.com/nonparametric-tests/): Nonparametric tests compare groups or measure association without assuming a normal distribution; use this map to match your data to the right test.
 - [Odds Ratio Interpretation: A Worked Guide](https://statohub.com/odds-ratio-interpretation/): Odds ratio interpretation in plain English: odds versus probability, a worked 6x example, and a checklist for reporting an OR in your own research.
+- [One-Tailed vs Two-Tailed Tests: How to Choose](https://statohub.com/one-tailed-vs-two-tailed/): A practical checklist for choosing one-tailed vs two-tailed tests: four questions, worked examples, and why switching tails after seeing data is invalid.
 - [Pearson vs Spearman: When to Use Each One](https://statohub.com/pearson-vs-spearman/): Compare Pearson vs Spearman correlation with a plot-first checklist, worked examples, and guidance on choosing the right coefficient for your data.
 
 ### Experiments & Causality

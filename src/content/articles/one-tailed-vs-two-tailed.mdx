@@ -1,0 +1,189 @@
+---
+title: "One-Tailed vs Two-Tailed Tests: How to Choose"
+h1: "4 Questions That Decide One-Tailed vs Two-Tailed Tests"
+description: "A practical checklist for choosing one-tailed vs two-tailed tests: four questions, worked examples, and why switching tails after seeing data is invalid."
+category: data-analysis
+primaryKeyword: one-tailed vs two-tailed tests
+keywords:
+  - one-tailed vs two-tailed tests
+  - one-tailed test
+  - two-tailed test
+  - hypothesis testing
+  - statistical significance
+  - p-value
+phase: 1
+related:
+  - box-cox-transformation
+  - confidence-interval-vs-prediction-interval
+  - confidence-level-vs-significance-level
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A one-tailed test puts all your risk of error on one side of the distribution, betting the effect moves in a single predicted direction. A two-tailed test splits that risk across both sides, staying open to effects moving either way. The quick rule: use a one-tailed test only when you commit to a direction *before* seeing your data and truly do not care about the opposite result. Otherwise, default to two-tailed. For symmetric distributions like the normal or t, a one-tailed p-value equals half the two-tailed p-value, but only when your result actually lands in the direction you predicted.
+
+<KeyTakeaways rows={[
+  { point: 'One-tailed tests are directional', details: 'All the risk of error sits on one side of the distribution, used only when you predict a specific direction before seeing the data.' },
+  { point: 'Two-tailed is the safe default', details: 'Risk splits across both tails, catching an effect that moves in either direction — the right choice whenever a reversed effect would still matter.' },
+  { point: 'The p-halving rule has conditions', details: 'A one-tailed p-value equals half the two-tailed p-value only for symmetric distributions (normal, t) and only when the result lands in the predicted direction.' },
+  { point: 'Never switch tails after seeing results', details: "Choosing one-tailed only after a two-tailed test misses significance is statistically invalid and inflates the false-positive rate." },
+  { point: 'Justify a one-tailed test explicitly', details: 'Reserve it for cases where an effect reversing direction is physically or logically impossible, and state the rationale in your methods section.' },
+]} />
+
+## One-Tailed vs Two-Tailed Test: The Formal Comparison
+
+The difference between one-tailed and two-tailed tests comes down to how you write the alternative hypothesis and where you place your rejection region. A two-tailed test uses a non-directional alternative: the population parameter is simply different from the null value, in either direction. A one-tailed test uses a directional alternative: the parameter is specifically greater than or specifically less than the null value.
+
+That distinction changes how you allocate your significance level. Say you set alpha at 0.05. In a two-tailed test, you split that 0.05 into two regions of 0.025 each, one in the upper tail and one in the lower tail of the distribution. In a one-tailed test, the entire 0.05 sits in a single tail, either the upper or the lower one, depending on which direction you predicted.
+
+Picture a bell curve. The [one- and two-tailed tests entry on Wikipedia](https://en.wikipedia.org/wiki/One-_and_two-tailed_tests) frames it clearly: a one-tailed test restricts the rejection region to one end of the distribution, while a two-tailed test splits that region across both ends. Practically, that means:
+
+- A two-tailed test rejects the null if your test statistic falls far into either the upper or lower tail.
+- A one-tailed test rejects the null only if the statistic falls far into the single tail you predicted, even if it falls dramatically into the *other* tail.
+- The critical value for a one-tailed test sits closer to the center of the distribution than the critical value for an equivalent two-tailed test, which is exactly why one-tailed tests are easier to "pass" in the predicted direction.
+
+This asymmetry only behaves predictably when the underlying sampling distribution is symmetric, which is the case for the normal and t distributions used in most introductory hypothesis tests.
+
+## How P-Values and Critical Values Differ Between the Two Tests
+
+The relationship between one-tailed and two-tailed p-values is mechanical, not mysterious, as long as your test statistic follows a symmetric distribution. For the normal and t distributions, the [UCLA Statistical Methods and Data Analytics FAQ](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/) confirms that the one-tailed p-value is exactly half the two-tailed p-value, provided the observed result falls in the direction you predicted ahead of time.
+
+Here is how that conversion actually plays out:
+
+1. Run your analysis and get a two-tailed p-value, say 0.04, from standard software output.
+2. Check that your result landed in the direction you predicted before collecting data. If it did, divide by two: your one-tailed p-value is 0.02.
+3. If the result landed in the *opposite* direction from your prediction, the conversion breaks down. Your one-tailed p-value in the predicted direction would actually be 0.98, not 0.02, because almost none of the distribution's mass sits on your side.
+4. Skip this halving trick entirely for asymmetric distributions like chi-square, where tail probabilities are not mirror images of each other.
+
+<Figure number={1} caption="Converting a two-tailed p-value of 0.04 to its one-tailed equivalents — half the value in the predicted direction, but 0.98 if the result falls the opposite way.">
+  <AnnotatedChart
+    title="One-tailed vs two-tailed p-value conversion"
+    desc="A bar chart comparing a two-tailed p-value of 0.04 against its one-tailed equivalents: 0.02 if the result lands in the predicted direction, and 0.98 if it lands in the opposite direction."
+    type="bar"
+    yLabel="p-value"
+    points={[
+      { label: 'Two-tailed p', value: 0.04, annotation: 'Standard two-tailed software output' },
+      { label: 'One-tailed, predicted direction', value: 0.02, annotation: 'Half the two-tailed value' },
+      { label: 'One-tailed, opposite direction', value: 0.98, annotation: 'Almost all the mass sits on the other side' },
+    ]}
+  />
+</Figure>
+
+Most statistical software packages default to reporting <Link to={routes.article('p-value')}>two-tailed p-values</Link>, because that is the more conservative and defensible default. If you need a one-tailed result, you typically have to request it explicitly, and you need to know which direction the software assumes before trusting the number it hands back.
+
+## Real Examples: Coin Flips, Drug Trials, and A/B Tests
+
+Abstract rules get concrete fast once you run them against situations you actually recognize. Three examples, in increasing order of stakes:
+
+- **Coin flip:** If you suspect a coin is biased toward heads specifically, your null is p = 0.5 and your alternative is p > 0.5, a one-tailed setup. If you only suspect the coin is unfair without knowing which way, your alternative is p ≠ 0.5, a two-tailed setup. Flip it 100 times and get 62 heads. The two-tailed test asks whether 62 is unusual in *either* direction; the one-tailed test asks only whether 62 is unusually high.
+- **Drug trial:** A new drug is tested against a placebo for lowering blood pressure. Even if researchers predict the drug lowers pressure, most trials still use two-tailed tests, because a drug that unexpectedly *raises* blood pressure is a safety signal you cannot afford to miss. [GraphPad's guide on one-tail versus two-tail p-values](https://www.graphpad.com/guides/prism/7/statistics/one-tail_vs__two-tail_p_values.htm) uses a similar case: a one-tailed test is defensible only when you can state with certainty, before collecting data, that the effect cannot run the other way. That is rarely true in medicine.
+- **A/B test:** A product team redesigns a checkout button and predicts conversions will rise. A one-tailed test is tempting because it is easier to declare a win. But if the redesign instead tanks conversions, a one-tailed test in the "increase" direction would report a high p-value and miss the harm entirely.
+
+<Callout variant="tip" title="Pro tip">
+If you would be surprised and want to know about a result in the opposite direction, you need a two-tailed test, no matter how confident you feel about your predicted direction.
+</Callout>
+
+## Why Switching Tails After Seeing Data Is a Serious Mistake
+
+The single most common misuse of one-tailed tests happens after the data is already in front of you. A researcher runs a two-tailed test, gets a p-value of 0.08, misses significance at alpha = 0.05, then quietly reruns the analysis as one-tailed to get a p-value of 0.04 and calls it significant. The UCLA FAQ on tailed tests is direct about this: choosing your tail after seeing results is statistically invalid because it exploits the one-tailed test's extra power retroactively, breaking the error-rate guarantees the whole framework depends on.
+
+This is not just a technicality. Practitioners have flagged that reaching for a one-tailed test purely because it makes significance easier to reach is scientifically irresponsible, not a legitimate analytical choice, according to [GeeksforGeeks' comparison of the two approaches](https://www.geeksforgeeks.org/data-science/difference-between-one-tailed-and-two-tailed-tests/). It also carries real consequences beyond an inflated false-positive rate:
+
+- You risk missing a genuinely important effect in the "wrong" direction, which in medical or safety contexts can mean overlooking harm.
+- You erode the credibility of your results the moment a reviewer or colleague notices the tail choice was made after the fact.
+- You make your study impossible to replicate cleanly, since your stated hypothesis no longer matches your actual analytical decision.
+
+The fix is procedural: state your direction and your alpha level before you touch the data, ideally in a preregistration document or your methods section draft. When you are unsure which way to go, default to two-tailed and report effect sizes and confidence intervals alongside the p-value, since those numbers carry information a single p-value cannot.
+
+## A Decision Checklist: One-Tailed or Two-Tailed?
+
+Work through these questions in order, before you run a single line of analysis:
+
+<Checklist
+  id="tail-decision-checklist"
+  title="Decision checklist: one-tailed or two-tailed?"
+  style="numbered"
+  items={[
+    { text: 'Do you have a specific, pre-stated directional hypothesis?', detail: 'If you cannot write "I predict X will increase" (not just "X will change") before seeing the data, stop here and use two-tailed.' },
+    { text: 'Could the effect plausibly run in the opposite direction?', detail: 'If a reasonable person could imagine the opposite outcome happening, and you would want to know if it did, use two-tailed.' },
+    { text: 'Are the consequences of missing an opposite-direction effect genuinely negligible?', detail: 'This is the highest bar. In most business, medical, and behavioral research, missing a harmful or unexpected reversal carries real cost, which argues for two-tailed by default.' },
+    { text: 'Did you preregister the direction, or can you otherwise prove it was decided before the data existed?', detail: 'If not, you no longer have a legitimate one-tailed test, regardless of what your hypothesis was.' },
+  ]}
+/>
+
+If you answered "no" to any of the first three questions, use two-tailed. The rare, justified cases for one-tailed tests tend to involve situations where a reversal is physically or logically impossible, such as testing whether a new manufacturing process reduces defect rates when the old process is already the floor.
+
+Whatever you choose, your methods section should state the alternative hypothesis explicitly, the alpha level used, and a one-sentence rationale for the tail choice. A line like "We used a one-tailed test at alpha = 0.05 because prior research and mechanism make a decrease in the opposite direction implausible" gives readers everything they need to judge your choice on its merits. Statohub's guide to <Link to={routes.article('null-hypothesis')}>stating the null hypothesis</Link> walks through phrasing this cleanly for a lab report or paper.
+
+## When the Symmetry Assumption Breaks Down
+
+The p-halving shortcut only works because the normal and t distributions are symmetric around zero. Half the probability mass sits above the center, half below, so cutting a two-tailed p-value in half tells you exactly how much mass sits beyond your one-sided cutoff. [Wolfram MathWorld's entry on one-tailed tests](https://mathworld.wolfram.com/One-TailedTest.html) reinforces that the tail direction must be fixed before you look at the data, precisely because the math assumes that symmetry holds from the outset.
+
+<DataTable
+  caption="How the symmetry assumption behind the p-halving shortcut breaks down for skewed distributions"
+  headers={['Property', 'Symmetric distributions (normal, t)', 'Skewed distributions (chi-square, F)']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Examples', 'Normal, t', 'Chi-square, F'],
+    ['Center', 'Centered at zero', 'Bounded at zero — no center'],
+    ['Tails', 'Mirror images of each other', 'Not mirror images'],
+    ['Two-tailed → one-tailed conversion', 'p-value can be halved', 'No clean halving rule'],
+  ]}
+/>
+
+That assumption fails for distributions like chi-square or F, which are bounded at zero and skewed. There is no clean halving rule for a chi-square test, because the two tails are not mirror images. Regression output adds another wrinkle: many software packages report a two-sided p-value for each coefficient by default, and you have to explicitly request or manually compute a one-sided version if your hypothesis about a coefficient's sign is genuinely directional. Statohub's <Link to={routes.categoryHub('inferential-statistics')}>inferential statistics hub</Link> covers how these test statistics get built in the first place, which is worth reviewing before you trust any shortcut.
+
+## Statohub's Take: Stop Optimizing for a Significant P-Value
+
+Too many students treat the one-tailed versus two-tailed decision as a lever for getting a smaller p-value, rather than what it actually is: a formal statement about what you were willing to find out before you looked. That framing matters more than the mechanics of halving a number.
+
+Our position at Statohub, reflected in how we structure the <Link to={routes.appliedLanding()}>Learn, Calculate, and Apply</Link> path across the site, is that the test choice belongs upstream of the data, not downstream of the result. Report your effect size and confidence interval next to whatever p-value you land on. A p-value tells you whether an effect probably exists; the effect size and interval tell you whether it matters. Students who build that habit early stop chasing significance and start doing analysis that holds up under scrutiny.
+
+## Put the Checklist to Work
+
+Working through a real dataset makes the one-tailed versus two-tailed decision far more concrete than any rule of thumb on its own. Statohub's <Link to={routes.learnLanding()}>Learn</Link> hub breaks down the reasoning behind hypothesis testing step by step, from stating hypotheses to interpreting output, without assuming you already speak statistics fluently. Once you have your test statistic and need a p-value fast, the <Link to={routes.calculatorsHub()}>calculators section</Link> handles the computation so you can spend your time on interpretation instead of arithmetic.
+
+If your next step involves comparing two groups, the <Link to={routes.article('paired-vs-independent-t-test')}>paired vs. independent t-test guide</Link> helps you pick the right test structure before tail direction even enters the picture. And if you are analyzing backtested trading data, [Trade4's piece on statistical significance in backtesting](https://blog.trade-4.com/blog/statistical-significance-backtesting) shows how these same tail and power decisions play out with financial time series. Start with a clear hypothesis, run the numbers, and let the interpretation drive the conclusion, not the other way around.
+
+## Sources
+
+<Sources items={[
+  { text: 'FAQ: What are the differences between one-tailed and two-tailed tests?', href: 'https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/', org: 'UCLA Statistical Methods and Data Analytics' },
+  { text: '7.1.3. What are statistical tests?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: '1.3.5.8. Chi-Square Test for the Variance (one-sided vs. two-sided)', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda358.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: 'One- and two-tailed tests', href: 'https://en.wikipedia.org/wiki/One-_and_two-tailed_tests', org: 'Wikipedia' },
+  { text: 'One-tail vs. two-tail P values', href: 'https://www.graphpad.com/guides/prism/7/statistics/one-tail_vs__two-tail_p_values.htm', org: 'GraphPad Prism guide' },
+  { text: 'One-Tailed Test', href: 'https://mathworld.wolfram.com/One-TailedTest.html', org: 'Wolfram MathWorld' },
+  { text: 'Difference Between One-Tailed and Two-Tailed Tests', href: 'https://www.geeksforgeeks.org/data-science/difference-between-one-tailed-and-two-tailed-tests/', org: 'GeeksforGeeks' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between a one-tailed and two-tailed test?',
+    answer: 'A one-tailed test uses a directional alternative hypothesis and puts the entire rejection region in a single tail of the distribution. A two-tailed test uses a non-directional alternative and splits the rejection region across both tails, so it catches an effect moving in either direction.',
+  },
+  {
+    question: 'Is a one-tailed p-value always half the two-tailed p-value?',
+    answer: 'Only when two conditions hold: the sampling distribution is symmetric, such as the normal or t distribution, and the observed result falls in the direction you predicted before collecting data. For asymmetric distributions like chi-square there is no clean halving rule, and a result in the opposite direction gives a one-tailed p-value far larger than half, not smaller.',
+  },
+  {
+    question: 'Can I switch to a one-tailed test after seeing my two-tailed result miss significance?',
+    answer: 'No. Choosing the tail after seeing the data exploits the one-tailed test’s extra power retroactively and invalidates the error-rate guarantees the test depends on. Decide and state your direction before you touch the data, ideally in a preregistration document.',
+  },
+  {
+    question: 'When is a one-tailed test actually appropriate?',
+    answer: 'Only when a reversal of the effect is physically or logically impossible and you genuinely do not need to know about it — for example, testing whether a new manufacturing process reduces defect rates when the old process already represents the floor. In most medical, business, and behavioral research, two-tailed is the defensible default.',
+  },
+]} />
