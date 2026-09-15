@@ -26,7 +26,7 @@ Internal Applied content via `content_db.py` ([[0021-boards-split-by-source]]).
 Batch 1 (4 articles) is live; **batch 2 (4 more, one per hub) has never been
 started -- topics were never chosen.** Governed by
 [[0014-applied-section-url-family]] / [[0015-wedge-scoped-to-learn]]; recipe in
-`docs/status/sessions/2026-08-16-applied-batch-1.md`. Still owed: visual QA vs
+`docs/status/sessions/archive/2026-08-16-applied-batch-1.md`. Still owed: visual QA vs
 `docs/ideas/homepage-redesign-mock-2026-08-16.png`. `time-series-forecasting`
 and `machine-learning-statistics` hold 1 article each.
 
