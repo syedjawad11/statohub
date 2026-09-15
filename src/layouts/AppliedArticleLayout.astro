@@ -207,10 +207,11 @@ const articleJsonLd = [
     margin: 0;
     color: var(--ink);
     font-family: var(--serif);
-    font-size: clamp(2.35rem, 5vw, 4.15rem);
+    /* Matches h1.article-title (Learn) in global.css so both sections share one title scale. */
+    font-size: clamp(32px, 4vw, 50px);
     font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.02;
+    letter-spacing: 0;
+    line-height: 1.08;
   }
 
   .applied-standfirst {
@@ -403,10 +404,6 @@ const articleJsonLd = [
 
     .applied-shell {
       padding-top: 1.25rem;
-    }
-
-    .applied-header h1 {
-      font-size: clamp(2.15rem, 12vw, 3rem);
     }
 
     .applied-related-grid {
