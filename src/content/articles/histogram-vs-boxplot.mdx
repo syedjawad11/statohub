@@ -1,0 +1,201 @@
+---
+title: "Histogram vs Boxplot: When to Use Each"
+h1: "30 Observation Rule: Histogram vs Boxplot, When to Combine"
+description: "Histogram vs boxplot: use the 30-observation rule to pick the right chart, know which settings to record, and see when combining both works best."
+category: data-analysis
+primaryKeyword: histogram vs boxplot
+keywords:
+  - histogram vs boxplot
+  - boxplot vs histogram
+  - histogram or boxplot
+  - when to use histogram vs boxplot
+  - understanding boxplots
+  - histogram examples
+phase: 1
+related:
+  - box-cox-transformation
+  - cohens-d
+  - communicating-uncertainty
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Use a histogram when you need to see distribution shape, modality, and skewness in a single variable. Use a boxplot when you need compact comparisons across groups, along with medians, interquartile ranges, and flagged outliers. Combine both when a report needs shape detail and a concise summary at once, which is common enough in coursework and client decks that it deserves its own workflow below.
+
+<KeyTakeaways rows={[
+  { point: 'Histograms show shape', details: 'They reveal modality, skewness, and gaps in one variable — but the picture changes with bin width, so rerun the chart at two or three settings before trusting a conclusion about shape.' },
+  { point: 'Boxplots compress to five numbers', details: 'Median, Q1, Q3, and 1.5×IQR whiskers make many groups comparable at a glance, but a boxplot cannot reveal a second peak in the data.' },
+  { point: 'Below roughly 30 observations, both charts get shaky', details: 'Bin heights and quartile positions swing wildly with a couple of extra points — plot the raw points instead.' },
+  { point: 'Combine them when you need both', details: 'A histogram with a marginal boxplot strip gives shape and the five-number summary in one figure without doubling the space.' },
+  { point: 'Always report your settings', details: 'State the bin rule, the sample size per group, and the outlier rule you used so a reader — or a grader — can reproduce the chart.' },
+]} />
+
+## What a Histogram Actually Shows
+
+A histogram sorts continuous data into bins and stacks a bar for each one, with height representing either the raw count or the density of observations. Because the variable is continuous, the bars touch, unlike a bar chart, where gaps signal categorical data with no numeric order between groups.
+
+That single visual gives you information a summary statistic cannot: modality (one peak, two peaks, or more), skewness (a long tail pulling right or left), gaps in the data, and unusual clusters near the tails. A histogram of exam scores might show two distinct peaks, one around 65 and one around 90, which a mean or median would flatten into a single, misleading middle value.
+
+The catch is bin width. Choose too few bins and real structure disappears into a few fat bars. Choose too many and the chart turns into visual noise. Three common starting rules of thumb are Sturges' formula, the square root rule, and the [Freedman–Diaconis rule](https://www.atlassian.com/data/charts/histogram-complete-guide), which adjusts bin width based on the interquartile range and tends to hold up better on skewed data.
+
+- Sturges works well for small, roughly normal datasets.
+- The square root rule is a fast default for moderate sample sizes.
+- Freedman–Diaconis adapts to spread and outliers, making it a safer pick for messy real-world data.
+
+Each rule arrives at a bin count differently. Sturges' formula sets the bin count near ⌈log₂(n) + 1⌉, which assumes a roughly normal shape and doesn't adjust for skew. The square root rule is blunter still — bin count ≈ √n — fast to compute but entirely agnostic to distribution shape. Freedman–Diaconis instead sizes each bin at roughly 2 × IQR × n^(−1/3), so a wider spread or a smaller sample produces wider bins, which is why it tends to hold up better once outliers or skew are present in the data.
+
+Histograms also struggle with categorical variables (they need a bar chart instead) and with very small samples, where a handful of points can make bins look artificially smooth or artificially spiky. In those cases, a density plot, an ECDF, or a simple strip plot of raw points usually tells a more honest story.
+
+<Callout variant="tip" title="Pro tip">
+Never trust a single bin width. Rerun the same histogram at two or three settings before you draw a conclusion about shape, since a bimodal pattern that vanishes when you change bin count was probably never real.
+</Callout>
+
+## Understanding Boxplots: The Five-Number Summary
+
+A boxplot compresses a distribution into five numbers: the minimum, the first quartile (Q1), the median, the third quartile (Q3), and the maximum, with the box itself spanning Q1 to Q3, known as the <Link to={routes.article('interquartile-range')}>interquartile range, or IQR</Link>. The line inside the box marks the median, not the mean, which is exactly why boxplots hold up so well against skewed data and extreme values.
+
+The whiskers extend to the most extreme points that still fall within 1.5 times the IQR from the box edges, a convention known as the Tukey rule after statistician John Tukey, who introduced the box-and-whisker plot in his 1977 book *Exploratory Data Analysis*. Anything beyond that gets plotted as an individual dot and flagged as a potential <Link to={routes.article('how-to-find-outliers')}>outlier</Link>, worth a second look rather than automatic deletion. Some software distinguishes "mild" outliers, beyond 1.5×IQR, from "extreme" outliers, beyond 3×IQR — a useful distinction when you're deciding how much scrutiny a flagged point deserves before you report it.
+
+- **Strength:** boxplots line up side by side cleanly, so comparing ten groups takes the same visual space as comparing two.
+- **Strength:** median and IQR are resistant to extreme values, unlike the mean and standard deviation.
+- **Weakness:** a boxplot cannot show you a bimodal distribution. Two peaks and one smooth hump can produce nearly identical boxes.
+- **Weakness:** with very small samples, the quartile estimates themselves get noisy, so the box can look tidy while hiding real instability.
+
+Boxplots earn their keep in situations with many groups to compare or when a report needs to stay compact, such as comparing salary distributions across ten departments. They deserve more caution as a standalone tool when the underlying shape, not just the summary, is the actual question.
+
+## Histogram or Boxplot? A Side-by-Side Comparison
+
+The decision usually comes down to what question you are actually answering, not which chart looks more polished.
+
+<DataTable
+  caption="Which chart to reach for, by task"
+  headers={['Task', 'Better chart', 'Why']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Exploring the shape of one variable', 'Histogram', 'It is the only one of the two that reveals modality directly.'],
+    ['Comparing several groups at once', 'Boxplot', 'Scales far better across five, ten, or twenty categories than a wall of histograms.'],
+    ['Hunting for outliers', 'Boxplot', 'The Tukey rule flags them automatically rather than requiring a visual guess.'],
+    ['Checking for multimodality before a test that assumes a single peak', 'Histogram', 'A boxplot will not warn you — two peaks and one hump can look identical.'],
+  ]}
+/>
+
+Sample size matters more than most students expect. As a rule of thumb, aim for roughly 30 observations per group before trusting either chart's summary as stable. Below that threshold, both histograms and boxplots can mislead, since bin heights and quartile positions swing wildly with just one or two added points. [Practitioner guidance on small-sample visualization](https://scispace.com/pdf/points-of-significance-visualizing-samples-with-box-plots-jozeti6oya.pdf) recommends plotting the raw points themselves, strip plots, dot plots, or beeswarm plots, once n drops much below 30, rather than dressing up noisy summary statistics.
+
+There is also a trade-off in honesty versus tidiness. A histogram's bin choice is subjective and needs disclosure; a boxplot's quartiles are computed automatically but hide shape by design. When neither tool fits the job cleanly, violin plots, density plots, an ECDF, or small multiples of histograms across groups often split the difference better than forcing one chart to do two jobs. A violin plot in particular mirrors a density curve around a central axis, so it keeps the shape information a boxplot discards while still letting you line several groups up side by side — the trade-off is that it needs a reader who already knows how to read a density shape, which makes it a weaker choice for a mixed or non-technical audience than a boxplot.
+
+## How to Choose and Report: A Decision Guide
+
+Start by confirming the variable type. Continuous data can go in either a histogram or boxplot; categorical data needs a bar chart, not a histogram, since [bars for categories require gaps while histogram bars for continuous bins touch](https://www.domo.com/learn/charts/histogram-charts).
+
+Next, check your sample size and group count. One group with enough data to explore shape points toward a histogram. Several groups needing quick comparison point toward a boxplot. When you genuinely cannot decide, make both — it costs little and often reveals something a single chart would have hidden. In practice, "make both" means building the histogram first so you know whether the shape is unimodal, skewed, or bimodal, then building the boxplot on the same variable and checking that the two tell a consistent story — a boxplot that looks perfectly symmetric next to a histogram with an obvious right tail is a signal to look closer at how the quartiles were computed, not to trust whichever chart happens to look cleaner.
+
+<Figure number={1} caption="A stop-and-decide path from variable type through group count and sample size to the right chart.">
+  <DecisionTree
+    title="Histogram vs boxplot decision path"
+    desc="A decision tree first asks whether the variable is categorical, then whether multiple groups are being compared, then whether there are at least 30 observations, to land on a bar chart, boxplot, histogram, or raw-point plot."
+    root={{
+      label: 'Is the variable categorical?',
+      yes: { label: 'Use a bar chart — categorical data needs gaps between bars' },
+      no: {
+        label: 'Are you comparing multiple groups?',
+        yes: { label: 'Use a boxplot for compact medians, IQR, and outliers' },
+        no: {
+          label: 'Are there at least ~30 observations?',
+          yes: { label: 'Use a histogram to explore shape, modality, and skewness' },
+          no: { label: 'Plot raw points — strip, dot, or beeswarm — instead' },
+        },
+      },
+    }}
+  />
+</Figure>
+
+Record your settings as you go, since reproducibility depends on it:
+
+<Checklist
+  id="histogram-boxplot-reporting"
+  title="Before you publish a distribution chart"
+  style="check"
+  items={[
+    { text: 'Bin rule recorded', detail: 'Which rule you used — Sturges, square root, or Freedman–Diaconis — and how many bins resulted.' },
+    { text: 'Sample size logged', detail: 'n for every group shown in the chart.' },
+    { text: 'Outlier rule stated', detail: 'Which rule flagged points as unusual, typically the 1.5×IQR convention.' },
+    { text: 'Median and IQR reported in the caption', detail: 'State the numbers explicitly rather than leaving readers to eyeball the chart.' },
+    { text: 'Bimodality claim double-checked', detail: 'A second peak should survive across two or three different bin widths before you call a distribution bimodal.' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+If you are grading or presenting to a mixed audience, boxplots communicate faster because the median and spread jump out immediately. Save histograms for the exploratory phase, where shape questions actually get answered.
+</Callout>
+
+## Statohub's Recommendation: Combine a Histogram With a Marginal Boxplot
+
+A common classroom-tested approach is to pair the two visualizations rather than pick one. A histogram gives you shape; a boxplot stacked as a thin marginal strip along the same axis gives you the median, IQR, and outliers without eating extra space, a pattern that shows up often in practitioner workflows for [aligning histograms and boxplots on a shared axis](https://www.geeksforgeeks.org/r-language/merge-and-perfectly-align-histogram-and-boxplot-using-ggplot2-in-r/).
+
+A simple build order works well for students:
+
+- Compute bin width using Freedman–Diaconis, then draw the histogram.
+- Calculate the five-number summary and add the boxplot as a narrow strip above or below, aligned to the same x-axis scale.
+- Annotate the median line and any flagged outliers directly on the combined figure.
+
+Skip the combined display for very small samples or when comparing many groups at once. Small multiples or a violin plot per group usually reads more clearly in those cases.
+
+## What I Tell Students Who Ask "Which One Should I Just Use?"
+
+Default to boxplots for grading and side-by-side comparisons; they force you to report median and IQR instead of eyeballing a shape. Default to histograms for exploratory work, where the question is "what does this distribution actually look like?" Always caption both with n and whichever bin or outlier rule you used. If you are still unsure which observation drove your conclusion, that is the sign to show both plots, not neither.
+
+## Practice What You Just Read
+
+Reading about bin widths and quartiles only gets you so far. The fastest way to internalize the difference between a histogram and a boxplot is to build both from the same dataset and watch where they disagree. Statohub's <Link to={routes.learnLanding()}>Learn</Link> hub walks through distribution concepts step by step, and the <Link to={routes.appliedLanding()}>Applied Statistics</Link> section shows the same decisions playing out on real datasets rather than toy examples.
+
+For the actual math, Statohub's <Link to={routes.calculatorsHub()}>calculators</Link> handle the median, quartiles, and IQR you need to caption either chart correctly, and the <Link to={routes.categoryHub('descriptive-statistics')}>descriptive statistics guide</Link> breaks down exactly what those numbers mean before you plot anything. If outliers are your main concern, the <Link to={routes.article('how-to-find-outliers')}>1.5×IQR outlier guide</Link> walks through the Tukey rule in the same detail used above. Pull a dataset you already have, run both a histogram and a boxplot on it, and see which one actually answers your question.
+
+## Recommended
+
+- <Link to={routes.article('empirical-rule')}>The Empirical Rule in Statistics: A 68-95-99.7 Guide</Link>
+- <Link to={routes.categoryHub('data-analysis')}>Data Analysis</Link>
+- <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics</Link>
+- <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'Atlassian — The Complete Guide to Histograms (bin-width rules)', href: 'https://www.atlassian.com/data/charts/histogram-complete-guide', org: 'Atlassian' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Box Plot', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook — Detection of Outliers (1.5×IQR / Tukey rule)', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Krzywinski, M. & Altman, N. — "Points of Significance: Visualizing samples with box plots," Nature Methods (2014)', href: 'https://www.nature.com/articles/nmeth.2813', org: 'Nature Methods' },
+  { text: 'John W. Tukey, Exploratory Data Analysis (Addison-Wesley, 1977)', href: 'https://www.google.com/books/edition/Exploratory_Data_Analysis/UT9dAAAAIAAJ', org: 'Addison-Wesley' },
+  { text: 'GeeksforGeeks — Merge and Perfectly Align Histogram and Boxplot Using ggplot2 in R', href: 'https://www.geeksforgeeks.org/r-language/merge-and-perfectly-align-histogram-and-boxplot-using-ggplot2-in-r/', org: 'GeeksforGeeks' },
+  { text: 'Mr. Slope Guy — Histogram vs Box Plot: When to Use Each for Describing Data', href: 'https://www.mrslopeguy.com/blog/histogram-vs-box-plot-when-to-use-each-for-describing-data', org: 'Mr. Slope Guy' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is a disadvantage of using a boxplot instead of a histogram?',
+    answer: 'A boxplot hides the shape of the distribution, so a bimodal dataset with two distinct peaks can look identical to a smooth, single-peaked one once it is compressed into five numbers.',
+  },
+  {
+    question: "What do boxplots show that histograms don't?",
+    answer: 'Boxplots explicitly mark the median, the interquartile range, and flagged outliers using the 1.5×IQR rule, and they let you line up many groups side by side in a fraction of the space a row of histograms would need.',
+  },
+  {
+    question: 'How do I match a histogram to a boxplot?',
+    answer: "Align both plots to the same x-axis scale, then place the boxplot as a narrow marginal strip above or below the histogram so the box's quartiles and whiskers line up directly with the corresponding bars.",
+  },
+  {
+    question: 'When should I use a bar chart instead of a boxplot or histogram?',
+    answer: 'Use a bar chart when your variable is categorical, since bar charts need gaps between bars to signal unordered categories, while histograms use touching bars specifically because the underlying variable is continuous.',
+  },
+]} />
