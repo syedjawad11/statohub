@@ -1,0 +1,239 @@
+---
+title: "Multiple Regression Diagnostics Guide"
+h1: "Check 4 Diagnostics in Multiple Regression"
+description: "A practitioner's guide to multiple regression diagnostics: run the four assumption checks, test multicollinearity with VIF, and avoid common reporting mistakes."
+category: data-analysis
+primaryKeyword: multiple regression diagnostics
+keywords:
+  - multiple regression diagnostics
+  - regression diagnostics
+  - multicollinearity
+  - variance inflation factor
+  - multiple linear regression
+  - regression assumptions
+phase: 1
+related:
+  - heteroscedasticity-test
+  - confidence-interval-vs-prediction-interval
+  - exploratory-data-analysis
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Multiple regression analysis estimates how a single outcome variable changes with two or more predictors at once, reporting each predictor's effect while the others are held fixed. The coefficient on any one variable is a partial effect, not a solo verdict. That distinction is where most misreadings start, because association among predictors in the sample can shift a coefficient's size or sign in ways a raw scatterplot never shows. The bigger caution: a well-fitted model describes correlation among variables, and treating that as causation requires a study design built for it, not just a good R².
+
+<KeyTakeaways rows={[
+  { point: 'Check VIF before trusting a coefficient', details: 'Checking for multicollinearity using VIF is essential; high VIF values may require combining variables or switching to regularization methods.' },
+  { point: 'Run the diagnostics, not just the fit', details: 'Regression diagnostics such as residual plots, normality tests, and heteroscedasticity checks are crucial for verifying assumption validity and ensuring reliable inference.' },
+  { point: 'Report ranges in real-world units', details: 'Report coefficients with 95% confidence intervals and translate them into real-world units to make findings understandable and useful for decision-making.' },
+  { point: 'Association is not causation', details: 'Causal interpretations require appropriate study design, not just statistical control; regression assesses associations, not causation.' },
+]} />
+
+## What Multiple Regression Analysis Is and When to Use It
+
+The population model is written as Y = β₀ + β₁X₁ + β₂X₂ + ... + βₖXₖ + ε, where each β represents the true, unknown effect of its predictor and ε absorbs everything the model doesn't explain. You never observe the population version. What you fit is the sample model, Ŷ = b₀ + b₁X₁ + b₂X₂ + ... + bₖXₖ, where the b's are estimates calculated from your data.
+
+This is the natural extension of simple linear regression, which uses one predictor. Add a second predictor, and you're doing multiple linear regression. It's worth separating this from multivariate regression, a distinct technique that models several *outcome* variables simultaneously rather than several predictors for one outcome.
+
+Researchers reach for multiple regression for three main jobs: predicting an outcome from known inputs, statistically controlling for confounding variables that might distort a relationship of interest, and testing competing explanations against the same observational dataset. Courts and expert witnesses use it for exactly that third purpose, weighing rival theories against the evidence a case presents, according to the [Federal Judicial Center's reference guide](https://www.fjc.gov/sites/default/files/2014/11.mult_reg.PDF).
+
+<Figure number={1} caption="The three jobs researchers use multiple regression for.">
+  <TaxonomyTree
+    title="Why researchers use multiple regression"
+    desc="A root node, multiple regression, branches into three use cases: prediction, control, and comparison, each with a one-line description."
+    root="Multiple regression"
+    branches={[
+      { label: 'Prediction', children: ['Predict an outcome from known inputs.'] },
+      { label: 'Control', children: ['Statistically control for confounding variables that might distort a relationship of interest.'] },
+      { label: 'Comparison', children: ['Test competing explanations against the same observational dataset.'] },
+    ]}
+  />
+</Figure>
+
+## Data Requirements and Sample Size Guidance
+
+Your outcome variable should be continuous, and your predictors can be continuous or categorical. Categorical variables need dummy coding: a variable with $k$ categories becomes $k-1$ binary indicators, with one category serving as the reference group against which the others are compared.
+
+Sample size guidance is famously loose; a commonly suggested minimum is a certain number of observations per predictor, with more recommended if you expect small effects or noisy measurement. Treat that ratio as a floor, not a target. Missing data deserves attention before you specify anything: understand whether values are missing completely at random, missing at random, or missing in a pattern tied to the outcome itself, since that mechanism determines whether listwise deletion or <Link to={routes.article('linear-regression')}>multiple imputation</Link> is the safer choice. Measurement error in predictors quietly biases coefficients too, so document how each variable was collected.
+
+## Building the Model: Predictors, Functional Form, and Interactions
+
+Predictor selection should start with theory, not with letting software search every combination for the best fit. Automated variable fishing tends to produce a model that fits your specific sample beautifully and generalizes poorly to anyone else's data.
+
+Once you've chosen defensible predictors, decide on functional form:
+
+- Log transformations help when a variable's effect is proportional rather than additive, and the coefficient becomes an approximate percentage change in the outcome.
+- Polynomial terms (X², X³) capture curvature, letting you model a relationship that rises then falls.
+- Interaction terms (X₁ × X₂) let one predictor's effect depend on the level of another. Report the interaction alongside both main effects, never alone.
+
+The word "linear" in multiple linear regression refers to linearity in the parameters, not in the predictors themselves, so transformations like these still fit comfortably inside the [standard regression framework](https://www2.stat.duke.edu/courses/Spring23/sta210.001/slides/assumptions.html).
+
+<Callout variant="tip" title="Pro Tip">
+Center continuous predictors (subtract the mean) before creating interaction or polynomial terms. It doesn't change the model's fit, but it reduces artificial collinearity between the original variable and its transformed version, and it makes the main-effect coefficients easier to interpret at a realistic value rather than at X = 0.
+</Callout>
+
+## Checking the Assumptions Behind Your Model
+
+Four assumptions carry the weight of everything downstream: linearity between predictors and the outcome, independence of observations, homoscedasticity (constant error variance across the range of fitted values), and approximately normal residuals. Violate any of them and your standard errors, and therefore your p-values and confidence intervals, become unreliable even if the coefficient estimates themselves stay roughly right.
+
+Run these diagnostics before trusting any output:
+
+<DataTable
+  caption="Regression diagnostics to run before trusting the output"
+  headers={['Diagnostic', 'What to look for', 'What it flags']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Residual vs. fitted plot', 'A random scatter around zero', 'A funnel shape signals heteroscedasticity; a curve signals a missed nonlinear term'],
+    ['Q-Q plot of residuals', 'Points hugging the diagonal line', 'Heavy departures at the tails mean the residuals depart from normality'],
+    ['Breusch-Pagan test', 'A formal test statistic, used when the residual plot looks ambiguous', 'Heteroscedasticity (non-constant error variance)'],
+    ['Durbin-Watson statistic', 'A value away from roughly 2', 'Autocorrelation in the residuals, which matters most when data are ordered over time'],
+    ["Cook's distance", 'Points with disproportionately high values', 'Influential observations whose removal would noticeably shift the coefficients'],
+  ]}
+/>
+
+Multicollinearity gets its own scrutiny. Tolerance equals 1 minus R² from regressing one predictor on all the others, and the <Link to={routes.article('multicollinearity-vif')}>Variance Inflation Factor</Link> is simply 1 divided by that tolerance.
+
+<Callout variant="note" title="A heuristic, not a hard cutoff">
+A common heuristic flags high VIF values as concerning, but treat any specific threshold as a rule of thumb rather than a hard cutoff. Sample size and the specific predictors involved both matter, and severe multicollinearity can destabilize coefficient estimates enough to flip their sign, according to [research on model specification](https://pmc.ncbi.nlm.nih.gov/articles/PMC6900425/).
+</Callout>
+
+When VIF is high, your remedies are dropping a redundant predictor, combining correlated variables into a single index, running a principal-components version of the model, or switching to ridge regression, which tolerates collinearity by design. Statohub's <Link to={routes.article('regression-assumptions')}>regression assumptions guide</Link> walks through each diagnostic plot in more depth.
+
+## Reading the Output: Coefficients, R², and the F-Test
+
+Ordinary least squares (OLS) is the estimation method behind most regression output, choosing the b coefficients that minimize the sum of squared residuals. It is efficient and well understood, but it is also sensitive to outliers and performs poorly if you extrapolate predictions outside the range of your observed data, a limitation NIST's [Engineering Statistics handbook](https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm) flags as a core weakness of the method.
+
+Each unstandardized coefficient tells you the change in the mean outcome for a one-unit increase in that predictor, holding the others constant. Standardized betas convert everything to comparable units, useful when you want to rank predictors by relative influence. A [95%](https://give.wmed.edu/s/?funds=VWCP&amount=500&c=WMWCS%C2%A0&drive=*) confidence interval around each coefficient tells you the plausible range of the true effect; a p-value below your chosen threshold tells you the estimate is unlikely under a true effect of zero, nothing more.
+
+- **R²** reports the share of variance in the outcome explained by the model, but it always increases when you add predictors, even useless ones.
+- **Adjusted R²** penalizes that inflation, making it the fairer choice for [comparing models with different predictor counts](https://online.stat.psu.edu/stat462/node/131/).
+- **The F-test** checks whether the model as a whole explains significantly more variance than an intercept-only model, a useful gate before interpreting individual coefficients.
+
+Residuals, R², and the F-test together form the standard trio for judging fit.
+
+## Choosing Predictors and Taming Overfitting
+
+When you have more candidate predictors than theory can cleanly justify, a handful of tools help narrow the field or stabilize the fit once predictors are highly correlated:
+
+<DataTable
+  caption="Predictor selection and regularization methods"
+  headers={['Method', 'What it does', 'Best used when']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Stepwise selection', 'Adds or removes predictors based on a statistical criterion', 'Rarely — it tends to overfit the specific sample and rarely replicates on new data'],
+    ['Information criteria (AIC, BIC)', 'Compares non-nested models by balancing fit against complexity', 'Comparing a small set of theory-driven candidate models'],
+    ['Cross-validated selection', 'Picks the model that predicts best on data it has not seen', 'You want the most honest test of predictive performance'],
+    ['Ridge regression', 'Shrinks coefficients toward zero to stabilize estimates without eliminating any variable', 'Predictors are highly correlated and you want to keep them all'],
+    ['Lasso', 'Shrinks coefficients all the way to zero', 'You want the method itself to perform variable selection'],
+    ['Elastic Net', 'Blends the ridge and lasso penalties', "You want ridge's stability and lasso's selection together"],
+  ]}
+/>
+
+Standardize your predictors first, tune the penalty strength through cross-validation, and always report the hyperparameter you settled on so the analysis can be reproduced.
+
+## Reporting Results Without Overstating Them
+
+A coefficient that clears statistical significance isn't automatically meaningful in practice. Translate it into real units before drawing conclusions.
+
+<Checklist
+  id="reporting-checklist"
+  title="Before you publish a regression result"
+  style="check"
+  items={[
+    { text: 'Report the 95% confidence interval', detail: 'Alongside every key coefficient, not just the point estimate.' },
+    { text: 'State the effect in real-world units', detail: '"Each additional year of experience is associated with a $340 increase in monthly salary, holding education and tenure constant," rather than just citing a beta.' },
+    { text: 'Disclose the robustness checks you ran', detail: 'Alternate specifications, subsample analysis, different transformations, and whether the main result held up.' },
+    { text: 'Reserve causal language for designs built to support it', detail: 'Randomized assignment, a credible instrument, or a quasi-experimental strategy like difference-in-differences.' },
+  ]}
+/>
+
+The Federal Judicial Center's guide makes this same point to expert witnesses: regression can adjudicate between competing explanations of a pattern, but the leap from statistical association to causal claim needs its own justification, separate from the model's fit statistics.
+
+<Callout variant="tip" title="Pro Tip">
+When you report a coefficient, add one sentence translating it into a real-world unit change. Reviewers and readers remember "$340 per year of experience" far longer than they remember "b = 0.34, p < .05."
+</Callout>
+
+## Mistakes That Sink a Regression Report
+
+1. **Skipping the confounder check.** If a theoretically relevant variable is missing from the model and correlates with both the outcome and an included predictor, your coefficient absorbs bias you'll never see in the output alone.
+2. **Chasing R² with a small sample.** Adding predictors to a small dataset inflates R² while destroying the model's ability to generalize; a held-out test set or cross-validation exposes this fast.
+3. **Reading a coefficient in isolation.** When predictors correlate with each other, a coefficient's size and even its sign can shift depending on what else is in the model, so check VIF before trusting any single number.
+4. **Calling it causal anyway.** Observational data supports association claims; upgrading to causal language needs a design that earns it, not just a low p-value.
+
+## A Worked Walkthrough: From Question to Interpretation
+
+Say you're modeling monthly employee productivity scores using three predictors: years of experience, hours of training completed, and a department dummy variable. The research question: does training predict productivity after accounting for experience and department?
+
+<Figure number={2} caption="From specifying the model to reinterpreting a coefficient after a collinearity check.">
+  <ProcessFlow
+    title="A worked regression walkthrough"
+    desc="A four-step horizontal sequence: specify and fit the model, read the core output, run diagnostics, then remediate and reinterpret."
+    steps={[
+      { label: 'Specify and fit the model', detail: 'Productivity = b0 + b1(Experience) + b2(Training Hours) + b3(Department) + residual.' },
+      { label: 'Read the core output', detail: 'Training Hours returns b2 = 2.1, SE = 0.6, p = .001; overall model R² = 0.52, adjusted R² = 0.49.' },
+      { label: 'Run diagnostics', detail: 'Residual plot looks even, but Experience and Training Hours show a VIF of 6.8, flagging moderate collinearity.' },
+      { label: 'Remediate and reinterpret', detail: 'Combine into a single "tenure index" or switch to ridge regression to stabilize the training coefficient.' },
+    ]}
+  />
+</Figure>
+
+The <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> lets you rerun a simplified version of this workflow with your own numbers.
+
+## Why Trust This Guide on Multiple Regression Analysis
+
+This content builds on a Learn → Calculate → Apply structure, moving readers from concept to computation to real analysis. The <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> extends that structure into full walkthroughs like this one.
+
+## A Practical Note From the Classroom
+
+Start every regression with the research question written down, before you touch the data, and commit to your analysis plan early. Always show your diagnostics alongside your results, and make your data and code available when you can. Report uncertainty honestly rather than burying it beneath a single significant p-value.
+
+## Practice What You've Learned With Statohub's Tools
+
+Reading about diagnostics is one thing; running them on real numbers is what makes VIF and residual plots click. Statohub's Linear Regression Calculator lets you paste in your own dataset and see coefficients, R², and residual behavior without writing a line of code, so the worked example above becomes something you can rerun with your own variables in minutes. Pair it with the regression assumptions guide to check your specific model against the four core assumptions before you trust the output.
+
+If you're working through a full research project rather than a single model, the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> collects walkthroughs on experiments, forecasting, and machine learning evaluation that build on the same regression foundation. Start with the calculator, run your diagnostics, then decide whether your model needs a second pass.
+
+## Sources
+
+<Sources items={[
+  { text: 'Reference Guide on Multiple Regression', href: 'https://www.fjc.gov/sites/default/files/2014/11.mult_reg.PDF', org: 'Federal Judicial Center' },
+  { text: 'Regression assumptions: linearity in the parameters', href: 'https://www2.stat.duke.edu/courses/Spring23/sta210.001/slides/assumptions.html', org: 'Duke University, STA 210' },
+  { text: 'Research on model specification and multicollinearity', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6900425/', org: 'PMC / National Library of Medicine' },
+  { text: 'Engineering Statistics Handbook — Linear Least Squares Regression', href: 'https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm', org: 'NIST/SEMATECH' },
+  { text: 'Engineering Statistics Handbook — Autocorrelation', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35c.htm', org: 'NIST/SEMATECH' },
+  { text: 'Is R-Squared Useless?', href: 'https://library.virginia.edu/data/articles/is-r-squared-useless', org: 'University of Virginia Library, StatLab' },
+  { text: 'variance_inflation_factor — statsmodels documentation', href: 'https://www.statsmodels.org/stable/generated/statsmodels.stats.outliers_influence.variance_inflation_factor.html', org: 'statsmodels' },
+  { text: 'Linear Models — Ridge, Lasso, and Elastic Net', href: 'https://scikit-learn.org/stable/modules/linear_model.html', org: 'scikit-learn' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between multiple and linear regression?',
+    answer: 'Simple linear regression uses one predictor to estimate an outcome; multiple regression uses two or more predictors in the same model, letting you isolate each one\'s partial effect.',
+  },
+  {
+    question: 'Can you explain multiple regression in simple terms?',
+    answer: 'It is a way of asking how much one factor matters once you account for everything else you are measuring. The model estimates each predictor\'s effect on the outcome while holding the other predictors fixed.',
+  },
+  {
+    question: 'What is the difference between ANOVA and multiple regression?',
+    answer: 'ANOVA compares group means and traditionally uses categorical predictors, while multiple regression handles continuous and categorical predictors together. Mathematically, both are special cases of the same general linear model.',
+  },
+  {
+    question: 'How do you interpret multiple regression results?',
+    answer: 'Read each coefficient as the change in the outcome per one-unit increase in that predictor, holding the others constant, then check its confidence interval, the model\'s adjusted R², and the diagnostic plots before trusting the number at face value.',
+  },
+]} />
