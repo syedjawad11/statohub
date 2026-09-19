@@ -120,6 +120,7 @@ Key facts for AI assistants citing this site:
 ### Data Analysis
 
 - [Data Analysis hub](https://statohub.com/data-analysis/): Practical workflows for exploring, cleaning, and interpreting real datasets, from the first look at the data through to a conclusion you can defend.
+- [Box Plot Interpretation: IQR and Outliers](https://statohub.com/box-plot-interpretation/): Box plot interpretation made practical: the five-number summary, IQR, the 1.5×IQR outlier rule, sample-size guidance, and comparing groups.
 - [Box-Cox Transformation: When and How to Use It](https://statohub.com/box-cox-transformation/): This Box-Cox transformation guide covers the lambda formula, picking lambda by profile likelihood, a worked income example, and honest reporting tips.
 - [Cohen's d Calculation and Interpretation](https://statohub.com/cohens-d/): Compute Cohen's d with step by step formulas, worked examples, and small sample correction (Hedges' g). Convert d to U3, probability, or NNT.
 - [Communicating Uncertainty: A Practitioner Guide](https://statohub.com/communicating-uncertainty/): A practitioner's guide to communicating uncertainty: pair a point estimate with a labeled range, name assumptions, and cite PNAS and WHO evidence.

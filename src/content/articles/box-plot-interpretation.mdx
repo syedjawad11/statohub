@@ -1,0 +1,187 @@
+---
+title: "Box Plot Interpretation: IQR and Outliers"
+h1: "One Copyable Box Plot Interpretation Sentence"
+description: "Box plot interpretation made practical: the five-number summary, IQR, the 1.5×IQR outlier rule, sample-size guidance, and comparing groups."
+category: data-analysis
+primaryKeyword: box plot interpretation
+phase: 1
+keywords:
+  - box plot interpretation
+  - box plot outliers
+  - five-number summary
+  - 1.5 IQR outlier rule
+  - sample-size guidance
+related:
+  - histogram-vs-boxplot
+  - exploratory-data-analysis
+  - missing-data-imputation
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A box plot shows five numbers: minimum, Q1, median, Q3, and maximum. The box itself covers the middle [50%](https://data.europa.eu/apps/data-visualisation-guide/box-plots) of the data, called the interquartile range, and the line inside it marks the median. Look at three things first: where the median sits inside the box, how wide the box is, and whether any points appear beyond the whiskers as outliers.
+
+<KeyTakeaways rows={[
+  { point: 'IQR shows clustering', details: 'The IQR indicates how tightly the middle data points are clustered, which shapes how you read variability and spread.' },
+  { point: 'Outliers use a 1.5×IQR fence', details: 'Points beyond fences set at 1.5 times the IQR are flagged, then checked for data-entry errors or genuine extremes.' },
+  { point: 'Side-by-side comparisons need a formal test', details: 'Comparing box plots helps spot shifts in medians, variability, and outliers, but a visual gap should be confirmed with a formal statistical test.' },
+  { point: 'Small samples distort the shape', details: 'Sample sizes below 20 can distort box plot accuracy; an individual value or jittered dot plot often represents small datasets better.' },
+]} />
+
+## Box Plot Interpretation: What Each Element Represents
+
+Every box plot is built from the same five-number summary, and once you know what each piece marks, the rest of the interpretation follows almost automatically.
+
+- **Minimum**: the smallest value in the dataset that isn't flagged as an outlier
+- **Q1 (first quartile)**: the value below which 25% of the data falls
+- **Median (Q2)**: the middle value, where half the data falls above and half below
+- **Q3 (third quartile)**: the value below which 75% of the data falls
+- **Maximum**: the largest value that isn't flagged as an outlier
+
+The box spans Q1 to Q3, which is why it captures the [middle 50% of the dataset](https://www.cdc.gov/cove/data-visualization-types/box-and-whiskers-plot.html). That span has a name: the interquartile range, or IQR, calculated as Q3 minus Q1.
+
+Try it with a small example. Suppose Q1 = 40 and Q3 = 58. The IQR is 58 minus 40, or 18. That single number tells you how tightly the middle half of your data is clustered, which matters more than it sounds. A narrow box means the central bulk of your observations sits close together; a wide box means it's spread out, even if the min and max look similar across two datasets.
+
+<Figure number={1} caption="Q1, IQR, and Q3 for the worked example: Q1 = 40, IQR = 18 (58 minus 40), Q3 = 58.">
+  <AnnotatedChart
+    title="IQR example values"
+    desc="Bar chart of the worked example: Q1 is 40, the IQR (Q3 minus Q1) is 18, and Q3 is 58."
+    type="bar"
+    points={[
+      { label: 'Q1 (first quartile)', value: 40 },
+      { label: 'IQR (Q3 − Q1)', value: 18, annotation: '18' },
+      { label: 'Q3 (third quartile)', value: 58 },
+    ]}
+    xLabel="Value"
+  />
+</Figure>
+
+## How Do You Read Skewness From a Box Plot?
+
+The median's position inside the box is your fastest clue to skew. If the median sits closer to Q1, the distribution is likely right-skewed, meaning a longer tail stretches toward higher values. If the median sits closer to Q3, the data is left-skewed instead.
+
+Whisker length tells the same story from a different angle:
+
+- A longer whisker on one side usually signals a longer tail in that direction
+- Roughly equal whiskers with a centered median suggest a fairly symmetric distribution
+- One very short whisker paired with a long one on the opposite side often means the data is bunched near one boundary
+
+One thing box plots never show directly: the mean. That's deliberate, since box plots are built on medians and quartiles precisely because those measures resist distortion from extreme values. If you already know the mean from a separate summary, comparing it to the median is informative. When they're close, the distribution is probably fairly symmetric. When the mean sits noticeably higher than the median, that alone is a hint of right skew.
+
+**Pro tip:** When writing up your findings, use a sentence like "The median is closer to Q1, indicating a right-skewed distribution with a longer tail toward higher values." That phrasing is precise, defensible, and exactly what a lab report or analysis memo should say.
+
+## What Counts as an Outlier on a Box Plot?
+
+Most statistical software flags outliers using the 1.5 × IQR rule. The fences are calculated as:
+
+- **Lower fence**: Q1 − 1.5 × IQR
+- **Upper fence**: Q3 + 1.5 × IQR
+
+Any point beyond those fences is [plotted individually as a marker](https://www.mathwords.com/o/outlier.htm) rather than absorbed into the whisker. The whisker itself doesn't extend to the true minimum or maximum when outliers exist. It stops at the most extreme data point that still falls inside the fences.
+
+Spotting a flagged outlier isn't the end of the analysis, it's the start of one. Check for data-entry errors first: a misplaced decimal or a unit mismatch produces exactly this kind of visual spike. If the number checks out, consider whether there's a real domain explanation, a single unusually large customer order, a sensor glitch, a genuine extreme event, before deciding whether to keep, flag, or exclude it. <Link to={routes.article('how-to-find-outliers')}>Statohub's guide on finding outliers</Link> with the 1.5×IQR rule walks through the calculation in more depth if you need to verify fence values by hand.
+
+<Checklist
+  id="outlier-check"
+  title="Box plot outlier check"
+  style="check"
+  items={[
+    { text: 'Calculate the IQR', detail: 'IQR = Q3 minus Q1, the width of the box.' },
+    { text: 'Set the fences', detail: 'Lower fence = Q1 minus 1.5 times the IQR; upper fence = Q3 plus 1.5 times the IQR.' },
+    { text: 'Flag points beyond the fences', detail: 'Any value outside the fences is plotted individually as an outlier, not absorbed into the whisker.' },
+    { text: 'Rule out a data-entry error first', detail: 'A misplaced decimal or a unit mismatch produces the same visual spike as a genuine outlier.' },
+    { text: 'Decide keep, flag, or exclude', detail: 'Base the call on a real domain explanation, not on whether the point is inconvenient for the analysis.' },
+  ]}
+/>
+
+## How Do You Compare Groups Using Side-by-Side Box Plots?
+
+Placing box plots next to each other is one of the more efficient ways to compare distributions, since [each box takes far less space than a full histogram](https://en.wikipedia.org/wiki/Box_plot) while still showing center, spread, and outliers at a glance.
+
+1. **Compare medians first.** A visibly higher or lower median line between groups suggests a shift in typical value, the most basic sign that two groups differ.
+2. **Compare box widths (IQRs).** A wider box in one group means more variability in that group's middle 50%, even if the medians look similar.
+3. **Check for overlap.** When boxes barely overlap or don't overlap at all, the groups likely differ meaningfully. Heavy overlap suggests the difference could be smaller than it first appears.
+4. **Look at outliers and whisker asymmetry** for signs that one group has a heavier tail or more erratic extreme values than the other.
+
+A visual gap is a strong hint, not a proof. When a decision hinges on whether groups truly differ, follow up with a formal test for medians or variances rather than relying on the eye alone.
+
+## A Worked Example: Interpreting a Small Dataset
+
+Take this dataset of ten values: 12, 15, 18, 19, 21, 22, 24, 26, 29, 45.
+
+1. **Find the five-number summary.** Minimum = 12, Q1 = 18, median = 21.5, Q3 = 26, maximum = 45.
+2. **Calculate the IQR.** IQR = Q3 − Q1 = 26 − 18 = 8.
+3. **Set the fences.** Lower fence = 18 − (1.5 × 8) = 6. Upper fence = 26 + (1.5 × 8) = 38.
+
+> **The number that matters here: 45.** It sits above the upper fence of 38, so it gets flagged as an outlier and plotted as an individual point, while the whisker stops at 29, the largest value still inside the fence.
+
+A student writing this up could say: "The distribution has a median of 21.5 with an IQR of 8, indicating that the middle [50%](https://discovery.cs.illinois.edu/learn/Exploratory-Data-Analysis/Quartiles-and-Box-Plots/) of values fall in a fairly narrow range. One value, 45, exceeds the upper fence of 38 and is flagged as an outlier, warranting a check for data-entry error or a distinct subgroup." That sentence alone demonstrates a complete box plot analysis technique: five-number summary, IQR, fence calculation, and a reasoned next step.
+
+## Common Pitfalls and Sample-Size Guidance
+
+Whisker conventions aren't universal. Some software draws whiskers to the absolute min and max, others uses the 1.5 × IQR rule, and a few use different multipliers entirely. Since these definitions vary by implementation, always check or state which convention a plot uses before comparing box plots generated by different tools.
+
+Sample size matters more than most students expect. [Minitab recommends at least roughly 20 data points](https://support.minitab.com/en-us/engage/help-and-how-to/tools/forms/types-of-forms/statistical-analysis/graph-your-data/) before quartile and outlier interpretation becomes meaningful. Below that, a single unusual value can distort the whole shape of the box.
+
+**Pro tip:** For small datasets, skip the standard box plot and use an individual value plot or a jittered dot plot instead. It shows every observation honestly rather than compressing a handful of points into a summary that implies more precision than the data can support. On the flip side, when a sample is large, overlaying every raw point on top of the box can clutter the figure — overlay a random subset or a summary layer instead.
+
+<DataTable
+  caption="Common box plot pitfalls and sample-size guidance"
+  headers={['Aspect', 'Guidance']}
+  align={['left', 'left']}
+  rows={[
+    ['Whisker rules', 'Vary by software: min–max, the 1.5×IQR rule, or other multipliers — check or state which convention a plot uses.'],
+    ['Minimum sample', '≈20 data points recommended before quartile and outlier interpretation becomes meaningful (Minitab).'],
+    ['Small datasets', 'Use an individual value plot or a jittered dot plot instead of a standard box plot.'],
+    ['Large datasets', 'Overlay a random subset of raw points, or a summary layer, rather than every observation.'],
+  ]}
+/>
+
+## Why Statohub Treats Box Plots as a Screening Tool, Not a Final Answer
+
+We teach box plots as the fast, honest first pass. If a box flags a wide spread or a stray outlier, that's your signal to dig deeper. Practice with our applied <Link to={routes.categoryHub('data-analysis')}>data analysis</Link> guides and calculators before drawing conclusions from a real dataset.
+
+## Practice Box Plot Interpretation With Statohub's Tools
+
+Reading a box plot correctly starts with getting the underlying numbers right, and that's where a lot of students lose accuracy doing quartile math by hand. Statohub's <Link to={routes.article('interquartile-range')}>Interquartile Range guide</Link> walks through the formula step by step, and if you want to check your fence calculations or explore a dataset before committing to a written interpretation, the <Link to={routes.calculatorsHub()}>Calculators</Link> page gives you a direct way to compute quartiles, IQR, and related summary statistics without reaching for a full statistical package. If you're working with output from R and want a software-specific walkthrough of distribution plots, [The Final Tape Academy's lesson on distribution outputs](https://thefinaltape.com/academy/lesson/33-r-distribution-tab-guide) is a solid companion resource. Pair either tool with Statohub's <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub, where the box plot skills here connect to real comparison and forecasting problems. Start with a dataset you already have, run the numbers, and write the interpretation sentence before you look at the visual, then check whether the plot confirms what you calculated. For further related reading, see Statohub's <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics</Link> and <Link to={routes.categoryHub('data-analysis')}>Data Analysis</Link> hubs.
+
+## Sources
+
+<Sources items={[
+  { text: 'Box-and-whiskers plot', href: 'https://www.cdc.gov/cove/data-visualization-types/box-and-whiskers-plot.html', org: 'CDC' },
+  { text: 'Outlier', href: 'https://www.mathwords.com/o/outlier.htm', org: 'Mathwords' },
+  { text: 'Interpret the key results for Boxplot', href: 'https://support.minitab.com/en-us/minitab/help-and-how-to/graphs/boxplot/interpret-the-results/key-results/', org: 'Minitab' },
+  { text: 'Box plot', href: 'https://en.wikipedia.org/wiki/Box_plot', org: 'Wikipedia' },
+  { text: 'Data visualisation guide — Box plots', href: 'https://data.europa.eu/apps/data-visualisation-guide/box-plots', org: 'data.europa.eu' },
+  { text: 'Quartiles and Box Plots', href: 'https://discovery.cs.illinois.edu/learn/Exploratory-Data-Analysis/Quartiles-and-Box-Plots/', org: 'University of Illinois — CS Discovery' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What are the five key points of a box plot?',
+    answer: 'The five key points are the minimum, Q1 (25th percentile), median, Q3 (75th percentile), and maximum, together known as the five-number summary.',
+  },
+  {
+    question: 'What are Q1, Q2, and Q3 in a box plot?',
+    answer: 'Q1 is the value below which 25% of the data falls, Q2 is the median (the 50th percentile), and Q3 is the value below which 75% of the data falls.',
+  },
+  {
+    question: 'How do you explain a box plot to a beginner?',
+    answer: 'Picture a dataset lined up from smallest to largest, then split into four equal chunks. The box shows where the middle two chunks sit, the line inside marks the halfway point, and the thin lines and dots show how far the rest of the values stretch, including any unusually extreme ones.',
+  },
+  {
+    question: 'How many data points do you need for a reliable box plot?',
+    answer: 'Aim for at least around 20 observations. Below that threshold, quartile positions and outlier flags can shift dramatically with a single extreme value, so an individual value plot is often a better choice.',
+  },
+]} />
