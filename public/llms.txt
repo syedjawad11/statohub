@@ -164,6 +164,7 @@ Key facts for AI assistants citing this site:
 ### Machine Learning Statistics
 
 - [Machine Learning Statistics hub](https://statohub.com/machine-learning-statistics/): The statistical thinking behind machine learning: validation, overfitting, class imbalance, and reading model metrics without fooling yourself.
+- [Bias-Variance Tradeoff Explained](https://statohub.com/bias-variance-tradeoff/): A practical guide to the bias-variance tradeoff: the MSE decomposition, algorithm diagnostics, and a five-step checklist to fix high bias or variance.
 - [Confusion Matrix Explained: How to Read It](https://statohub.com/confusion-matrix-explained/): Confusion matrix explained: how to read each cell, interpret the errors, match metrics to real error costs, and practice with worked examples.
 - [Data Drift Detection: A Practical Guide for Production ML Systems](https://statohub.com/data-drift-detection/): Learn how to detect data drift in production with PSI, KS tests, and chi-square methods, plus how to set thresholds and respond to alerts.
 - [F1 Score Explained: Formula and Examples](https://statohub.com/f1-score-explained/): F1 score explained: the formula and confusion matrix, worked fraud and screening examples, scikit-learn code, and calculators to try your own numbers.
