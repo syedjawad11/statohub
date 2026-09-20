@@ -175,15 +175,7 @@ To compute Pearson's r for your own paired datasets, use the <Link to={routes.ca
 
 ---
 
-## True or False: Correlation Implies Causation
-
-One of the most direct assessment questions in introductory statistics: **True or false — correlation implies causation.**
-
-The answer is **false**, without qualification. A correlation is a statistical description of how two variables co-vary in a dataset. Causation is a claim about mechanism and direction: one variable produces changes in the other. The first is entirely consistent with a world where no causal link exists.
-
-**True or false: correlation implies causation?** False. This remains false no matter how large the correlation is. An r of 0.99 between ice cream sales and drowning deaths does not make ice cream a drowning risk. An r of 0.99 between two accounting variables that are mathematically defined in terms of each other tells you nothing about causation whatsoever.
-
-The complementary statement — "correlation does not imply causation" — is **true**. It serves as a constant reminder that the leap from observed association to causal claim requires additional evidence and additional work. The correlation itself is just the beginning of the investigation.
+## Why the Distinction Matters
 
 This distinction matters in practice. Public health decisions, business strategy, scientific conclusions, and policy recommendations all depend on getting the causal question right. Confusing correlation with causation has historically led to harmful interventions (treating a risk marker rather than its cause), missed opportunities (ignoring a real causal lever because the evidence came from observational data), and wasted resources (acting on a spurious pattern that disappears when conditions change).
 
@@ -213,15 +205,7 @@ No single method is definitive. Scientific consensus on causation accumulates fr
 
 ### Does correlation imply causation?
 
-No. Correlation does not imply causation. Two variables can correlate because a third variable causes both (confounding), because the causal direction is the reverse of what is assumed, or because chance produced the pattern in the specific data collected. Establishing causation requires ruling out these alternatives, which typically demands controlled experiments or rigorous observational study designs.
-
-### What does "correlation does not imply causation" mean?
-
-It means that finding a statistical association between two variables — even a strong one with a large r value — is not sufficient evidence that one variable causes the other. The phrase is a reminder to ask: what other explanations could produce this pattern? Identifying and systematically eliminating alternative explanations is the foundation of causal reasoning in science.
-
-### True or false: correlation implies causation?
-
-**False.** This is one of the clearest true-or-false facts in introductory statistics. No strength of correlation — not even r = 0.99 — proves causation by itself. A high correlation is consistent with causation, with a shared confounding variable, with reverse causation, or with coincidence.
+No. Two variables can correlate because a third variable causes both (confounding), because the causal direction is the reverse of what is assumed, or because chance produced the pattern in the specific data collected. Establishing causation requires ruling out these alternatives, which typically demands controlled experiments or rigorous observational study designs.
 
 ### What is a spurious correlation?
 
@@ -229,11 +213,7 @@ A spurious correlation is a real statistical association between two variables t
 
 ### Which correlation is most likely a causation?
 
-A correlation is more likely causal when it is strong and consistent across multiple independent studies and populations, when the proposed cause precedes the effect in time (temporality), when a plausible biological or mechanistic explanation exists, when a dose-response gradient holds (more exposure = more effect), and when controlled experiments can replicate the relationship by directly manipulating the hypothesized cause. The smoking–lung cancer relationship exemplifies a correlation that satisfies nearly all these criteria.
-
-### What is a correlation vs identity example?
-
-A correlation vs identity example contrasts an observed statistical association (empirical, could be spurious) with a definitional relationship that is algebraically guaranteed to be true. Revenue = Price × Units Sold is an identity — any dataset will yield r = 1.00 for these two quantities because they are the same thing expressed differently. An observed correlation between advertising spend and revenue, by contrast, is an empirical finding that could result from causation, from reverse causation (high-revenue firms spend more), or from a shared confounder. The distinction prevents over-interpreting trivially perfect correlations as meaningful discoveries.
+One that is strong and consistent across multiple independent studies and populations, when the proposed cause precedes the effect in time (temporality), when a plausible biological or mechanistic explanation exists, when a dose-response gradient holds (more exposure = more effect), and when controlled experiments can replicate the relationship by directly manipulating the hypothesized cause. The smoking–lung cancer relationship exemplifies a correlation that satisfies nearly all these criteria.
 
 ### How do researchers establish causation from observational data?
 

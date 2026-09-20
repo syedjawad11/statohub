@@ -237,25 +237,13 @@ Standard deviation always carries units. A standard deviation of 4.2 means 4.2 k
 
 ## Frequently Asked Questions
 
-### What does standard deviation mean?
-
-Standard deviation is a single number that summarises how spread out a set of values is around the mean. Formally, it is the square root of the average squared deviation from the mean. In everyday terms, it tells you the typical distance between an individual value and the dataset average — a small standard deviation means values are tightly clustered; a large one means they are widely scattered.
-
 ### What is the standard deviation formula?
 
 There are two standard deviation formulas. For a **sample**: `s = √( Σ(xᵢ − x̄)² / (n − 1) )`. For a **population**: `σ = √( Σ(xᵢ − μ)² / N )`. The only difference is the denominator — samples use `n − 1` (Bessel's correction) to produce an unbiased estimator; populations use the full count `N`.
 
-### How do you find standard deviation?
-
-To find the standard deviation: (1) calculate the mean of the dataset; (2) subtract the mean from each value to get the deviations; (3) square each deviation; (4) sum the squared deviations; (5) divide by `n − 1` for a sample or `N` for a population; (6) take the square root. The result is the standard deviation in the original units of measurement.
-
-### How do you find the standard deviation of a sample?
-
-Find the sample standard deviation by following the six steps above and dividing by `n − 1` (not `n`) in step 5. The `n − 1` denominator is Bessel's correction, which adjusts for the systematic underestimation that occurs when the mean is estimated from the same sample.
-
 ### What does a high standard deviation mean?
 
-A high standard deviation means values in the dataset are spread widely around the mean — individual observations differ substantially from the average. There is no universal threshold for "high" or "low"; the interpretation depends on the scale of the data. A standard deviation of 10 points is high for a 0–20 scale but low for a 0–1,000 scale. The most useful comparison is across datasets measured in the same units or to a stated target range.
+Values in the dataset are spread widely around the mean — individual observations differ substantially from the average. There is no universal threshold for "high" or "low"; the interpretation depends on the scale of the data. A standard deviation of 10 points is high for a 0–20 scale but low for a 0–1,000 scale. The most useful comparison is across datasets measured in the same units or to a stated target range.
 
 ### Is standard deviation the same as variance?
 
@@ -263,7 +251,7 @@ No, but they are closely related. Variance is the standard deviation squared (`s
 
 ### What does standard deviation mean in a normal distribution?
 
-In a normal distribution, standard deviation defines the shape of the bell curve. The 68-95-99.7 rule states: about 68 % of values lie within ±1 standard deviation of the mean, 95 % within ±2 standard deviations, and 99.7 % within ±3 standard deviations. This makes standard deviation a natural yardstick for assessing how unusual any single observation is within a normally distributed dataset.
+It defines the width of the bell curve. The 68-95-99.7 rule states: about 68 % of values lie within ±1 standard deviation of the mean, 95 % within ±2 standard deviations, and 99.7 % within ±3 standard deviations. This makes standard deviation a natural yardstick for assessing how unusual any single observation is within a normally distributed dataset.
 
 ---
 

@@ -259,33 +259,17 @@ The gap in raw value between the 10th and 20th percentile is not necessarily equ
 
 ## Frequently Asked Questions
 
-### What is the percentile meaning in statistics?
-
-The percentile meaning in statistics is that the pth percentile is the value at or below which p percent of the data in a dataset falls. A value at the 80th percentile exceeds 80 percent of all observations. Percentiles describe location within a distribution, giving a raw number context as a rank.
-
-### How do you define percentile in simple terms?
-
-To define percentile simply: it is the cut-off point that separates the bottom p percent of a dataset from the top (100 - p) percent. The 90th percentile is the value below which 90 percent of the data sits. The 50th percentile is the median. You can think of percentiles as equally spaced fence posts along a sorted list, placed at every percentage mark from 0 to 100.
-
-### What is the standard percentile definition used in math courses?
-
-The standard percentile definition used in introductory statistics is: Pₚ is the value such that at least p percent of the data is at or below Pₚ and at least (100 - p) percent is at or above it. Different sources handle ties and boundary cases slightly differently, but the linear interpolation method presented here — Hyndman-Fan Type 7 — is the modern default used by most statistical software.
-
 ### How to calculate percentile step by step?
 
-To calculate percentile: (1) Sort the data in ascending order. (2) Compute position = (p / 100) x (n - 1). (3) Set j = floor(position), k = ceil(position), f = position - j. (4) If f = 0, the answer is sortedData[j]; otherwise the answer is sortedData[j] + f x (sortedData[k] - sortedData[j]). Apply this procedure for any p from 0 to 100.
-
-### How to calculate percentiles for a larger dataset?
-
-The procedure for how to calculate percentiles is identical regardless of dataset size. Sort the values, compute the virtual position, split into integer and fractional parts, and interpolate. For very large datasets the fractional part approaches zero and the result is nearly identical to simply locating the value at rank floor(p x n / 100). Statistical software handles the arithmetic automatically, but the method is the same four-step formula.
+Four steps. (1) Sort the data in ascending order. (2) Compute position = (p / 100) x (n - 1). (3) Set j = floor(position), k = ceil(position), f = position - j. (4) If f = 0, the answer is sortedData[j]; otherwise the answer is sortedData[j] + f x (sortedData[k] - sortedData[j]). Apply this procedure for any p from 0 to 100.
 
 ### What is the 50th percentile?
 
-The 50th percentile is the median — the value that divides the sorted dataset into two equal halves. For the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50] the 50th percentile is 27.5, computed by interpolating halfway between the 5th value (25) and the 6th value (30). In a symmetric distribution the median equals the mean; in a skewed distribution they diverge.
+The median — the value that divides the sorted dataset into two equal halves. For the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50] the 50th percentile is 27.5, computed by interpolating halfway between the 5th value (25) and the 6th value (30). In a symmetric distribution the median equals the mean; in a skewed distribution they diverge.
 
 ### What does the 90th percentile mean?
 
-The 90th percentile means that 90 percent of the data falls at or below that value and only 10 percent exceeds it. In the worked example above, P₉₀ = 45.5 for the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]. In everyday language, a person at the 90th percentile of any measured characteristic has a higher value than 90 percent of the reference population.
+Ninety percent of the data falls at or below that value and only 10 percent exceeds it. In the worked example above, P₉₀ = 45.5 for the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]. In everyday language, a person at the 90th percentile of any measured characteristic has a higher value than 90 percent of the reference population.
 
 ### What is the difference between a percentile and a percentage?
 
@@ -295,6 +279,6 @@ A percentage is a proportion of a whole (answering 70 of 100 questions gives a 7
 
 ## Summary
 
-The percentile meaning comes down to a single idea: where does one value sit within a sorted distribution? The definition of percentile makes it precise — Pₚ is the threshold below which p percent of observations fall. Calculating any percentile requires four steps: sort, compute a virtual position scaled to the data range, split that position into floor and fraction, and interpolate linearly between neighbors. Quartiles (Q1, Q2, Q3) are the most commonly used special cases; the IQR they produce is one of the most robust measures of spread in descriptive statistics.
+Percentiles come down to a single idea: where does one value sit within a sorted distribution? The definition of percentile makes it precise — Pₚ is the threshold below which p percent of observations fall. Calculating any percentile requires four steps: sort, compute a virtual position scaled to the data range, split that position into floor and fraction, and interpolate linearly between neighbors. Quartiles (Q1, Q2, Q3) are the most commonly used special cases; the IQR they produce is one of the most robust measures of spread in descriptive statistics.
 
 For the full standalone tool, open the <Link to={routes.calculator('percentile')}>percentile calculator page</Link>, or browse all statistics tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.

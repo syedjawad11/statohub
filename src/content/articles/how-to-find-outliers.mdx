@@ -246,15 +246,7 @@ The 1.5×IQR rule is a heuristic, not a verdict. A perfectly normal dataset with
 
 ### How do you find outliers in a dataset?
 
-Sort the data, find Q1 (25th percentile) and Q3 (75th percentile), calculate IQR = Q3 − Q1, then compute the lower fence (Q1 − 1.5×IQR) and upper fence (Q3 + 1.5×IQR). Any value below the lower fence or above the upper fence is an outlier. The worked example in this article uses the dataset 5, 7, 8, 9, 10, 11, 12, 90 and finds one outlier: 90, which exceeds the upper fence of 17.5.
-
-### What is the formula for an outlier?
-
-The outlier formula uses two fences: **Lower fence = Q1 − 1.5 × IQR** and **Upper fence = Q3 + 1.5 × IQR**. Values outside those boundaries are outliers. For extreme outliers, replace 1.5 with 3. IQR is the interquartile range (Q3 minus Q1).
-
-### How do I calculate an outlier step by step?
-
-1. Sort the data from smallest to largest. 2. Find Q1 and Q3. 3. Compute IQR = Q3 − Q1. 4. Apply the lower fence = Q1 − 1.5×IQR and upper fence = Q3 + 1.5×IQR. 5. Flag any value that falls outside the fences as an outlier.
+With the 1.5×IQR rule: sort the data, find Q1 (25th percentile) and Q3 (75th percentile), calculate IQR = Q3 − Q1, then compute the lower fence (Q1 − 1.5×IQR) and upper fence (Q3 + 1.5×IQR). Any value below the lower fence or above the upper fence is an outlier. The worked example in this article uses the dataset 5, 7, 8, 9, 10, 11, 12, 90 and finds one outlier: 90, which exceeds the upper fence of 17.5.
 
 ### How do you find an outlier in statistics using the Z-score method?
 
