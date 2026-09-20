@@ -246,11 +246,7 @@ Technically true — with a large enough sample, almost any non-zero effect will
 
 There is no universally "good" p-value; the threshold depends on your field and the cost of a false positive. In most sciences α = 0.05 is the default, so p < 0.05 is considered statistically significant. Clinical trials routinely require p < 0.01. A p-value is meaningful only in relation to the pre-specified significance level α.
 
-### How to calculate p-value?
-
-To calculate a p-value: (1) state H₀ and H₁; (2) choose a test statistic (z, t, chi-square, etc.) appropriate for your data; (3) compute the test statistic from your sample; (4) find the probability of obtaining a test statistic at least as extreme under H₀, using the appropriate distribution table or software. The p-value formula for a two-tailed z-test is `p = 2 × P(Z > |z|)`.
-
-### How to find p-value from a z-score?
+### How do I find a p-value from a z-score?
 
 Find the cumulative area at your z-score in a standard normal table (the value for z = 2.0 is 0.9772). Subtract from 1 to get the right-tail area (0.0228). For a two-tailed test, multiply by 2 (0.0456). For a right-tailed test, 0.0228 is the p-value directly.
 

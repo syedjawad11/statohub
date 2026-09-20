@@ -72,8 +72,15 @@ Every rule below is tagged with its tier; §8 is the enumerated checklist.
   gist in the first paragraph.
 - Include **at least one fully worked example** with real numbers.
 - Add an **FAQ block** (H2 "Frequently Asked Questions" + H3 questions) where the
-  keyword set contains question-phrased queries — it maps cleanly to those
-  keywords and earns FAQ rich results.
+  keyword set contains question-phrased queries. **One entry per distinct question,
+  never one per keyword variant [WARN]** — "What is X?", "What does X mean?" and
+  "What is the X definition?" are one question, so write it once and let the
+  keyword variants live in the body. 3–6 entries is typical; if you have more,
+  check they are really different questions. **Answers must not restate the
+  question** in their first sentence — start with the answer. Never add an FAQ
+  whose only purpose is to hit a phrasing from the brief (a question no reader
+  would ask). Fold anything the body already covers under its own H2 into that
+  H2, not into a second FAQ.
 - Embed the **`<StatCalc>`** component where the brief assigns a calculator,
   placed right after the formula/worked-example section ("try it yourself").
 
@@ -200,6 +207,8 @@ to CHANGES_REQUESTED on their own.
 - Skipped heading level (e.g. H2 → H4); keyword stuffing in headings.
 - Title length outside the ideal range (meta-description length is HARD — see §7).
 - Active-voice ratio, readability, tone; worked-example quality; FAQ where warranted.
+- Two FAQ entries that ask the same question in different words, or an FAQ answer
+  that opens by restating its question (§4).
 
 **ADVISORY (note only):**
 - A shorter `h1` variation vs the SEO title; exact-match keyword in the H1.

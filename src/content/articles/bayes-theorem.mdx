@@ -261,10 +261,6 @@ A single weak signal should shift your posterior modestly, not dramatically. If 
 
 Bayes' rule is the formula for updating a probability when new evidence arrives. It says: your updated probability equals your initial probability multiplied by how likely the evidence is if your hypothesis is true, divided by the overall probability of seeing the evidence. It quantifies exactly how much new information should change what you believe.
 
-### What is the difference between Bayes' theorem and conditional probability?
-
-Conditional probability, P(A | B), is the probability of A given B. Bayes' theorem is a formula for *calculating* that conditional probability using three other quantities: the prior P(A), the likelihood P(B | A), and the marginal likelihood P(B). It is the tool for flipping a conditional probability around — turning P(B | A) into P(A | B).
-
 ### What is a prior in Bayesian statistics?
 
 A prior is your probability estimate for a hypothesis before incorporating new data. It can come from previous studies, expert knowledge, or a default assumption of no information. After you observe evidence and apply Bayes' rule, the result is the posterior — your updated belief. In sequential Bayesian updating, the posterior becomes the new prior for the next observation.
@@ -290,7 +286,7 @@ The core idea — multiply your prior belief by the likelihood of the data, divi
 
 ### How does Bayes' rule relate to conditional probability?
 
-Bayes' rule is derived from the definition of conditional probability. By definition, P(A | B) = P(A ∩ B) / P(B) and P(B | A) = P(A ∩ B) / P(A). Rearranging the second expression gives P(A ∩ B) = P(B | A) × P(A). Substituting into the first expression yields Bayes' theorem: P(A | B) = P(B | A) × P(A) / P(B). The theorem follows directly from probability axioms — it is not an additional assumption.
+It is derived from the definition of conditional probability, and it is the tool for flipping a conditional around — turning P(B | A) into P(A | B). By definition, P(A | B) = P(A ∩ B) / P(B) and P(B | A) = P(A ∩ B) / P(A). Rearranging the second expression gives P(A ∩ B) = P(B | A) × P(A). Substituting into the first expression yields Bayes' theorem: P(A | B) = P(B | A) × P(A) / P(B). The theorem follows directly from probability axioms — it is not an additional assumption.
 
 <RelatedLink to={routes.article('binomial-distribution')} label="Binomial Distribution: Formula & Examples" intro="You may also find this useful" />
 

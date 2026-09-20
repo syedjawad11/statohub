@@ -242,38 +242,30 @@ Combining the average price per unit from two suppliers without accounting for t
 
 ## Frequently Asked Questions
 
-### Definition and Meaning
+### What is a weighted average?
 
-A weighted average is an average that assigns a different level of importance (a weight) to each value in a dataset. Values with higher weights have a greater influence on the result than values with lower weights. It equals the sum of each value multiplied by its weight, divided by the sum of all the weights: `x̄_w = Σ(wᵢ × xᵢ) / Σwᵢ`.
+Each value in the dataset is given a weight reflecting its importance, and values with higher weights have a greater influence on the result than values with lower weights. It equals the sum of each value multiplied by its weight, divided by the sum of all the weights: `x̄_w = Σ(wᵢ × xᵢ) / Σwᵢ`.
 
-### Applying the Formula
+### How do I apply the weighted average formula?
 
 Write each value next to its weight, multiply every pair together, sum all the products, then divide by the total of all the weights. When the weights are percentages that sum to 100%, convert each to a decimal first (divide by 100), then apply the formula. The result is the weighted average.
 
-### Calculating a Course Grade Step by Step
+### How do I calculate a weighted course grade?
 
-List each graded component, its score, and its percentage weight. Divide each percentage by 100 to get a decimal weight. Multiply each score by its decimal weight. Sum all those products. Divide by the sum of the decimal weights (which equals 1.0 if the percentages total 100%). The worked example above shows every step for a five-component course. This is how to calculate weighted average for grades using the standard formula.
+List each graded component, its score, and its percentage weight. Divide each percentage by 100 to get a decimal weight. Multiply each score by its decimal weight. Sum all those products. Divide by the sum of the decimal weights (which equals 1.0 if the percentages total 100%). The worked example above shows every step for a five-component course.
 
-### Mean vs. Weighted Mean
+### How does a weighted mean differ from the arithmetic mean?
 
 The arithmetic mean treats every value equally — each gets a weight of 1/n. The weighted mean assigns a specific weight to each value so that some contribute more to the result than others. When all weights are equal, the two formulas produce the same number. Use the weighted mean whenever the data points differ in importance, group size, or reliability.
 
-### Using an Online Grade Calculator
+### Why is my weighted grade higher or lower than my simple average?
 
-An average calculator for grades automates the multiplication-and-division steps: enter each assessment score and its weight, and the calculator returns the final grade. The calculator on this page does exactly that. Knowing the underlying formula lets you verify the result and adapt it when a grading scheme changes — a useful skill even when a weighted average calculator grades tool is available.
-
-### Why It Differs from the Simple Mean
-
-The result differs from the simple mean when the highest-scoring items carry the most weight (pushing it upward) or when the lowest-scoring items carry the most weight (pulling it down). A student who excels on a heavily weighted final exam will finish above their simple mean; one who struggles on the final will be below it. The direction of the gap reveals which components had the greatest influence.
-
-### When It Equals the Arithmetic Mean
-
-The weighted average equals the arithmetic mean exactly when all the weights are equal — each weight is the same value, say 1. In fact, the arithmetic mean is the special case of the weighted mean where every data point has equal importance. In practice, the two match whenever the grading scheme, allocation, or group sizes are identical for every item being averaged.
+The weighted result differs from the simple mean when the highest-scoring items carry the most weight (pushing it upward) or when the lowest-scoring items carry the most weight (pulling it down). A student who excels on a heavily weighted final exam will finish above their simple mean; one who struggles on the final will be below it. The direction of the gap reveals which components had the greatest influence.
 
 ---
 
 ## Summary
 
-A weighted average is the right tool whenever the values you are combining carry different levels of importance. The weighted average formula — sum of (weight × value) divided by the sum of the weights — is a direct extension of the arithmetic mean that handles unequal importance naturally and reduces to the plain mean when all weights are equal. Whether you are calculating a course grade with a weighted average calculator, combining portfolio returns, or aggregating survey data from groups of different sizes, the steps are the same: multiply each value by its weight, sum the products, then divide by the total weight.
+A weighted average is the right tool whenever the values you are combining carry different levels of importance. The weighted average formula — sum of (weight × value) divided by the sum of the weights — is a direct extension of the arithmetic mean that handles unequal importance naturally and reduces to the plain mean when all weights are equal. Whether you are calculating a course grade, combining portfolio returns, or aggregating survey data from groups of different sizes, the steps are the same: multiply each value by its weight, sum the products, then divide by the total weight.
 
 For the plain arithmetic mean and an overview of the median and mode, see the <Link to={routes.article('what-is-an-average')}>what is an average</Link> guide. To understand how spread is measured and what the standard deviation symbol σ means, see the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol</Link> article.

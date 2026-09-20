@@ -44,7 +44,7 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
   plaintext and was printed into a 2026-09-01 transcript. Git no longer needs it;
   the MCP server does. Replace with a fine-grained, repo-scoped token.
 - **AdSense rejected ("low value content") -- remediation in progress**, plan in
-  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phase 1 (FAQ dedupe) 5/35 done.
+  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phase 1 (FAQ dedupe) done, 35/35; Phase 2 next.
 
 ## Parked (do not silently resume)
 

@@ -55,6 +55,12 @@ but never block on their own.
 - Keyword coverage gaps (a brief keyword missing or reading as stuffed/unnatural),
   active-voice ratio, readability (~grade 8–10 guide-rail; don't penalise necessary
   stats terms), tone, worked-example quality, FAQ presence where warranted.
+- **Duplicate FAQ entries** — two H3 questions that are the same question in
+  different words (keyword variants such as "What is X?" / "What does X mean?" /
+  "What is the X definition?"), or an FAQ that only exists to hit a phrase from
+  the brief. Also flag any FAQ answer whose first sentence restates the
+  question, and any H2/H3 in the body that is a keyword variant of another
+  heading. One entry per distinct question; 3–6 is typical.
 
 **ADVISORY (note only):**
 - A shorter `h1` variation vs the SEO title; exact-match keyword in the H1.
