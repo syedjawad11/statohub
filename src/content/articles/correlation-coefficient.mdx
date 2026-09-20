@@ -1,7 +1,7 @@
 ---
-title: "Correlation Coefficient Formula: Interpreting r"
-h1: "Correlation Coefficient (r): Formula and Interpretation"
-description: "See how to calculate a correlation coefficient and, more importantly, what an r value does and doesn't license you to conclude about your data."
+title: "Correlation Coefficient (Pearson's r): Formula & Interpretation"
+h1: "Correlation Coefficient (Pearson's r): Formula and Interpretation"
+description: "How to calculate the Pearson correlation coefficient, how r relates to covariance and Spearman's rank, and what an r value does and doesn't let you conclude."
 category: regression-correlation
 primaryKeyword: correlation coefficient
 keywords:
@@ -17,14 +17,20 @@ keywords:
   - which of these r values represents the weakest correlation
   - which of these r-values represents the weakest correlation
   - which value of r indicates a stronger correlation
+  - pearson correlation
+  - pearson's correlation coefficient
+  - pearson product moment correlation
+  - covariance formula
+  - spearman rank correlation coefficient
 phase: 2
 calculator: correlation-coefficient
 pubDate: 2026-02-14
-updatedDate: 2026-09-09
+updatedDate: 2026-09-20
 related:
-  - simpsons-paradox
+  - what-is-correlation
   - pearson-vs-spearman
   - correlation-vs-causation
+  - linear-regression
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -34,7 +40,7 @@ import { routes } from '../../lib/links';
 
 A **correlation coefficient** is a single number, r, between −1 and +1 that tells you whether two variables move together and how tightly. What it does *not* tell you is what you're allowed to conclude from that number — an r of 0.60 can mean something entirely different depending on how the data were collected, whether the relationship is actually a straight line, and whether one stray data point or a hidden subgroup is doing all the work. That gap between "here is r" and "here is what r means" is where most correlation coefficients get misread, and it's the gap this page is built to close.
 
-You'll get the formula and a full worked calculation below, but the core of this page is judgment: how to read a given r value correctly, and the specific ways r quietly misleads people who take it at face value — nonlinearity, restricted range, outliers, and mixing subgroups that individually tell a different story than the pooled data does. For the broader concept of correlation — what it means and why it matters before you ever compute a number — see <Link to={routes.article('what-is-correlation')}>what correlation means in statistics</Link>.
+You'll get the Pearson formula, its covariance form, a full worked calculation, and a comparison with Spearman's rank correlation below, but the core of this page is judgment: how to read a given r value correctly, and the specific ways r quietly misleads people who take it at face value — nonlinearity, restricted range, outliers, and mixing subgroups that individually tell a different story than the pooled data does. For the broader concept of correlation — what it means and why it matters before you ever compute a number — see <Link to={routes.article('what-is-correlation')}>what correlation means in statistics</Link>.
 
 ---
 
@@ -42,7 +48,7 @@ You'll get the formula and a full worked calculation below, but the core of this
 
 A correlation coefficient summarizes how consistently two variables move together across a set of paired measurements. When x rising tends to accompany y rising, the coefficient is positive. When x rising tends to accompany y falling, it's negative. When there's no consistent straight-line pattern either way, r sits near zero — though, as the misleading section below covers, "near zero" is not the same as "unrelated."
 
-The version used almost everywhere is the **Pearson correlation coefficient**, named for Karl Pearson, who formalized it in the 1890s. It's symmetric (correlating x with y gives the same answer as y with x), dimensionless (changing units doesn't change r), and it only ever measures the *linear* part of a relationship. Two other coefficients — Spearman's ρ and Kendall's τ — extend the idea to ranked or curved-but-monotonic data; the <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient</Link> article covers how those relate to Pearson's r and to covariance in more depth than belongs here.
+The version used almost everywhere is the **Pearson correlation coefficient** — formally the *Pearson product-moment correlation coefficient*, named for Karl Pearson, who formalized it in 1895 on the back of Francis Galton's 1880s work on co-variation. The "product-moment" in the name refers to the numerator of the formula: a "moment" is a kind of average about the mean, and the numerator sums the products of each variable's first moment. Today researchers usually drop the qualifiers and say "the correlation coefficient" or "Pearson's r"; a published correlation with no further label almost always means this one. It's symmetric (correlating x with y gives the same answer as y with x), dimensionless (changing units doesn't change r), and it only ever measures the *linear* part of a relationship. Computed for a whole population it is written ρ (rho) and is a parameter; computed from a sample — which is nearly always — it is written r and is a statistic. Two other coefficients, Spearman's ρ and Kendall's τ, extend the idea to ranked or curved-but-monotonic data; the Spearman comparison further down covers when to reach for it.
 
 A positive coefficient shows up wherever two quantities share a driver in the same direction — study hours and exam scores, altitude and air pressure (inverted), advertising spend and short-run revenue. A negative one shows up just as often — exercise frequency and resting heart rate, elevation and temperature. Neither sign says more about the *strength* of the relationship than the other; only the absolute value does, which is the subject of the interpretation section further down.
 
@@ -65,6 +71,20 @@ r = [ nΣxᵢyᵢ − (Σxᵢ)(Σyᵢ) ] / √{ [ nΣxᵢ² − (Σxᵢ)² ] · 
 ```
 
 Both forms give the same result. The deviation form is the one worth understanding: the numerator is the sum of cross-products of deviations from each mean, and dividing by the product of the two standard deviations is exactly what forces the result to stay inside [−1, +1], as the [NIST/SEMATECH e-Handbook of Statistical Methods, §1.3.5.11 — Bivariate Data and Scatter Plots](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm) sets out. When x and y deviate from their means in the same direction more often than not, the cross-products skew positive and r climbs toward +1; when they deviate in opposite directions, r moves toward −1; when the two are unrelated, positive and negative cross-products cancel out and r drifts toward 0.
+
+### The Covariance Form
+
+The same quantity can be written in terms of the **covariance** and the two sample standard deviations:
+
+```
+r = Cov(X, Y) / (sX · sY)
+
+Cov(X, Y) = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / (n − 1)
+sX = √[Σ(xᵢ − x̄)² / (n − 1)]
+sY = √[Σ(yᵢ − ȳ)² / (n − 1)]
+```
+
+Covariance captures the joint variability of x and y, but its magnitude depends on the units of measurement — kilograms times centimetres, dollars times days — so it is hard to interpret on its own and impossible to compare across datasets. Dividing by the product of the two standard deviations removes the units and standardises the result. Pearson's r is, in this sense, a standardised covariance; the (n − 1) factors cancel, which is why the deviation form above never mentions them.
 
 <RelatedLink to={routes.calculator('linear-regression')} label="linear regression calculator" intro="On a related note" />
 
@@ -108,7 +128,17 @@ r = 6 / √(10 × 6)
   ≈ 0.775
 ```
 
-An r of roughly **0.775** tells the quality team that flagged bottles do climb fairly reliably as time-since-calibration increases, but the fourth shift (4 hours, only 4 flags instead of the 5 the trend would predict) is a reminder that "fairly reliably" is not "always" — real production data rarely sits exactly on a line. Squaring r gives the coefficient of determination, r² = 0.775² ≈ **0.600**: about 60% of the shift-to-shift variation in flagged bottles lines up with hours since calibration, leaving 40% down to other factors (bottle batch, line speed, operator, ambient temperature).
+### Step 4: Check it via the covariance form
+
+```
+Cov(X, Y) = 6 / (5 − 1) = 1.5
+sX = √(10 / 4) = √2.5 ≈ 1.581
+sY = √(6 / 4)  = √1.5 ≈ 1.225
+
+r = 1.5 / (1.581 × 1.225) ≈ 1.5 / 1.937 ≈ 0.775
+```
+
+Both routes agree. An r of roughly **0.775** tells the quality team that flagged bottles do climb fairly reliably as time-since-calibration increases, but the fourth shift (4 hours, only 4 flags instead of the 5 the trend would predict) is a reminder that "fairly reliably" is not "always" — real production data rarely sits exactly on a line. Squaring r gives the coefficient of determination, r² = 0.775² ≈ **0.600**: about 60% of the shift-to-shift variation in flagged bottles lines up with hours since calibration, leaving 40% down to other factors (bottle batch, line speed, operator, ambient temperature).
 
 <RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
 
@@ -170,6 +200,22 @@ The most dramatic failure isn't a weak correlation — it's a correlation that r
 
 ---
 
+## Pearson's r vs. Spearman's Rank Correlation
+
+Pearson's r is not the only correlation coefficient. When its assumptions are shaky, the **Spearman rank correlation coefficient** (written ρ or rₛ) is the standard alternative. Spearman converts each variable's values into ranks — smallest value gets rank 1, next smallest rank 2, and so on — and then applies the Pearson formula to those ranks instead of the raw data. That makes it a measure of **monotonic** association: it detects whether one variable consistently rises as the other rises, even when the relationship is not a straight line. For tie-free data the formula simplifies to:
+
+```
+ρ = 1 − (6 · Σdᵢ²) / (n(n² − 1))
+```
+
+where dᵢ is the difference between the two ranks of the i-th pair. (What some sources call "Pearson rank correlation" is simply this — the Pearson formula on ranks. There is no separate coefficient by that name.)
+
+Use **Pearson's r** when both variables are continuous, the relationship you expect is linear, and — if you intend to test significance on a small sample — both are roughly normal. Use **Spearman's ρ** when one or both variables are ordinal, when influential outliers would distort r, when the relationship is monotonic but clearly curved, or when normality is implausible. When the data are well-behaved the two usually agree; a large gap between them is itself informative, pointing at outliers or a nonlinear pattern that r is missing. The [Penn State STAT 501, Lesson 1.9 — Correlation](https://online.stat.psu.edu/stat501/lesson/1/1.9) compares how the two behave under different data conditions, and <Link to={routes.article('pearson-vs-spearman')}>Pearson vs Spearman</Link> works through the choice on real data.
+
+<RelatedLink to={routes.article('pearson-vs-spearman')} label="Pearson vs Spearman" intro="Worth reading next" />
+
+---
+
 ## Correlation Coefficients Don't Prove Causation
 
 A high r tempts people to conclude that one variable causes the other, and it can't support that conclusion on its own — a correlation is equally consistent with direct causation, a shared third cause, or plain coincidence in a small or heavily-tested sample. The bottling-plant r of 0.775 is a case in point: it's consistent with calibration drift *causing* more flagged bottles, but it can't rule out a third factor, like ambient humidity, that independently affects both the sensor and the bottling process. Distinguishing those explanations needs controlled experiments or formal causal-inference methods, not a bigger r. The full reasoning, including the classic ice-cream-and-drownings example, lives in <Link to={routes.article('correlation-vs-causation')}>correlation vs causation</Link>.
@@ -194,7 +240,11 @@ Whichever value has the largest absolute value is the strongest, and whichever h
 
 ### What's the difference between a correlation coefficient and covariance?
 
-Covariance measures the same co-movement between two variables but stays in their original units (kg·cm, dollars·days), which makes it impossible to compare across datasets. Dividing covariance by the product of the two standard deviations produces r — dimensionless and always within [−1, +1]. The <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient</Link> article works through that derivation in full.
+Covariance measures the same co-movement between two variables but stays in their original units (kg·cm, dollars·days), which makes it impossible to compare across datasets. Dividing covariance by the product of the two standard deviations produces r — dimensionless and always within [−1, +1]. The covariance form of the formula above, and Step 4 of the worked example, show the two routes landing on the same number.
+
+### When should I use Spearman's rank correlation instead of Pearson's r?
+
+When your data are ordinal, when outliers are a concern, or when the relationship is monotonic but not linear. Spearman ranks the values before correlating them, so it is robust to outliers and valid for ordinal scales. Both coefficients live in [−1, +1]; a large difference between them signals outliers or a curved pattern that Pearson's r is not capturing.
 
 ### Can two variables have r = 0 and still be related?
 
@@ -208,6 +258,6 @@ There's no universal cutoff. r > 0.50 reads as a strong effect in psychology and
 
 ## Summary
 
-A correlation coefficient compresses the strength and direction of a linear relationship into one number between −1 and +1, computed by standardizing the covariance of two variables against their standard deviations. Sign tells you direction only; absolute value tells you strength, which is why the largest-magnitude r in a set is always the strongest correlation and the smallest-magnitude r is always the weakest, whatever the sign.
+A correlation coefficient — Pearson's r, unless a source says otherwise — compresses the strength and direction of a linear relationship into one number between −1 and +1, computed by standardizing the covariance of two variables against their standard deviations. When the data are ranked, skewed by outliers, or curved but monotonic, Spearman's rank correlation is the honest substitute. Sign tells you direction only; absolute value tells you strength, which is why the largest-magnitude r in a set is always the strongest correlation and the smallest-magnitude r is always the weakest, whatever the sign.
 
 What the number can't do on its own is rule out the four failure modes covered here: a curved (non-linear) relationship that r reads as weak or zero, a restricted range that understates the true association, a single outlier doing most of the work, or a Simpson's-paradox-style reversal hiding inside pooled subgroups. Compute r, but also plot the data, check for outliers, and ask whether the data were pooled across groups that might behave differently — the calculator above will do the arithmetic for any dataset you have, but the judgment calls are still yours to make.

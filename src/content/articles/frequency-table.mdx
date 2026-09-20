@@ -1,6 +1,6 @@
 ---
-title: "Frequency Tables: How to Build & Read Them"
-description: "A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions."
+title: "Frequency Tables: How to Find Frequency, Build & Read Them"
+description: "Frequency in statistics is how often a value appears. Build a frequency table step by step, group data into classes, and find relative and cumulative frequency."
 category: descriptive-statistics
 primaryKeyword: frequency table
 keywords:
@@ -10,9 +10,16 @@ keywords:
   - relative frequency table
   - statistics frequency polygon
   - what is the relative frequency in statistics
+  - frequency in statistics
+  - class frequency
+  - grouped frequency distribution
 phase: 1
 calculator: frequency-table
-related: []
+related:
+  - mean-median-mode-range
+  - percentiles
+  - skewed-distribution
+updatedDate: 2026-09-20
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -23,7 +30,7 @@ import { routes } from '../../lib/links';
 
 A **frequency table** turns a raw list of data values into an organised summary that shows exactly how often each value appears. You have a dataset — say, 20 quiz scores — and you want to answer the simplest question in statistics: how many times does each value show up? The frequency table answers that question at a glance, making patterns visible that a stream of numbers hides.
 
-Frequency tables are one of the first tools you reach for when exploring a new dataset. They underpin the frequency distribution, the relative frequency table, and visual displays like the frequency polygon. Learning to build and read one well is a foundational skill in descriptive statistics.
+Frequency tables are one of the first tools you reach for when exploring a new dataset. They underpin the frequency distribution, the relative frequency table, and visual displays like the frequency polygon. According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3 — EDA Techniques](https://www.itl.nist.gov/div898/handbook/eda/section3/eda30.htm), examining how often each value occurs is the essential first step in any quantitative analysis, and this page covers the whole job: counting frequency in raw data, extending the table with relative and cumulative columns, and grouping continuous data into classes when individual values don't repeat.
 
 ---
 
@@ -213,18 +220,59 @@ For continuous data, you plot the midpoint of each class interval on the horizon
 
 ## Grouped Frequency Tables for Continuous Data
 
-When data is continuous — times, heights, weights, temperatures — individual values rarely repeat exactly. A simple value-count table would have a separate row for every observation, each with a frequency of 1, which is useless as a summary. Instead, you group values into **class intervals** (also called bins or classes) and count how many observations fall in each interval.
+When data is continuous — times, heights, weights, temperatures — individual values rarely repeat exactly. A simple value-count table would have a separate row for every observation, each with a frequency of 1, which is useless as a summary. Instead, you group values into **class intervals** (also called bins or classes) and count how many observations fall in each interval. The count inside one interval is the **class frequency**, and the finished table is a **grouped frequency distribution**.
 
-**Example:** Suppose you record the heights of 30 adults to the nearest centimetre. You might create class intervals of width 5: 155–159 cm, 160–164 cm, 165–169 cm, and so on. Count how many heights fall in each interval and you have a grouped frequency table.
+A well-formed class interval has a **lower class limit** (the smallest value that belongs to it), an **upper class limit** (the largest), and a **class width** — the distance from the lower limit of one class to the lower limit of the next.
 
 Rules for choosing class intervals:
 
-- **Between 5 and 15 classes** is the standard guideline for most datasets. Fewer than 5 classes lose too much detail; more than 15 make the table hard to scan.
+- **Between 5 and 15 classes** is the standard guideline for most datasets. Fewer than 5 classes lose too much detail; more than 15 make the table hard to scan. **Sturges' rule** gives a starting point: `k ≈ 1 + 3.322 × log₁₀(n)`, so for n = 20 it suggests k ≈ 5.3, i.e. 5 or 6 classes.
+- The class width is then `⌈(max − min) / k⌉`, rounded up to a convenient whole number so the limits are easy to read.
 - All classes should share the **same width** so the bars in any histogram you draw are equal in width and the frequencies are directly comparable.
-- Classes must be **mutually exclusive** — each observation belongs to exactly one class. Use clear conventions such as [155, 160) meaning "155 or more but less than 160."
+- Classes must be **mutually exclusive** — each observation belongs to exactly one class. Use clear conventions such as [155, 160) meaning "155 or more but less than 160," or write 40–49 and 50–59 rather than 40–50 and 50–60.
 - Classes must be **exhaustive** — every observation has a place in the table.
 
+### Worked Example: Grouping 20 Exam Scores
+
+**Dataset:** Twenty students' exam scores (out of 100):
+
+45, 52, 67, 71, 83, 90, 54, 68, 72, 85, 92, 56, 69, 73, 87, 94, 58, 65, 78, 88
+
+**Step 1: Calculate the range.** Minimum = 45, maximum = 94, so the range is 94 − 45 = 49.
+
+**Step 2: Choose the number of classes.** With n = 20, Sturges' rule gives k ≈ 5.3. Use 6 classes of width 10 — a round number that covers the full range (6 × 10 = 60 ≥ 49).
+
+**Step 3: Set the class limits.** Starting at 40 and stepping by 10: 40–49, 50–59, 60–69, 70–79, 80–89, 90–99.
+
+**Step 4: Tally each score into its class.**
+
+| Class interval | Observations | Frequency (f) |
+|---|---|---|
+| 40–49 | 45 | 1 |
+| 50–59 | 52, 54, 56, 58 | 4 |
+| 60–69 | 65, 67, 68, 69 | 4 |
+| 70–79 | 71, 72, 73, 78 | 4 |
+| 80–89 | 83, 85, 87, 88 | 4 |
+| 90–99 | 90, 92, 94 | 3 |
+
+**Verification:** 1 + 4 + 4 + 4 + 4 + 3 = **20 = n** ✓
+
+**Step 5: Add relative and cumulative frequencies.**
+
+| Class | f | Relative f | Cumulative f |
+|---|---|---|---|
+| 40–49 | 1 | 0.05 (5%) | 1 |
+| 50–59 | 4 | 0.20 (20%) | 5 |
+| 60–69 | 4 | 0.20 (20%) | 9 |
+| 70–79 | 4 | 0.20 (20%) | 13 |
+| 80–89 | 4 | 0.20 (20%) | 17 |
+| 90–99 | 3 | 0.15 (15%) | 20 |
+
+Reading the table: 80% of students (16 out of 20) scored between 50 and 89; the cumulative frequency of 9 in the 60–69 row means 45% of students scored below 70; and the 90–99 class's relative frequency of 0.15 means 15% scored 90 or above. For a histogram, each bar spans one class interval and its height is the class frequency; for a frequency polygon, plot the class midpoints (44.5, 54.5, …) instead of raw values.
+
 The [Penn State STAT 200, Lesson 2.1 — Organizing Data](https://online.stat.psu.edu/stat200/lesson/2/2.1) covers grouped frequency distributions in detail, including guidance on choosing the number of classes and class width for various dataset sizes.
+
+<RelatedLink to={routes.article('mean-median-mode-range')} label="mean, median, mode, and range explained" intro="Worth reading next" />
 
 ---
 
@@ -262,7 +310,7 @@ Using class intervals of different widths is occasionally valid, but if you then
 
 ### Confusing Frequency and Relative Frequency
 
-Frequency is a raw count; relative frequency is a proportion. They answer different questions. If a teacher says "eight students scored a 7," that is the frequency (f = 5 actually, but conceptually this is a count). If the teacher says "25 percent of students scored a 7," that is the relative frequency (5 / 20 = 0.25). Neither is wrong; they are answering different questions.
+Frequency is a raw count; relative frequency is a proportion. They answer different questions. If a teacher says "five students scored a 7," that is the frequency (f = 5). If the teacher says "25 percent of students scored a 7," that is the relative frequency (5 / 20 = 0.25). Neither is wrong; they are answering different questions.
 
 ### Letting Relative Frequencies Sum to a Value Other Than 1.00
 
@@ -290,9 +338,17 @@ Multiply by 100 to express the result as a percentage. Compute this for every ro
 
 A line graph of frequencies (or relative frequencies) plotted against the corresponding data values or class midpoints, with consecutive points connected by straight lines. The polygon is anchored to zero one class before the first bar and one class after the last, creating a closed shape. It is particularly useful for overlaying and comparing the frequency distributions of two or more groups on a single chart.
 
+### What is class frequency?
+
+The count of observations that fall within one class interval in a grouped frequency table. If 4 out of 20 exam scores fall between 50 and 59, the class frequency for that interval is 4. The sum of all class frequencies always equals the total number of observations n.
+
+### What is cumulative frequency?
+
+A running total of frequencies accumulated from the first row to the current row. After the third row, the cumulative frequency equals the sum of the first three frequencies. The cumulative frequency of the last row always equals n, which serves as a built-in check that no values were missed.
+
 ### How many classes should a grouped frequency table have?
 
-A common guideline is 5 to 15 classes. A useful rule of thumb is to use approximately the square root of the number of observations: for 100 data points, aim for about 10 classes. Fewer classes suppress detail and can hide important features of the distribution; more classes fragment the data so much that the pattern becomes hard to see.
+A common guideline is 5 to 15 classes. Sturges' rule, k ≈ 1 + 3.322 × log₁₀(n), gives a defensible starting point; a rougher rule of thumb is the square root of the number of observations, so for 100 data points aim for about 10 classes. Fewer classes suppress detail and can hide important features of the distribution; more classes fragment the data so much that the pattern becomes hard to see.
 
 ---
 

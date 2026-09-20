@@ -14,7 +14,6 @@ calculator: mean-absolute-deviation
 related:
   - standard-deviation
   - variance
-  - sample-variance-formula
 pubDate: 2026-02-14
 updatedDate: 2026-09-09
 draft: false
@@ -202,7 +201,7 @@ If MAD is easier to compute, easier to explain, and less sensitive to a stray ou
 
 Squared deviations have a property absolute deviations lack: the function x² is differentiable everywhere, including at zero, while |x| has a sharp corner at zero where no single tangent line exists. That sounds like a minor technicality, but it's the entire reason least-squares methods work. To find the value that minimizes total squared deviation, you take a derivative, set it to zero, and solve — which is exactly how you can prove the mean minimizes sum of squared deviations in a few lines of algebra. Try the same proof with absolute deviations and you hit that corner; there's no derivative to set to zero, so minimizing absolute deviation requires different tools (linear programming, or the median instead of the mean) rather than a clean closed-form solution.
 
-Squared deviations also decompose in ways absolute deviations don't. <Link to={routes.article('sample-variance-formula')}>Variance</Link> of a sum of independent variables is just the sum of their variances — a property statisticians lean on constantly in ANOVA, sums-of-squares decompositions, and error propagation. Absolute deviations offer no comparable shortcut; you can't combine two groups' MADs by simply adding them. And because the normal distribution's density is built from a squared term, e^−(x−μ)²/2σ², every method that assumes normally distributed data or error — confidence intervals, t-tests, regression, ANOVA — naturally produces variance and standard deviation as its native scale, not MAD.
+Squared deviations also decompose in ways absolute deviations don't. <Link to={routes.article('variance')}>Variance</Link> of a sum of independent variables is just the sum of their variances — a property statisticians lean on constantly in ANOVA, sums-of-squares decompositions, and error propagation. Absolute deviations offer no comparable shortcut; you can't combine two groups' MADs by simply adding them. And because the normal distribution's density is built from a squared term, e^−(x−μ)²/2σ², every method that assumes normally distributed data or error — confidence intervals, t-tests, regression, ANOVA — naturally produces variance and standard deviation as its native scale, not MAD.
 
 None of that makes standard deviation more "correct" as a description of spread. It makes it more tractable to build a century of mathematical machinery on top of — a decision made by Gauss and Laplace in the 1800s, well before anyone worried about explaining the result to a general audience.
 

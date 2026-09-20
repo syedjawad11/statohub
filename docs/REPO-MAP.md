@@ -85,7 +85,7 @@ statohub/
 |   `-- db_sync.py           # dump/rebuild/check the two SQLite boards <-> their .sql dumps
 |                            #   (ADR 0018). `check` runs in the build; `dump` before committing.
 |
-|-- public/                  # robots.txt, _headers (security headers), favicons, og-default.png
+|-- public/                  # robots.txt, _headers (security headers), _redirects (301s), favicons, og-default.png
 |
 |-- content-ops/             # INTERNAL content board -- everything we write ourselves
 |   |-- content.db            # SQLite editorial DB (gitignored; tracked as content.sql)

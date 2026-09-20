@@ -1,0 +1,8 @@
+# Cloudflare Pages redirects. One line per retired URL; a target must never
+# itself be a source (no chains). scripts/check-links.mjs reads the built copy
+# and fails the build if any internal link still points at a source.
+/calculators/average/  /calculators/mean/  301
+/mean-vs-average/  /what-is-an-average/  301
+/how-to-find-frequency-statistics/  /frequency-table/  301
+/pearson-correlation-coefficient/  /correlation-coefficient/  301
+/sample-variance-formula/  /variance/  301

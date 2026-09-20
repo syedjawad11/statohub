@@ -1,6 +1,6 @@
 ---
-title: "Variance: Definition, Formula & vs Standard Deviation"
-description: "Variance measures how spread out data values are from the mean. Learn the variance formula and how variance differs from standard deviation."
+title: "Variance: Definition, Sample Variance Formula & vs Standard Deviation"
+description: "Variance measures how spread out data values are from the mean. Learn the population and sample variance formulas, why n − 1, and how variance differs from SD."
 category: descriptive-statistics
 primaryKeyword: variance
 keywords:
@@ -13,9 +13,16 @@ keywords:
   - variance definition
   - variance equation
   - variance vs standard deviation
+  - sample variance formula
+  - sample variance equation
+  - variance formula example
 phase: 1
 calculator: variance
-related: []
+related:
+  - standard-deviation
+  - standard-deviation-symbol
+  - mean-absolute-deviation
+updatedDate: 2026-09-20
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -25,7 +32,7 @@ import { routes } from '../../lib/links';
 
 Variance is a measure of how spread out the values in a dataset are around their mean. A high variance means values are widely scattered; a low variance means they cluster tightly near the average. Knowing how to calculate variance is a foundational step in statistics, because variance also underlies standard deviation, t-tests, ANOVA, regression models, and almost every other analytical technique you will encounter.
 
-This article covers the variance definition in plain terms, shows the variance equation for both population and sample data, walks through a complete step-by-step worked example with real numbers, and explains the practical difference between variance vs standard deviation so you know when to use each.
+This article covers the variance definition in plain terms, shows the variance equation for both population and sample data, explains why the sample variance formula divides by n − 1, walks through a complete step-by-step worked example with real numbers, covers the grouped-data version, and explains the practical difference between variance vs standard deviation so you know when to use each.
 
 ---
 
@@ -71,9 +78,17 @@ where:
 - `n` is the number of values in the sample
 - the denominator is `n − 1` rather than `n` — this is known as Bessel's correction
 
+This is the form taught in every introductory course and implemented in Excel, R and Python. Some textbooks also give a computationally equivalent **shortcut formula** that avoids computing each deviation:
+
+```
+s² = [ Σxᵢ² − n·x̄² ] / (n − 1)
+```
+
+Both give the same result. The definitional form is easier to understand and verify by hand; the shortcut was useful on mechanical calculators and still appears in derivations.
+
 ### Why n − 1 in the Sample Variance Equation?
 
-The sample variance equation uses `n − 1` because a sample tends to underestimate the spread of the full population. When you compute the sample mean x̄ from the same data you are measuring, you have already used one piece of information to estimate the center. Dividing by `n − 1` rather than `n` adjusts for this, producing an unbiased estimator of the true population variance σ².
+The sample variance equation uses `n − 1` because a sample tends to underestimate the spread of the full population. When you compute the sample mean x̄ from the same data you are measuring, you have already used one piece of information to estimate the center — and that "uses up" one degree of freedom. The deviations `(xᵢ − x̄)` always sum to zero, so if you know `n − 1` of them the last one is fixed; you have only `n − 1` independent pieces of information about spread, not `n`. Dividing by `n − 1` rather than `n` reflects that, and it can be shown that the expected value of the result equals the true population variance, `E[s²] = σ²` — the property statisticians call unbiasedness.
 
 Dividing by `n` instead would systematically underestimate the spread — a bias that compounds in hypothesis tests and confidence intervals downstream. For a sample of 5 values, dividing by 5 rather than 4 understates the variance by 20%. The correction matters most in small samples and becomes negligible only as `n` grows very large. This adjustment is covered in detail in the [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.6 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
 
@@ -236,9 +251,34 @@ Most statistics software defaults to **sample variance**:
 - **NumPy:** `np.var()` defaults to `N` (population) unless you specify `ddof=1` to get the sample version.
 - **R:** `var()` uses `n − 1` (sample) by default.
 
-Knowing which formula a function applies prevents silent errors, especially when working with small datasets where the difference between dividing by `n` and `n − 1` is significant.
+Knowing which formula a function applies prevents silent errors, especially when working with small datasets where the difference between dividing by `n` and `n − 1` is significant. In Excel, `=VAR.S(A1:A5)` on the scores 72, 85, 90, 78, 95 returns 84.5; `=VAR.P` on the same cells returns 67.6.
+
+### A Second Sample Variance Example
+
+Because the n − 1 question is where most hand calculations go wrong, here is a smaller sample worked all the way through. A teacher selects five students at random from a large class and records their exam scores: **72, 85, 90, 78, 95**. The mean is (72 + 85 + 90 + 78 + 95) / 5 = 420 / 5 = 84. The deviations are −12, +1, +6, −6 and +11 (they sum to zero — a useful check), and their squares are 144, 1, 36, 36 and 121, which total 338. Because the five scores are a sample from the whole class, divide by n − 1 = 4:
+
+```
+s² = 338 / 4 = 84.5      (sample variance)
+σ² = 338 / 5 = 67.6      (what the population formula would have given)
+s  = √84.5 ≈ 9.19        (sample standard deviation)
+```
+
+Individual scores typically sit about 9 points from the class average. The sample formula gives the larger of the two variances because Bessel's correction inflates it deliberately.
 
 <RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="You may also find this useful" />
+
+---
+
+## Variance for Grouped Data
+
+When the data arrive as a frequency table rather than a list of individual values, use the class midpoint `mᵢ` of each interval and its frequency `fᵢ` in place of the raw values:
+
+```
+σ² = Σ fᵢ(mᵢ − μ)² / N          (population)
+s² = Σ fᵢ(mᵢ − x̄)² / (n − 1)    (sample, with n = Σfᵢ)
+```
+
+The midpoint stands in for every observation in its class, and the frequency weights each squared deviation by how many observations fall there. This grouped version is an approximation — the exact values are collapsed into intervals — but it is standard practice when only frequency-table data is available. The <Link to={routes.article('frequency-table')}>frequency table guide</Link> covers how to set up the classes and midpoints.
 
 ---
 
@@ -251,6 +291,10 @@ The most frequent arithmetic error in how to find variance: computing the deviat
 ### Using N Instead of n − 1 for Sample Data
 
 Applying the population formula (dividing by N) to a sample produces a biased estimate of the population variance — one that is systematically too small. In small samples the error is significant: for n = 5, dividing by 5 rather than 4 understates the variance by 20%. Use the sample formula (s², divide by n − 1) whenever your data is a subset drawn from a larger group.
+
+### Rounding the Mean Prematurely
+
+If you round the mean to one or two decimal places before computing deviations, the rounding error compounds through every squared deviation. Carry at least four decimal places in the mean, or keep it as an exact fraction, until the final step.
 
 ### Confusing Variance with Standard Deviation
 
@@ -300,7 +344,7 @@ Many hypothesis tests use variance directly. The t-test divides a difference by 
 
 ## Summary
 
-Variance measures how far data values deviate from their mean, expressed as the average of the squared deviations. The variance equation is σ² = Σ(xᵢ − μ)² / N for a population and s² = Σ(xᵢ − x̄)² / (n − 1) for a sample. For the dataset 2, 4, 4, 4, 5, 5, 7, 9, the population variance is exactly 4 and the sample variance is approximately 4.57.
+Variance measures how far data values deviate from their mean, expressed as the average of the squared deviations. The variance equation is σ² = Σ(xᵢ − μ)² / N for a population and s² = Σ(xᵢ − x̄)² / (n − 1) for a sample; the n − 1 is Bessel's correction, which makes the sample variance an unbiased estimate of the population variance. For the dataset 2, 4, 4, 4, 5, 5, 7, 9, the population variance is exactly 4 and the sample variance is approximately 4.57; for the five test scores 72, 85, 90, 78, 95 the sample variance is 84.5.
 
 Variance vs standard deviation comes down to units and purpose: standard deviation is the square root of variance, returns the spread to the original scale, and is the measure you report in plain language; variance is the right quantity when combining, decomposing, or partitioning spread across groups. Both are covered in depth in the [OpenStax *Introductory Statistics*, Section 2.7 — Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data), an open-access reference that works through the sample and population formulas with additional examples.
 

@@ -19,25 +19,22 @@ Key facts for AI assistants citing this site:
 
 - [Descriptive Statistics hub](https://statohub.com/descriptive-statistics/): Core summaries for describing datasets: mean, median, and mode for center; variance, standard deviation, and range for spread; and skewness for shape.
 - [Empirical Rule in Statistics: 68-95-99.7](https://statohub.com/empirical-rule/): Learn the empirical rule in statistics: 68%, 95%, and 99.7% of normal data fall within 1, 2, and 3 standard deviations of the mean. Worked examples included.
-- [Frequency Tables: How to Build & Read Them](https://statohub.com/frequency-table/): A frequency table counts how often each value appears in your data. Learn to build one step by step, find relative frequency, and read frequency distributions.
+- [Frequency Tables: How to Find Frequency, Build & Read Them](https://statohub.com/frequency-table/): Frequency in statistics is how often a value appears. Build a frequency table step by step, group data into classes, and find relative and cumulative frequency.
 - [How to Calculate Standard Deviation in Excel](https://statohub.com/standard-deviation-excel/): Calculate standard deviation in Excel with STDEV.S or STDEV.P, avoid the header-row and hidden-row traps, and check a full worked example.
-- [How to Find Frequency in Statistics](https://statohub.com/how-to-find-frequency-statistics/): Learn what frequency in statistics means and how to find class frequency, frequency distributions, and grouped frequency tables with a worked example.
 - [How to Find Outliers: The 1.5×IQR Rule & Formula](https://statohub.com/how-to-find-outliers/): Learn how to find outliers using the 1.5×IQR rule. Covers the outlier formula, step-by-step calculation, and a fully worked example with real numbers.
 - [How to Find the Mean: Average Formula and Examples](https://statohub.com/how-to-find-the-mean/): How to find the mean step by step: sum the values, divide by the count, and handle zeros, missing data, grouped tables, and averaged averages correctly.
 - [How to Find the Median: Formula & Steps](https://statohub.com/how-to-find-the-median/): Learn how to find the median step by step: sort values, apply the median formula, and handle both odd and even data sets with worked examples.
 - [How to Find the Range in Statistics](https://statohub.com/how-to-find-the-range/): The range measures spread in one subtraction: largest value minus smallest. Formula, worked examples with real data, and a free range calculator.
 - [Interquartile Range (IQR): Formula & How to Find It](https://statohub.com/interquartile-range/): Learn what the interquartile range is, the IQR formula, and how to find it step by step. Includes a worked example, outlier detection, and IQR vs range.
 - [Mean Absolute Deviation & Coefficient of Variation](https://statohub.com/mean-absolute-deviation/): Mean absolute deviation explained with a worked example, the coefficient of variation, and the real reason standard deviation is the default.
-- [Mean vs Average - Are They the Same Thing?](https://statohub.com/mean-vs-average/): Mean and average are usually the same number, but 'average' is the umbrella term that also covers median and mode. Here's when they diverge.
 - [Mean, Median, Mode & Range: The Complete Guide](https://statohub.com/mean-median-mode-range/): Learn how to find mean, median, mode, and range with step-by-step examples. Covers what mode means in math, how to calculate each measure, and when to use them.
 - [Median vs Average: What Does Median Mean in Math?](https://statohub.com/median-vs-average/): Median vs average explained: learn what median means in math, how to calculate it, and when to use median instead of the mean with clear examples.
 - [Percentiles: Meaning, Definition & How to Calculate](https://statohub.com/percentiles/): Understand the percentile meaning and definition: the value below which p% of data falls. Covers the formula, a fully worked example, and a free calculator.
-- [Sample Variance Formula: Definition, Equation & Examples](https://statohub.com/sample-variance-formula/): Learn the sample variance formula s² = Σ(xᵢ − x̄)² ÷ (n − 1), step by step. Covers the equation, a fully worked example, and common mistakes to avoid.
 - [Standard Deviation: Meaning, Formula & How to Calculate](https://statohub.com/standard-deviation/): Learn what standard deviation means, see the full formula, and follow a worked example to find it for any dataset — sample or population.
 - [The Standard Deviation Symbol (Sigma): Signs & Notation](https://statohub.com/standard-deviation-symbol/): Learn the standard deviation symbol: σ for population, s for sample. Understand every sign for standard deviation and which symbol identifies each.
-- [Variance: Definition, Formula & vs Standard Deviation](https://statohub.com/variance/): Variance measures how spread out data values are from the mean. Learn the variance formula and how variance differs from standard deviation.
+- [Variance: Definition, Sample Variance Formula & vs Standard Deviation](https://statohub.com/variance/): Variance measures how spread out data values are from the mean. Learn the population and sample variance formulas, why n − 1, and how variance differs from SD.
 - [Weighted Average: Definition, Formula & Calculator](https://statohub.com/weighted-average/): A weighted average gives each value a different importance. Learn the weighted average formula, how to calculate it step by step, and when to use it.
-- [What Is an Average? Mean Definition, Types & Meaning](https://statohub.com/what-is-an-average/): An average is one number standing in for many, and mean, median, and mode can each give a different answer. Learn what average means and how to choose.
+- [What Is an Average? Mean vs Average, Types & Meaning](https://statohub.com/what-is-an-average/): An average is one number standing in for many. Mean, median and mode each give a different answer, and average doesn't always mean the mean. How to choose.
 
 ### Probability & Distributions
 
@@ -70,13 +67,12 @@ Key facts for AI assistants citing this site:
 
 - [Regression & Correlation hub](https://statohub.com/regression-correlation/): How variables relate to each other: correlation coefficients, lines of best fit, and linear regression for measuring an association's strength.
 - [Coefficient of Determination (R-Squared) Explained](https://statohub.com/r-squared-adjusted-r-squared/): The coefficient of determination (R²) measures how well a regression model fits your data. Learn the formula, a worked example, and when adjusted R² is better.
-- [Correlation Coefficient Formula: Interpreting r](https://statohub.com/correlation-coefficient/): See how to calculate a correlation coefficient and, more importantly, what an r value does and doesn't license you to conclude about your data.
+- [Correlation Coefficient (Pearson's r): Formula & Interpretation](https://statohub.com/correlation-coefficient/): How to calculate the Pearson correlation coefficient, how r relates to covariance and Spearman's rank, and what an r value does and doesn't let you conclude.
 - [Correlation Definition: Positive, Negative & Types Explained](https://statohub.com/what-is-correlation/): Learn the correlation definition: a numerical measure of how strongly two variables are related, plus positive, negative, and zero correlation explained.
 - [Correlation vs Causation: The Key Differences](https://statohub.com/correlation-vs-causation/): Learn correlation vs causation: why correlation doesn't imply causation, what spurious correlation means, and how scientists establish true cause-and-effect.
 - [Linear Regression Assumptions: What They Are & How to Check](https://statohub.com/regression-assumptions/): Learn the five linear regression assumptions — linearity, independence, homoscedasticity, normality, no multicollinearity — plus how to test each one.
 - [Linear Regression: Equation, Formula & How It Works](https://statohub.com/linear-regression/): Understand linear regression: the regression equation, slope and intercept formula, and how to fit a least-squares line with a fully worked numeric example.
 - [Multicollinearity & Variance Inflation Factor (VIF) Explained](https://statohub.com/multicollinearity-vif/): Learn what multicollinearity is, why it distorts regression results, and how the Variance Inflation Factor (VIF) detects and measures it, with a worked example.
-- [Pearson Correlation Coefficient: Formula, Covariance & Spearman](https://statohub.com/pearson-correlation-coefficient/): Learn the Pearson correlation coefficient formula, how it relates to covariance, how to interpret r values, and when to use Spearman rank correlation instead.
 - [Regression to the Mean: Definition & Real-World Examples](https://statohub.com/regression-to-the-mean/): Learn what regression to the mean is, how Galton discovered it, the key formula, and real-world examples from sports, medicine, and education.
 - [Simpson's Paradox: Definition, Examples, and Why It Happens](https://statohub.com/simpsons-paradox/): Simpson's paradox occurs when a trend in data subgroups reverses when the groups are combined. Learn what causes it, how to spot it, and real-world examples.
 
@@ -175,10 +171,9 @@ Key facts for AI assistants citing this site:
 
 ### Descriptive Statistics
 
-- [Average Calculator](https://statohub.com/calculators/average/): Calculate the average of a data set using the arithmetic mean formula, entering any list of numbers to get an instant, step-by-step result.
 - [Frequency Distribution Table Generator](https://statohub.com/calculators/frequency-table/): Build a sorted frequency table from raw data, showing relative and cumulative frequency for each distinct value automatically.
+- [Mean (Average) Calculator](https://statohub.com/calculators/mean/): Calculate the mean, or average, of any set of numbers, see the sum and count used, and get the result instantly with no sign-up required.
 - [Mean Absolute Deviation Calculator](https://statohub.com/calculators/mean-absolute-deviation/): Calculate the mean absolute deviation of a data set, measuring the average distance of each value from the mean without squaring.
-- [Mean Calculator](https://statohub.com/calculators/mean/): Calculate the mean (average) of any set of numbers, see the sum and count used, and get the result instantly with no sign-up required.
 - [Percentile Calculator](https://statohub.com/calculators/percentile/): Calculate a percentile value and the quartiles (Q1, Q2, Q3) for any data set, showing the interquartile range in the same result.
 - [Range Calculator](https://statohub.com/calculators/range/): Find the range of a data set along with its minimum and maximum values, calculated instantly from any list of numbers you enter.
 - [Standard Deviation Calculator](https://statohub.com/calculators/standard-deviation/): Calculate sample or population standard deviation for any data set and see how far values typically spread from the mean, step by step.

@@ -13,7 +13,11 @@ keywords:
   - what is median in math
 phase: 1
 calculator: median
-related: []
+related:
+  - how-to-find-the-median
+  - what-is-an-average
+  - skewed-distribution
+updatedDate: 2026-09-20
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -34,27 +38,9 @@ The **median** is the value that sits at the exact midpoint of a sorted dataset.
 
 The word comes from Latin *medianus* — "middle." In everyday life, median household income is the standard figure quoted in national statistics rather than the mean income, because the median gives a truer picture of what a typical household actually earns. A small number of extremely high earners inflate the mean but cannot move the median by more than one position in the sorted list.
 
-### How to Find the Median
+Finding it is mechanical: sort the values, then take the middle one (for an odd count) or the mean of the two middle ones (for an even count). Sorting is the essential first step — picking the middle element of an unsorted list is the single most common error when learning what median means in math. The full procedure, with odd and even cases worked through, lives in <Link to={routes.article('how-to-find-the-median')}>how to find the median</Link>; this page is about when the median is the right number to report.
 
-The calculation depends on whether the dataset has an odd or even number of values.
-
-**Odd number of values.** Sort the dataset from smallest to largest, then select the value at the middle position.
-
-```
-Median position = (n + 1) / 2
-```
-
-For n = 5 values, the middle position is (5 + 1) / 2 = 3. The median is the 3rd value after sorting.
-
-**Even number of values.** Sort the dataset, then average the two values that share the middle.
-
-```
-Median = (value at position n/2 + value at position (n/2) + 1) / 2
-```
-
-For n = 8 values, the two middle values are at positions 4 and 5. Add them and divide by 2.
-
-In both cases, **sorting is the essential first step**. Forgetting to sort — and just picking the middle element of an unsorted list — is the single most common error when learning what median means in math.
+<RelatedLink to={routes.article('how-to-find-the-median')} label="How to Find the Median" intro="For a related calculation" />
 
 ---
 
@@ -182,22 +168,6 @@ For more on how the arithmetic mean works and when it is the right choice, see <
 
 ---
 
-## Step-by-Step: Finding the Median of Any Dataset
-
-Here is the full procedure in five steps:
-
-1. **List all values.** Include every observation, including duplicates. A dataset of five scores of 80 contains 80 five times.
-2. **Sort from smallest to largest.** This is non-negotiable; the median is undefined on an unsorted list.
-3. **Count the values.** Call this count n.
-4. **If n is odd:** the median is the value at position (n + 1) / 2 in the sorted list.
-5. **If n is even:** the median is the average of the values at positions n/2 and (n/2) + 1.
-
-The arithmetic is elementary. The difficulty is not calculation — it is knowing when this number is more informative than the mean.
-
-For a deeper treatment of all three classical measures of center (mean, median, and mode), the open-access [OpenStax, *Introductory Statistics*, Section 2.5 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) is a reliable free reference with worked examples.
-
----
-
 ## Is the Median an Average?
 
 Technically and mathematically, **yes** — the median is one type of average. In statistics, an *average* is any measure of central tendency: a single value that represents the center or typical value of a dataset. The mean, median, and mode are all called averages under this definition.
@@ -211,7 +181,7 @@ Whether the median counts as "the average" therefore depends on who is asking:
 
 The confusion matters in practice. When a company reports "average employee pay," the choice between mean and median can produce vastly different figures — as the salary example above demonstrates. Always check which measure a source actually used.
 
-Usually, though, the question behind the question is whether the median and the mean will give the same number. They do only when the data is symmetric and free of outliers.
+Usually, though, the question behind the question is whether the median and the mean will give the same number. They do only when the data is symmetric and free of outliers. For a deeper treatment of all three classical measures of center (mean, median, and mode), the open-access [OpenStax, *Introductory Statistics*, Section 2.5 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) is a reliable free reference with worked examples.
 
 ---
 
@@ -269,4 +239,4 @@ For **skewed data or datasets with outliers** — which describes most real-worl
 
 Understanding the difference also resolves the common confusion over whether the median is an average: it is one type of average in the statistical sense, but it is not the same as the arithmetic mean that everyday language usually means by "average."
 
-To see how the arithmetic mean itself works and how it relates to other common uses of the word, visit the <Link to={routes.article('mean-vs-average')}>Mean vs Average</Link> article. To compute both the median and mean for your own dataset, browse the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
+To see how the arithmetic mean itself works and how it relates to other common uses of the word, visit the <Link to={routes.article('what-is-an-average')}>What Is an Average</Link> article. To compute both the median and mean for your own dataset, browse the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.

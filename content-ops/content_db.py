@@ -44,6 +44,7 @@ APPLIED_PLAYBOOK = ".claude/applied-playbook.md"  # repo-root relative
 STATUSES = [
     "planned", "briefed", "drafting", "in_review",
     "changes_requested", "approved", "published", "research_pending",
+    "merged",  # URL retired with a 301 into another brief; keywords moved there
 ]
 SECTIONS = ["learn", "applied"]
 

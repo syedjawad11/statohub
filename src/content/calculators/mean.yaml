@@ -1,5 +1,5 @@
-title: Mean Calculator
-description: Calculate the mean (average) of any set of numbers, see the sum and count used, and get the result instantly with no sign-up required.
+title: Mean (Average) Calculator
+description: Calculate the mean, or average, of any set of numbers, see the sum and count used, and get the result instantly with no sign-up required.
 engine: mean
 category: descriptive-statistics
 standalone: true
@@ -9,3 +9,4 @@ keywords:
   - mean calculator
   - average calculator
   - how to find the mean
+  - calculate average

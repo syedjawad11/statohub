@@ -12,7 +12,11 @@ keywords:
   - positive correlation
   - which table shows a positive correlation
 phase: 1
-related: []
+related:
+  - correlation-coefficient
+  - correlation-vs-causation
+  - pearson-vs-spearman
+updatedDate: 2026-09-20
 draft: false
 ---
 import RelatedLink from '../../components/RelatedLink.astro';
@@ -20,7 +24,7 @@ import RelatedLink from '../../components/RelatedLink.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-Correlation appears in almost every branch of statistics — from medical research to finance to education — because it answers a straightforward question: do two measured quantities tend to move together? This article builds the correlation definition up from first principles, works through the Pearson formula with real numbers, then covers positive and negative correlation, how to average several r values, and how to read a correlation table.
+Correlation appears in almost every branch of statistics — from medical research to finance to education — because it answers a straightforward question: do two measured quantities tend to move together? This article builds the correlation definition up from first principles, then covers positive, negative and zero correlation, what the number does and does not tell you, how to average several r values, and how to read a correlation table. The formula itself, a step-by-step calculation and the ways r can mislead are the job of the <Link to={routes.article('correlation-coefficient')}>correlation coefficient guide</Link>; this page is about the concept.
 
 ## The Correlation Definition
 
@@ -42,27 +46,13 @@ The standard measure is **Pearson's r** (the Pearson product-moment correlation 
 
 The boundaries above follow conventions from Cohen (1988) and are widely used in social-science research. What counts as "strong" depends on the field: an r of 0.50 may be unremarkable in psychology but exceptionally high in ecology, where dozens of variables compete to explain variance.
 
-### The Pearson r Formula
+### Where the Number Comes From
 
-The Pearson formula is:
-
-```
-r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / √[Σ(xᵢ − x̄)² × Σ(yᵢ − ȳ)²]
-```
-
-where `xᵢ` and `yᵢ` are paired observations, `x̄` and `ȳ` are the respective means, and `Σ` denotes summing over all n pairs.
-
-An equivalent form using sample standard deviations makes the scale-independence of r explicit:
-
-```
-r = Σ[(xᵢ − x̄)(yᵢ − ȳ)] / [(n − 1) × sₓ × sᵧ]
-```
-
-Multiplying every x value by a constant leaves r unchanged, because that constant cancels in both the numerator and the denominator. Pearson's r is therefore dimensionless — it carries no units and can be compared across variables measured in completely different scales. The [NIST/SEMATECH e-Handbook of Statistical Methods, section on the Linear Correlation Coefficient](https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm) provides a rigorous derivation and examples of how r is used in quality-control analysis.
+Pearson's r is built from how each pair of observations deviates from its own mean: when x sits above its mean at the same time y sits above its mean (or both sit below), the pair pushes r toward +1; when the two deviate in opposite directions, the pair pushes r toward −1. Dividing by the spread of each variable keeps the result between −1 and +1 and strips out the units, so r is a pure number that can be compared across variables measured on completely different scales. The [NIST/SEMATECH e-Handbook of Statistical Methods, section on the Linear Correlation Coefficient](https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm) gives the derivation; the <Link to={routes.article('correlation-coefficient')}>correlation coefficient guide</Link> works through the formula and a full hand calculation.
 
 <RelatedLink to={routes.calculator('correlation-coefficient')} label="correlation coefficient calculator" intro="For a related calculation" />
 
-## A Fully Worked Example
+## A Quick Example
 
 A teacher records weekly study hours and end-of-term exam scores for five students:
 
@@ -74,36 +64,7 @@ A teacher records weekly study hours and end-of-term exam scores for five studen
 | D | 5 | 80 |
 | E | 6 | 85 |
 
-**Step 1 — Compute the means:**
-
-```
-x̄ = (2 + 3 + 4 + 5 + 6) / 5 = 20 / 5 = 4.0
-ȳ = (60 + 65 + 70 + 80 + 85) / 5 = 360 / 5 = 72.0
-```
-
-**Step 2 — Compute the deviations, cross-products, and squared deviations:**
-
-| Student | xᵢ − x̄ | yᵢ − ȳ | (xᵢ − x̄)(yᵢ − ȳ) | (xᵢ − x̄)² | (yᵢ − ȳ)² |
-|---------|---------|---------|-------------------|------------|------------|
-| A | −2 | −12 | 24 | 4 | 144 |
-| B | −1 | −7 | 7 | 1 | 49 |
-| C | 0 | −2 | 0 | 0 | 4 |
-| D | +1 | +8 | 8 | 1 | 64 |
-| E | +2 | +13 | 26 | 4 | 169 |
-| **Sum** | | | **65** | **10** | **430** |
-
-**Step 3 — Apply the formula:**
-
-```
-r = 65 / √(10 × 430)
-r = 65 / √4300
-r = 65 / 65.57
-r ≈ 0.991
-```
-
-An r of 0.991 is very close to +1, confirming that as study hours increase, exam scores rise in an almost perfectly linear pattern.
-
-To compute Pearson's r for your own datasets, the <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> handles every step and returns r, r², and the regression equation automatically.
+Every student who studied more scored higher, and the increases are nearly proportional — each extra hour adds roughly five to ten points. Running the five pairs through the formula gives **r ≈ 0.991**, very close to +1: as study hours increase, exam scores rise in an almost perfectly linear pattern. To compute r for your own data, the <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> returns r, r², and the regression equation automatically.
 
 ## Positive Correlation
 
@@ -148,7 +109,7 @@ What a given r tells you depends on both its sign and its magnitude:
 
 Pearson's r is dimensionless and bounded between −1 and +1, which makes it comparable across studies regardless of the units each variable was measured in. The [Penn State STAT 501 Regression Analysis course notes, Introduction to Linear Correlation](https://online.stat.psu.edu/stat501/lesson/1/1.9) offer a detailed treatment of how r relates to the slope and intercept of the fitted regression line.
 
-## How to Average Multiple r Values
+## How to Average Several r Values
 
 When you have Pearson correlations from several independent studies or subgroups and want to combine them into a single average, you cannot simply add the r values and divide. Pearson's r is not measured on a linear scale, especially near ±1 — straightforward averaging of raw r values produces a biased (typically underestimated) result.
 
@@ -164,7 +125,7 @@ z' = 0.5 × ln[(1 + r) / (1 − r)]
 
 This maps the bounded [−1, +1] scale onto an unbounded (−∞, +∞) scale where the values behave approximately like a normal distribution, making arithmetic averaging valid.
 
-### Step-by-Step Mean Correlation Example
+### Step-by-Step Example
 
 Suppose two studies report r₁ = 0.50 and r₂ = 0.80.
 
@@ -206,7 +167,7 @@ r_mean = (e^(2 × 0.824) − 1) / (e^(2 × 0.824) + 1)
         ≈ 0.677
 ```
 
-The mean correlation is approximately **r = 0.68**. Averaging the raw values directly gives (0.50 + 0.80) / 2 = 0.65 — a slight underestimate, because the r scale compresses near ±1.
+The average correlation is approximately **r = 0.68**. Averaging the raw values directly gives (0.50 + 0.80) / 2 = 0.65 — a slight underestimate, because the r scale compresses near ±1.
 
 When studies differ in sample size, weight each z' by `(nᵢ − 3)` before averaging:
 
@@ -214,7 +175,7 @@ When studies differ in sample size, weight each z' by `(nᵢ − 3)` before aver
 z'_weighted = Σ[(nᵢ − 3) × z'ᵢ] / Σ(nᵢ − 3)
 ```
 
-This gives larger samples proportionally more influence, producing a more precise mean correlation estimate.
+This gives larger samples proportionally more influence, producing a more precise estimate of the average correlation.
 
 ## What Correlation Is and Is Not
 
@@ -280,9 +241,9 @@ Only the direction. With r between 0 and +1 both variables increase together or 
 
 Look at the off-diagonal cells: a matrix whose off-diagonal entries are positive numbers clearly above zero (say, 0.72) is describing variables that rise and fall together. Cells near 0 show little or no linear relationship, and cells near −1 show a strong negative one. In a multiple-choice problem, the table with clearly positive off-diagonal entries is the one to pick.
 
-### What is mean correlation?
+### Can you average several correlation coefficients?
 
-The average of several Pearson r values from different studies or subgroups. Because the r scale is compressed near ±1, raw r values cannot simply be averaged. Convert each r to Fisher's z' = 0.5 × ln[(1 + r)/(1 − r)], average the z' values (weighting by nᵢ − 3 if sample sizes differ), then back-transform with r = tanh(z'_mean), as in the worked example above.
+Not directly. Because the r scale is compressed near ±1, raw r values from different studies or subgroups cannot simply be added and divided. Convert each r to Fisher's z' = 0.5 × ln[(1 + r)/(1 − r)], average the z' values (weighting by nᵢ − 3 if sample sizes differ), then back-transform with r = tanh(z'_mean), as in the worked example above.
 
 ---
 

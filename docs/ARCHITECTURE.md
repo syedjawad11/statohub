@@ -55,6 +55,11 @@ Three layers work together, and all three must stay in sync:
    unresolvable (redirect or 404). This runs as part of `npm run build`, so a broken
    internal link cannot ship.
 
+Retired URLs get a `301` line in `public/_redirects` (Cloudflare Pages format,
+copied into `dist/`); `check-links.mjs` reads that file and also fails the build
+if any internal link still targets a redirect source. A target must never itself
+be a source (no chains).
+
 **Never hand-write a raw internal `<a href="...">`.** Always `<Link to={routes.x()}>`
 or `url(routes.x())`. This applies to every internal href, including ones inside
 JSON-LD (`src/lib/schema.ts` builders), sitemap entries, and canonical tags.

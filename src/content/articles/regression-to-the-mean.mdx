@@ -54,7 +54,7 @@ The Galton example is instructive about the mechanism. If height were perfectly 
 
 The mathematical structure of regression to the mean follows directly from the formula for predicting one variable from another when they share an imperfect correlation.
 
-Let X be the first measurement (for example, a father's height) and Y be the second (a son's height). Suppose X and Y have population means μ_X and μ_Y, standard deviations σ_X and σ_Y, and a <Link to={routes.article('pearson-correlation-coefficient')}>Pearson correlation coefficient</Link> r between them. The best linear prediction of Y given X is:
+Let X be the first measurement (for example, a father's height) and Y be the second (a son's height). Suppose X and Y have population means μ_X and μ_Y, standard deviations σ_X and σ_Y, and a <Link to={routes.article('correlation-coefficient')}>Pearson correlation coefficient</Link> r between them. The best linear prediction of Y given X is:
 
 ```
 E[Y] = μ_Y + r × (σ_Y ÷ σ_X) × (X − μ_X)
@@ -195,8 +195,6 @@ Recognizing the phenomenon is the first step. Accounting for it in study design 
 **Calculating the expected regression.** Using the formula — E[Y] = μ_Y + r × (σ_Y ÷ σ_X) × (X − μ_X) — it is possible to estimate how much improvement to expect from regression alone, then subtract that expected regression from the observed improvement. What remains is a more honest upper bound on the intervention's contribution.
 
 ---
-
-<RelatedLink to={routes.article('pearson-correlation-coefficient')} label="Pearson correlation coefficient" intro="Worth reading next" />
 
 ## Frequently Asked Questions
 

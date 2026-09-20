@@ -4,16 +4,15 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-19 (outsource batch 5: 5 published; board 32/5).
+**Last updated:** 2026-09-20 (AdSense phase 2: 5 merges). **Baseline:** 148
+pages, 121 tests, 0 violations, 5 redirects in `public/_redirects`.
 
-**Known quirk:** `db_sync.py check` always recommends `dump` even when the `.db`
-is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
-
-Workflow routers are maps ([[0022-routers-are-maps-not-rulebooks]]). Cloud
-routines RETIRED to `docs/legacy/cloud-routine/`; **claude.ai schedules still
-wake nightly** -- disable in claude.ai -> Routines.
-
-**Baseline** (2026-09-19): 153 pages, 121 tests, 0 violations.
+**Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
+is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
+the board (`statistics-basics`/`calculators` categories) -- **never `seed`**; edit
+via SQL then `dump`. Routers are maps ([[0022-routers-are-maps-not-rulebooks]]).
+Cloud routines RETIRED to `docs/legacy/cloud-routine/`; **claude.ai schedules
+still wake nightly** -- disable in claude.ai -> Routines.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
@@ -28,9 +27,9 @@ and `machine-learning-statistics` hold 1 article each.
 ## Outsource pipeline: 32 published, 5 queued
 
 Batch 5 (2026-09-18/19): histogram-vs-boxplot, multiple-regression-diagnostics,
-missing-data-imputation, box-plot-interpretation, bias-variance-tradeoff.
-Batch 4 detail: `docs/status/sessions/2026-09-13-outsource-batch-4.md`.
-**Partner backlinks are never stripped** -- [[0023-outsource-keeps-partner-backlinks]].
+missing-data-imputation, box-plot-interpretation, bias-variance-tradeoff (batch 4:
+`sessions/2026-09-13-outsource-batch-4.md`). **Partner backlinks are never
+stripped** -- [[0023-outsource-keeps-partner-backlinks]].
 
 **Only publish rows whose vendor dashboard status is DRAFT.** The 5 queued rows
 (intention-to-treat, multiple-comparisons-problem, normality-tests, holt-winters,
@@ -41,20 +40,21 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
 ## Blocked / waiting
 
 - **Rotate the GitHub PAT.** The classic `ghp_` token in `~/.claude.json` is
-  plaintext and was printed into a 2026-09-01 transcript. Git no longer needs it;
-  the MCP server does. Replace with a fine-grained, repo-scoped token.
+  plaintext and was printed into a 2026-09-01 transcript. Git no longer needs
+  it; the MCP server does. Replace with a fine-grained, repo-scoped token.
 - **AdSense rejected ("low value content") -- remediation in progress**, plan in
-  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phase 1 (FAQ dedupe) done, 35/35; Phase 2 next.
+  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phases 1-2 done (FAQ dedupe;
+  5 merges -> 301s, board rows `merged`). Phase 3 (trust pages) next.
 
 ## Parked (do not silently resume)
 
 - Sanitizer gaps: processors drop "Statohub's Take"/CTA, leave bare `{` in
-  prose (MDX ReferenceError), and leave the vendor `— Statohub` sign-off (caught
-  by reviewer twice in batch 5; still live in confusion-matrix-explained,
-  f1-score-explained, granger-causality). None is a `check_sanitized.py` check yet.
+  prose (MDX ReferenceError), and leave the vendor `— Statohub` sign-off (still
+  live in confusion-matrix-explained, f1-score-explained, granger-causality).
+  None is a `check_sanitized.py` check yet.
 - Meta title lengths -- outsourced fixed + gated 2026-09-12; still open: ~50
   Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
 - Article schema `image` missing -- `articleSchema()` in `src/lib/schema.ts`.
 - `how-to-find-the-range` refresh -- 5 range keywords in DB, unused in copy.
-- `relative frequency` / `cumulative frequency` -- uncovered Learn candidates;
-  Phase C / D per `docs/ideas/statohub-action-plan.md` not started.
+- `relative frequency` / `cumulative frequency` -- uncovered Learn candidates
+  (now partly inside `/frequency-table/`); Phase C / D not started.
