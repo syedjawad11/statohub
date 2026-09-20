@@ -305,7 +305,7 @@ Independent events do not influence each other's probabilities: P(A ∩ B) = P(A
 
 ### Can two events be both independent and mutually exclusive?
 
-Only if at least one event is impossible (has probability zero). For any two events with P(A) > 0 and P(B) > 0, mutual exclusivity requires P(A ∩ B) = 0, while independence requires P(A ∩ B) = P(A) × P(B) > 0. Both conditions cannot hold simultaneously unless one probability is zero — which means the event never occurs. In any real probability problem with actual events, the answer is: **no**, two non-trivial events cannot be both independent and mutually exclusive.
+Only if at least one event is impossible (has probability zero). For any two events with P(A) > 0 and P(B) > 0, mutual exclusivity requires P(A ∩ B) = 0, while independence requires P(A ∩ B) = P(A) × P(B) > 0. Both conditions cannot hold simultaneously unless one probability is zero — which means the event never occurs. In any real probability problem with actual events, the answer is: **no**, two non-trivial events cannot be both independent and mutually exclusive. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section on Probability](https://www.itl.nist.gov/div898/handbook/eda/section3/eda362.htm) states the same result.
 
 ### What is the formula for independent events?
 
@@ -339,10 +339,6 @@ P(A ∪ B) = P(A) + P(B) − P(A ∩ B)    [general addition rule]
 
 Forgetting to subtract P(A ∩ B) when events overlap is one of the most common probability errors. Verify mutual exclusivity before applying the simplified rule.
 
-### Are mutually exclusive events independent?
-
-No — not when both events have positive probability. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section on Probability](https://www.itl.nist.gov/div898/handbook/eda/section3/eda362.htm) and standard probability theory are in agreement: two events with P(A) > 0 and P(B) > 0 cannot be both mutually exclusive and independent. The proof is straightforward: if P(A ∩ B) = 0 (mutual exclusivity) and P(A) × P(B) > 0, then P(A ∩ B) ≠ P(A) × P(B), so the independence condition fails.
-
 ### How do I tell whether events are independent or dependent?
 
 Three approaches work reliably:
@@ -360,10 +356,6 @@ Any categorical outcome where items fall into exactly one group: a coin landing 
 ### What are real-life examples of independent events?
 
 The weather in Tokyo today and the result of a coin flip in London. Whether it rains Monday and whether it rains the following Sunday (far enough apart that they are effectively independent). In designed experiments: randomised assignment to treatment groups makes group membership independent of pre-existing subject characteristics — one of the main reasons randomisation matters in experimental design.
-
-### Why does mutual exclusivity matter in probability calculations?
-
-It determines which addition rule you can use. If events are mutually exclusive, P(A ∪ B) = P(A) + P(B). If they are not, you must subtract P(A ∩ B). Incorrectly assuming mutual exclusivity overstates the probability of at least one event occurring by exactly P(A ∩ B). In problems with many overlapping events, this error compounds quickly.
 
 ---
 

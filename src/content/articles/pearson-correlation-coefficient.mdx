@@ -241,19 +241,15 @@ Pearson's r is powerful, but it rests on several assumptions that matter when in
 
 ### What does the Pearson correlation coefficient measure?
 
-Pearson's r measures the strength and direction of the linear relationship between two continuous numerical variables. It answers the question: how closely do the paired values follow a straight-line pattern? The result ranges from −1 (perfect negative linear relationship) to +1 (perfect positive linear relationship), with 0 indicating no linear association.
+The strength and direction of the linear relationship between two continuous numerical variables — in other words, how closely the paired values follow a straight-line pattern. The result ranges from −1 (perfect negative linear relationship) to +1 (perfect positive linear relationship), with 0 indicating no linear association.
 
-### What is the covariance formula connection to Pearson's r?
+### How is Pearson's r related to covariance?
 
-The covariance formula gives Cov(X, Y), the average cross-product of deviations from the two means. Pearson's r is the covariance divided by the product of the two standard deviations: r = Cov(X, Y) / (sX × sY). This division standardises the covariance, removing the effect of the variables' units and scaling the result to the [−1, +1] range.
+Cov(X, Y) is the average cross-product of deviations from the two means, and Pearson's r is that covariance divided by the product of the two standard deviations: r = Cov(X, Y) / (sX × sY). This division standardises the covariance, removing the effect of the variables' units and scaling the result to the [−1, +1] range.
 
 ### What is the difference between Pearson's r and R²?
 
 Pearson's r is the correlation coefficient. R-squared (r²) is its square and gives the proportion of the variance in one variable that is linearly explained by the other. If r = 0.775, then r² = 0.6, meaning 60% of the variance in y is accounted for by the linear relationship with x. R² is always non-negative and ranges from 0 to 1.
-
-### What is the Pearson product-moment correlation?
-
-The Pearson product-moment correlation coefficient is the full formal name for Pearson's r. "Product-moment" refers to the numerator of the formula, which sums the products of each variable's deviations from their respective means. Karl Pearson published the method in 1895, formalising earlier ideas by Francis Galton. It is the same quantity as "pearson's correlation coefficient" — the name is just more precise.
 
 ### When should I use the Spearman rank correlation coefficient instead of Pearson's r?
 
@@ -262,10 +258,6 @@ Use the Spearman rank correlation coefficient when your data are ordinal, when o
 ### Can Pearson's correlation be negative and still indicate a strong relationship?
 
 Yes. A negative r simply means the two variables move in opposite directions — as one increases, the other tends to decrease. A value of r = −0.85 indicates a stronger linear relationship than r = +0.4. The sign gives direction; the absolute value gives strength. Both r = +0.85 and r = −0.85 represent the same magnitude of linear association.
-
-### What is pearson's correlation used for in practice?
-
-Pearson's correlation is used to summarise the relationship between two variables before and after regression analysis, to compare the associations found in different studies, to screen variables for inclusion in predictive models, and to describe relationships in exploratory data analysis. Because it is dimensionless and always in the same [−1, +1] range, it is directly comparable across different pairs of variables and across different studies.
 
 ### What is a good value for Pearson's r?
 

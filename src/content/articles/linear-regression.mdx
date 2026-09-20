@@ -220,9 +220,9 @@ A value of 0.775 indicates a moderately strong positive linear association betwe
 
 ---
 
-## Which Regression Equation Best Fits the Data?
+## Comparing Candidate Models
 
-The question "which regression equation best fits the data?" — or equivalently "which regression equation best fits these data?" — arises whenever you compare two or more candidate models for the same dataset. There are several criteria; use them together for a complete picture.
+When two or more regression equations are proposed for the same dataset, several criteria decide which fits best; use them together for a complete picture.
 
 **Sum of squared residuals (SSR).** The least-squares line minimises the sum of squared residuals by construction. When two different regression equations are proposed (perhaps a linear model and a polynomial model), the one with the smaller SSR fits the observed data more closely. A multiple-choice question that provides two specific regression equations and asks which fits best is almost always asking you to compute SSR for each and pick the smaller one.
 
@@ -285,11 +285,11 @@ The least-squares formulas always produce a slope and an intercept, but those es
 
 ### What is linear regression?
 
-Linear regression is a statistical method that fits a straight line to paired (x, y) data by minimising the total squared distance between observed *y* values and the predicted values on the line. It is the most common form of regression analysis and produces a regression equation of the form ŷ = b₀ + b₁x, where the slope and intercept are calculated from the data.
+It fits a straight line to paired (x, y) data by minimising the total squared distance between observed *y* values and the predicted values on the line. It is the most common form of regression analysis and produces a regression equation of the form ŷ = b₀ + b₁x, where the slope and intercept are calculated from the data.
 
 ### What is the linear regression formula?
 
-The linear regression formula has two parts. The slope is:
+Two formulas define the least-squares line. The slope is:
 
 ```
 b₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)²
@@ -303,17 +303,9 @@ b₀ = ȳ − b₁ · x̄
 
 Together they define the regression equation ŷ = b₀ + b₁x, the least-squares line through the data.
 
-### What is a regression equation?
-
-A regression equation expresses the predicted relationship between a predictor *x* and a response *y* as a mathematical formula. For simple linear regression the standard form is ŷ = b₀ + b₁x, where b₀ is the intercept and b₁ is the slope. Substituting a specific value of *x* into the regression equation yields the model's prediction for *y* at that point.
-
 ### What do the slope and intercept tell you?
 
 The **slope** is the rate of change: how much *y* is predicted to increase (positive slope) or decrease (negative slope) for each additional unit of *x*. The **intercept** is the predicted *y* when *x* equals zero, anchoring the line's vertical position. Together, the slope and intercept completely specify the regression equation.
-
-### Which regression equation best fits the data?
-
-The regression equation that best fits the data is the one that minimises the sum of squared residuals — that is, the ordinary least-squares line. When comparing two or more specific candidate equations, compute the sum of squared residuals for each and choose the smallest. You can also compare R² values: a higher R² indicates more of the variation in *y* is explained by the model.
 
 ### What is the difference between linear regression and logistic regression?
 

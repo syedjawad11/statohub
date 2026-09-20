@@ -205,9 +205,9 @@ The **distribution mean** is a parameter — a true, fixed property of a theoret
 
 The **marginal probability distribution** arises when you have a joint distribution over two or more random variables and want to focus on just one, setting the others aside.
 
-### Marginal Distribution Definition
+### How the Marginal Is Computed
 
-The **marginal distribution definition**: given a joint distribution P(X, Y), the marginal distribution of X is obtained by summing (discrete) or integrating (continuous) over all possible values of Y:
+Given a joint distribution P(X, Y), the marginal distribution of X is obtained by summing (discrete) or integrating (continuous) over all possible values of Y:
 
 ```
 P(X = x) = Σ_y P(X = x, Y = y)      (discrete)
@@ -216,9 +216,9 @@ f(x)      = ∫ f(x, y) dy             (continuous)
 
 The term "marginal" has a practical origin: you write a joint probability table and literally sum values into the margins of the table.
 
-### Marginal Distribution Meaning
+### What the Marginal Tells You
 
-The **marginal distribution meaning** in practice: it reveals how one variable behaves on its own, regardless of the other variable. The joint distribution P(X, Y) encodes the relationship between X and Y; the marginal probability distribution P(X) strips out Y entirely.
+In practice it reveals how one variable behaves on its own, regardless of the other variable. The joint distribution P(X, Y) encodes the relationship between X and Y; the marginal probability distribution P(X) strips out Y entirely.
 
 **Worked example:** A survey of 400 people records age group (Young / Middle / Senior) and diet type (Vegetarian / Non-vegetarian). The joint distribution counts all six combinations:
 
@@ -342,21 +342,17 @@ The normal distribution is mathematically convenient, but it does not fit every 
 
 A **probability distribution** is a complete description of all possible values of a random variable and the probability associated with each. For discrete variables it takes the form of a table or PMF; for continuous variables it is a PDF. Both obey the same two rules: probabilities are non-negative and they total exactly 1.
 
-### What is the distribution mean?
+### What is the mean of a probability distribution?
 
-The **distribution mean** (also written E(X) or μ) is the probability-weighted average of all possible outcomes. For a discrete distribution: `E(X) = Σ xᵢ · P(X = xᵢ)`. For a continuous distribution: `E(X) = ∫ x · f(x) dx`. It represents the long-run average value of the random variable over an unlimited number of repetitions.
+The expected value, written E(X) or μ, is the probability-weighted average of all possible outcomes. For a discrete distribution: `E(X) = Σ xᵢ · P(X = xᵢ)`. For a continuous distribution: `E(X) = ∫ x · f(x) dx`. It represents the long-run average value of the random variable over an unlimited number of repetitions.
 
 ### What is the difference between the distribution of the population and the sample distribution?
 
-The **distribution of the population** (population distribution) is the true probability distribution that governs every member of the entire group. The **sample distribution** is the empirical frequency distribution of a subset you have observed. The sample distribution is an estimate of the population distribution; as the sample grows, the two converge by the Law of Large Numbers.
+The population distribution is the true probability distribution that governs every member of the entire group; the sample distribution is the empirical frequency distribution of a subset you have observed. The sample distribution is an estimate of the population distribution; as the sample grows, the two converge by the Law of Large Numbers.
 
 ### What is a marginal probability distribution?
 
-A **marginal probability distribution** is the distribution of a single variable extracted from a joint distribution of two or more variables. You find it by summing (discrete) or integrating (continuous) the joint distribution over all values of the other variables. The **marginal distribution meaning**: it shows one variable's behaviour in isolation, without conditioning on any other variable.
-
-### What is the marginal distribution definition?
-
-The **marginal distribution definition**: given a joint distribution P(X, Y) for discrete variables, the marginal distribution of X is `P(X = x) = Σ_y P(X = x, Y = y)`. For continuous variables: `f(x) = ∫ f(x, y) dy`. The name comes from the practice of summing joint-probability table entries into the table's margins.
+Take a joint distribution of two or more variables and sum (discrete) or integrate (continuous) over every variable except the one you care about; what remains is that variable's marginal distribution. It shows one variable's behaviour in isolation, without conditioning on any other variable. The name comes from summing joint-probability table entries into the table's margins.
 
 ### How does a probability distribution relate to Bayesian statistics?
 
@@ -376,7 +372,7 @@ The most commonly encountered distributions in introductory and applied statisti
 
 A **probability distribution** maps every possible outcome of a random variable to its probability, subject to two constraints: each probability is non-negative and they all sum to one. The two main families — discrete (PMF) and continuous (PDF) — include widely used named distributions such as the binomial, Poisson, normal, and exponential.
 
-The **distribution mean** (expected value E(X)) is the probability-weighted centre of any distribution: `Σ xᵢ · P(X = xᵢ)` for discrete variables, or the integral of `x · f(x)` for continuous ones. It is the long-run average of the distribution of population outcomes.
+The expected value E(X) is the probability-weighted centre of any distribution: `Σ xᵢ · P(X = xᵢ)` for discrete variables, or the integral of `x · f(x)` for continuous ones. It is the long-run average outcome over the whole population.
 
 The **marginal probability distribution** isolates one variable's distribution from a joint distribution of several, obtained by summing or integrating over the unwanted variables. It answers "What is the distribution of X on its own?" while the joint distribution answers "What is the distribution of X and Y together?"
 

@@ -300,19 +300,11 @@ The IQR is an **absolute** measure in the same units as the data. An IQR of 8 po
 
 ### What is the interquartile range?
 
-The interquartile range is the difference between the third quartile (Q3) and the first quartile (Q1): **IQR = Q3 − Q1**. It measures the spread of the middle 50 percent of a sorted data set and is not influenced by extreme values at either end.
-
-### How to find interquartile range step by step?
-
-Sort the data in ascending order. Find the median (Q2). Split the values into a lower half and an upper half, excluding the median when n is odd. Q1 is the median of the lower half; Q3 is the median of the upper half. Subtract to get **IQR = Q3 − Q1**.
-
-### What is the IQR formula?
-
-The IQR formula is **IQR = Q3 − Q1**, where Q1 is the 25th percentile (first quartile) and Q3 is the 75th percentile (third quartile) of the data set.
+Subtract the first quartile from the third: **IQR = Q3 − Q1**. It measures the spread of the middle 50 percent of a sorted data set and is not influenced by extreme values at either end.
 
 ### What is interquartile range used for?
 
-The interquartile range describes the spread of the central portion of a distribution, anchors the box in a boxplot, and powers Tukey's 1.5 × IQR outlier-detection rule. It is also used to compare variability between groups when outliers make the standard deviation unreliable.
+It describes the spread of the central portion of a distribution, anchors the box in a boxplot, and powers Tukey's 1.5 × IQR outlier-detection rule. It is also used to compare variability between groups when outliers make the standard deviation unreliable.
 
 ### How to find the interquartile range for an even number of values?
 
@@ -322,6 +314,6 @@ The process is the same, but finding the median (Step 2) works differently. For 
 
 Because Q1 and Q3 are calculated from values in the **inner portion** of the sorted data. Adding a value to the far end of a distribution shifts only the maximum (or minimum), leaving the positions of the 25th and 75th percentile values unchanged. The IQR therefore stays the same regardless of how extreme the new outlier is.
 
-### What is the interquartile range vs the range?
+### How does the IQR differ from the range?
 
 The range (maximum minus minimum) measures the total spread of all values and is highly sensitive to outliers. The IQR (Q3 minus Q1) measures only the middle 50 percent and is resistant to outliers. Both summarise spread in the same units as the data, but the IQR is preferred when extreme values are present or the distribution is skewed.

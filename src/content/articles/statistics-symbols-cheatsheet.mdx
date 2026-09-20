@@ -364,21 +364,13 @@ Every symbol in this analysis — x̄, s, n, μ₀, t, df, α — maps directly 
 
 ## Frequently Asked Questions
 
-### What is the statistics symbols cheat sheet?
-
-A **statistics symbols cheat sheet** is a reference table that lists every common notation used in descriptive statistics, probability, hypothesis testing, and regression in one place. The key symbols are μ (population mean), x̄ (sample mean), σ (population standard deviation), s (sample standard deviation), P(A) (probability of an event), H₀ (null hypothesis), α (significance level), p (p-value), r (correlation), and R² (coefficient of determination).
-
-### What are statistics and or symbols?
-
-The statistics **"and" symbol is ∩** (intersection) and the **"or" symbol is ∪** (union). They come from set theory and appear in probability notation. P(A ∩ B) is the probability that events A and B both occur. P(A ∪ B) is the probability that A or B (or both) occur, computed as P(A) + P(B) − P(A ∩ B). These two statistics and or symbols appear whenever you combine events in probability calculations.
-
 ### What is mu 0 (μ₀) in statistics?
 
 **μ₀ (mu-zero)** is the hypothesised value of the population mean stated in the null hypothesis H₀. It is a fixed constant that represents the baseline or reference value your test is checking against — for example, "is the true population mean equal to 70?" sets μ₀ = 70. The one-sample t-statistic formula is `t = (x̄ − μ₀) / (s / √n)`. A large absolute t-value means x̄ is far from μ₀, providing evidence against H₀.
 
 ### What is the difference between σ and s?
 
-**σ** is the population standard deviation and **s** is the sample standard deviation. The formulas differ in the denominator: σ divides by N (population size) and s divides by n − 1 (Bessel's correction, which removes a systematic bias). In practice, you almost always use s because you rarely have data for an entire population.
+The denominator. σ describes a whole population and divides by N; s is computed from a sample and divides by n − 1 (Bessel's correction, which removes a systematic bias). In practice you almost always use s, because you rarely have data for an entire population. As n grows large the two converge: for the eight values in the worked example σ ≈ 5.339 and s ≈ 5.707, but at n = 1 000 the gap is under 0.1 %.
 
 ### What does x̄ mean in statistics?
 
@@ -392,10 +384,6 @@ The general rule is: **Greek letter → population parameter, Latin letter → s
 
 **α** is the significance level you set *before* running the test — your maximum tolerance for a false positive (for example, α = 0.05 means you accept up to a 5 % chance of incorrectly rejecting a true H₀). **p** is the p-value computed *from* your data after running the test — the probability of observing results at least as extreme as yours if H₀ were true. The decision rule is simple: if p < α, reject H₀; if p ≥ α, retain H₀. You must set α before looking at p; adjusting α after seeing the data is a form of p-hacking.
 
-### Can σ and s ever give the same value?
-
-Yes. As the sample size n grows very large, the difference between dividing by N and dividing by n − 1 becomes negligible, so s approaches σ. For small n (say, n = 8), the two values differ noticeably (as in the worked example above, where σ for those eight values would be √(228/8) ≈ 5.339, while s ≈ 5.707). For n = 1 000, the difference is less than 0.1 %.
-
 ---
 
 ## Summary
@@ -405,7 +393,7 @@ This **statistics symbols cheat sheet** covers more than 40 symbols across every
 - **Greek letter → population parameter** (μ, σ, ρ, β₁, ε)
 - **Latin letter → sample statistic** (x̄, s, r, b₁, ŷ)
 
-Within probability, the two essential **statistics and or symbols** are **∩** ("and," intersection) and **∪** ("or," union) — use the addition rule P(A ∪ B) = P(A) + P(B) − P(A ∩ B) whenever you combine events.
+Within probability, the two essential set symbols are **∩** ("and," intersection) and **∪** ("or," union) — use the addition rule P(A ∪ B) = P(A) + P(B) − P(A ∩ B) whenever you combine events.
 
 Within hypothesis testing, remember that **μ₀ is the null hypothesis value** (a fixed reference you set before the test, not something you compute from data), **α is your pre-set false-positive threshold**, and **p is the data-driven result** you compare against α.
 

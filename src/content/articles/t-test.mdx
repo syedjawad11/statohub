@@ -297,15 +297,11 @@ Running the t test with two samples or the paired t-test on a very small, heavil
 
 ### What is a paired t-test?
 
-A **paired t-test** is a hypothesis test that compares two related observations taken from the same subjects. It converts each pair into a single difference score, then tests whether the mean of those differences is significantly different from zero using the standard student t-test formula applied to the differences. It is the appropriate choice whenever participants are measured twice or matched across two conditions.
-
-### What is the difference between a t-test and a paired t-test?
-
-The *t-test* is a family of related tests that includes one-sample, paired, and two-sample variants. A **paired t-test** is the member designed for matched or repeated-measures data, where pairing removes between-subject variability from the error term. An independent two-sample t-test treats both groups as completely separate and does not exploit any within-subject correlation. The phrase *t-test and paired t-test* is sometimes used to distinguish the general label from the specific paired design.
+When each subject is measured twice, or subjects are matched across two conditions, the paired t-test converts each pair into a single difference score, then tests whether the mean of those differences is significantly different from zero using the standard student t-test formula applied to the differences. It is the appropriate choice whenever participants are measured twice or matched across two conditions.
 
 ### What is the t-test equation?
 
-The **t-test equation** in its general form is observed effect divided by standard error:
+In every version, t is the observed effect divided by its standard error:
 
 ```
 t = (observed effect) / (standard error)
@@ -327,21 +323,11 @@ A larger numerator (bigger effect) or smaller denominator (tighter data or large
 
 ### When should I use a two-sample t-test?
 
-Use the **2 sample t-test** — or t test for two sample groups — when two entirely independent groups are being compared and no natural pairing or matching connects observations across the groups. If the same subjects appear in both conditions, or if observations were deliberately matched before the study, the paired t-test will be more powerful and more appropriate.
+When two entirely independent groups are being compared and no natural pairing or matching connects observations across the groups. If the same subjects appear in both conditions, or if observations were deliberately matched before the study, the paired t-test will be more powerful and more appropriate.
 
 ### How many degrees of freedom does a paired t-test have?
 
 For a **paired t-test**, df = n − 1, where n is the number of pairs (not the total number of measurements). In the worked example above, n = 6 pairs gives df = 5. For the two-sample t-test with equal variances, df = n₁ + n₂ − 2 (14 in the second example with eight per group).
-
-### What is the student t-test formula?
-
-The **student t-test formula** is named after Gosset's pen name "Student." In its simplest one-sample form:
-
-```
-t = (x̄ − μ₀) / (s / √n)
-```
-
-"Student" signals that the result is compared against the t-distribution rather than the standard normal distribution. As sample size grows, the t-distribution converges to the standard normal, so for large samples the t-test and z-test produce nearly identical results. The paired t-test uses this exact formula with d̄ in place of x̄, s_d in place of s, and μ₀ = 0.
 
 ### How do I interpret the p-value from a t-test?
 
@@ -351,6 +337,6 @@ A **p-value** is the probability of observing a t statistic at least as extreme 
 
 ## Summary
 
-The t-test family provides a principled framework for comparing means when the population standard deviation is unknown. The **paired t-test** — or paired difference t-test — is the most powerful choice when each subject provides two related observations, because converting the data to difference scores removes between-subject noise from the analysis. The **two-sample t-test** handles independent groups by pooling the two variance estimates into a shared standard error. Both rest on the same **student t-test formula** logic: the size of the effect relative to how much that effect would vary by chance. The **t-test and paired t-test** together cover the vast majority of mean-comparison problems encountered in research, quality control, and data analysis.
+The t-test family provides a principled framework for comparing means when the population standard deviation is unknown. The **paired t-test** — or paired difference t-test — is the most powerful choice when each subject provides two related observations, because converting the data to difference scores removes between-subject noise from the analysis. The **two-sample t-test** handles independent groups by pooling the two variance estimates into a shared standard error. Both rest on the same logic: the size of the effect relative to how much that effect would vary by chance. Together they cover the vast majority of mean-comparison problems encountered in research, quality control, and data analysis.
 
-Mastering the **t-test equation** means knowing when to pair, how to compute difference scores, how to read the t-distribution critical values, and how to interpret p-values in context — not in isolation.
+Mastering the t-test means knowing when to pair, how to compute difference scores, how to read the t-distribution critical values, and how to interpret p-values in context — not in isolation.
