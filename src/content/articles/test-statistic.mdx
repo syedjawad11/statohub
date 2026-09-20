@@ -249,15 +249,7 @@ For the related z-statistic used when the population standard deviation is known
 
 ### What is a degree of freedom in statistics?
 
-A degree of freedom represents one independent piece of information that is free to vary when estimating a parameter. In a sample of n values, all n observations can vary freely. Once you use that sample to estimate the mean, that constraint "uses up" one degree of freedom, leaving n − 1 degrees of freedom for estimating the variance. The [Penn State STAT 415 course on hypothesis testing for one mean](https://online.stat.psu.edu/stat415/lesson/7/7.1) discusses degrees of freedom in detail and shows how they shape the t-distribution.
-
-### What is df in statistics?
-
-**df** stands for *degrees of freedom*. It appears as a row label in the t distribution table, as a subscript on the test statistic symbol (for example, t₁₅ means a t-statistic with df = 15), and as a parameter in chi-square and F distributions. You need the correct df to look up the right critical value. For a one-sample t-test, df = n − 1.
-
-### What is d.f. in statistics?
-
-**d.f.** is an alternative abbreviation for *degrees of freedom*, written with periods between the letters. Some older textbooks and printed tables use d.f.; modern software and most current textbooks use df. The two notations are interchangeable — they describe the same quantity.
+One independent piece of information that is free to vary when estimating a parameter. In a sample of n values, all n observations can vary freely. Once you use that sample to estimate the mean, that constraint "uses up" one degree of freedom, leaving n − 1 degrees of freedom for estimating the variance. The [Penn State STAT 415 course on hypothesis testing for one mean](https://online.stat.psu.edu/stat415/lesson/7/7.1) discusses degrees of freedom in detail and shows how they shape the t-distribution.
 
 ### What is the difference between the test statistic and the p-value?
 
@@ -266,10 +258,6 @@ The test statistic is a number on the scale of the underlying distribution (t, z
 ### Can the test statistic be negative?
 
 Yes. A t-statistic is negative whenever the sample mean falls below the null-hypothesis mean (x̄ < μ₀). In the worked example above, the sample mean (352 mL) was below the claimed value (355 mL), giving t = −2.00. For a two-tailed test, what matters is the absolute value; for a lower-tailed one-tailed test, a large negative value is what triggers rejection.
-
-### What does the test statistic tell you about the p-value?
-
-The further the test statistic is from zero (in absolute value), the more extreme the result, and the smaller the p-value. For df = 15, a test statistic of |t| = 2.131 corresponds to exactly p = 0.05 (two-tailed). A test statistic of |t| = 3.0 corresponds to p ≈ 0.009 — much stronger evidence against H₀. The t distribution table shows the mapping between test statistics and significance levels; the T-Table Calculator and P-Value Calculator handle the exact probabilities.
 
 ### How does the test statistic formula change for a two-sample t-test?
 

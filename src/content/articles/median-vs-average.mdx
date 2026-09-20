@@ -204,14 +204,14 @@ Technically and mathematically, **yes** — the median is one type of average. I
 
 In everyday speech, however, "average" almost always refers specifically to the **arithmetic mean** — the sum divided by the count. When a news article states "the average price of a home rose to $400,000," it means the arithmetic mean, not the median.
 
-So the complete answer to **is median the average?** and **is the median the average?** depends on context:
+Whether the median counts as "the average" therefore depends on who is asking:
 
 - **In formal statistics:** the median is classified as a type of average (a measure of center). This usage is correct and common in textbooks.
 - **In everyday language:** "the average" usually means the arithmetic mean. The median is a different number and conveys different information.
 
 The confusion matters in practice. When a company reports "average employee pay," the choice between mean and median can produce vastly different figures — as the salary example above demonstrates. Always check which measure a source actually used.
 
-Similarly, when someone asks **is median average** or **is the median the average**, the intended question is usually whether the median and mean will give the same result. The answer: only when data is symmetric and outlier-free.
+Usually, though, the question behind the question is whether the median and the mean will give the same number. They do only when the data is symmetric and free of outliers.
 
 ---
 
@@ -241,37 +241,21 @@ The median is the middle value. The mode is the most frequently occurring value.
 
 ## Frequently Asked Questions
 
-### Is median an average?
-
-In formal statistics, yes — the median is one of three classical measures of central tendency (the others are the mean and the mode), and all three are called "averages" in that broad sense. In everyday usage, however, "average" usually refers to the arithmetic mean (sum divided by count), and the median and mean are different calculations that often produce different numbers.
-
-### Is median the average?
-
-It depends on how you define "average." Statistically, the median is a type of average. Colloquially, "the average" almost always means the arithmetic mean. For symmetric data, median and mean are close; for skewed or outlier-heavy data, they diverge significantly, and the median is usually the fairer summary.
-
-### Is the median the average?
-
-Same answer: the median is classified as an average in statistics (a measure of center), but "the average" in plain language generally refers to the arithmetic mean. If a dataset is right-skewed — like incomes, housing prices, or corporate salaries — the median and the mean can differ by a large amount, and which one a source reports changes the story it tells.
-
 ### What does median mean in math?
 
-In math, the median is the middle value of a dataset when the values are arranged in order from smallest to largest. For an odd number of values it is the exact middle; for an even number it is the mean of the two middle values. The median is a measure of central tendency that is resistant to outliers — extreme values cannot drag it far from the center of the bulk of the data.
-
-### What is median in math precisely?
-
-Precisely, the median is the value M such that at least 50 percent of the data falls at or below M and at least 50 percent falls at or above M. This makes it the 50th percentile of the dataset. When you sort the data, the median sits at the balance point of the sorted list by count — while the mean sits at the balance point by magnitude.
+The middle value once a dataset is arranged from smallest to largest. For an odd number of values it is the exact middle; for an even number it is the mean of the two middle values. Because only position matters, extreme values cannot drag it far from where the bulk of the data sits — it is the 50th percentile of the sorted list.
 
 ### When should I use the median instead of the mean?
 
-Use the median when: data has outliers that inflate or deflate the mean; the distribution is skewed (long tail on one side); you are reporting a "typical" value for a general audience and one extreme case would distort the picture; or the data is ordinal. Use the mean when data is roughly symmetric, when you need to reconstruct totals (total = mean × n), or when subsequent statistical tests require it.
+Reach for the median when the data has outliers that inflate or deflate the mean, when the distribution is skewed with a long tail on one side, when you are reporting a "typical" value for a general audience and one extreme case would distort the picture, or when the data is ordinal. Use the mean when data is roughly symmetric, when you need to reconstruct totals (total = mean × n), or when subsequent statistical tests require it.
 
 ### Why do income reports use median instead of mean?
 
-Income distributions are strongly right-skewed: a small number of very high earners pull the arithmetic mean far above what most people earn. The median income — the income of the person exactly in the middle of the sorted list — accurately reflects what a typical household earns. This is why the U.S. Census Bureau and most national statistics agencies report median household income rather than the mean.
+Income distributions are strongly right-skewed: a small number of very high earners pull the arithmetic mean far above what most people earn. The income of the household exactly in the middle of the sorted list reflects what a typical household actually earns, which is why the U.S. Census Bureau and most national statistics agencies report median household income rather than the mean.
 
 ### Can the median and mean be equal?
 
-Yes. For a perfectly symmetric dataset, the mean and median are identical. For any roughly symmetric, outlier-free data, they will be very close. The further a distribution departs from symmetry, the more they diverge. In the five-value example {2, 5, 7, 9, 12} above, both the median and the mean equal exactly 7.
+Yes. For a perfectly symmetric dataset they are identical, and for any roughly symmetric, outlier-free data they will be very close. The further a distribution departs from symmetry, the more they diverge. In the five-value example {2, 5, 7, 9, 12} above, both equal exactly 7.
 
 ---
 
