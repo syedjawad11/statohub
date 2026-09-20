@@ -4,21 +4,16 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-13 (outsource batch 4: 8 published; ADR 0023).
+**Last updated:** 2026-09-19 (outsource batch 5: 5 published; board 32/5).
 
 **Known quirk:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale -- if the `.sql` looks newer, `rm` the `.db` and `rebuild`.
 
-## Workflow layer restructured 2026-09-06
+Workflow routers are maps ([[0022-routers-are-maps-not-rulebooks]]). Cloud
+routines RETIRED to `docs/legacy/cloud-routine/`; **claude.ai schedules still
+wake nightly** -- disable in claude.ai -> Routines.
 
-Routers are maps now, one canonical home per rule, delegation ceremony dropped;
-playbooks and outsource engine untouched. [[0022-routers-are-maps-not-rulebooks]].
-
-**Cloud routines: RETIRED** to `docs/legacy/cloud-routine/`; the `PAUSED`
-marker stays put. **claude.ai schedules still wake nightly** -- disable them in
-claude.ai -> Routines.
-
-**Baseline** (2026-09-13): 147 pages, 5,909 links, 121 tests, 0 violations.
+**Baseline** (2026-09-19): 153 pages, 121 tests, 0 violations.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
@@ -30,28 +25,33 @@ started -- topics were never chosen.** Governed by
 `docs/ideas/homepage-redesign-mock-2026-08-16.png`. `time-series-forecasting`
 and `machine-learning-statistics` hold 1 article each.
 
-## Outsource pipeline: 27 published, 10 queued
+## Outsource pipeline: 32 published, 5 queued
 
+Batch 5 (2026-09-18/19): histogram-vs-boxplot, multiple-regression-diagnostics,
+missing-data-imputation, box-plot-interpretation, bias-variance-tradeoff.
 Batch 4 detail: `docs/status/sessions/2026-09-13-outsource-batch-4.md`.
 **Partner backlinks are never stripped** -- [[0023-outsource-keeps-partner-backlinks]].
 
-**Only publish rows whose vendor dashboard status is DRAFT.** At close,
-`histogram-vs-boxplot` and `multiple-regression-diagnostics` were still
-GENERATING upstream -- re-`fetch` before processing; the other 8 queued rows do
-not exist upstream yet. Batches of 2-3, one reviewer at a time, report between.
+**Only publish rows whose vendor dashboard status is DRAFT.** The 5 queued rows
+(intention-to-treat, multiple-comparisons-problem, normality-tests, holt-winters,
+scatter-plot-interpretation) did not exist upstream at last check -- confirm on
+the vendor board before `fetch`. Vendor badge stays DRAFT for our renamed slugs;
+that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
 
 ## Blocked / waiting
 
 - **Rotate the GitHub PAT.** The classic `ghp_` token in `~/.claude.json` is
   plaintext and was printed into a 2026-09-01 transcript. Git no longer needs it;
   the MCP server does. Replace with a fine-grained, repo-scoped token.
-- **AdSense review: no technical blocker** (2026-09-06 audit; 5 fixes deferred)
-  -- `docs/status/sessions/2026-09-06-adsense-audit.md`.
+- **AdSense rejected ("low value content") -- remediation in progress**, plan in
+  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phase 1 (FAQ dedupe) 5/35 done.
 
 ## Parked (do not silently resume)
 
-- Sanitizer gaps: processors drop "Statohub's Take"/CTA and leave bare `{` in
-  prose (MDX ReferenceError); neither is a `check_sanitized.py` check yet.
+- Sanitizer gaps: processors drop "Statohub's Take"/CTA, leave bare `{` in
+  prose (MDX ReferenceError), and leave the vendor `— Statohub` sign-off (caught
+  by reviewer twice in batch 5; still live in confusion-matrix-explained,
+  f1-score-explained, granger-causality). None is a `check_sanitized.py` check yet.
 - Meta title lengths -- outsourced fixed + gated 2026-09-12; still open: ~50
   Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
 - Article schema `image` missing -- `articleSchema()` in `src/lib/schema.ts`.
