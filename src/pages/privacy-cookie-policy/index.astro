@@ -1,31 +1,33 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
-import type { BreadcrumbItem } from '../../lib/schema';
+import { EDITORIAL_TEAM, type BreadcrumbItem } from '../../lib/schema';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
-  { label: 'Privacy & Cookies', route: routes.privacyCookiePolicy() },
+  { label: 'Privacy, Cookies & Terms', route: routes.privacyCookiePolicy() },
 ];
 ---
 
 <BaseLayout
-  title="Privacy & Cookies | Statohub"
-  description="Privacy and cookie policy for Statohub: what data we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices."
+  title="Privacy, Cookies & Terms | Statohub"
+  description="Statohub's privacy policy, cookie policy and terms of use: what we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices."
   canonicalPath={routes.privacyCookiePolicy()}
   breadcrumbs={breadcrumbs}
 >
   <article class="max-w-3xl">
     <p class="page-kicker">Policy</p>
-    <h1 class="page-title">Privacy & Cookies</h1>
+    <h1 class="page-title">Privacy, Cookies & Terms</h1>
     <div class="article-prose">
       <p>
         This page explains how Statohub handles privacy, cookies, and browser
-        storage. Statohub is a static statistics education and calculator site.
-        We do not provide user accounts, sign-in areas, comments, or user
+        storage, and sets out the <a href="#terms">terms</a> on which the site
+        may be used. Statohub is a static statistics education and calculator
+        site. We do not provide user accounts, sign-in areas, comments, or user
         profiles.
       </p>
-      <p><strong>Last updated:</strong> September 6, 2026</p>
+      <p><strong>Last updated:</strong> September 20, 2026</p>
 
       <h2>Privacy Policy</h2>
 
@@ -179,7 +181,9 @@ const breadcrumbs: BreadcrumbItem[] = [
       <p>
         For privacy questions, including anything about advertising cookies or
         your consent choice, email
-        <!--email_off--><a href="mailto:privacy@statohub.com">privacy@statohub.com</a><!--/email_off-->.
+        <!--email_off--><a href={`mailto:${EDITORIAL_TEAM.email}`}>{EDITORIAL_TEAM.email}</a><!--/email_off-->.
+        The <Link to={routes.contact()}>contact page</Link> explains what else
+        that address is for.
       </p>
 
       <h2>Cookie Policy</h2>
@@ -247,6 +251,94 @@ const breadcrumbs: BreadcrumbItem[] = [
         third-party cookies specifically will stop the advertising cookies
         described above without affecting the calculators, which run entirely in
         your browser.
+      </p>
+
+      <h2 id="terms">Terms of Use</h2>
+      <p>
+        By using Statohub you agree to these terms. They are short because the
+        site is simple: there is nothing to sign up for, nothing to buy, and
+        nothing you submit is stored.
+      </p>
+
+      <h3>Educational use only</h3>
+      <p>
+        Statohub teaches statistical methods and provides calculators that run
+        them. The content is general educational material. It is not medical,
+        legal, financial, or other professional advice, and it is not a
+        substitute for a qualified statistician or adviser who can see your
+        actual data and circumstances. Decisions you make based on what you read
+        or compute here are your own.
+      </p>
+
+      <h3>Accuracy</h3>
+      <p>
+        We work hard to get the maths right: every guide is reviewed before
+        publication, every calculator is covered by automated tests, and we
+        correct errors when they are reported. Our
+        <Link to={routes.editorialPolicy()}>editorial policy</Link> sets out
+        how. Even so, the site is provided "as is" and we cannot promise that
+        every page is free of error or that a calculator is suitable for your
+        particular purpose. Check that a method fits your data before you rely
+        on its result, and please <Link to={routes.contact()}>tell us</Link>
+        if something is wrong.
+      </p>
+
+      <h3>Calculators</h3>
+      <p>
+        The calculators run in your browser and are provided for learning and
+        for checking your own working. You are responsible for the numbers you
+        enter and for how you use the output. We may change, add, or remove a
+        calculator at any time.
+      </p>
+
+      <h3>Content and copyright</h3>
+      <p>
+        The guides, worked examples, calculator code, and design of Statohub are
+        the property of Statohub unless otherwise stated. You are welcome to
+        read, print, and use the material for personal study and teaching, to
+        link to any page, and to quote short passages with attribution and a
+        link back to the source page. Republishing whole guides, scraping the
+        site to build a competing dataset or product, or presenting our content
+        as your own is not permitted without our written permission.
+      </p>
+      <p>
+        External references cited in the guides, such as the NIST/SEMATECH
+        e-Handbook or OpenStax textbooks, belong to their respective publishers
+        and are used under their own licences.
+      </p>
+
+      <h3>Third-party sites and advertising</h3>
+      <p>
+        Pages link to external educational and reference sites, and the site
+        carries advertising served by Google AdSense. We do not control those
+        sites or the advertisers, and a link or an advertisement is not an
+        endorsement. Your dealings with any third party are between you and
+        them.
+      </p>
+
+      <h3>Acceptable use</h3>
+      <p>
+        Do not use the site in a way that interferes with its operation or with
+        other people's use of it, including automated requests at a rate that
+        degrades the service, attempts to bypass security or advertising
+        controls, or use of the content to train or build products in breach of
+        the copyright terms above.
+      </p>
+
+      <h3>Limitation of liability</h3>
+      <p>
+        To the fullest extent permitted by law, Statohub and its editorial team
+        are not liable for any loss or damage arising from your use of, or
+        inability to use, the site or its calculators, or from reliance on any
+        content on it. Nothing in these terms limits liability that cannot be
+        limited by law.
+      </p>
+
+      <h3>Changes</h3>
+      <p>
+        We may update these terms when the site changes. The updated date at the
+        top of this page reflects the latest revision, and continued use of the
+        site after a change means you accept the revised terms.
       </p>
     </div>
   </article>

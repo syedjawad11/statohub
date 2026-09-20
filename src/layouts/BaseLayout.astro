@@ -8,7 +8,7 @@ import Canonical from '../components/seo/Canonical.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import Meta from '../components/seo/Meta.astro';
 import { routes, url, type CategoryId, type RouteRef } from '../lib/links';
-import { breadcrumbList, type BreadcrumbItem } from '../lib/schema';
+import { breadcrumbList, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
 
 type CategoryEntry = CollectionEntry<'categories'>;
 
@@ -230,7 +230,7 @@ const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
             </Link>
             <p>Statistics education and calculator tools for clear, practical learning.</p>
             <p class="foot-contact">
-              Contact us: <!--email_off--><a href="mailto:admin@statohub.com">admin@statohub.com</a><!--/email_off-->
+              Contact us: <!--email_off--><a href={`mailto:${EDITORIAL_TEAM.email}`}>{EDITORIAL_TEAM.email}</a><!--/email_off-->
             </p>
           </div>
           <div>
@@ -254,7 +254,10 @@ const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
           <div>
             <h5>Site</h5>
             <Link to={routes.about()}>About</Link>
+            <Link to={routes.editorialPolicy()}>Editorial policy</Link>
+            <Link to={routes.contact()}>Contact</Link>
             <Link to={routes.privacyCookiePolicy()}>Privacy & Cookies</Link>
+            <Link to={routes.privacyCookiePolicy()} hash="terms">Terms</Link>
             <a href="/sitemap-index.xml">Sitemap</a>
           </div>
         </div>

@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+import { EDITORIAL_TEAM, type BreadcrumbItem } from '../../lib/schema';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Editorial policy', route: routes.editorialPolicy() },
+];
+---
+
+<BaseLayout
+  title="Editorial Policy | How Statohub guides and calculators are checked"
+  description="How Statohub guides are researched, written and reviewed, which references the maths is checked against, how the calculators are tested, and how we use AI."
+  canonicalPath={routes.editorialPolicy()}
+  breadcrumbs={breadcrumbs}
+>
+  <article class="max-w-3xl">
+    <p class="page-kicker">Editorial policy</p>
+    <h1 class="page-title">How we decide what is true enough to publish.</h1>
+    <p class="page-lede">
+      This page is the standard every guide and calculator on Statohub is held
+      to: where the maths is checked, what a review has to catch, how errors are
+      corrected, and where AI tools are and are not used.
+    </p>
+
+    <div class="article-prose">
+      <p><strong>Last updated:</strong> September 20, 2026</p>
+
+      <h2>Who is accountable</h2>
+      <p>
+        Everything on Statohub is published by the
+        <strong>{EDITORIAL_TEAM.name}</strong>, the group that commissions,
+        writes, reviews and maintains the site. We publish under a team byline
+        rather than individual names because every page passes through more than
+        one pair of hands before it goes live, and the team as a whole answers
+        for it. Who we are and why the site exists is on the
+        <Link to={routes.about()}>About page</Link>. If something on a page is
+        wrong, the address to write to is on the
+        <Link to={routes.contact()}>contact page</Link>.
+      </p>
+
+      <h2>What we publish, and for whom</h2>
+      <p>
+        Statohub explains statistical methods and gives you a calculator to run
+        them. It is written for students, self-learners and working analysts who
+        need to understand a method well enough to use it and to know when it
+        will mislead them. Every guide is expected to cover three things: what
+        the method is, one example worked all the way through in real units, and
+        the situations in which the method breaks down.
+      </p>
+      <p>
+        We do not publish gambling or betting-odds tools, invented evidence, or
+        anything that stands in for medical, legal or financial advice. The
+        <Link to={routes.about()}>About page</Link> explains each of those rules.
+      </p>
+
+      <h2>Where the maths is checked</h2>
+      <p>
+        Formulas, definitions and worked examples are checked against primary
+        references rather than against other websites. The references we return
+        to most often, and cite from the guides themselves, are:
+      </p>
+      <ul>
+        <li>
+          the <a href="https://www.itl.nist.gov/div898/handbook/">NIST/SEMATECH
+          e-Handbook of Statistical Methods</a> for definitions, formulas and
+          reference values;
+        </li>
+        <li>
+          Penn State's online course notes, in particular
+          <a href="https://online.stat.psu.edu/stat501/">STAT 501 (Regression
+          Methods)</a>, for regression and correlation;
+        </li>
+        <li>
+          <a href="https://openstax.org/books/introductory-statistics/pages/1-introduction">OpenStax
+          Introductory Statistics</a> for the introductory material.
+        </li>
+      </ul>
+      <p>
+        When a guide gives a number, that number is computed, not quoted. Worked
+        examples are recalculated by hand and, wherever the page has a
+        calculator, cross-checked against the calculator's own engine so that the
+        prose and the tool cannot disagree. Where a guide uses data to
+        demonstrate a method, it is presented as a worked scenario and never
+        dressed up as a real-world finding.
+      </p>
+
+      <h2>How the calculators are verified</h2>
+      <p>
+        Each calculator is a small, self-contained function maintained in this
+        site's own codebase, not a third-party widget. Every function is covered
+        by an automated test suite that has to pass before the site can be
+        deployed. The tests compare results with values worked out
+        independently and deliberately include the awkward inputs that produce
+        quietly wrong answers elsewhere: empty lists, a single value, ties,
+        negative numbers, and the sample-versus-population distinction.
+      </p>
+      <p>
+        The calculators run entirely in your browser and nothing you type is
+        sent to us. Results are shown with the intermediate steps so you can
+        follow the arithmetic rather than take the final number on trust. A
+        calculator is still a calculator: check that the method fits your data
+        before you rely on its output.
+      </p>
+
+      <h2>What a review has to catch</h2>
+      <p>
+        Every draft is reviewed against a fixed written checklist before it is
+        published. A draft that fails comes back with a specific list of fixes,
+        not a general note. The checklist covers, among other things:
+      </p>
+      <ul>
+        <li>the arithmetic in every worked example, recomputed;</li>
+        <li>whether the page answers its own question and stays on one topic, so it does not duplicate another page on the site;</li>
+        <li>whether the failure modes and edge cases a reader will actually hit are covered, not just the happy path;</li>
+        <li>that no study is cited that has not been read, and no statistic is quoted that cannot be sourced;</li>
+        <li>that every internal link resolves to a live page (the site will not build otherwise);</li>
+        <li>that the frequently-asked-questions block has one entry per genuinely distinct question, with answers that add something rather than restate it.</li>
+      </ul>
+
+      <h2>How we use AI</h2>
+      <p>
+        We use AI tools for research and for proofreading only: to find and
+        summarise source material, and to catch typos, unclear sentences and
+        inconsistencies in a finished draft. The guides are written by the
+        editorial team, every worked example is recomputed by the team, and
+        nothing is published without a team review. AI output is never used as
+        a source of facts or figures on its own.
+      </p>
+
+      <h2>Commissioned guides</h2>
+      <p>
+        Some guides in the <Link to={routes.appliedLanding()}>Applied</Link>
+        section are commissioned from outside subject-matter writers. They are
+        not published as they arrive: each one is edited for house style,
+        checked for accuracy and for overlap with existing coverage, and only
+        then published under the same byline and to the same standard as the
+        guides written in-house.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        Statohub is funded by advertising served by Google AdSense, which is
+        what keeps every guide and calculator free. Ads are selected by Google,
+        not by us, and advertisers do not see, commission or influence any
+        editorial content. How advertising cookies work here is set out in the
+        <Link to={routes.privacyCookiePolicy()}>privacy and cookie policy</Link>.
+      </p>
+
+      <h2>Dates, updates and corrections</h2>
+      <p>
+        Every guide and calculator page shows two dates: when it was first
+        published, and when it was last reviewed. The review date moves when the
+        page is edited or when it has been checked again without needing
+        changes. A page is revisited when we find an error, when an explanation
+        is not landing, or when a better example replaces a generic one.
+      </p>
+      <p>
+        If you find a mistake, tell us. Corrections to the maths are treated as
+        urgent. When something substantive is corrected, the page is fixed, its
+        review date changes, and we would rather hear about it from you than
+        leave it up. The <Link to={routes.contact()}>contact page</Link> says
+        what to include so we can find and fix the problem quickly.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

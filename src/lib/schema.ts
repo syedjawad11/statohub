@@ -18,6 +18,8 @@ interface WebPageSchemaInput {
   id: CalculatorId;
   name: string;
   description: string;
+  datePublished?: Date | string;
+  dateModified?: Date | string;
 }
 
 function absoluteRoute(ref: RouteRef, site: URL): string {
@@ -76,19 +78,34 @@ export function faqPageSchema(items: FaqItem[]) {
 }
 
 /**
- * The named byline every article carries. It is a real editorial group rather
- * than a person, so it is modelled as an Organization under the publisher and
- * points at /about/, where the team, its process and its corrections policy are
- * described. Keep the name in step with the visible byline in the layouts.
+ * The named byline every guide and calculator page carries. It is a real
+ * editorial group rather than a person, so it is modelled as an Organization
+ * under the publisher and points at /about/, where the team, its process and
+ * its corrections policy are described. One object feeds the JSON-LD, the
+ * visible bylines, the footer and the contact / editorial-policy pages, so the
+ * name and address cannot drift between them. No Person schema by design (the
+ * site has no named individual authors) -- see ADR 0024.
  */
-export const EDITORIAL_TEAM_NAME = 'Statohub Editorial Team';
+export const EDITORIAL_TEAM = {
+  name: 'Statohub Editorial Team',
+  route: routes.about(),
+  description:
+    'The small group that commissions, writes, checks and maintains the statistics guides and calculators on Statohub.',
+  email: 'admin@statohub.com',
+  /** Official brand profile URLs (e.g. X, LinkedIn). Left empty until provided. */
+  sameAs: [] as string[],
+} as const;
+
+/** @deprecated Read EDITORIAL_TEAM.name; kept so older imports keep compiling. */
+export const EDITORIAL_TEAM_NAME = EDITORIAL_TEAM.name;
 
 export function editorialTeamRef(site: URL) {
   return {
     '@type': 'Organization',
     '@id': new URL('#editorial-team', site).href,
-    name: EDITORIAL_TEAM_NAME,
-    url: absoluteRoute(routes.about(), site),
+    name: EDITORIAL_TEAM.name,
+    description: EDITORIAL_TEAM.description,
+    url: absoluteRoute(EDITORIAL_TEAM.route, site),
     parentOrganization: { '@id': new URL('#organization', site).href },
   };
 }
@@ -126,7 +143,7 @@ export function articleSchema(input: ArticleSchemaInput, site: URL) {
 interface OrganizationSchemaInput {
   name?: string;
   logo?: string;
-  /** Official brand profile URLs (e.g. X, LinkedIn). Left empty until provided. */
+  /** Official brand profile URLs (e.g. X, LinkedIn). Defaults to EDITORIAL_TEAM.sameAs. */
   sameAs?: string[];
 }
 
@@ -142,6 +159,16 @@ export function organizationSchema(site: URL, input: OrganizationSchemaInput = {
     '@id': new URL('#organization', site).href,
     name: input.name ?? 'Statohub',
     url: site.href,
+    description:
+      'Plain-English statistics guides paired with calculators that run in the browser, covering foundations, descriptive and inferential statistics, probability, regression, experiments and forecasting.',
+    email: EDITORIAL_TEAM.email,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'editorial',
+      email: EDITORIAL_TEAM.email,
+      url: absoluteRoute(routes.contact(), site),
+    },
+    publishingPrinciples: absoluteRoute(routes.editorialPolicy(), site),
   };
 
   if (input.logo) {
@@ -151,8 +178,9 @@ export function organizationSchema(site: URL, input: OrganizationSchemaInput = {
     };
   }
 
-  if (input.sameAs && input.sameAs.length > 0) {
-    schema.sameAs = input.sameAs;
+  const sameAs = input.sameAs ?? EDITORIAL_TEAM.sameAs;
+  if (sameAs.length > 0) {
+    schema.sameAs = sameAs;
   }
 
   return schema;
@@ -176,12 +204,24 @@ export function webSiteSchema(site: URL, input: WebSiteSchemaInput = {}) {
 }
 
 export function webPageSchema(input: WebPageSchemaInput, site: URL) {
-  return {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: input.name,
     description: input.description,
     url: absoluteRoute(routes.calculator(input.id), site),
     isPartOf: { '@id': new URL('#website', site).href },
+    author: editorialTeamRef(site),
+    publisher: { '@id': new URL('#organization', site).href },
   };
+
+  if (input.datePublished) {
+    schema.datePublished = isoDate(input.datePublished);
+  }
+
+  if (input.dateModified) {
+    schema.dateModified = isoDate(input.dateModified);
+  }
+
+  return schema;
 }

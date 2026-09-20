@@ -187,6 +187,8 @@ Same `src/content/config.ts` `articles` schema as Learn — `title`,
 optional `calculator` (leave unset per §1 unless a real match exists),
 optional `h1`, `related`, and `draft: true` until reviewed. No `section`
 field exists on the article — get the category right and the layout follows.
+`pubDate` / `updatedDate` / `reviewedDate` follow the Learn rule (real dates
+only; set `pubDate` when `draft` flips to false — see seo-playbook §7).
 
 - **`draft: true`** until reviewed. Draft articles produce zero static paths
   (filtered before `getStaticPaths()`), so validate via

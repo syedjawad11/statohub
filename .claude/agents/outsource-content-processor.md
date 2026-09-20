@@ -157,9 +157,10 @@ article below that floor.
   decision). Leave empty if fewer than 3 exist yet.
 - `draft: true` — always, on every write from you. Only the reviewer flips
   this, and only after the real build gate passes.
-- Omit `ogImage`, `pubDate`, `updatedDate`, `calculator` (Applied
-  articles are exempt from the calculator requirement — see playbook §1;
-  never force a contrived embed).
+- Omit `ogImage`, `pubDate`, `updatedDate`, `reviewedDate`, `calculator`
+  (the reviewer sets the three dates to the publish day when it flips
+  `draft`; Applied articles are exempt from the calculator requirement — see
+  playbook §1; never force a contrived embed).
 
 ## Cannibalization cross-check (read-only)
 Before finalizing, check whether `primaryKeyword` (or an obvious variant)

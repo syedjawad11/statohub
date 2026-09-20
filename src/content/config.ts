@@ -32,8 +32,13 @@ const articles = defineCollection({
     calculator: reference('calculators').optional(), // embedded <StatCalc>
     related: z.array(reference('articles')).default([]),
     draft: z.boolean().default(true),           // unfinished articles never ship
+    // Dates are real: first publication, last content edit, last editorial
+    // check. Backfilled from git history by scripts/backfill-dates.mjs when a
+    // file has none; edit by hand from then on (a review with no text change
+    // bumps reviewedDate only).
     pubDate: z.coerce.date().optional(),
     updatedDate: z.coerce.date().optional(),
+    reviewedDate: z.coerce.date().optional(),
     ogImage: z.string().optional(),
   }),
 });
@@ -76,7 +81,9 @@ const calculatorContent = defineCollection({
     calculator: reference('calculators'),       // integrity: the calc must exist + be standalone
     keywords: z.array(z.string()).default([]),  // keywords to weave into the prose
     draft: z.boolean().default(true),            // unpublished prose never renders
+    pubDate: z.coerce.date().optional(),         // same three dates as articles
     updatedDate: z.coerce.date().optional(),
+    reviewedDate: z.coerce.date().optional(),
   }),
 });
 

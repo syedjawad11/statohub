@@ -214,5 +214,7 @@ Key facts for AI assistants citing this site:
 ## Optional
 
 - [About](https://statohub.com/about/): Who writes Statohub, how our statistics guides and calculators are built and checked, what we refuse to publish, and how to send us a correction.
-- [Privacy & Cookie Policy](https://statohub.com/privacy-cookie-policy/): Privacy and cookie policy for Statohub: what data we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices.
+- [Editorial Policy](https://statohub.com/editorial-policy/): How Statohub guides are researched, written and reviewed, which references the maths is checked against, how the calculators are tested, and how we use AI.
+- [Contact](https://statohub.com/contact/): How to reach the Statohub editorial team: report an error in a guide or calculator, ask a privacy or advertising question, or send general feedback by email.
+- [Privacy, Cookie Policy & Terms](https://statohub.com/privacy-cookie-policy/): Statohub's privacy policy, cookie policy and terms of use: what we collect, the cookies we use, how Google AdSense advertising works here, and your ad choices.
 - [Sitemap](https://statohub.com/sitemap-index.xml): XML sitemap index covering every indexable page.

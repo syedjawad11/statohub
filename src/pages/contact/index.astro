@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+import { EDITORIAL_TEAM, type BreadcrumbItem } from '../../lib/schema';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  { label: 'Home', route: routes.home() },
+  { label: 'Contact', route: routes.contact() },
+];
+---
+
+<BaseLayout
+  title="Contact Statohub | Report a mistake or ask a question"
+  description="How to reach the Statohub editorial team: report an error in a guide or calculator, ask a privacy or advertising question, or send general feedback by email."
+  canonicalPath={routes.contact()}
+  breadcrumbs={breadcrumbs}
+>
+  <article class="max-w-3xl">
+    <p class="page-kicker">Contact</p>
+    <h1 class="page-title">Tell us what is wrong, or what is missing.</h1>
+    <p class="page-lede">
+      Statohub has no accounts, comment threads or contact forms, so everything
+      comes in by email. One address reaches the editorial team for every kind
+      of message.
+    </p>
+
+    <div class="article-prose">
+      <p>
+        Write to
+        <!--email_off--><a href={`mailto:${EDITORIAL_TEAM.email}`}>{EDITORIAL_TEAM.email}</a><!--/email_off-->.
+        It is read by the <strong>{EDITORIAL_TEAM.name}</strong>, the group
+        that writes and maintains the site.
+      </p>
+
+      <h2>Reporting a mistake</h2>
+      <p>
+        Corrections are the messages we most want to receive. A wrong number, a
+        formula that does not match the worked example, a calculator result you
+        can show is off, an explanation that is misleading: all of these are
+        treated as urgent, and the page is fixed rather than quietly left as it
+        is. To help us find the problem in one pass, include:
+      </p>
+      <ul>
+        <li>the page address (the full URL, or the title of the guide or calculator);</li>
+        <li>the sentence, formula or calculator input you think is wrong, quoted or described;</li>
+        <li>what you believe the correct value or statement is, and if possible where it comes from;</li>
+        <li>for a calculator, the exact values you entered and the result you got.</li>
+      </ul>
+      <p>
+        When a substantive correction is made, the page's review date changes.
+        How corrections and reviews work is set out in the
+        <Link to={routes.editorialPolicy()}>editorial policy</Link>.
+      </p>
+
+      <h2>Privacy, cookies and advertising</h2>
+      <p>
+        Questions about the data this site processes, the cookies it sets, the
+        Google AdSense advertising it carries, or your consent choice go to the
+        same address. Please read the
+        <Link to={routes.privacyCookiePolicy()}>privacy and cookie policy</Link>
+        first: it explains what is and is not collected, and how to opt out of
+        personalised advertising, which you can do without writing to us.
+      </p>
+
+      <h2>Suggestions and everything else</h2>
+      <p>
+        If a topic you needed is not covered, a guide stopped short of the
+        question you actually had, or a calculator is missing an input you
+        needed, tell us which page you were on and what you were trying to do.
+        That detail is what turns a suggestion into a change we can make.
+      </p>
+      <p>
+        We do not build gambling or betting-odds calculators, so requests for
+        those will not get a reply.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

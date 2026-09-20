@@ -31,6 +31,7 @@
 | [0021](0021-boards-split-by-source.md) | The two content boards split by source (internal vs. vendor), not by section | process | accepted | 2026-09-03 |
 | [0022](0022-routers-are-maps-not-rulebooks.md) | Router files are maps, not rulebooks; delegation is a judgment call | process | accepted | 2026-09-06 |
 | [0023](0023-outsource-keeps-partner-backlinks.md) | Outsourced articles keep every non-vendor external link (partner backlinks); only babylovegrowth links are stripped | content | accepted | 2026-09-13 |
+| [0024](0024-team-byline-and-trust-pages.md) | Team byline only with git-derived dates; editorial policy, contact and terms pages; no Person schema | content | accepted | 2026-09-20 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new

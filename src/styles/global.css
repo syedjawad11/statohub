@@ -2542,6 +2542,10 @@
     font-size: 18px;
   }
 
+  .calc-hero .calc-meta {
+    margin-top: 14px;
+  }
+
   .panel,
   .statcalc-card.statcalc-page {
     overflow: hidden;

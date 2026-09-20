@@ -21,7 +21,9 @@ statohub/
 |   |   |-- 404.astro                   # noindex, prevents soft-404s
 |   |   |-- [slug]/index.astro          # Root [slug]: articles + category hubs (discriminated union)
 |   |   |-- about/index.astro
-|   |   |-- privacy-cookie-policy/index.astro   # Combined legal page
+|   |   |-- editorial-policy/index.astro        # How guides/calculators are checked, AI use (ADR-0024)
+|   |   |-- contact/index.astro                 # One email, what to include in a correction
+|   |   |-- privacy-cookie-policy/index.astro   # Combined legal page + #terms section
 |   |   |-- learn/index.astro           # /learn/ section landing (ADR-0014)
 |   |   |-- applied/index.astro         # /applied/ section landing (ADR-0014)
 |   |   |-- dev/applied-preview/        # noindex living style guide: all modules + infographics
@@ -65,7 +67,8 @@ statohub/
 |   |-- lib/
 |   |   |-- links.ts                     # Typed route registry: routes / url() -- single source of truth
 |   |   |-- content-route-ids.ts         # GENERATED literal-union of route ids (gen-route-ids.mjs)
-|   |   |-- schema.ts                    # Pure JSON-LD builders (BreadcrumbList/Article/SoftwareApplication/WebSite/Org)
+|   |   |-- schema.ts                    # Pure JSON-LD builders + EDITORIAL_TEAM (the one byline/contact object)
+|   |   |-- dates.ts                     # Published / Reviewed labels shared by article + calculator pages
 |   |   |-- related-calculators.ts       # Auto-derives same-category "Related calculators" sidebar
 |   |   `-- related-intros.ts            # Approved varied intro-phrase pool for RelatedLink
 |   |
@@ -82,6 +85,7 @@ statohub/
 |   |-- check-contrast.mjs   # CI GATE: design-token contrast ratios
 |   |-- check-docs.mjs       # BUILD GATE: docs/ link + wikilink resolution, ADR index
 |   |                        #   completeness, NOW.md/CLAUDE.md line caps, session archive age
+|   |-- backfill-dates.mjs   # One-off: fills missing pubDate/updatedDate/reviewedDate from git (ADR 0024)
 |   `-- db_sync.py           # dump/rebuild/check the two SQLite boards <-> their .sql dumps
 |                            #   (ADR 0018). `check` runs in the build; `dump` before committing.
 |

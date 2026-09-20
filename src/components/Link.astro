@@ -3,6 +3,8 @@ import { url, type RouteRef } from '../lib/links';
 
 interface Props {
   to: RouteRef;
+  /** In-page fragment on the target route, without the leading '#'. */
+  hash?: string;
   class?: string;
   id?: string;
   title?: string;
@@ -15,8 +17,9 @@ interface Props {
   [attribute: `data-${string}`]: string | number | boolean | undefined;
 }
 
-const { to, ...rest } = Astro.props;
+// Internal page routes only. Use a plain <a> for external, same-page anchor, or asset links.
+const { to, hash, ...rest } = Astro.props;
+const href = hash ? `${url(to)}#${hash}` : url(to);
 ---
 
-<!-- Internal page routes only. Use a plain <a> for external, anchor, or asset links. -->
-<a href={url(to)} {...rest}><slot /></a>
+<a href={href} {...rest}><slot /></a>

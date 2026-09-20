@@ -4,9 +4,8 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-20 (AdSense phase 2: 5 merges). **Baseline:** 148
-pages, 121 tests, 0 violations, 5 redirects in `public/_redirects`.
-
+**Last updated:** 2026-09-20 (AdSense phase 3: trust layer). **Baseline:** 150
+pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 **Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
 the board (`statistics-basics`/`calculators` categories) -- **never `seed`**; edit
@@ -43,8 +42,9 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
   plaintext and was printed into a 2026-09-01 transcript. Git no longer needs
   it; the MCP server does. Replace with a fine-grained, repo-scoped token.
 - **AdSense rejected ("low value content") -- remediation in progress**, plan in
-  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phases 1-2 done (FAQ dedupe;
-  5 merges -> 301s, board rows `merged`). Phase 3 (trust pages) next.
+  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phases 1-3 done (FAQ dedupe;
+  5 merges -> 301s; bylines + git dates, `/editorial-policy/`, `/contact/`,
+  `#terms` -- [[0024-team-byline-and-trust-pages]]). Phase 4 (template variety) next.
 
 ## Parked (do not silently resume)
 
@@ -54,7 +54,7 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
   None is a `check_sanitized.py` check yet.
 - Meta title lengths -- outsourced fixed + gated 2026-09-12; still open: ~50
   Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
-- Article schema `image` missing -- `articleSchema()` in `src/lib/schema.ts`.
-- `how-to-find-the-range` refresh -- 5 range keywords in DB, unused in copy.
+- Article schema `image` missing (`articleSchema()`); `how-to-find-the-range`
+  refresh -- 5 range keywords in DB, unused in copy.
 - `relative frequency` / `cumulative frequency` -- uncovered Learn candidates
   (now partly inside `/frequency-table/`); Phase C / D not started.

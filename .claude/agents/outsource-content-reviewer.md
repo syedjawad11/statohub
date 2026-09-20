@@ -68,7 +68,9 @@ Both were hit in outsource batch 3, and `check_sanitized.py` detects neither.
 ## 5. Gate on the *published* state — flip `draft` before you build
 Steps 1-4 clear → flip the frontmatter **first**, then build:
 
-1. `Edit` the file: `draft: true` → `draft: false`.
+1. `Edit` the file: `draft: true` → `draft: false`, and add today's date as
+   `pubDate`, `updatedDate` and `reviewedDate` (YYYY-MM-DD) so the page renders
+   its Published / Reviewed line ([[0024-team-byline-and-trust-pages]]).
 2. ```
    npx astro check
    npm test

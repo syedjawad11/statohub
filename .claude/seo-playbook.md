@@ -142,6 +142,12 @@ Every rule below is tagged with its tier; §8 is the enumerated checklist.
   `keywords` (array, all from the brief), `phase` (1|2|3), `calculator` (the
   embed slug, when assigned), optional `h1` (shorter visible headline), optional
   `related`, and `draft: true`.
+- **Dates are real, never invented** ([[0024-team-byline-and-trust-pages]]):
+  set `pubDate` to the day the article is published (the day `draft` flips to
+  false), `updatedDate` to the day of any later content edit, `reviewedDate`
+  to the day of the last editorial check (bump it on a review with no text
+  change). The layouts render "Published / Reviewed" from these; an article
+  without them shows no dates. Never backdate a page before its file existed.
 - **Meta description length is 110-160 characters, sitewide, no exceptions.**
   This is enforced two ways: (1) `description` in `src/content/config.ts` is a
   shared `z.string().min(110).max(160)` schema across the `articles`,

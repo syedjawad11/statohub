@@ -19,6 +19,8 @@ export type CategoryId = CategoryContentId;
 export type RouteRef =
   | { kind: 'home' }
   | { kind: 'about' }
+  | { kind: 'editorialPolicy' }
+  | { kind: 'contact' }
   | { kind: 'privacyCookiePolicy' }
   | { kind: 'learnLanding' }
   | { kind: 'appliedLanding' }
@@ -35,6 +37,10 @@ export function url(ref: RouteRef): string {
       return '/';
     case 'about':
       return '/about/';
+    case 'editorialPolicy':
+      return '/editorial-policy/';
+    case 'contact':
+      return '/contact/';
     case 'privacyCookiePolicy':
       return '/privacy-cookie-policy/';
     case 'learnLanding':
@@ -55,6 +61,8 @@ export function url(ref: RouteRef): string {
 export const routes = {
   home: (): RouteRef => ({ kind: 'home' }),
   about: (): RouteRef => ({ kind: 'about' }),
+  editorialPolicy: (): RouteRef => ({ kind: 'editorialPolicy' }),
+  contact: (): RouteRef => ({ kind: 'contact' }),
   privacyCookiePolicy: (): RouteRef => ({ kind: 'privacyCookiePolicy' }),
   learnLanding: (): RouteRef => ({ kind: 'learnLanding' }),
   appliedLanding: (): RouteRef => ({ kind: 'appliedLanding' }),

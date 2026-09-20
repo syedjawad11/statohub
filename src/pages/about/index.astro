@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
-import { EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../../lib/schema';
+import { EDITORIAL_TEAM, type BreadcrumbItem } from '../../lib/schema';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { label: 'Home', route: routes.home() },
@@ -65,13 +65,15 @@ const hubs = [
       <h2>Who writes Statohub</h2>
       <p>
         Everything here is published under the byline of the
-        <strong>{EDITORIAL_TEAM_NAME}</strong> — the small group responsible for
+        <strong>{EDITORIAL_TEAM.name}</strong> — the small group responsible for
         commissioning, writing, checking and maintaining this site. We use a
         team byline rather than individual author names because no guide here is
         the work of one person start to finish: topics are researched and
         drafted, then independently reviewed against a written checklist, then
         cross-checked against the calculator that implements the same maths.
-        The team, not any single contributor, is accountable for what ships.
+        The team, not any single contributor, is accountable for what ships. The
+        standard every page is held to is written down in our
+        <Link to={routes.editorialPolicy()}>editorial policy</Link>.
       </p>
       <p>
         Some guides in our applied section are commissioned from outside
@@ -107,12 +109,23 @@ const hubs = [
           specific fix list rather than being waved through.
         </li>
         <li>
-          <strong>Publish and revisit.</strong> Guides carry a visible last
-          updated date. We revise pages when we find an error, when an
+          <strong>Publish and revisit.</strong> Guides carry a visible
+          published date and last-reviewed date. We revise pages when we find an error, when an
           explanation is not landing, or when we can replace a generic example
           with a better one.
         </li>
       </ol>
+
+      <h2>How we use AI</h2>
+      <p>
+        We use AI tools for two jobs: research, meaning finding and summarising
+        source material before a guide is drafted, and proofreading, meaning
+        catching typos, unclear sentences and inconsistencies in a finished
+        draft. The guides themselves are written by the editorial team, every
+        worked example is recomputed by the team, and nothing is published
+        without a team review. AI output is never treated as a source of facts
+        or figures on its own.
+      </p>
 
       <h2>How the calculators are built</h2>
       <p>
@@ -181,9 +194,11 @@ const hubs = [
         that is misleading — please tell us. Corrections to the maths are treated
         as urgent and we would much rather hear about them from you than leave
         them up. Write to
-        <!--email_off--><a href="mailto:admin@statohub.com">admin@statohub.com</a><!--/email_off-->
-        with the page address and what looks wrong. When we correct something
-        substantive, the page's updated date changes with it.
+        <!--email_off--><a href={`mailto:${EDITORIAL_TEAM.email}`}>{EDITORIAL_TEAM.email}</a><!--/email_off-->
+        with the page address and what looks wrong; the
+        <Link to={routes.contact()}>contact page</Link> lists what to include.
+        When we correct something substantive, the page's review date changes
+        with it.
       </p>
     </div>
 

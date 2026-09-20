@@ -3,7 +3,8 @@ import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
-import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../lib/schema';
+import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
+import { guideDates } from '../lib/dates';
 import BaseLayout from './BaseLayout.astro';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
@@ -35,13 +36,11 @@ const {
 const tocItems = headings
   .filter((heading): heading is Heading & { depth: 2 | 3 } => heading.depth === 2 || heading.depth === 3)
   .map((heading) => ({ text: heading.text, href: `#${heading.slug}`, depth: heading.depth }));
-const updatedDate = article.updatedDate ?? article.pubDate;
-const formattedDate = updatedDate
-  ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(updatedDate)
-  : undefined;
+const dates = guideDates(article, 'long');
 const metaItems: string[] = [];
+if (dates.publishedLabel) metaItems.push(dates.publishedLabel);
+if (dates.reviewedLabel) metaItems.push(dates.reviewedLabel);
 if (readingTime) metaItems.push(readingTime);
-if (formattedDate) metaItems.push(`Updated ${formattedDate}`);
 if (hasCalculator) metaItems.push('Includes a calculator');
 const relatedItems = [
   ...relatedArticles.map((item) => ({
@@ -105,7 +104,7 @@ const articleJsonLd = [
       <h1>{article.h1 || article.title}</h1>
       <p class="applied-standfirst">{article.description}</p>
       <div class="applied-meta" aria-label="Article details">
-        <span>By <Link to={routes.about()}>{EDITORIAL_TEAM_NAME}</Link></span>
+        <span>By <Link to={EDITORIAL_TEAM.route}>{EDITORIAL_TEAM.name}</Link></span>
         {metaItems.map((item) => <span>{item}</span>)}
       </div>
     </header>

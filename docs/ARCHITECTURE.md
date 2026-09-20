@@ -30,7 +30,7 @@ Every route is flat and trailing-slash-terminated, one folder per route:
 | `/{slug}/` | Teaching article OR category hub (discriminated union in one root `[slug]` route -- Astro allows only one root `[slug]` dir, so `src/pages/[slug]/index.astro` inspects the collection and picks a layout) |
 | `/calculators/` | Calculators hub |
 | `/calculators/{tool}/` | Standalone calculator page (`StatCalc variant="page"`) + short teaching block |
-| `/about/`, `/privacy-cookie-policy/` | Static pages |
+| `/about/`, `/editorial-policy/`, `/contact/`, `/privacy-cookie-policy/` (with `#terms`) | Static trust / legal pages ([[0024-team-byline-and-trust-pages]]) |
 | `/404` | Not-found, `noindex`, prevents soft-404s |
 
 Enforced by `astro.config.mjs` (`trailingSlash: 'always'`, `build.format: 'directory'`)

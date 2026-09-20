@@ -4,7 +4,8 @@ import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
 import BaseLayout from './BaseLayout.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
-import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM_NAME, type BreadcrumbItem } from '../lib/schema';
+import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
+import { guideDates } from '../lib/dates';
 
 type ArticleData = CollectionEntry<'articles'>['data'];
 
@@ -57,10 +58,7 @@ const {
 } = Astro.props as Props;
 
 const tocItems = headings.filter((heading) => heading.depth === 2);
-const updatedDate = article.updatedDate ?? article.pubDate;
-const formattedDate = updatedDate
-  ? new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' }).format(updatedDate)
-  : undefined;
+const dates = guideDates(article);
 const keepGoingItems = [
   ...relatedArticles.map((item) => ({
     kind: 'Guide' as const,
@@ -137,8 +135,9 @@ const articleJsonLd = [
         <div class="meta-row article-meta">
           {readingTime && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>{readingTime}</span>}
           {hasCalculator && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9" /></svg>1 calculator</span>}
-          {formattedDate && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20a8 8 0 1 0-8-8" /><path d="M12 8v4l3 2" /></svg>Updated {formattedDate}</span>}
-          <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /><path d="M4 20a8 8 0 0 1 16 0" /></svg>By <Link to={routes.about()}>{EDITORIAL_TEAM_NAME}</Link></span>
+          <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /><path d="M4 20a8 8 0 0 1 16 0" /></svg>By <Link to={EDITORIAL_TEAM.route}>{EDITORIAL_TEAM.name}</Link></span>
+          {dates.publishedLabel && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>{dates.publishedLabel}</span>}
+          {dates.reviewedLabel && <span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20a8 8 0 1 0-8-8" /><path d="M12 8v4l3 2" /></svg>{dates.reviewedLabel}</span>}
         </div>
       </header>
 

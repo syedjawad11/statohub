@@ -214,6 +214,8 @@ const learn = required(`${SITE_ORIGIN}/learn/`);
 const applied = required(`${SITE_ORIGIN}/applied/`);
 const calculatorsHub = required(`${SITE_ORIGIN}/calculators/`);
 const about = required(`${SITE_ORIGIN}/about/`);
+const editorialPolicy = required(`${SITE_ORIGIN}/editorial-policy/`);
+const contact = required(`${SITE_ORIGIN}/contact/`);
 const privacy = required(`${SITE_ORIGIN}/privacy-cookie-policy/`);
 
 for (const category of categories) required(`${SITE_ORIGIN}/${category.slug}/`);
@@ -286,7 +288,9 @@ lines.push(
   '## Optional',
   '',
   item(about, 'About'),
-  item(privacy, 'Privacy & Cookie Policy'),
+  item(editorialPolicy, 'Editorial Policy'),
+  item(contact, 'Contact'),
+  item(privacy, 'Privacy, Cookie Policy & Terms'),
   `- [Sitemap](${SITEMAP_URL}): ${fixedDescription.sitemap}`,
   '',
 );
