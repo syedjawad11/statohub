@@ -39,12 +39,12 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
 ## Blocked / waiting
 
 - **Rotate the GitHub PAT.** The classic `ghp_` token in `~/.claude.json` is
-  plaintext and was printed into a 2026-09-01 transcript. Git no longer needs
-  it; the MCP server does. Replace with a fine-grained, repo-scoped token.
-- **AdSense rejected ("low value content") -- remediation in progress**, plan in
-  `sessions/2026-09-20-adsense-phase0-inventory.md`. Phases 1-3 done (FAQ dedupe;
-  5 merges -> 301s; bylines + git dates, `/editorial-policy/`, `/contact/`,
-  `#terms` -- [[0024-team-byline-and-trust-pages]]). Phase 4 (template variety) next.
+  plaintext (printed in a 2026-09-01 transcript); only the MCP server needs it.
+- **AdSense rejected ("low value content") -- phases 1-3 done, 4-5 parked by
+  owner.** Handoff `sessions/2026-09-20-adsense-phases-1-3.md` (baseline
+  `-phase0-inventory.md`; [[0024-team-byline-and-trust-pages]]). Phase 4 =
+  calculator template variety + 337 rotated RelatedLink intros + thin-calc
+  enrich-vs-noindex; Phase 5 = verify + resubmit. Not started.
 
 ## Parked (do not silently resume)
 
@@ -52,8 +52,8 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
   prose (MDX ReferenceError), and leave the vendor `— Statohub` sign-off (still
   live in confusion-matrix-explained, f1-score-explained, granger-causality).
   None is a `check_sanitized.py` check yet.
-- Meta title lengths -- outsourced fixed + gated 2026-09-12; still open: ~50
-  Learn at 61-70 chars, 22 calculators at 26-43; `sessions/2026-09-10-meta-title-lengths.md`.
+- Meta title lengths -- ~50 Learn at 61-70 chars, 22 calculators at 26-43
+  still open; `sessions/2026-09-10-meta-title-lengths.md`.
 - Article schema `image` missing (`articleSchema()`); `how-to-find-the-range`
   refresh -- 5 range keywords in DB, unused in copy.
 - `relative frequency` / `cumulative frequency` -- uncovered Learn candidates
