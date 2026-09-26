@@ -44,7 +44,7 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
   owner.** Handoff `sessions/2026-09-20-adsense-phases-1-3.md` (baseline
   `-phase0-inventory.md`; [[0024-team-byline-and-trust-pages]]). Phase 4 =
   calc template variety + 337 RelatedLink intros + thin-calc enrich-vs-noindex;
-  Phase 5 = resubmit. **Adsterra runs meanwhile ([[0025]]) -- pull the popunder first.**
+  Phase 5 = resubmit. **Adsterra banners run meanwhile ([[0025]]) -- re-tighten the CSP first.**
 
 ## Parked (do not silently resume)
 

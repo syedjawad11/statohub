@@ -2974,14 +2974,6 @@
     margin-block: 8px 40px;
   }
 
-  .ad-slot--native {
-    align-items: stretch;
-  }
-
-  .ad-slot--native .ad-label {
-    align-self: center;
-  }
-
   .ad-slot--empty {
     display: none;
   }

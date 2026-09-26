@@ -33,10 +33,7 @@ Choices CMP and `ads.txt` line.
 - Gate: `PROD && !noindex && ads`. BaseLayout's `ads` prop is `false` on
   about, contact, editorial-policy and privacy/terms; 404 and `/dev/` are
   noindex. The popunder loads once per eligible page from BaseLayout.
-- One Adsterra **native banner** (`src/components/ads/AdNative.astro`, script +
-  fixed container id, so at most once per page) sits after the end rectangle
-  on Learn and Applied articles.
-- The privacy page discloses Adsterra (including popunders) alongside AdSense.
+- The privacy page discloses Adsterra alongside AdSense.
 - The CSP in `public/_headers` must admit Adsterra's rotating domains for
   scripts, frames, images and connections, or nothing serves.
 
@@ -49,6 +46,13 @@ reliable way to run more than one Adsterra banner per page.
 violates AdSense policy) and re-tighten the CSP; the banners may stay.
 Popunder frequency is capped in the Adsterra dashboard, not in code. Adding a
 new banner size means one key in `ads.ts` plus a ladder entry.
+
+**Amendment (2026-09-27, same day):** the popunder and the native banner were
+removed. The popunder hijacked clicks on internal links to ad URLs, and the
+native banner served dating ads despite adult ads being off in the dashboard.
+Neither is filterable from code (the Publisher API is read-only), so both are
+out; only the six iframe banners remain. Do not re-add either without the
+owner's sign-off.
 
 **Revisit when:** AdSense approves the site, or Adsterra revenue / user
 complaints make the popunder not worth it.

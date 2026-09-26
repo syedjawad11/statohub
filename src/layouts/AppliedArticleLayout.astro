@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
-import AdNative from '../components/ads/AdNative.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
 import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
@@ -124,7 +123,6 @@ const articleJsonLd = [
       <AdSlot size="leaderboard" class="ad-slot--top" />
       <div class="applied-prose article-prose"><slot /></div>
       <AdSlot size="rectangle" class="ad-slot--end" />
-      <AdNative />
       {relatedItems.length > 0 && (
         <section class="applied-related" aria-labelledby="applied-related-heading">
           <div class="applied-related-heading">

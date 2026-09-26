@@ -9,7 +9,7 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import Meta from '../components/seo/Meta.astro';
 import { routes, url, type CategoryId, type RouteRef } from '../lib/links';
 import { breadcrumbList, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
-import { ADSTERRA_INVOKE_BASE, ADSTERRA_POPUNDER_SRC } from '../lib/ads';
+import { ADSTERRA_INVOKE_BASE } from '../lib/ads';
 
 type CategoryEntry = CollectionEntry<'categories'>;
 
@@ -23,7 +23,7 @@ interface Props {
   showBreadcrumbs?: boolean;
   jsonLd?: object[];
   noindex?: boolean;
-  /** Adsterra ads (banners + popunder). Off for trust pages; always off on noindex pages. */
+  /** Adsterra banner ads. Off for trust pages; always off on noindex pages. */
   ads?: boolean;
 }
 
@@ -315,8 +315,6 @@ const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
             slots.forEach((slot) => io.observe(slot));
           })();
         </script>
-        {/* Adsterra popunder. Remove before any AdSense resubmission (ADR 0025). */}
-        <script is:inline async src={ADSTERRA_POPUNDER_SRC}></script>
       </>
     )}
     <script is:inline>

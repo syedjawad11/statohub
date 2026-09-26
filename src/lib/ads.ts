@@ -6,11 +6,6 @@ export type AdSize = '728x90' | '468x60' | '320x50' | '300x250' | '160x600' | '1
 
 export const ADSTERRA_INVOKE_BASE = 'https://www.highrevenueformat.com';
 
-// Popunder: one page-level script. Frequency cap is set in the Adsterra dashboard.
-// Remove before any AdSense resubmission (popunders violate AdSense policy).
-export const ADSTERRA_POPUNDER_SRC =
-  'https://pl31528907.profitableratecpmnetwork.com/76/00/f7/7600f7634a85b1fead33695e99dfcd63.js';
-
 export const ADSTERRA_BANNER_KEYS: Record<AdSize, string> = {
   '728x90': '487666a725d5e38fcd0f7400cd6c487c',
   '468x60': 'c94b9ede8c25a4f3419b66e5b82b9732',
@@ -34,9 +29,3 @@ export function parseAdSize(size: AdSize): { width: number; height: number } {
   const [width, height] = size.split('x').map(Number);
   return { width, height };
 }
-
-// Native banner: one per page (the script fills a fixed container id).
-export const ADSTERRA_NATIVE = {
-  src: 'https://pl31528908.profitableratecpmnetwork.com/1a02ee448a51d8410b6d85cf3712cd46/invoke.js',
-  containerId: 'container-1a02ee448a51d8410b6d85cf3712cd46',
-} as const;

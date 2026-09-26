@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
-import AdNative from '../components/ads/AdNative.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import BaseLayout from './BaseLayout.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
@@ -156,7 +155,6 @@ const articleJsonLd = [
 
       <AdSlot size="rectangle" class="ad-slot--end" />
 
-      <AdNative />
 
       {keepGoingItems.length > 0 && (
         <section class="related related-section">
