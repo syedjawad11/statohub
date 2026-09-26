@@ -1,0 +1,217 @@
+---
+title: "Intention to Treat: ITT vs Per-Protocol"
+h1: "11 Point Gap: Intention to Treat"
+description: "Intention to treat (ITT) means analyzing every randomized participant as assigned. See a worked ITT vs. per-protocol example, a checklist, and sources."
+category: experiments-causality
+primaryKeyword: intention to treat
+keywords:
+  - intention to treat
+  - itt
+  - per-protocol
+  - itt vs per-protocol
+phase: 1
+related:
+  - difference-in-differences
+  - false-discovery-rate
+  - interrupted-time-series
+draft: false
+pubDate: 2026-09-27
+updatedDate: 2026-09-27
+reviewedDate: 2026-09-27
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Intention-to-treat (ITT) means analyzing participants in the groups to which they were randomized, regardless of whether they took the assigned treatment, switched arms, or dropped out. The principle exists to preserve the balance that randomization created and to estimate the effect of assigning a treatment policy, not the effect of taking treatment perfectly. This article walks through the core definitions, contrasts ITT with per-protocol and modified-ITT approaches, shows how missing data is handled under the [estimand framework](https://pmc.ncbi.nlm.nih.gov/articles/PMC8234249/), and works through a compact numeric example so you can see the bias risk directly.
+
+<KeyTakeaways rows={[
+  { point: 'Missing data needs a strategy', details: 'Multiple imputation or another principled method is essential to maintain validity when a meaningful share of participants drop out or have unreported outcomes.' },
+  { point: 'The ITT-per-protocol gap is informative', details: 'How far the two estimates diverge shows how much nonadherence is inflating the apparent treatment benefit.' },
+  { point: 'Define the population up front', details: 'A defensible ITT analysis pre-specifies the population and how missing data will be handled, then reports both transparently.' },
+  { point: 'Compare, do not just report one number', details: 'Pairing ITT with per-protocol results and sensitivity analyses gives a fuller picture of the treatment effect and its bias risk.' },
+]} />
+
+## What Does Intention to Treat Actually Mean?
+
+Intention-to-treat rests on two principles that sound simple but get misapplied constantly. First, the analysis population is everyone randomized, full stop, not everyone who completed the trial as planned. Second, every randomized participant's outcome gets measured and counted, even if they never took a single dose or switched to the other arm halfway through. This is the "as-randomized" rule, and it stands in direct opposition to "as-treated" analysis, which groups participants by what they actually did rather than what they were assigned.
+
+In practice, trial teams operationalize this two ways:
+
+- **Strict ITT**: includes every participant who was randomized, with no exceptions, even those with zero exposure to the intervention.
+- **Modified ITT (mITT)**: restricts the population somewhat, commonly to those who received at least one dose or had at least one post-randomization measurement.
+
+The trouble with mITT is that its definition varies from trial to trial, and authors must predefine it in the protocol before seeing outcome data. A trial that quietly redefines its analysis population after unblinding results invites exactly the kind of selection bias ITT was designed to prevent.
+
+## Why Does Intention to Treat Preserve Randomization?
+
+Randomization balances known and unknown confounders across arms at the moment of assignment. Age, disease severity, genetic factors nobody thought to measure. All of it gets distributed roughly evenly between groups purely by chance. That balance is fragile, though, and it breaks the instant you start excluding participants based on what happened after randomization. Drop the noncompliant patients from the treatment arm, and you are very likely dropping the sicker or less motivated ones, which shifts the remaining sample toward healthier responders and inflates the apparent benefit.
+
+This is why ITT answers a specific question: what happens when you offer treatment A instead of treatment B under real-world conditions, including the adherence problems that show up outside a controlled lab. That is an effectiveness question, not an efficacy question. It reflects how a treatment policy performs when deployed, not how it performs when taken exactly as prescribed. For this reason, <Link to={routes.categoryHub('experiments-causality')}>superiority trials</Link> designate ITT as the primary analysis in the vast majority of registered protocols, reserving per-protocol or as-treated results as supportive secondary evidence.
+
+<Callout variant="tip" title="Pro tip">
+When a trial reports a smaller effect size under ITT than under per-protocol, that gap itself is informative. It tells you how much of the treatment's apparent benefit depends on strict adherence, which matters enormously for predicting real-world performance.
+</Callout>
+
+<DataTable
+  caption="ITT vs. per-protocol at a glance"
+  headers={['Dimension', 'Intention-to-treat (ITT)', 'Per-protocol']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Randomization', 'Preserves randomization at assignment', 'Breaks randomization when excluding participants'],
+    ['Population included', 'Includes nonadherence and dropouts', 'Excludes noncompliant participants'],
+    ['Question answered', 'Effectiveness question', 'Efficacy question'],
+    ['Role in a trial', 'Primary analysis in superiority trials', 'Supportive secondary evidence'],
+  ]}
+/>
+
+## How Does ITT Compare to Per-Protocol and Other Analyses?
+
+Per-protocol analysis keeps only participants who followed the trial as designed, which sounds reasonable until you remember that "followed the protocol" is itself an outcome influenced by the treatment. Someone who quits a drug because of side effects, or a control-arm patient who was too healthy to need rescue medication, gets excluded in a way that is anything but random. This is a version of the [healthy adherer effect](https://catalogofbias.org/biases/adherence-bias/): good adherers tend to have better outcomes even in a placebo arm, so per-protocol and completer analyses can overestimate a treatment's benefit precisely because they discard the protection randomization provides.
+
+A few related analysis types show up regularly in trial reports:
+
+- **As-treated analysis**: groups participants by treatment actually received, useful for safety signals but prone to the same confounding problem as per-protocol.
+- **Modified ITT (mITT)**: as described above, requires a prespecified, narrowly justified exclusion rule.
+- **CACE (complier average causal effect)**: estimates the effect specifically among compliers, using instrumental-variable logic rather than simple exclusion, and complements ITT when efficacy-in-compliers is the real question.
+
+Modern regulatory guidance reframes all of this through the estimand lens. The ICH E9 addendum asks trialists to define five things upfront: the population, the variable, how intercurrent events (like treatment discontinuation) are handled, the summary measure, and the population-level summary. A "treatment policy" strategy for handling intercurrent events maps directly onto classic ITT, while other strategies (hypothetical, while-on-treatment) formalize what per-protocol and as-treated analyses were trying to capture all along.
+
+## How Should You Handle Missing Outcome Data Under ITT?
+
+Loss to follow-up is where the ITT principle gets tested hardest. You can include every randomized participant in your analysis population, but if a quarter of them never provided a final outcome measurement, "as-randomized" becomes an empty promise unless you address the gap explicitly.
+
+Four approaches dominate practice, each with real tradeoffs:
+
+1. **Complete-case analysis** uses only participants with observed outcomes, which is simple but assumes data are missing completely at random, an assumption that rarely holds when dropout relates to how well the treatment is working.
+2. **Last observation carried forward (LOCF)** substitutes a participant's most recent measurement for the missing endpoint. It is widely used but [widely discouraged](https://eprints.whiterose.ac.uk/id/eprint/238480/1/Cochrane_Evidence_Synthesis_and_Methods_-_2024_-_Chaplin_-_Intention_to_treat_analyses_and_missing_outcome_data_A_tutorial.pdf) because it can flatten real treatment trajectories and understate variability.
+3. **Single imputation** methods (mean substitution, regression-based estimates) fill gaps with one plausible value but understate uncertainty since they treat imputed data as if it were observed.
+4. **Multiple imputation** generates several plausible datasets reflecting the uncertainty around each missing value, then pools results, which better preserves standard errors and is now the [preferred default](https://eprints.whiterose.ac.uk/id/eprint/238480/1/Cochrane_Evidence_Synthesis_and_Methods_-_2024_-_Chaplin_-_Intention_to_treat_analyses_and_missing_outcome_data_A_tutorial.pdf) in most methodological guidance.
+
+<Callout variant="note" title="Missing data reality check">
+When loss to follow-up is large relative to the number of observed events, even a technically correct ITT analysis offers little real protection against bias — the [ITT principle](https://pmc.ncbi.nlm.nih.gov/articles/PMC81628/) describes a population rule, not a guarantee against bias. The safeguard is running sensitivity analyses under alternative missingness assumptions, not the label on the analysis itself.
+</Callout>
+
+The practical recommendation is straightforward even if the statistics behind it are not: prespecify your missing-data strategy in the protocol before you see any results, favor multiple imputation or a principled model-based method over LOCF, and always run sensitivity analyses under alternative missingness assumptions (best-case, worst-case, tipping-point) to see whether your conclusions hold up.
+
+## A Worked Example: ITT vs. Per-Protocol Side by Side
+
+Picture a hypothetical randomized controlled trial testing a new blood pressure medication against a placebo, with 200 participants randomized to each arm. In the treatment arm, 40 participants stop taking the drug early because of mild side effects. In the placebo arm, 20 drop out for unrelated reasons. Everyone who completes the trial gets an outcome measurement (achieving target blood pressure or not).
+
+<Figure number={1} caption="Participants analyzed under ITT vs. per-protocol in the 200-per-arm worked example: ITT keeps all 200 in each arm, per-protocol drops to 160 and 180 after dropouts.">
+  <AnnotatedChart
+    title="ITT vs. per-protocol analyzed participants"
+    desc="Bar chart of four participant counts: ITT-Treatment 200, ITT-Placebo 200, per-protocol-Treatment 160 after 40 dropouts, per-protocol-Placebo 180 after 20 dropouts."
+    type="bar"
+    yLabel="Participants analyzed"
+    points={[
+      { label: 'ITT — Treatment', value: 200 },
+      { label: 'ITT — Placebo', value: 200 },
+      { label: 'PP — Treatment', value: 160, annotation: '40 dropouts excluded' },
+      { label: 'PP — Placebo', value: 180, annotation: '20 dropouts excluded' },
+    ]}
+  />
+</Figure>
+
+Under ITT, every randomized participant counts toward the denominator, including the 40 treatment-arm dropouts (counted as nonresponders here, a conservative worst-case assumption) and the 20 placebo dropouts. The risk difference comes out to 20 percentage points. Under per-protocol, those 60 dropouts vanish from both denominators entirely, and the risk difference jumps to roughly 31 points.
+
+That 11-point gap is not a rounding artifact. It exists because the participants who dropped out of the treatment arm were disproportionately the ones having a harder time with the drug, so excluding them left a healthier-looking treatment group behind. A few things follow from this:
+
+- The per-protocol estimate looks like a stronger clinical result, but it answers "what happens if everyone tolerates and adheres to treatment," a scenario that will not match real-world prescribing.
+- The ITT estimate is more conservative, but it reflects what actually happens when this treatment gets offered to a general patient population.
+- Reporting only the per-protocol number without the ITT comparison is a genuine red flag when reading published trial results.
+
+## What Should You Check When a Trial Claims ITT?
+
+A paper stating "analyzed by intention-to-treat" in its abstract deserves scrutiny before you take that label at face value. Several methodological reviews have found that claimed ITT analyses are sometimes misapplied in ways that quietly undermine the principle.
+
+<Checklist
+  id="itt-claim-checklist"
+  title="What to check when a trial claims ITT"
+  style="check"
+  items={[
+    { text: 'Exact population definition', detail: 'States whether the analysis is strict ITT or a specific mITT variant.' },
+    { text: 'CONSORT flow diagram accounts for everyone', detail: 'Shows exactly where and why participant numbers change between arms.' },
+    { text: 'Loss to follow-up reported by arm', detail: 'Not just as a single pooled total.' },
+    { text: 'Missing-data method described', detail: 'And prespecified rather than chosen after seeing the data.' },
+    { text: 'Stated estimand or analysis plan', detail: 'Ties the ITT approach to a specific clinical question.' },
+    { text: 'Sensitivity analyses reported', detail: 'Under alternative missing-data assumptions.' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+When ITT and per-protocol results tell noticeably different stories, do not treat one as "correct" and dismiss the other. Concordant results across both analyses give you more confidence than either analysis alone, while a wide gap between them is itself a finding worth interpreting.
+</Callout>
+
+## Where Does Intention to Treat Fall Short?
+
+ITT is not a cure-all, and treating it as an unquestionable gold standard is itself a common misuse. When dropout is extensive and imputation methods are weak or unstated, an ITT label provides only the appearance of rigor. High nonadherence can also dilute a genuinely effective treatment's apparent benefit, since including nonresponsive dropouts pulls the estimated effect toward the null.
+
+A few judgment calls matter here:
+
+- Treat ITT as the primary analysis for superiority trials, but demand a well-justified estimand and sensitivity analyses when dropout exceeds roughly 10 to 20 percent of the sample.
+- In noninferiority or equivalence trials, both ITT and per-protocol results should point the same direction before you trust the conclusion, since a biased per-protocol analysis can make a genuinely inferior treatment look acceptable.
+- Never accept an ITT claim at face value without checking how the paper defined its population and handled missing outcomes.
+
+## Practicing ITT Reasoning With Statohub
+
+Reading about ITT is one thing. Actually working through the numbers is what makes the logic stick. Statohub's Experiments & Causality hub covers the broader design questions that ITT sits inside, including randomization, control groups, and how confounding creeps into imperfect experiments.
+
+For the arithmetic itself, a couple of Statohub's calculators come in handy. The <Link to={routes.calculator('probability')}>probability calculator</Link> lets you replicate the risk-difference math from the worked example above using your own trial numbers. The <Link to={routes.calculator('chi-square')}>chi-square calculator</Link> helps you test whether an observed difference between ITT and per-protocol groups is statistically meaningful or within the range of chance variation. Pairing explanation with calculation is the whole point: read the principle, then run your own numbers against it rather than trusting a memorized formula.
+
+## The Overrated Rigor of the ITT Label
+
+The biggest misconception about intention-to-treat is that saying "we used ITT" settles the question of trial quality. It does not. The label describes a population rule, not a guarantee against bias, and the research behind this article makes that gap obvious: a trial can technically satisfy ITT by including every randomized participant while still handling missing outcomes so carelessly that the result means very little.
+
+What gets underweighted in most explainers is the missing-data problem specifically. Readers fixate on the as-randomized rule and skip past the harder question of what happened to participants who never provided a final outcome. That is usually where the real judgment call lives, not in whether the population was defined correctly.
+
+If you take one thing from this, prioritize checking the sensitivity analyses before you trust the headline ITT effect size. A single point estimate under one missing-data assumption tells you far less than a range of estimates across several plausible assumptions. Concordance across those assumptions, not the ITT label itself, is what should earn your confidence.
+
+## Try These Statohub Tools Next
+
+The article pairs each concept explanation with a way to test it against real numbers, which is exactly what a topic like intention-to-treat rewards. Start with the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub for more worked examples that connect statistical theory to real analytical decisions, including experiments beyond clinical trials.
+
+If you want to run your own version of the worked example above, plug your risk differences into the probability calculator, or check whether a group difference clears statistical significance with the chi-square calculator. Both live on Statohub's full <Link to={routes.calculatorsHub()}>calculators page</Link>, alongside tools for averages and other summary statistics you will need when reconstructing a trial's reported numbers by hand. If clinical trial design itself is new territory, a nonacademic overview like [this founder-oriented explainer](https://blog.thestartupmd.com/blog/startup-clinical-study-design-explained) covers the practical basics before you dive into ITT specifics.
+
+This article is general information, not a substitute for advice from a qualified doctor. Consult a qualified healthcare professional about your own circumstances before acting on anything here.
+
+## Sources
+
+<Sources items={[
+  { text: 'Why ITT analysis is not always the answer for estimating treatment effects in clinical trials', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8234249/', org: 'PMC / National Library of Medicine' },
+  { text: 'Adherence bias', href: 'https://catalogofbias.org/biases/adherence-bias/', org: 'Catalogue of Bias, University of Oxford' },
+  { text: 'Intention-to-treat analyses and missing outcome data: A tutorial (2024)', href: 'https://eprints.whiterose.ac.uk/id/eprint/238480/1/Cochrane_Evidence_Synthesis_and_Methods_-_2024_-_Chaplin_-_Intention_to_treat_analyses_and_missing_outcome_data_A_tutorial.pdf', org: 'Cochrane Evidence Synthesis and Methods' },
+  { text: 'Montori VM, Guyatt GH. "Intention-to-treat principle."', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC81628/', org: 'CMAJ, 2001' },
+  { text: 'The Intention-to-Treat Principle: How to Assess the True Effect of Choosing a Medical Treatment', href: 'https://pubmed.ncbi.nlm.nih.gov/25058221/', org: 'JAMA / PubMed' },
+  { text: 'Startup clinical study design, explained', href: 'https://blog.thestartupmd.com/blog/startup-clinical-study-design-explained', org: 'The Startup MD' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Are the Disadvantages of Intention-to-Treat Analysis?',
+    answer: 'ITT can dilute an apparent treatment effect when adherence is poor, since nonresponsive dropouts get counted against the treatment arm. It also depends heavily on how missing outcome data are handled. A poorly justified imputation method can undermine the analysis even when the population definition is correct.',
+  },
+  {
+    question: 'What Is the Difference Between On-Treatment and Intention-to-Treat Analysis?',
+    answer: 'On-treatment (as-treated) analysis groups participants by the treatment they actually received, while ITT groups them by their original random assignment regardless of what they took. As-treated analysis is prone to confounding because the decision to switch or stop treatment is rarely random, which breaks the balance randomization created.',
+  },
+  {
+    question: 'What Is the Difference Between Intention-to-Treat and Modified Intention-to-Treat?',
+    answer: "Strict ITT includes every randomized participant with no exceptions. Modified ITT (mITT) applies a narrower, prespecified rule, such as including only those who received at least one dose of study medication. The key requirement is that mITT's exclusion criteria must be defined in the protocol before outcome data are seen, not chosen afterward.",
+  },
+  {
+    question: 'Why Is Intention-to-Treat Analysis Considered Good Practice?',
+    answer: 'ITT preserves the balance across known and unknown confounders that randomization creates, because it does not selectively drop participants based on what happened after assignment. It answers a practical, effectiveness-oriented question: what happens when a treatment policy is offered under real-world adherence conditions, which is [why regulatory guidance](https://pubmed.ncbi.nlm.nih.gov/25058221/) treats it as the standard primary analysis for superiority trials.',
+  },
+]} />
+
