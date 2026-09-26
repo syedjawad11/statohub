@@ -9,6 +9,7 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import Meta from '../components/seo/Meta.astro';
 import { routes, url, type CategoryId, type RouteRef } from '../lib/links';
 import { breadcrumbList, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
+import { ADSTERRA_INVOKE_BASE, ADSTERRA_POPUNDER_SRC } from '../lib/ads';
 
 type CategoryEntry = CollectionEntry<'categories'>;
 
@@ -22,6 +23,8 @@ interface Props {
   showBreadcrumbs?: boolean;
   jsonLd?: object[];
   noindex?: boolean;
+  /** Adsterra ads (banners + popunder). Off for trust pages; always off on noindex pages. */
+  ads?: boolean;
 }
 
 const {
@@ -34,7 +37,10 @@ const {
   showBreadcrumbs = true,
   jsonLd = [],
   noindex = false,
+  ads = true,
 } = Astro.props;
+
+const adsterraEnabled = import.meta.env.PROD && !noindex && ads;
 
 const site = Astro.site ?? Astro.url;
 const canonical = new URL(canonicalPath ? url(canonicalPath) : Astro.url.pathname, site);
@@ -159,9 +165,8 @@ const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
     )}
     <script is:inline>
       (() => {
-        const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const useDark = stored ? stored === 'dark' : prefersDark;
+        // Light is the default; dark only when the visitor has chosen it via the toggle.
+        const useDark = localStorage.getItem('theme') === 'dark';
         document.documentElement.classList.toggle('dark', useDark);
       })();
     </script>
@@ -267,6 +272,53 @@ const AHREFS_ANALYTICS_KEY = 'Ua/EUJ9dT7YQDw2baSnUJQ';
         </div>
       </div>
     </footer>
+    {adsterraEnabled && (
+      <>
+        {/* Adsterra banner loader: each slot gets its own srcdoc iframe so the global atOptions never collide. */}
+        <script is:inline define:vars={{ invokeBase: ADSTERRA_INVOKE_BASE }}>
+          (() => {
+            const RAIL_TOP = 90;
+            const pick = (slot, sizes) => {
+              const width = slot.querySelector('.ad-frame')?.clientWidth ?? 0;
+              const rail = slot.hasAttribute('data-ad-fit-rail') ? slot.closest('.article-rail-right') : null;
+              const railUsed = rail ? rail.offsetHeight - slot.offsetHeight : 0;
+              return sizes.find((size) =>
+                size.width <= width && (!rail || RAIL_TOP + railUsed + size.height + 60 <= window.innerHeight));
+            };
+            const fill = (slot) => {
+              let sizes = [];
+              try { sizes = JSON.parse(slot.dataset.adSizes || '[]'); } catch { return; }
+              const size = pick(slot, sizes);
+              if (!size) { slot.classList.add('ad-slot--empty'); return; }
+              const frame = document.createElement('iframe');
+              frame.width = String(size.width);
+              frame.height = String(size.height);
+              frame.title = 'Advertisement';
+              frame.setAttribute('scrolling', 'no');
+              // Match the srcdoc's light scheme so dark mode doesn't paint an opaque white box.
+              frame.style.colorScheme = 'light';
+              frame.srcdoc = '<!doctype html><html><head><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent}</style></head><body>'
+                + '<script>atOptions={key:"' + size.key + '",format:"iframe",height:' + size.height + ',width:' + size.width + ',params:{}};<\/script>'
+                + '<script src="' + invokeBase + '/' + size.key + '/invoke.js"><\/script></body></html>';
+              slot.querySelector('.ad-frame').appendChild(frame);
+              slot.classList.add('ad-slot--filled');
+            };
+            const slots = document.querySelectorAll('.ad-slot[data-ad-sizes]');
+            if (!('IntersectionObserver' in window)) { slots.forEach(fill); return; }
+            const io = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                io.unobserve(entry.target);
+                fill(entry.target);
+              });
+            }, { rootMargin: '300px 0px' });
+            slots.forEach((slot) => io.observe(slot));
+          })();
+        </script>
+        {/* Adsterra popunder. Remove before any AdSense resubmission (ADR 0025). */}
+        <script is:inline async src={ADSTERRA_POPUNDER_SRC}></script>
+      </>
+    )}
     <script is:inline>
       (() => {
         const themeButton = document.getElementById('theme-toggle');

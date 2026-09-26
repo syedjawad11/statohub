@@ -2,6 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
 import RailToc from '../components/RailToc.astro';
+import AdNative from '../components/ads/AdNative.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
 import BaseLayout from './BaseLayout.astro';
 import { routes, type ArticleId, type CalculatorId, type CategoryId } from '../lib/links';
 import { articleSchema, organizationSchema, webSiteSchema, EDITORIAL_TEAM, type BreadcrumbItem } from '../lib/schema';
@@ -146,9 +148,15 @@ const articleJsonLd = [
         <path d="M0 22 C 180 22, 240 4, 420 4 S 640 22, 1000 22 L1000 24 L0 24 Z" fill="currentColor" opacity=".18"></path>
       </svg>
 
+      <AdSlot size="leaderboard" class="ad-slot--top" />
+
       <div class="article-body article-prose">
         <slot />
       </div>
+
+      <AdSlot size="rectangle" class="ad-slot--end" />
+
+      <AdNative />
 
       {keepGoingItems.length > 0 && (
         <section class="related related-section">
@@ -179,6 +187,7 @@ const articleJsonLd = [
           <a href={`#${calculatorAnchor}`} class="btn btn-ghost toc-jump">Jump to calculator</a>
         </div>
       )}
+      <AdSlot size="skyscraper" class="ad-slot--rail" />
     </aside>
   </div>
 

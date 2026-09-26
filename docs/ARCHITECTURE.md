@@ -140,6 +140,13 @@ enforced by `outsource-content/check_sanitized.py`. `public/_headers` sets secur
 X-Frame-Options, etc.) since Wrangler/Cloudflare Pages can't set these any other way
 for a Direct Upload project.
 
+**Ads.** AdSense (loader + Funding Choices CMP in `BaseLayout.astro`, `public/ads.txt`)
+is wired but unapproved. Adsterra serves in the meantime ([[0025-adsterra-interim-monetization]]):
+keys in `src/lib/ads.ts`, slots via `src/components/ads/AdSlot.astro`, one inline
+loader + popunder in `BaseLayout.astro` gated `PROD && !noindex && ads` (`ads={false}`
+on trust pages). Each banner runs in its own `srcdoc` iframe because Adsterra's
+`atOptions` is a global.
+
 ## Editorial / content pipeline
 
 There are **two** pipelines with two separate boards. They split by *source*

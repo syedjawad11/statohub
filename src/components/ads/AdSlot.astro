@@ -1,0 +1,26 @@
+---
+// One Adsterra banner slot. Renders on production builds only; the inline
+// loader in BaseLayout.astro fills it lazily with the largest size that fits.
+import { AD_SLOTS, ADSTERRA_BANNER_KEYS, parseAdSize, type AdSlotName } from '../../lib/ads';
+
+interface Props {
+  size: AdSlotName;
+  class?: string;
+}
+
+const { size: slot, class: className } = Astro.props;
+const sizes = AD_SLOTS[slot].map((size) => ({ ...parseAdSize(size), key: ADSTERRA_BANNER_KEYS[size] }));
+---
+
+{import.meta.env.PROD && (
+  <div
+    class:list={['ad-slot', `ad-slot--${slot}`, className]}
+    data-ad-sizes={JSON.stringify(sizes)}
+    data-ad-fit-rail={slot === 'skyscraper' ? '' : undefined}
+    role="complementary"
+    aria-label="Advertisement"
+  >
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-frame"></div>
+  </div>
+)}

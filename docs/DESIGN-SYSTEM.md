@@ -128,7 +128,7 @@ article pushes column count high enough to threaten the budget, apply the
 same rule. `AnnotatedChart.astro` is unused in any published article (only
 `/dev/applied-preview/`); it has the same latent risk and should get the
 same treatment before its first real use. See
-`docs/status/sessions/2026-08-23-infographic-readability.md` for the
+`docs/status/sessions/archive/2026-08-23-infographic-readability.md` for the
 readability incident that established this rule.
 
 ## Accessibility
@@ -151,3 +151,7 @@ applied by an inline pre-paint `<script>` in the `<head>` of
 predates and survived the TASK-019 theme refresh unchanged -- the refresh only
 changed which tokens live under `html.dark`, not the toggling mechanism
 itself.
+
+The default is **light** for every visitor (the OS `prefers-color-scheme` is
+not consulted, owner call 2026-09-27); dark applies only after the visitor picks
+it with the toggle.

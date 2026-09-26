@@ -2919,5 +2919,70 @@
       padding-inline: 0;
     }
   }
-}
 
+  /* Adsterra ad slots (src/components/ads/AdSlot.astro). Height is reserved
+     for the size the loader will pick, so ads never shift the page. */
+  .ad-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 28px auto;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .ad-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .ad-frame {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ad-frame iframe {
+    display: block;
+    max-width: 100%;
+    border: 0;
+    background: transparent;
+  }
+
+  .ad-slot--leaderboard .ad-frame { min-height: 50px; }
+  .ad-slot--rectangle .ad-frame { min-height: 250px; }
+
+  @media (min-width: 500px) {
+    .ad-slot--leaderboard .ad-frame { min-height: 60px; }
+  }
+
+  @media (min-width: 760px) {
+    .ad-slot--leaderboard .ad-frame { min-height: 90px; }
+  }
+
+  .ad-slot--rail,
+  .ad-slot--side {
+    margin: 24px 0 0;
+  }
+
+  .ad-slot--band {
+    margin-block: 8px 40px;
+  }
+
+  .ad-slot--native {
+    align-items: stretch;
+  }
+
+  .ad-slot--native .ad-label {
+    align-self: center;
+  }
+
+  .ad-slot--empty {
+    display: none;
+  }
+}

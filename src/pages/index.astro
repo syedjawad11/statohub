@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Link from '../components/Link.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   routes,
@@ -197,6 +198,8 @@ const pathways = [
       </Link>
     ))}
   </section>
+
+  <AdSlot size="leaderboard" class="ad-slot--band" />
 
   <section class="home3-section" aria-labelledby="home3-learn-title">
     <header class="home3-section-head">

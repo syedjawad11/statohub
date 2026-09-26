@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import Link from '../../../components/Link.astro';
 import StatCalc from '../../../components/StatCalc.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AdSlot from '../../../components/ads/AdSlot.astro';
 import { routes } from '../../../lib/links';
 import { getRelatedCalculators } from '../../../lib/related-calculators';
 import { organizationSchema, webPageSchema, webSiteSchema, EDITORIAL_TEAM, type BreadcrumbItem } from '../../../lib/schema';
@@ -118,6 +119,9 @@ const calculatorJsonLd = [
           ))
         }
       </div>
+      <AdSlot size="halfSkyscraper" class="ad-slot--side" />
     </aside>
   </section>
+
+  <AdSlot size="rectangle" class="ad-slot--end" />
 </BaseLayout>

@@ -43,8 +43,8 @@ that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
 - **AdSense rejected ("low value content") -- phases 1-3 done, 4-5 parked by
   owner.** Handoff `sessions/2026-09-20-adsense-phases-1-3.md` (baseline
   `-phase0-inventory.md`; [[0024-team-byline-and-trust-pages]]). Phase 4 =
-  calculator template variety + 337 rotated RelatedLink intros + thin-calc
-  enrich-vs-noindex; Phase 5 = verify + resubmit. Not started.
+  calc template variety + 337 RelatedLink intros + thin-calc enrich-vs-noindex;
+  Phase 5 = resubmit. **Adsterra runs meanwhile ([[0025]]) -- pull the popunder first.**
 
 ## Parked (do not silently resume)
 
