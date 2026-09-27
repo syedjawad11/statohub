@@ -1,0 +1,220 @@
+---
+title: "Multiple Comparisons Problem: A Practical Guide"
+h1: "46% Risk with 12 Tests: Multiple Comparisons Problem"
+description: "The multiple comparisons problem means 12 independent tests carry a 46% false-positive risk; see when Bonferroni or FDR correction applies."
+category: experiments-causality
+primaryKeyword: multiple comparisons problem
+keywords:
+  - multiple comparisons problem
+  - bonferroni correction
+  - false discovery rate
+  - false positive risk
+phase: 1
+related:
+  - bonferroni-correction
+  - false-discovery-rate
+  - intention-to-treat
+draft: false
+pubDate: 2026-09-27
+updatedDate: 2026-09-27
+reviewedDate: 2026-09-27
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Run enough hypothesis tests against the same data and one of them will look significant by chance alone, even when nothing real is happening. This is the multiple comparisons problem: as the number of tests (m) grows, the probability that at least one produces a false positive climbs fast, often well past the [5%](https://en.wikipedia.org/wiki/Multiple_comparisons_problem) you think you signed up for. The fix is either to reduce the number of tests you run or to adjust the significance threshold with a method matched to your goal, using familywise error rate (<Link to={routes.article('bonferroni-correction')}>FWER</Link>) control when a single false positive is costly, and <Link to={routes.article('false-discovery-rate')}>false discovery rate (FDR)</Link> control when you are scanning for leads among hundreds of comparisons.
+
+<KeyTakeaways rows={[
+  { point: '12 tests, ~46% risk', details: 'Running multiple independent tests stacks false-positive risk fast: a 12-test scenario at the 5% level yields nearly a coin-flip chance of at least one false positive.' },
+  { point: 'FWER methods trade power for certainty', details: 'Bonferroni and Holm control the familywise error rate but can be overly conservative, cutting power to detect real effects as the number of tests grows.' },
+  { point: 'FDR methods suit large-scale screening', details: 'Benjamini-Hochberg allows more discoveries through by bounding the proportion of false positives among rejected hypotheses.' },
+  { point: 'Design discipline lowers the burden', details: 'Planned comparisons specified before data collection carry a lower multiplicity burden than post hoc analyses, which risk p-hacking and data dredging.' },
+  { point: 'Match the method, then report it', details: 'Pick a correction based on your research objective and test dependence, and report every test run alongside the correction applied.' },
+]} />
+
+## What Is the Multiple Comparisons Problem in Statistics?
+
+Every hypothesis test carries a built-in chance of error. Set your significance level (α) at 0.05, and you accept a [5% risk](https://www.mathwords.com/s/significance_level.htm) of a false positive on that one test. Run a second test, and a [second 5% risk](https://pmc.ncbi.nlm.nih.gov/articles/PMC4840791/) enters the picture. Run a dozen, and those risks stack up in a way that catches most students off guard.
+
+Think of it like flipping a coin. Getting five heads in a row from one coin looks suspicious. Hand out a hundred coins to a hundred people and ask each to flip five times, though, and you should expect a handful of people to report five heads purely from luck. Nothing was rigged. You just gave chance enough opportunities to produce a rare-looking result somewhere in the crowd. That is the multiple testing problem in miniature, and it is why a "significant" finding buried inside a large batch of comparisons deserves more scrutiny than one from a single, pre-planned test.
+
+Statisticians separate this risk into two useful concepts:
+
+- **Per-comparison error rate (PCER):** the error rate for a single test, taken in isolation, which stays fixed at whatever α you chose.
+- **Familywise error rate (FWER):** the probability of at least one false positive across the entire set, or "family," of tests you ran.
+
+Dependence among your tests complicates the picture further. When comparisons share the same underlying data (overlapping groups, correlated outcome measures), the errors are not independent, and simple corrections built for independent tests, like Bonferroni, end up overly conservative, a point echoed in reviews of ecological multiple testing practice.
+
+## How Do You Calculate the Probability of a False Positive Across Multiple Tests?
+
+The core formula for the multiple comparisons problem is short enough to memorize:
+
+`P(at least one false positive) = 1 − (1 − α)^m`
+
+Here, α is your per-test significance threshold (commonly 0.05) and m is the number of independent tests you run. The formula works because `(1 − α)^m` gives the probability that every single test comes back clean, so subtracting that from 1 gives the probability that at least one test slips through as a false alarm.
+
+**Plug in m = 12 and α = 0.05, and the result is striking: the probability of at least one false positive is close to half, much higher than the nominal 5%.** Running twelve independent comparisons at the standard 5% threshold gives you [roughly a 46% chance](https://psy652.colostate.edu/site-guide/multiple-comparisons.html) that at least one comes back "significant" purely by chance. That is closer to a coin flip than a rare event.
+
+<Figure number={1} caption="False-positive risk climbs fast as the number of independent tests grows, from 5% at one test to 46% at twelve, all at the standard α = 0.05 threshold.">
+  <AnnotatedChart
+    title="False-positive risk by number of tests"
+    desc="A bar chart showing the probability of at least one false positive climbing from 5.0% at 1 test to 14.3% at 3 tests, 26.5% at 6 tests, and 46.0% at 12 tests, all at alpha = 0.05."
+    type="bar"
+    points={[
+      { label: '1 test (α=0.05)', value: 5.0 },
+      { label: '3 tests (α=0.05)', value: 14.3 },
+      { label: '6 tests (α=0.05)', value: 26.5 },
+      { label: '12 tests (α=0.05)', value: 46.0 },
+    ]}
+    yLabel="False-positive probability (%)"
+  />
+</Figure>
+
+A few caveats matter here:
+
+- The formula assumes independence between tests, which rarely holds exactly in real data (repeated measures on the same subjects, correlated genes, related KPIs).
+- When tests are positively correlated, the true false positive probability is usually somewhat lower than the formula predicts, though still elevated compared to a single test.
+- The formula tells you about at least one error across the family. It says nothing about which specific test is the false positive, which is exactly why post hoc scrutiny matters.
+
+## Which Correction Method Should You Use for Multiple Testing?
+
+Choosing among Bonferroni, Holm, Tukey HSD, Scheffé, and Benjamini-Hochberg comes down to one question: are you protecting against any false positive across the family, or are you trying to control the rate of false discoveries within a larger batch of true findings? Adjustment guidance from experimental research literature frames this as a trade-off between conservatism and statistical power, not a search for a single "correct" answer.
+
+<DataTable
+  caption="Multiple-comparisons correction methods by family and best use case"
+  headers={['Method', 'Family', 'Approach', 'Best use case']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Bonferroni', 'FWER', 'Divides α by the number of tests (α/m)', 'Small, pre-specified test sets where one false positive is costly'],
+    ['Holm', 'FWER', 'Stepwise threshold, strictest for the smallest p-value', 'Same goal as Bonferroni, with more statistical power'],
+    ['Šidák', 'FWER', 'Slightly less conservative than Bonferroni', 'Independent tests, where the gain over Bonferroni is usually small'],
+    ['Tukey HSD', 'FWER (ANOVA)', 'All pairwise comparisons of group means', 'Default post hoc test after a significant one-way ANOVA'],
+    ['Scheffé', 'FWER (ANOVA)', 'Any linear combination of means, not just pairs', 'Complex contrasts beyond simple pairwise comparisons'],
+    ['Benjamini-Hochberg (BH)', 'FDR', 'Ranks p-values and applies a sliding threshold', 'Large-scale screening across hundreds of comparisons'],
+    ['Benjamini-Yekutieli (BY)', 'FDR', 'Extends BH to hold under arbitrary dependence', 'Correlated tests where BH’s independence assumption is shaky'],
+  ]}
+/>
+
+Resampling and permutation-based adjustments, along with k-FWER approaches (which tolerate up to k false positives instead of zero), exist for specialized cases where standard corrections are either too weak or too strict. A guide to <Link to={routes.article('post-hoc-tests')}>post hoc tests</Link> walks through the mechanics of Tukey and Bonferroni in more depth if you want worked examples.
+
+<Callout variant="tip" title="Pro tip">
+If you are unsure which way to lean, run your analysis twice, once with a conservative FWER method and once with BH, and compare which findings survive both. Results that hold up under both corrections are the ones worth building a follow-up study around.
+</Callout>
+
+The universal trade-off: every correction that lowers your false positive rate also lowers your power to detect real effects. Conservative methods protect you from embarrassment; they also make it easier to miss something true.
+
+## Planned vs. Unplanned Comparisons: Why Design Matters
+
+A planned (a priori) comparison is one you specified before looking at the data, usually tied to a specific hypothesis your study was designed to test. An unplanned (post hoc) comparison emerges after you have already seen the results, often from scanning every possible pairing or subgroup for something interesting.
+
+Planned comparisons carry a lighter multiplicity burden because your research design already limited the number of legitimate tests. Unplanned comparisons, by contrast, often mean you are implicitly testing far more hypotheses than your reported p-value reflects, since you looked at many possible splits before landing on the one you're reporting.
+
+<Checklist
+  id="design-habits"
+  title="Design habits that keep multiplicity under control"
+  style="numbered"
+  items={[
+    { text: 'Preregister your analysis plan', detail: 'Specify exactly which comparisons you intend to run before collecting or examining the data.' },
+    { text: 'Run a global test first', detail: 'A one-way ANOVA, for instance, before drilling into pairwise comparisons, rather than skipping straight to pairwise tests.' },
+    { text: 'Composite related outcomes', detail: 'Combine into a single primary measure instead of testing five related variables separately.' },
+    { text: 'Limit subgroup analyses', detail: 'Restrict to those with a clear theoretical justification, and label any others as exploratory.' },
+  ]}
+/>
+
+An overview of <Link to={routes.categoryHub('experiments-causality')}>experimental design and preregistration</Link> covers these habits in more detail if planning is where you are stuck.
+
+## How Do You Choose the Right Correction for Your Analysis?
+
+A practical workflow turns this from an abstract statistics debate into a decision you can make in five minutes.
+
+1. **Decide your objective first.** Are you confirming a specific hypothesis where even one false positive would be costly (favor FWER control), or are you scanning a large space for candidates to validate later (favor FDR control)?
+2. **Count your tests honestly**, including every comparison you looked at, not just the ones you plan to report.
+3. **Assess dependence and available power.** Highly correlated tests behave differently than independent ones, and small samples make any correction hit harder.
+4. **Simulate or estimate adjusted thresholds** before finalizing your analysis, so you know roughly how much power you are giving up.
+5. **Pick a candidate method, then run a sensitivity check** against at least one alternative correction to see whether your key findings survive.
+6. **Report the exact correction applied**, along with whether each comparison was planned or post hoc, so readers can judge the claim on its own terms.
+
+<Callout variant="tip" title="Pro tip">
+A <Link to={routes.calculator('probability')}>probability calculator</Link> is a fast way to see how your own false positive risk scales as you add tests, using the same `1 − (1 − α)^m` logic behind the m = 12 example above.
+</Callout>
+
+Small sample sizes deserve a special warning here. Conservative corrections combined with low statistical power are a bad mix. You end up unable to detect anything, real or not, which is often worse for a research program than accepting a slightly higher false positive rate on a well justified, planned comparison.
+
+## How Does the Multiple Comparisons Problem Show Up in Real Analyses?
+
+Three settings illustrate how this plays out in practice.
+
+- **ANOVA pairwise comparisons.** After a significant <Link to={routes.article('one-way-anova')}>one-way ANOVA</Link>, Tukey HSD is the standard choice for all pairwise mean comparisons. Scheffé takes over when you need to test more complex combinations of means, and Bonferroni remains a fallback when you only care about a small, specific subset of pairs.
+- **A/B testing with many variants or metrics.** <Link to={routes.article('how-to-design-an-ab-test')}>Testing five variants against a control</Link>, or tracking ten KPIs at once, multiplies your false positive exposure the same way twelve independent tests did in the earlier example. <Link to={routes.article('sequential-testing')}>Sequential testing methods</Link> and FDR-based monitoring help teams avoid declaring a "winning" variant that is really just noise.
+- **Genomics and large-scale screening.** Studies testing thousands of genes or brain voxels almost always turn to Benjamini-Hochberg FDR control rather than Bonferroni, since Bonferroni's threshold at that scale would reject almost everything, real effects included. FDR control accepts a known, bounded rate of false discoveries among the hits, with replication studies serving as the real filter, a balance discussed in [reviews of large-scale FDR methodology](http://www-stat.wharton.upenn.edu/~tcai/paper/FDR-Review.pdf).
+
+## What Mistakes Should You Avoid When Reporting Multiple Tests?
+
+The most common failure is not a math error. It is selective reporting: running twenty comparisons, finding two significant ones, and writing up the paper as though those two were the only tests conducted. A close cousin is the unplanned subgroup claim, where a null overall result gets rescued by slicing the data into smaller and smaller pieces until something clears the significance bar.
+
+- Selective reporting and p-hacking inflate the apparent false discovery rate well beyond what any correction formula accounts for, and replication remains the most reliable safeguard against it, according to [analysis-procedure guidance from EGAP](https://methods.egap.org/guides/analysis-procedures/multiple-comparisons_en.html).
+- Failing to disclose the total number of tests run makes any single p-value in the write-up impossible to evaluate honestly.
+- Low statistical power compounds the problem: estimates of the share of published significant findings that are false range widely, with some analyses citing figures near 50% under common power assumptions.
+
+A solid reporting checklist covers the full list of tests conducted, which were planned versus post hoc, the exact correction method applied, effect sizes with confidence intervals, and unadjusted alongside adjusted p-values.
+
+<Callout variant="tip" title="Pro tip">
+When in doubt, report both the raw and corrected p-values side by side. Readers can judge the strength of your evidence either way, and it signals you have nothing to hide.
+</Callout>
+
+## Where to Learn More and Apply These Methods
+
+A <Link to={routes.article('post-hoc-tests')}>post hoc tests guide</Link> walks through Tukey, Bonferroni, and related methods with worked examples, and it pairs naturally with the <Link to={routes.article('one-way-anova')}>one-way ANOVA guide</Link> if you are moving from an omnibus test into pairwise comparisons. The broader <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> collects practical write-ups that connect concepts like this one to real datasets and experiments.
+
+For the calculations themselves, the probability calculator, <Link to={routes.calculator('chi-square')}>chi-square calculator</Link>, and other tools under <Link to={routes.calculatorsHub()}>Statohub's calculators</Link> let you check adjusted thresholds and test statistics without rebuilding formulas from scratch. Pairing a clear explanation with a working calculator is the fastest way to go from "I think I need a correction" to a defensible number in your write-up.
+
+## An Honest Analyst's Take on Chasing Significance
+
+The multiple comparisons problem rewards discipline more than cleverness. Every extra test you run without a plan is a small bet against your own credibility, and the honest move is almost always to run fewer, better justified comparisons rather than to reach for a fancier correction after the fact. Treat exploratory findings as leads, not conclusions, and let replication do the work that a p-value alone cannot.
+
+## Put These Corrections to Work on Your Own Data
+
+Reading about Bonferroni and Benjamini-Hochberg is one thing. Applying the right one to your own dataset without redoing the algebra by hand is another. Statohub keeps its guides and calculators on the same page for exactly that reason: you can read the post hoc tests guide for the reasoning, then move straight to a calculator to check your numbers, instead of hunting across three different sites for a formula, an explanation, and a tool that actually computes it.
+
+If your project involves comparing groups after an ANOVA, testing several A/B variants at once, or scanning a larger dataset for candidate effects, start with the <Link to={routes.calculator('probability')}>probability calculator</Link> to see how your own false positive risk scales with the number of tests, then check the broader Applied Statistics hub for worked examples close to your situation. For a nonparametric alternative when ANOVA assumptions do not hold, see the <Link to={routes.article('mann-whitney-u-test')}>Mann-Whitney U test</Link> guide, and browse the <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics</Link> hub for the underlying test theory.
+
+## Sources
+
+<Sources items={[
+  { text: '7.4.7. How can we make multiple comparisons?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section4/prc47.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: 'Ranganathan P, Pramesh CS, Buyse M — Common pitfalls in statistical analysis: The perils of multiple testing', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4840791/', org: 'Perspectives in Clinical Research (PMC)' },
+  { text: 'Multiple comparisons: the family-wise error problem', href: 'https://psy652.colostate.edu/site-guide/multiple-comparisons.html', org: 'Colorado State University, PSY 652' },
+  { text: 'Multiple Comparisons', href: 'https://www.jmp.com/en/statistics-knowledge-portal/inferential-statistics/hypothesis-testing/multiple-comparisons', org: 'JMP Statistics Knowledge Portal' },
+  { text: 'T. Tony Cai — Large-Scale Multiple Testing', href: 'http://www-stat.wharton.upenn.edu/~tcai/paper/FDR-Review.pdf', org: 'University of Pennsylvania, Wharton Statistics' },
+  { text: '10 Things You Need to Know About Multiple Comparisons', href: 'https://methods.egap.org/guides/analysis-procedures/multiple-comparisons_en.html', org: 'EGAP (Evidence in Governance and Politics)' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Should I use ANOVA or a t-test for multiple groups?',
+    answer: 'Use a one-way ANOVA when you are comparing three or more group means at once, since running separate t-tests for every pair inflates your false positive rate through the exact multiplicity mechanism described above. Follow a significant ANOVA with a post hoc test like Tukey HSD to identify which specific pairs differ.',
+  },
+  {
+    question: 'Does Bonferroni correct for multiple comparisons?',
+    answer: 'Yes, Bonferroni is one of the most widely used corrections for multiple comparisons, and it works by dividing your significance threshold (α) by the number of tests you are running. It reliably controls the familywise error rate, but it is also one of the more conservative options, which means it can cost you statistical power when you are running many tests.',
+  },
+  {
+    question: "What is Dunnett's test used for in multiple comparisons?",
+    answer: "Dunnett's test is designed for comparing several treatment groups against a single control group, rather than comparing every group against every other group. It controls the familywise error rate for that specific comparison structure, and it typically has more power than Tukey HSD when a control group comparison is your actual research question.",
+  },
+  {
+    question: 'What is the problem of running multiple statistical tests?',
+    answer: 'Running multiple tests on the same data raises the probability that at least one result looks statistically significant purely by chance, even if no real effect exists anywhere in the data. With twelve independent tests at a 5% significance level, that probability climbs to roughly 46%, which is why corrections like Bonferroni, Holm, or Benjamini-Hochberg exist to bring the error rate back under control.',
+  },
+]} />
