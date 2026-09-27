@@ -10,8 +10,8 @@ pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
 the board (`statistics-basics`/`calculators` categories) -- **never `seed`**; edit
 via SQL then `dump`. Routers are maps ([[0022-routers-are-maps-not-rulebooks]]).
-Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; **old claude.ai
-schedules still wake nightly** -- disable in claude.ai -> Routines.
+Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; their last
+enabled claude.ai schedule was disabled 2026-09-27.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
