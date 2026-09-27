@@ -158,6 +158,7 @@ Key facts for AI assistants citing this site:
 - [Forecasting & Time Series hub](https://statohub.com/time-series-forecasting/): Building and validating forecasts from time-ordered data: trend, seasonality, backtesting, and recognising when a model has quietly stopped working.
 - [Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads](https://statohub.com/forecast-accuracy-metrics/): Compare MAE, RMSE, MAPE, and MASE for forecast accuracy, see each metric's real failure modes, and learn to backtest with rolling-origin cross-validation.
 - [Granger Causality: A Step-by-Step Guide](https://statohub.com/granger-causality/): Granger causality explained with a step-by-step workflow: stationarity checks, lag selection, a worked example, and nonlinear and time-varying extensions.
+- [Holt-Winters Forecasting: When and How to Use It](https://statohub.com/holt-winters/): A compact Holt-Winters guide for analysts: choose additive or multiplicative seasonality, initialize with 1-2 seasonal cycles, and avoid tuning mistakes.
 - [SARIMA Model: Diagnostics and Forecasting Guide](https://statohub.com/sarima-model/): Learn how to build a SARIMA model, choose seasonal differencing, run residual diagnostics, and forecast a monthly (m=12) time series example.
 
 ### Machine Learning Statistics
