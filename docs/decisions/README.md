@@ -33,6 +33,7 @@
 | [0023](0023-outsource-keeps-partner-backlinks.md) | Outsourced articles keep every non-vendor external link (partner backlinks); only babylovegrowth links are stripped | content | accepted | 2026-09-13 |
 | [0024](0024-team-byline-and-trust-pages.md) | Team byline only with git-derived dates; editorial policy, contact and terms pages; no Person schema | content | accepted | 2026-09-20 |
 | [0025](0025-adsterra-interim-monetization.md) | Adsterra banners as interim ads (popunder + native pulled same day) while AdSense is unapproved; AdSense code stays | architecture | accepted | 2026-09-27 |
+| [0026](0026-outsource-daily-cloud-routine.md) | Daily claude.ai cloud routine publishes one outsourced article per run and auto-queues new vendor drafts | process | accepted | 2026-09-27 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new

@@ -55,9 +55,10 @@ is marked `approved` — this pipeline never writes to `content.db`, and
   contract: `primaryKeyword` in `title` and `description`, rendered
   `<title>` (title + ` | Statohub`) ≤ 60 chars — because vendor titles lead
   with a hook or audience tag and bury the keyword.
-- `cloud-routine/` — retired to `docs/legacy/cloud-routine/`; once the
-  first article has been manually verified (see repo root `CLAUDE.md` /
-  `docs/status/NOW.md` for whether it's active).
+- `routine/publish-daily.md` — instructions for the daily claude.ai cloud
+  routine (09:00 UTC, one article per run, auto-queues new vendor drafts).
+  Pause it by committing `routine/PAUSED`. See
+  `docs/decisions/0026-outsource-daily-cloud-routine.md`.
 
 ## Status flow
 

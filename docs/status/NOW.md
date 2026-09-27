@@ -4,14 +4,14 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-20 (AdSense phase 3: trust layer). **Baseline:** 150
+**Last updated:** 2026-09-27 (outsource batch 6 + daily cloud routine). **Baseline:** 150
 pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 **Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
 the board (`statistics-basics`/`calculators` categories) -- **never `seed`**; edit
 via SQL then `dump`. Routers are maps ([[0022-routers-are-maps-not-rulebooks]]).
-Cloud routines RETIRED to `docs/legacy/cloud-routine/`; **claude.ai schedules
-still wake nightly** -- disable in claude.ai -> Routines.
+Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; **old claude.ai
+schedules still wake nightly** -- disable in claude.ai -> Routines.
 
 ## Active: Applied Statistics -- *internal* batch 2 not started
 
@@ -23,18 +23,15 @@ started -- topics were never chosen.** Governed by
 `docs/ideas/homepage-redesign-mock-2026-08-16.png`. `time-series-forecasting`
 and `machine-learning-statistics` hold 1 article each.
 
-## Outsource pipeline: 32 published, 5 queued
+## Outsource pipeline: 35 published, 2 queued, daily routine
 
-Batch 5 (2026-09-18/19): histogram-vs-boxplot, multiple-regression-diagnostics,
-missing-data-imputation, box-plot-interpretation, bias-variance-tradeoff (batch 4:
-`sessions/2026-09-13-outsource-batch-4.md`). **Partner backlinks are never
-stripped** -- [[0023-outsource-keeps-partner-backlinks]].
-
-**Only publish rows whose vendor dashboard status is DRAFT.** The 5 queued rows
-(intention-to-treat, multiple-comparisons-problem, normality-tests, holt-winters,
-scatter-plot-interpretation) did not exist upstream at last check -- confirm on
-the vendor board before `fetch`. Vendor badge stays DRAFT for our renamed slugs;
-that is expected, not a publish failure. Batches of 2-3, one reviewer at a time.
+Batch 6 (2026-09-27): intention-to-treat, multiple-comparisons-problem,
+normality-tests. **Daily cloud routine** publishes one article at 09:00 UTC and
+auto-queues new vendor drafts ([[0026-outsource-daily-cloud-routine]];
+`outsource-content/routine/publish-daily.md`, pause via `routine/PAUSED`).
+**Partner backlinks are never stripped** -- replacing an unreachable Sources
+entry keeps the vendor's inline href ([[0023-outsource-keeps-partner-backlinks]]).
+Rows left `changes_requested`/`blocked` by the routine need a local session.
 
 ## Blocked / waiting
 
