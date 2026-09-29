@@ -258,6 +258,13 @@
       "title": "Bias-Variance Tradeoff",
       "slug": "bias-variance-tradeoff",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 38,
+      "day_label": "2026-09-22",
+      "title": "Histogram Interpretation",
+      "slug": "histogram-interpretation",
+      "category_slug": "data-analysis"
     }
   ]
 }

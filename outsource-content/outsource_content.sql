@@ -54,6 +54,7 @@ INSERT INTO "outsource_articles" VALUES('difference-in-differences','Difference 
 INSERT INTO "outsource_articles" VALUES('missing-data-imputation','Missing Data Imputation','data-analysis',35,'41','854352','published','outsource-content/raw/missing-data-imputation.json','src/content/articles/missing-data-imputation.mdx',1,2,0,7,'','2026-09-13 13:46:50','2026-09-18 12:31:22');
 INSERT INTO "outsource_articles" VALUES('box-plot-interpretation','Box Plot Interpretation','data-analysis',36,'42','857043','published','outsource-content/raw/box-plot-interpretation.json','src/content/articles/box-plot-interpretation.mdx',1,2,0,6,'','2026-09-13 13:46:50','2026-09-19 18:14:08');
 INSERT INTO "outsource_articles" VALUES('bias-variance-tradeoff','Bias-Variance Tradeoff','machine-learning-statistics',37,'43','863134','published','outsource-content/raw/bias-variance-tradeoff.json','src/content/articles/bias-variance-tradeoff.mdx',1,1,0,6,'','2026-09-13 13:46:50','2026-09-19 18:17:49');
+INSERT INTO "outsource_articles" VALUES('histogram-interpretation','Histogram Interpretation','data-analysis',38,'2026-09-22','886961','fetched','outsource-content/raw/histogram-interpretation.json',NULL,0,0,0,NULL,'','2026-09-29 09:14:11','2026-09-29 09:14:21');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
