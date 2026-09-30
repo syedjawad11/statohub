@@ -265,6 +265,13 @@
       "title": "Histogram Interpretation",
       "slug": "histogram-interpretation",
       "category_slug": "data-analysis"
+    },
+    {
+      "queue_position": 39,
+      "day_label": "2026-09-24",
+      "title": "K-Fold Cross Validation",
+      "slug": "k-fold-cross-validation",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }
