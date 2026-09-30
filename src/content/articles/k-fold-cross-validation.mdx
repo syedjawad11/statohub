@@ -1,0 +1,294 @@
+---
+title: "K-Fold Cross Validation: A Practitioner's Guide"
+h1: "Don't Trust 10-Fold Scores: K-Fold Cross-Validation"
+description: "Learn k-fold cross validation in scikit-learn: pick the right k, stratify correctly, avoid preprocessing leaks, and know when nested or repeated CV pays off."
+category: machine-learning-statistics
+primaryKeyword: k-fold cross validation
+keywords:
+  - k-fold cross validation
+  - kfold cross validation
+  - how to implement k fold
+  - k fold vs stratified
+  - cross validation in machine learning
+  - what is k fold
+  - cross validation techniques
+  - k fold example
+phase: 1
+related:
+  - bias-variance-tradeoff
+  - f1-score-explained
+  - confusion-matrix-explained
+draft: false
+pubDate: 2026-09-30
+updatedDate: 2026-09-30
+reviewedDate: 2026-09-30
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+K-fold cross-validation partitions your dataset into k equal-sized folds, trains a model on k−1 of them, and validates on the one left out, repeating the process k times and averaging the scores. The result is a mean performance estimate (and, ideally, its standard deviation) for a modeling strategy rather than a single trained model. Stratified 10-fold is the practical default for classification, with repeated runs or nested cross-validation layered on top when the stakes justify the extra compute. The catch, covered below, is that this average is easier to trust than its variance.
+
+<KeyTakeaways variant="bullets" bullets={[
+  "Ten-fold cross-validation with stratification and multiple repetitions generally offers the best bias-variance balance for moderate-sized classification datasets.",
+  "Using fewer than five folds or unstratified splits can increase bias or produce unstable estimates, especially with imbalanced classes or small datasets.",
+  "Always compute and report both the mean and standard deviation of fold scores to accurately convey performance stability and uncertainty.",
+  "Proper implementation requires fitting preprocessing steps within each fold to prevent data leakage, rather than fitting on the full dataset beforehand.",
+  "For hyperparameter tuning, nested cross-validation provides unbiased performance estimates by separating tuning and evaluation processes.",
+]} />
+
+## How K-Fold Cross-Validation Actually Works
+
+Cross-validation solves a basic problem: if you train and test on the same data, your performance estimate is biased upward, and if you carve out a single holdout set, your estimate depends heavily on which rows happened to land where. K-fold cross-validation splits the difference. You divide the dataset into k roughly equal partitions, called folds, then run k separate training rounds. In each round, one fold is held out for validation and the remaining k−1 folds are combined into the training set. Every observation ends up in the validation set exactly once and in a training set k−1 times.
+
+The [scikit-learn documentation](https://scikit-learn.org/stable/modules/cross_validation.html) describes this as evaluating an estimator's performance rather than a single fitted model, and that distinction matters more than it looks. Each of the k rounds produces a fresh model trained on a slightly different subset of your data, so the final score is really an average across k models, not a report card for one specific model you plan to ship.
+
+Two extreme cases help anchor where k-fold sits on a spectrum. Set k equal to the number of observations n, and you get leave-one-out cross-validation (LOO): n training rounds, each leaving out a single row. Set k to 2, and you get something close to a single train/test split repeated twice with the halves swapped. Neither extreme is typically ideal, which is part of why values between 5 and 10 dominate applied work.
+
+<Figure number={1} caption="Number of training rounds run at k = 2, k = 5, and k = 10 — one round per fold.">
+  <AnnotatedChart
+    title="Training rounds by k"
+    desc="Bar chart showing training rounds scale directly with k: 2 rounds at k=2, 5 rounds at k=5, and 10 rounds at k=10."
+    type="bar"
+    points={[
+      { label: 'k = 2', value: 2 },
+      { label: 'k = 5', value: 5 },
+      { label: 'k = 10', value: 10 },
+    ]}
+    yLabel="Training rounds"
+  />
+</Figure>
+
+Here's the mechanical process, translated into a form you can map directly onto code:
+
+1. Fix k (commonly 5 or 10) and, for classification, decide whether to stratify by class label.
+2. Shuffle the data if the original order carries no meaningful structure (skip this for time series or grouped data).
+3. Split the data into k folds of roughly equal size.
+4. For each fold i from 1 to k: train the model on all folds except fold i, then evaluate it on fold i using your chosen metric.
+5. Store the k metric values, one per fold.
+6. Compute the mean of the k scores as your point estimate.
+7. Compute the standard deviation of the k scores to gauge how much that estimate might swing on different data.
+8. Report both numbers together, not the mean alone.
+
+That last step gets skipped constantly, and it is the single most common way k-fold results get overstated. A mean accuracy of [91%](https://stats.stackexchange.com/questions/367272/difference-between-mean-average-accuracy-and-overall-accuracy) means something very different if the fold scores ranged from 89% to 93% than if they ranged from 78% to 99%.
+
+## Choosing K: The Bias Variance Trade-Off You Can't Avoid
+
+The value you pick for k trades statistical bias against variance, and the direction of that trade-off surprises people the first time they see it. As k increases, each training fold contains more of the original data (closer to the full dataset), so the trained models more closely resemble a model fit on everything you have. That reduces bias in the performance estimate. But larger k also means the k training sets overlap more heavily with each other, so the k resulting models are more similar, and their errors become correlated. Correlated errors inflate the variance of the average. Smaller k does the opposite: less overlap between training sets, more diversity across folds, lower variance in the average, but higher bias because each training set is a meaningfully smaller slice of your data.
+
+[Ron Kohavi's classic study on accuracy estimation](http://ai.stanford.edu/~ronnyk/accEst.pdf) found that stratified 10-fold cross-validation tends to give a favorable balance between these two forces across a range of real datasets, which is why it became the default so many practitioners now reach for automatically.
+
+<Callout variant="note" title="Statistic callout">
+Ten-fold cross-validation is commonly used as a practical compromise for model selection, providing a bias-variance trade-off found to work well across multiple empirical studies, as noted in Kohavi's research and the scikit-learn documentation.
+</Callout>
+
+Some practical rules of thumb, drawn from how these trade-offs actually play out on real datasets:
+
+- Use 10-fold as your starting point for classification and regression on datasets of moderate size, roughly a few hundred rows and up.
+- Drop to 5-fold when your model is slow to train or your dataset is large enough that each fold still contains thousands of rows.
+- Be cautious with leave-one-out on anything but small datasets. LOO has almost no bias, but its n training sets are nearly identical to each other, which drives up variance in the final estimate and makes it computationally expensive for anything beyond a few hundred rows.
+- For very small datasets (under a few hundred rows), higher k values (10, or even LOO) can be justified because you cannot afford to shrink the training set further without starving the model of data.
+- When your dataset is large enough that even 5-fold gives you thousands of validation examples per fold, the marginal statistical benefit of pushing k higher shrinks fast, while the compute cost keeps climbing linearly.
+
+If you have the compute budget, repeating k-fold cross-validation several times with different random shuffles, and averaging across repetitions, gives you a more stable estimate than any single k-fold run. This is exactly what `RepeatedKFold` and `RepeatedStratifiedKFold` in scikit-learn are built for, and it directly addresses the variance problem rather than just picking a k and hoping for the best.
+
+## Stratified, Repeated, Grouped, and Time-Aware Cross-Validation
+
+Plain k-fold assumes your rows are independent and identically distributed, an assumption that breaks in predictable ways depending on your data. Scikit-learn's splitter classes exist because each violation of that assumption needs a different fix.
+
+**StratifiedKFold** preserves the class proportions of the full dataset within each fold. If your target variable is [90%](https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/) negative and 10% positive, plain KFold can, by chance, produce a fold that's 97% negative, and a model evaluated on that fold will look artificially strong or weak depending on which way the imbalance tips. Kohavi's research on cross-validation found that stratification improves stability for model selection, and for any classification task with meaningfully imbalanced classes, it should be treated as the default rather than an optional refinement.
+
+**RepeatedKFold** and **RepeatedStratifiedKFold** run the entire k-fold procedure multiple times with different random splits and pool the results. This directly targets the estimator-randomness problem: a single k-fold run depends on exactly how your data happened to get shuffled into folds, and a different random seed can shift your mean score by a percentage point or more on noisy data. One evaluation of [repeated k-fold CV in clinical prediction modeling](https://arxiv.org/abs/2607.03676v1) found that repeated k-fold produced instability estimates comparable to bootstrap resampling, and sometimes more favorable calibration, which is a useful data point if you have ever wondered whether the extra runs are worth the compute.
+
+**GroupKFold** matters whenever your rows are not truly independent because they cluster around some higher-level unit: multiple scans from the same patient, multiple transactions from the same customer, multiple sensor readings from the same device. Plain k-fold can put some of a patient's scans in the training fold and others in the validation fold, letting the model implicitly memorize patient-specific patterns rather than generalizing. GroupKFold guarantees that all rows sharing a group identifier land in the same fold, training or validation, never split across both.
+
+<Figure number={2} caption="A target variable split 90% negative / 10% positive — the kind of imbalance plain KFold can distort by chance in a single fold.">
+  <AnnotatedChart
+    title="Class proportions in an imbalanced target"
+    desc="Bar chart of an imbalanced binary target: 90% negative class, 10% positive class."
+    type="bar"
+    points={[
+      { label: 'Negative', value: 90 },
+      { label: 'Positive', value: 10 },
+    ]}
+    yLabel="Share of dataset (%)"
+  />
+</Figure>
+
+**TimeSeriesSplit** exists because standard k-fold shuffling is invalid for time-ordered data. Shuffling lets your model train on data that chronologically follows the data it's being tested on, a form of information leakage that inflates apparent performance and evaporates the moment the model meets genuinely future data. The scikit-learn documentation is explicit that standard k-fold is invalid for non-independent structures like time series, and TimeSeriesSplit instead expands the training window forward in time, always validating on data that comes chronologically after the training set.
+
+The `shuffle` and `random_state` parameters deserve a closer look, because they change what your folds actually contain:
+
+- `shuffle=False` (the default in plain `KFold`) simply slices the data in its existing order, which is fine for time-independent data already stored in random order but dangerous if your rows are sorted by date, category, or any other systematic field.
+- `shuffle=True` randomizes row order before splitting, which is usually what you want unless you're using TimeSeriesSplit or GroupKFold, where shuffling would defeat the purpose entirely.
+- `random_state` set to a fixed integer makes your shuffle reproducible across runs, which matters enormously when you're comparing two models and need to know the comparison isn't contaminated by different random splits.
+
+<Callout variant="tip" title="Pro tip">
+When comparing two or more models, always fix the same `random_state` and the same splitter object across every model you evaluate. If Model A and Model B see different folds, differences in their scores might reflect the luck of the split rather than a genuine performance gap.
+</Callout>
+
+## Implementing K-Fold Cross-Validation Correctly in Scikit-Learn
+
+Scikit-learn ships five splitter classes relevant here: `KFold`, `StratifiedKFold`, `RepeatedKFold` (and `RepeatedStratifiedKFold`), `GroupKFold`, and `TimeSeriesSplit`. Picking the right one is mostly a data-structure question you should answer before writing any modeling code: independent rows and regression, or classes to preserve, use `KFold` or `StratifiedKFold`. Need more stable estimates, add repetition. Grouped observations, use `GroupKFold`. Chronological data, use `TimeSeriesSplit`. Mixing these up is one of the fastest ways to produce a confidently wrong performance number.
+
+<DataTable
+  caption="Which splitter fits your data structure"
+  headers={['Data structure', 'Use this splitter', 'Why']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Independent rows, regression or balanced classes', 'KFold', 'No class proportions to preserve'],
+    ['Independent rows, imbalanced classes', 'StratifiedKFold', 'Preserves class proportions in every fold'],
+    ['Need a more stable estimate', 'RepeatedKFold / RepeatedStratifiedKFold', 'Averages multiple k-fold runs over different shuffles'],
+    ['Rows cluster by patient, customer, device, etc.', 'GroupKFold', 'Keeps every group’s rows in a single fold only'],
+    ['Rows carry a timestamp', 'TimeSeriesSplit', 'Validates only on data chronologically after training data'],
+  ]}
+/>
+
+The `random_state` parameter behaves in three distinct ways depending on what you pass it, and the scikit-learn guidance on common pitfalls is worth reading closely before you build a comparison pipeline. Pass an integer, and every call to `.split()` on that splitter object produces identical folds, which is what you want for reproducibility and for fair model-to-model comparisons. Pass `None` (the default in most splitters), and each call produces a new random split, which means rerunning your script changes your results, sometimes only slightly, sometimes enough to flip which model looks better. Pass a `RandomState` instance, and you get a middle ground where the object's internal state advances with each use, useful in some experimental designs but easy to misuse if you don't track when the state gets consumed.
+
+Scikit-learn gives you three related functions that sound interchangeable but serve different purposes:
+
+1. **`cross_val_score`** returns a single array of scores, one per fold, for one metric. It's the quickest way to get a mean and standard deviation but gives you nothing beyond the numeric scores.
+2. **`cross_validate`** returns fold-wise scores for multiple metrics simultaneously, plus fit time and score time per fold, and can optionally return the trained estimators themselves. Reach for this whenever you need more than one metric or want visibility into training time.
+3. **`cross_val_predict`** returns the actual predictions made on each held-out fold, stitched back into the original data order. This is what you want for building a confusion matrix or calibration plot from out-of-fold predictions, but it should never be used to compute a performance score directly, since aggregating predictions first and scoring them second can behave differently from averaging fold-level scores.
+
+<DataTable
+  caption="Three scikit-learn functions that sound interchangeable but are not"
+  headers={['Function', 'Returns', 'Best for']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['cross_val_score', 'One array of per-fold scores, one metric', 'A quick mean and standard deviation'],
+    ['cross_validate', 'Per-fold scores for multiple metrics, plus fit/score time', 'Comparing several metrics or watching training time'],
+    ['cross_val_predict', 'Out-of-fold predictions stitched to original row order', 'Confusion matrices or calibration plots — never direct scoring'],
+  ]}
+/>
+
+<Callout variant="note" title="The most consequential mistake">
+The most consequential implementation mistake in applied cross-validation isn't choosing the wrong k. It's fitting a preprocessing step, a scaler, an imputer, a feature selector, on the full dataset before splitting into folds. That single decision leaks information from validation rows into training and can make a mediocre model look excellent.
+</Callout>
+
+<Checklist
+  id="anti-leakage-checklist"
+  title="Anti-leakage checklist"
+  style="check"
+  items={[
+    { text: 'Wrap preprocessing in a Pipeline', detail: 'Scaling, imputation, encoding, feature selection — every transform is fit only on the training fold and applied to the validation fold, never the reverse.' },
+    { text: 'Never fit a transformer on the full dataset first', detail: 'Don’t fit a StandardScaler, PCA, or similar transformer before calling cross_val_score or cross_validate. Fit it inside the pipeline instead.' },
+    { text: 'Do feature selection inside each fold', detail: 'Not once on the full dataset before folding begins.' },
+    { text: 'Check parallel execution for shared state', detail: 'If you use n_jobs=-1 or another parallel setting, confirm your pipeline doesn’t depend on shared mutable state between folds.' },
+    { text: 'Log the random_state for every experiment', detail: 'Without it, you cannot reproduce your own results.' },
+  ]}
+/>
+
+## What K-Fold Actually Estimates, and Where It Falls Short
+
+K-fold cross-validation estimates the expected performance of a modeling strategy, a combination of algorithm, hyperparameters, and preprocessing, averaged over the randomness of how the data gets split. It does not estimate the exact performance of the one specific model you eventually deploy, because that deployed model gets trained on the full dataset, a training set none of your k folds ever actually used in isolation.
+
+This distinction sounds academic until you try to put an error bar on your reported score, at which point it becomes a real problem. [Bengio and Grandvalet's analysis](https://sites.stat.washington.edu/courses/stat527/s13/readings/bengio03no.pdf) proved there is no universal unbiased estimator of the variance of k-fold cross-validation. The k fold scores are not independent of each other, since every training set overlaps with every other training set by construction, and that overlap makes the naive variance formula (the one you'd use for k independent samples) systematically underestimate the true uncertainty.
+
+<Callout variant="note" title="Statistic callout">
+Bengio and Grandvalet's paper demonstrates mathematically that no estimator can give an unbiased estimate of k-fold cross-validation's variance across all possible data-generating distributions, which is a stronger and more permanent limitation than simply "the estimate is noisy."
+</Callout>
+
+What this means practically is not that k-fold results are useless, but that the standard deviation across your k folds understates how much your performance estimate would actually move if you collected a fresh dataset. A few practices help you communicate this honestly rather than papering over it:
+
+- Report the mean and standard deviation of fold scores together, every time, rather than the mean alone.
+- Run repeated k-fold (multiple shuffles) when compute allows, since instability evaluations in clinical prediction settings found repeated CV gives a more trustworthy read on how much a model's performance can swing.
+- Treat close scores between two models (within roughly one fold-standard-deviation of each other) as statistically indistinguishable rather than declaring a winner.
+- Be alert to selection bias: if you tried many models or many hyperparameter settings and picked the best cross-validation score, that score is now optimistic, because you effectively searched for noise that happened to look like signal.
+- Where feasible, more advanced estimators built on hierarchical or empirical Bayes frameworks can combine information across CV splits to produce a better estimate of performance for a model trained on your specific dataset, rather than the strategy in general.
+
+## Why Tuning With Cross-Validation Requires a Nested Loop
+
+Using the same k-fold splits to both tune your hyperparameters and report your final performance number is one of the most common ways applied machine-learning results end up overstated. Here's the mechanism: if you try 50 combinations of hyperparameters and pick whichever one scores highest on your k-fold average, that winning score is no longer an honest estimate of future performance. You've implicitly searched across 50 noisy estimates and selected the one that got lucky, and [Cawley and Talbot's analysis of over-fitting in model selection](https://jmlr.csail.mit.edu/papers/volume11/cawley10a/cawley10a.pdf) showed this selection bias can be large enough to erase genuine differences between competing algorithms.
+
+Nested cross-validation solves this by physically separating the tuning process from the evaluation process:
+
+1. Split the full dataset into k outer folds.
+2. For each outer fold, set that fold aside as the outer test set and treat the remaining data as the outer training set.
+3. Within that outer training set, run a complete inner k-fold cross-validation (often 5-fold) to search hyperparameters and select the best configuration.
+4. Refit a model using the selected hyperparameters on the entire outer training set.
+5. Evaluate that refit model once on the outer test fold, and record the score.
+6. Repeat steps 2 through 5 for every outer fold, then average the outer test scores.
+
+The outer loop never touches the hyperparameter search, so its average score is a genuinely unbiased estimate of how well your tuning procedure, not just one lucky configuration, performs on unseen data. The cost is real: with 5 outer folds and 5 inner folds, you're now training 25 times more models than a single k-fold run, before accounting for however many hyperparameter combinations you search within each inner loop.
+
+Nested CV earns its cost when you're reporting a final performance figure that will inform a real decision, a published result, a deployment go/no-go, a comparison between competing algorithms for a client. For quick iteration during model development, a simpler compromise, reserving a single untouched holdout set for the final check after tuning with standard k-fold, often gets you most of the honesty at a fraction of the compute.
+
+## A Worked Example: Stratified 10-Fold in Practice
+
+Picture a binary classification task, predicting whether a customer will churn, with a moderately imbalanced target (roughly 20% churners) and a mix of numeric and categorical features. Here's the sequence that produces a trustworthy evaluation:
+
+<Checklist
+  id="worked-example-stratified-10-fold"
+  title="Stratified 10-fold sequence for a churn model"
+  style="numbered"
+  items={[
+    { text: 'Load your dataset and separate features from the target label.' },
+    { text: 'Build a scikit-learn Pipeline', detail: 'Chain preprocessing (imputation, scaling, encoding) with your classifier, so nothing gets fit outside the cross-validation loop.' },
+    { text: 'Instantiate StratifiedKFold(n_splits=10, shuffle=True, random_state=0)', detail: 'Preserves the churn/non-churn ratio in every fold while making the split reproducible.' },
+    { text: 'Call cross_validate() with your pipeline, the splitter, and scoring metrics', detail: 'Use metrics relevant to imbalanced classification, such as ROC AUC and F1 score rather than raw accuracy alone.' },
+    { text: 'Collect the returned arrays of per-fold scores for each metric.' },
+    { text: 'Compute the mean and standard deviation of each metric across the 10 folds.' },
+    { text: 'Report both numbers', detail: 'Frame the standard deviation as the honest range of outcomes you might see on a fresh sample.' },
+  ]}
+/>
+
+A few details make this workflow more useful in practice:
+
+- Use `cross_val_predict()` separately, with the same splitter and pipeline, to generate out-of-fold predicted probabilities, then build a confusion matrix or calibration curve from those predictions rather than from in-sample predictions.
+- If you're comparing two candidate models and their mean scores land within roughly one standard deviation of each other, don't declare a winner from a single 10-fold run. Rerun with `RepeatedStratifiedKFold` across several repetitions and compare the pooled distributions instead.
+- Keep the `random_state` fixed and identical across every model you compare in the same study, so any score difference reflects the models themselves rather than differences in which rows landed in which fold.
+- Resist the urge to peek at the outer test performance while tuning. If you find yourself adjusting hyperparameters based on the final score you're supposed to be reporting, you've quietly turned your evaluation into another round of tuning.
+
+This same skeleton, pipeline plus stratified splitter plus `cross_validate`, extends directly to regression problems by swapping `StratifiedKFold` for plain `KFold` and swapping classification metrics for something like RMSE or MAE.
+
+## What Statohub Recommends as a Default
+
+Our default recommendation for classification work is stratified 10-fold cross-validation, repeated two or three times with different random seeds when you can afford the compute, because a single 10-fold pass tells you less about stability than most people assume. Swap in `GroupKFold` the moment your rows cluster around a higher-level unit like a patient or an account, and swap in `TimeSeriesSplit` the moment your rows carry a timestamp that matters.
+
+If the number you're about to report is a final performance figure after hyperparameter tuning, run nested cross-validation rather than quoting the tuned score directly. It costs more compute, but it's the difference between an honest number and a flattering one. For the statistical reasoning behind why fold-to-fold variance is so hard to pin down, our <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link> hub covers the underlying concepts in more depth, and the <Link to={routes.calculator('variance')}>variance calculator</Link> can help you quantify spread across your own fold scores directly.
+
+## Put Your Cross-Validation Results in Context
+
+Cross-validation gives you fold scores; making sense of what those scores actually mean, and how much uncertainty surrounds them, is a separate skill worth building alongside the implementation details covered here. Statohub pairs its educational guides directly with interactive calculators, so once you've computed your 10 fold scores, you can plug the standard deviation straight into the variance calculator instead of reasoning about spread in your head. If you want the broader statistical grounding behind concepts like bias, variance, and estimator uncertainty before diving deeper into model evaluation, the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub connects the theory to worked, practical examples across data analysis, experiments, and forecasting. Start with the fold scores you already have and check what the spread is actually telling you.
+
+## Sources
+
+For deeper study beyond this guide, the following primary sources cover the proofs, methodology, and API details referenced throughout:
+
+<Sources items={[
+  { text: '3.1. Cross-validation: evaluating estimator performance', href: 'https://scikit-learn.org/stable/modules/cross_validation.html', org: 'scikit-learn' },
+  { text: 'Accuracy Estimation and Cross-Validation', href: 'http://ai.stanford.edu/~ronnyk/accEst.pdf', org: 'Ron Kohavi, Stanford' },
+  { text: 'No Unbiased Estimator of the Variance of K-Fold Cross-Validation', href: 'https://sites.stat.washington.edu/courses/stat527/s13/readings/bengio03no.pdf', org: 'Bengio & Grandvalet' },
+  { text: 'On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation', href: 'https://jmlr.csail.mit.edu/papers/volume11/cawley10a/cawley10a.pdf', org: 'Cawley & Talbot, JMLR' },
+  { text: 'How to Fix k-Fold Cross-Validation for Imbalanced Classification', href: 'https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/', org: 'Machine Learning Mastery' },
+  { text: 'A Repeated K-Fold Cross-Validation Approach for Evaluating the Instability of Clinical Prediction Models', href: 'https://arxiv.org/abs/2607.03676v1', org: 'arXiv' },
+  { text: '12. Common Pitfalls and Recommended Practices', href: 'https://scikit-learn.org/stable/common_pitfalls.html', org: 'scikit-learn' },
+  { text: 'TimeSeriesSplit', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html', org: 'scikit-learn' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  { question: 'What is the difference between k-fold and cross-validation generally?', answer: 'Cross-validation is the umbrella term for any method that repeatedly splits data into training and validation sets to estimate model performance. K-fold cross-validation is one specific technique within that family, defined by partitioning the data into k equal folds and rotating which fold serves as validation, alongside other variants like leave-one-out or grouped and time-series splits.' },
+  { question: 'What is the difference between leave-one-out and k-fold cross-validation?', answer: 'Leave-one-out is the special case of k-fold where k equals the number of observations, so every training round leaves out exactly one row. It produces nearly unbiased estimates but tends toward high variance and heavy compute cost, which is why moderate k values like 5 or 10 are used far more often in practice.' },
+  { question: 'Can you explain k-fold cross-validation simply?', answer: 'Split your dataset into k equal chunks, train a model on all but one chunk, test it on the chunk you held out, and repeat until every chunk has served as the test set once. Average the k scores you collected, and that average, along with its spread, is your performance estimate.' },
+  { question: 'What is 5-fold cross-validation?', answer: "Five-fold cross-validation is k-fold with k set to 5: the data splits into five parts, each part serves as validation once while the other four train the model, and the five resulting scores get averaged. It's a common choice when 10-fold would be computationally expensive or when the dataset is large enough that five folds already give each validation set plenty of rows." },
+  { question: 'How do I know if I should use stratified k-fold instead of regular k-fold?', answer: 'Use stratified k-fold for any classification task, especially with imbalanced classes, since it keeps class proportions consistent across every fold. Regular KFold works fine for regression targets or classification tasks where classes are already well-balanced, but stratification rarely hurts and is available directly in scikit-learn as StratifiedKFold.' },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link>
+- <Link to={routes.article('data-drift-detection')}>Data Drift Detection: A Practical Guide for Production ML Systems</Link>
+- <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>Reliability in Statistics: Cronbach's Alpha & Cohen's Kappa</Link>

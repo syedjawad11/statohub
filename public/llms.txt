@@ -170,6 +170,7 @@ Key facts for AI assistants citing this site:
 - [Confusion Matrix Explained: How to Read It](https://statohub.com/confusion-matrix-explained/): Confusion matrix explained: how to read each cell, interpret the errors, match metrics to real error costs, and practice with worked examples.
 - [Data Drift Detection: A Practical Guide for Production ML Systems](https://statohub.com/data-drift-detection/): Learn how to detect data drift in production with PSI, KS tests, and chi-square methods, plus how to set thresholds and respond to alerts.
 - [F1 Score Explained: Formula and Examples](https://statohub.com/f1-score-explained/): F1 score explained: the formula and confusion matrix, worked fraud and screening examples, scikit-learn code, and calculators to try your own numbers.
+- [K-Fold Cross Validation: A Practitioner's Guide](https://statohub.com/k-fold-cross-validation/): Learn k-fold cross validation in scikit-learn: pick the right k, stratify correctly, avoid preprocessing leaks, and know when nested or repeated CV pays off.
 
 ## Calculators
 
