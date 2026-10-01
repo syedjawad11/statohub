@@ -27,9 +27,10 @@ large files, deletes work -- with no new private key to manage; the credential
 is the `gh` token already stored in the macOS keychain. `git push --dry-run`
 was verified on setup.
 
-**Consequences:** Mac toolchain, for anyone reproducing it: Homebrew
-`node@20` (keg-only; `/opt/homebrew/opt/node@20/bin` is on `PATH` via
-`~/.zprofile`), system `/usr/bin/python3` (3.9 -- all repo scripts run on it),
+**Consequences:** Mac toolchain, for anyone reproducing it: Node 20 via
+`fnm` (Homebrew), which reads `.nvmrc` on `cd` -- other projects on the Mac
+need other Node majors, so no single Node sits on `PATH`; the hook is
+`fnm env --use-on-cd` in `~/.zprofile`, system `/usr/bin/python3` (3.9 -- all repo scripts run on it),
 system `sqlite3`. After a fresh clone: `npm ci`, then
 `python3 scripts/db_sync.py rebuild` (per [[0018-sqlite-boards-as-sql-dumps]]).
 macOS's filesystem is case-insensitive; Linux CI is not, so a rename that only
