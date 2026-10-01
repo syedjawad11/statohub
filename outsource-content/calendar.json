@@ -272,6 +272,13 @@
       "title": "K-Fold Cross Validation",
       "slug": "k-fold-cross-validation",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 40,
+      "day_label": "2026-09-24",
+      "title": "Train Test Split",
+      "slug": "train-test-split",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }
