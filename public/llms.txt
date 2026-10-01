@@ -171,6 +171,7 @@ Key facts for AI assistants citing this site:
 - [Data Drift Detection: A Practical Guide for Production ML Systems](https://statohub.com/data-drift-detection/): Learn how to detect data drift in production with PSI, KS tests, and chi-square methods, plus how to set thresholds and respond to alerts.
 - [F1 Score Explained: Formula and Examples](https://statohub.com/f1-score-explained/): F1 score explained: the formula and confusion matrix, worked fraud and screening examples, scikit-learn code, and calculators to try your own numbers.
 - [K-Fold Cross Validation: A Practitioner's Guide](https://statohub.com/k-fold-cross-validation/): Learn k-fold cross validation in scikit-learn: pick the right k, stratify correctly, avoid preprocessing leaks, and know when nested or repeated CV pays off.
+- [Train Test Split: A Data Leakage Checklist](https://statohub.com/train-test-split/): A practical train test split guide for sklearn: choosing 80/20 vs 90/10 ratios, stratified splits, avoiding leakage, and when to use a holdout set instead.
 
 ## Calculators
 
