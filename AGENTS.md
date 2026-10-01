@@ -50,9 +50,11 @@ Read the one relevant to your task, skip the rest:
   typed registry in `src/lib/links.ts`.
 - **Lean, no over-engineering.** A small reproducible script beats a framework;
   don't touch sibling folders.
-- This workspace is Linux (migrated from Windows 2026-08). A `spawn EPERM` on
-  `npm test` / `astro build`, or an `npm install` "cached-only" failure, is a
-  sandbox approval prompt — approve and re-run rather than changing the code.
+- This workspace is macOS on Apple Silicon (Windows -> Linux 2026-08 -> Mac
+  2026-10, [[0027-macos-workspace]]). Node 20 is Homebrew's keg-only `node@20`
+  at `/opt/homebrew/opt/node@20/bin`. A `spawn EPERM` on `npm test` /
+  `astro build`, or an `npm install` "cached-only" failure, is a sandbox
+  approval prompt — approve and re-run rather than changing the code.
 
 ## Gates before handing off
 

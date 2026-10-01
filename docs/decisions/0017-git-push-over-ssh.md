@@ -2,7 +2,7 @@
 number: 0017
 title: Pushes go back to local git over SSH; GitHub MCP is a fallback
 type: process
-status: accepted
+status: superseded-by-0027
 date: 2026-09-01
 ---
 

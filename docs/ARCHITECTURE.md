@@ -109,8 +109,9 @@ via the repo secret `CLOUDFLARE_API_TOKEN`.
 **Three gates to run before any push, always:** `npx astro check` (expect 0/0/0),
 `npm test` (Vitest), `npm run build` (includes the link gate -- expect 0 violations).
 
-Claude pushes to `main` with plain `git push` over SSH -- see
-[[0017-git-push-over-ssh]], which supersedes the GitHub-MCP-only flow of
+Claude pushes to `main` with plain `git push` over HTTPS, authenticated by the
+`gh` CLI credential helper -- see [[0027-macos-workspace]], which supersedes the
+SSH flow of [[0017-git-push-over-ssh]] and the GitHub-MCP-only flow of
 [[0016-github-mcp-for-pushes]]. The MCP server remains a fallback, with hard
 limits (no binary files, no deletes, whole-file overwrites only).
 

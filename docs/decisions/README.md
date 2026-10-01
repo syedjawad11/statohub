@@ -24,7 +24,7 @@
 | [0014](0014-applied-section-url-family.md) | Applied Statistics lives at flat root URLs, not under /blog/ | architecture | accepted | 2026-08-16 |
 | [0015](0015-wedge-scoped-to-learn.md) | The wedge is scoped to Learn; Applied articles need no calculator | product | accepted | 2026-08-16 |
 | [0016](0016-github-mcp-for-pushes.md) | GitHub pushes go through the GitHub MCP server, not local git credentials | process | superseded-by-0017 | 2026-08-27 |
-| [0017](0017-git-push-over-ssh.md) | Pushes go back to local git over SSH; GitHub MCP is a fallback | process | accepted | 2026-09-01 |
+| [0017](0017-git-push-over-ssh.md) | Pushes go back to local git over SSH; GitHub MCP is a fallback | process | superseded-by-0027 | 2026-09-01 |
 | [0018](0018-sqlite-boards-as-sql-dumps.md) | SQLite boards are tracked as SQL dumps, not binary blobs | architecture | accepted | 2026-09-01 |
 | [0019](0019-outsource-word-floor.md) | Outsource pillar gets its own word floor (1,500), below the Applied 3,000 | content | accepted | 2026-09-02 |
 | [0020](0020-outsource-is-applied-only.md) | Outsourced content is Applied-only; Applied has exactly four category hubs | content | accepted | 2026-09-02 |
@@ -34,6 +34,7 @@
 | [0024](0024-team-byline-and-trust-pages.md) | Team byline only with git-derived dates; editorial policy, contact and terms pages; no Person schema | content | accepted | 2026-09-20 |
 | [0025](0025-adsterra-interim-monetization.md) | Adsterra banners as interim ads (popunder + native pulled same day) while AdSense is unapproved; AdSense code stays | architecture | accepted | 2026-09-27 |
 | [0026](0026-outsource-daily-cloud-routine.md) | Daily claude.ai cloud routine publishes one outsourced article per run and auto-queues new vendor drafts | process | accepted | 2026-09-27 |
+| [0027](0027-macos-workspace.md) | Workspace moves to macOS (Apple Silicon); pushes go over HTTPS via the `gh` credential helper | process | accepted | 2026-10-01 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new
