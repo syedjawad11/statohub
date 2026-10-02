@@ -1,0 +1,229 @@
+---
+title: "Control Confounders with DAGs"
+h1: "Control Confounders with DAGs and the Disjunctive Cause Rule"
+description: "A practical guide to control confounders with DAGs: apply the disjunctive cause rule, run balance and propensity-score checks, and report sensitivity analyses."
+category: experiments-causality
+primaryKeyword: "control confounders with dags"
+keywords:
+  - control confounders with dags
+  - disjunctive cause rule
+  - propensity score checks
+  - sensitivity analyses
+  - balance checks
+phase: 1
+related:
+  - intention-to-treat
+  - multiple-comparisons-problem
+  - difference-in-differences
+draft: false
+pubDate: 2026-10-02
+updatedDate: 2026-10-02
+reviewedDate: 2026-10-02
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+You control confounders by preventing them at the design stage through randomization, restriction, or matching, or by adjusting for them analytically with regression or propensity-score methods. When measurement of every confounder is not possible, instrumental variables, negative controls, and sensitivity analyses probe what remains. The single hazard to guard against: adjusting for a collider or a mediator instead of a true confounder, which can introduce bias rather than remove it.
+
+<KeyTakeaways rows={[
+  { point: 'Design beats correction', details: 'Randomization and matching are the most effective design-stage methods, but they are often limited by ethical, practical, or sample size constraints.' },
+  { point: 'Three-part adjustment test', details: 'Adjustment variables must meet criteria such as being measured before exposure and being true causes of both exposure and outcome to avoid bias.' },
+  { point: 'Propensity scores need diagnostics', details: 'Propensity score techniques can improve confounder balancing but require careful evaluation of score overlap and covariate balance diagnostics.' },
+  { point: 'Mediators and colliders are not confounders', details: 'Adjusting for mediators or colliders introduces bias, so proper causal structure understanding via DAGs is essential for variable selection.' },
+  { point: 'Bound what you cannot measure', details: 'Sensitivity analyses like E-values and negative controls help estimate the impact of unmeasured confounders when adjusting for measured variables is insufficient.' },
+]} />
+
+## What counts as a confounder and when to adjust
+
+A confounder is a variable that causes both the exposure and the outcome, and that is not itself a consequence of the exposure. The classic identification rule requires three conditions: the variable must be associated with the exposure, associated with the outcome independent of the exposure, and not lie on the causal pathway between them. A Directed Acyclic Graph, or DAG, makes these relationships visible by mapping arrows between exposure, outcome, and candidate covariates, which lets an analyst trace which paths are causal and which are not. [DAGs help distinguish causal paths from non-causal ones](https://pubmed.ncbi.nlm.nih.gov/27091131/) and identify a minimally sufficient adjustment set that blocks back-door paths without opening new ones through a collider.
+
+Three practical criteria help decide which variables belong in that adjustment set:
+
+- **Pretreatment criterion**: only include variables measured before the exposure occurred, since a variable measured after exposure may already be affected by it.
+- **Common-cause criterion**: include a variable if it plausibly causes both exposure and outcome, even without formal statistical testing.
+- **Modified disjunctive cause criterion**: include any pretreatment covariate that affects the exposure, the outcome, or both, which is a practical compromise when the full causal structure is not known. A [2024 methodological tutorial](https://pmc.ncbi.nlm.nih.gov/articles/PMC11637813/) describes this criterion as a way to balance thoroughness against the risk of adjusting for the wrong variables.
+
+Instrumental variables and mediators should generally stay out of the adjustment set. An instrument affects the outcome only through the exposure, so conditioning on it can amplify bias from any unmeasured confounding that remains. A mediator lies on the causal path you are trying to estimate, so adjusting for it removes part of the effect you are studying rather than a source of bias. Confusing either with a genuine confounder is one of the more common ways an analysis goes wrong before a single model is fit.
+
+## Design-stage controls: randomization, restriction, and matching
+
+Design-stage fixes prevent confounding before any data is collected, which makes them preferable to statistical correction whenever they are feasible. Analytic adjustment corrects for confounders you can measure. Design controls remove the problem for confounders you may never think to measure at all.
+
+1. **Randomization** assigns exposure independently of any covariate, measured or not, so that treatment groups are balanced on average across every characteristic that might otherwise confound the comparison. Its limits are practical rather than statistical: randomization is not always ethical or feasible outside controlled experiments, and small samples can still produce chance imbalance in a particular covariate even under proper randomization.
+2. **Restriction** narrows the study population to a single level of a confounder, such as studying only nonsmokers when smoking would otherwise confound a comparison. This removes the confounder's influence entirely within the restricted sample but limits how far the findings generalize to groups outside that stratum.
+3. **Matching** pairs exposed and unexposed subjects who share values on selected confounders, which controls those variables by construction. The choice of matching variables and their granularity matters: overly coarse categories leave residual imbalance, while overly fine matching can shrink the usable sample. Matched data also require analysis methods that account for the matched structure, such as conditional logistic regression, rather than an unadjusted comparison of group means.
+
+<Callout variant="tip" title="Pro tip">
+Decide on your design-stage controls before collecting data. Retrofitting matching or restriction after the fact usually means discarding cases, which can introduce the very selection bias you were trying to avoid.
+</Callout>
+
+## Analysis-stage control methods: stratification, regression, and standardization
+
+When design-stage prevention is not an option, or when confounders are numerous, analytic adjustment does the work instead. Stratification, the analytic cousin of restriction, splits the sample into subgroups defined by a confounder and compares exposure and outcome within each stratum before pooling the results with a weighted average, often through the Mantel-Haenszel method. Stratification works well for one or two categorical confounders with a manageable number of levels, but it becomes unwieldy once several confounders are involved, since the number of strata grows quickly and some cells end up too sparse to estimate reliably.
+
+Multivariable regression handles that situation more gracefully by including all suspected confounders as covariates in a single model, whether linear, logistic, or a proportional hazards model depending on the outcome. A few modeling choices affect how well this works in practice:
+
+- **Functional form** matters because a continuous confounder assumed to have a linear effect, when its true relationship is curved, will leave residual confounding even after adjustment.
+- **Interaction terms** are worth testing when the effect of exposure plausibly differs across confounder levels, since a model that forces a single average effect can mask meaningfully different subgroup effects.
+- **Categorical handling** requires care with reference groups and dummy coding, particularly when a category has few observations and produces unstable estimates.
+
+Standardization offers an alternative to regression coefficients: it computes what the outcome rate would be if every group had the same distribution of a confounder, which produces an adjusted rate that is easier to communicate to a non-technical audience than a regression coefficient.
+
+Diagnosing whether adjustment actually worked matters as much as running the model. Balance checks compare the distribution of confounders across exposure groups after adjustment, and a <Link to={routes.article('multicollinearity-vif')}>related guide on multicollinearity and variance inflation factors</Link> explains how to check whether correlated covariates are distorting standard errors and, in turn, the adjusted estimate. A large gap between the crude and adjusted estimate signals that confounding was present and the adjustment mattered. A gap that persists across several plausible model specifications, on the other hand, often points to residual confounding from a variable that was measured imperfectly or left out entirely.
+
+<Callout variant="note" title="Measurement note">
+Imperfect measurement of a confounder typically leaves residual confounding roughly proportional to the size of the original confounding, according to methodological work on imperfectly measured confounders. In rare cases of extreme misclassification, adjustment can theoretically worsen bias rather than reduce it.
+</Callout>
+
+Reporting practice follows from this: present both the crude and the adjusted estimate side by side rather than the adjusted figure alone, so a reader can judge how much the covariates changed the picture.
+
+## Propensity score approaches: matching, weighting, and doubly robust methods
+
+The propensity score is the probability that a given subject received the exposure, conditional on their measured covariates. Instead of adjusting for each confounder separately inside an outcome model, a single propensity score summarizes all of them at once, which separates the design of the comparison from the modeling of the outcome. Standard methods for confounding control in registry-based studies describe this separation as one of the main practical advantages of propensity-score methods over direct regression adjustment, since it lets an analyst check covariate balance before ever looking at the outcome.
+
+Building the propensity score model follows the same selection logic as any other adjustment set: include variables that predict the exposure, the outcome, or both, and exclude anything that behaves like an instrument, since including an instrument in a propensity model can inflate variance without reducing bias.
+
+Once the score is estimated, several diagnostic and analytic choices follow:
+
+- **Standardized mean differences and love plots** show whether covariates are balanced between exposure groups after matching or weighting, with values under roughly 0.1 generally considered acceptable.
+- **Trimming and calipers** remove or restrict matches with poorly overlapping propensity scores, since areas with no overlap between groups cannot support a valid comparison.
+- **Matching versus inverse probability weighting** trades sample size for precision: matching discards unmatched subjects, while weighting keeps everyone but can produce unstable estimates when scores cluster near 0 or 1.
+- **Overlap weighting** downweights subjects at the extremes of the score distribution, which tends to produce more stable estimates than standard inverse probability weighting when overlap is imperfect.
+- **Doubly robust estimators**, such as augmented inverse probability weighting or targeted maximum likelihood estimation, combine a propensity model with an outcome model so that the estimate stays consistent if either model, though not necessarily both, is correctly specified.
+
+<Callout variant="tip" title="Pro tip">
+Always inspect the propensity score distribution before running the outcome analysis. A histogram with little overlap between exposed and unexposed groups is a warning that no adjustment method will fully fix, since it usually means the two groups are not comparable to begin with.
+</Callout>
+
+## Tools for confounding you cannot measure
+
+Measured confounders can be handled through the methods above, but some confounders are never recorded, whether because they were not anticipated or because they cannot be observed at all. A few tools exist to probe or bound the resulting bias rather than eliminate it outright.
+
+- **Instrumental variables** rely on a factor that influences the exposure but affects the outcome only through that exposure, which lets an analyst estimate a causal effect without directly controlling for the unmeasured confounder. The approach depends on three assumptions that are often hard to verify in practice: relevance, meaning the instrument actually predicts exposure; exclusion, meaning it affects the outcome only through exposure; and independence, meaning it shares no common cause with the outcome.
+- **Negative control outcomes and exposures** test whether an association appears where none should exist. A negative control outcome is a variable that the exposure should not plausibly affect, so an association there suggests unmeasured confounding is at work; a negative control exposure serves the same check from the other direction.
+- **Sensitivity analyses**, including the E-value and the robustness value, quantify how strong an unmeasured confounder would need to be, in terms of its association with both exposure and outcome, to fully explain away an observed effect. A 2024 tutorial on confounder selection and sensitivity analysis walks through calculating both metrics and interpreting them alongside the primary estimate rather than as a replacement for it.
+
+<Callout variant="note" title="Reading the E-value">
+A larger E-value indicates that only an implausibly strong unmeasured confounder could account for the observed association, which strengthens confidence in a causal interpretation without proving it. These tools function as robustness checks: none of them replaces careful design, and all of them should be reported alongside, not instead of, the primary adjusted estimate.
+</Callout>
+
+## Colliders, overadjustment, and the residual confounding trap
+
+Some of the most damaging errors in confounder control come from adjusting for the wrong variable rather than failing to adjust at all. A collider is a variable caused by both the exposure and the outcome, and conditioning on it opens a non-causal path between them that did not exist before. [Empirical work using DAGs and propensity-score diagnostics](https://link.springer.com/article/10.1186/s12982-024-00148-3) has shown that stepwise selection of covariates by self-rated health produced a distorted, non-causal association between skin color and heart attack risk precisely because the variable behaved as a collider rather than a confounder.
+
+A few patterns to check for before finalizing an adjustment set:
+
+- **Overadjustment** happens when a mediator, a variable on the causal path from exposure to outcome, gets treated as a confounder and included in the model, which removes part of the effect being estimated rather than a source of bias.
+- **Mechanical selection rules**, such as adding covariates based on p-value cutoffs or percent change in the effect estimate, can pull in colliders or instruments that a DAG-based review would have excluded. [Applied guidance on confounding bias](https://stacks.cdc.gov/view/cdc/87758/cdc_87758_DS1.pdf) notes that adding more variables to a model does not reliably reduce bias and can introduce it instead.
+- **Measurement error in a confounder** leaves residual confounding behind even after adjustment, roughly in proportion to how poorly the variable was measured, which argues for using the most precise version of a covariate available rather than a rough proxy.
+
+A quick check that catches many of these problems: draw the DAG first, decide which variables are confounders under the criteria above, and only then run the model, rather than letting a statistical selection procedure choose covariates on its own.
+
+## Building the workflow: from estimand to robustness checks
+
+A repeatable workflow keeps confounder control consistent across projects and gives reviewers something concrete to evaluate in a methods section.
+
+<Checklist
+  id="confounder-workflow"
+  title="Confounder-control workflow"
+  style="numbered"
+  items={[
+    { text: 'Define the estimand', detail: 'Draw a DAG that maps the hypothesized relationships between exposure, outcome, and candidate covariates before any modeling begins.' },
+    { text: 'List pretreatment covariates', detail: 'Apply the modified disjunctive cause criterion to decide which belong in the adjustment set, excluding instruments and mediators.' },
+    { text: 'Choose a design fix when feasible', detail: 'Randomization, restriction, or matching, falling back on a prespecified analytic approach such as regression or propensity scores when it is not.' },
+    { text: 'Run diagnostics', detail: 'Balance checks for propensity-score methods and residual confounding checks for regression, before interpreting any results.' },
+    { text: 'Report sensitivity analyses', detail: 'The E-value, negative controls, or an instrumental variable estimate where one is available, alongside the primary estimate.' },
+  ]}
+/>
+
+<DataTable
+  caption="What each step in the confounder-control workflow produces"
+  headers={['Workflow step', 'What it produces']}
+  align={['left', 'left']}
+  rows={[
+    ['Define estimand and DAG', 'A documented causal structure to guide variable selection'],
+    ['Apply disjunctive cause criterion', 'A defensible, minimal adjustment set'],
+    ['Select design or analytic method', 'A prespecified plan resistant to post hoc changes'],
+    ['Run balance and residual diagnostics', 'Evidence the adjustment behaved as intended'],
+    ['Report sensitivity analyses', 'A transparent bound on unmeasured confounding'],
+  ]}
+/>
+
+This sequence, published in a methods supplement, gives readers enough detail to judge whether confounding was handled with care rather than assumed away.
+
+## A worked example: exposure, outcome, and adjustment in practice
+
+Consider an observational study comparing outcomes for users of a new feature against non-users, where age, prior engagement, and account tenure plausibly affect both feature adoption and the outcome. A DAG places these three as common causes of exposure and outcome, none as mediators. The adjustment set becomes age, prior engagement, and tenure, entered into a propensity score model. Balance diagnostics show standardized differences under 0.1 after matching, and an E-value calculation suggests only a strong, currently unmeasured confounder could explain away the result. The adjusted estimate still carries the usual caveat: it narrows the gap between association and causation, without closing it.
+
+<Figure number={1} caption="The five-step causal adjustment workflow applied to the worked feature-adoption example: DAG, propensity score, matching, balance check, and E-value sensitivity analysis.">
+  <ProcessFlow
+    title="Causal adjustment workflow"
+    desc="A five-step workflow for the worked example: identify confounders with a DAG, build a propensity score, match units on it, check covariate balance, and run a sensitivity analysis with the E-value."
+    steps={[
+      { label: 'Confounders (DAG)', detail: 'Age, engagement, tenure, exposure and outcome' },
+      { label: 'Propensity score', detail: 'Include those three variables in the model' },
+      { label: 'Matching', detail: 'Match units on the propensity score' },
+      { label: 'Balance check', detail: 'Standardized differences under 0.1 after matching' },
+      { label: 'Sensitivity', detail: 'E-value: only a strong unmeasured confounder' },
+    ]}
+  />
+</Figure>
+
+## Statohub resources behind this guidance
+
+This guide draws on the <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> hub, which covers experimental design and causal inference in more depth, alongside NCBI and PMC methodological reviews cited throughout. The reasoning behind why association is not causation is unpacked further in a companion guide on <Link to={routes.article('correlation-vs-causation')}>correlation versus causation</Link>, useful background before applying any of the adjustment methods above. The editorial approach favors peer-reviewed methodological sources over informal guides when the two disagree.
+
+## A caution worth keeping in mind
+
+Adjustment narrows the gap between association and causation, it rarely closes it. The temptation in applied work is to treat a well-adjusted model as settled fact, when the more honest framing is a robustness check: how much does the estimate survive scrutiny from a different specification, a negative control, or an E-value calculation. Publish the DAG, report the crude estimate next to the adjusted one, and treat a single sensitivity analysis as a floor, not a ceiling, for the checking a causal claim deserves. Readers weighing a causal claim in their own data will get more out of running two or three of these checks than out of a single, more elaborate model.
+
+## Where to go next for design and diagnostics
+
+Confounder control works best alongside the broader toolkit for causal reasoning, which is why the Experiments & Causality hub and the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> sit next to each other on Statohub: one covers the design logic behind randomization and matching, the other shows these methods applied to real datasets and experiments. For the diagnostic side, the <Link to={routes.calculator('chi-square')}>Chi Square Calculator</Link> and <Link to={routes.calculator('probability')}>Probability Calculator</Link> handle quick checks that come up while balancing groups or estimating an E-value by hand. Start at <Link to={routes.home()}>Statohub</Link> for the full path from foundational concepts to applied technique.
+
+## Sources
+
+<Sources items={[
+  { text: 'Methods to control for unmeasured confounding in pharmacoepidemiology: an overview', href: 'https://pubmed.ncbi.nlm.nih.gov/27091131/', org: 'PubMed' },
+  { text: 'Confounding: a routine concern in the interpretation of epidemiological studies', href: 'https://www.ncbi.nlm.nih.gov/books/NBK612871/', org: 'NCBI Bookshelf' },
+  { text: 'Methodological tutorial: confounder selection and sensitivity analyses (2024)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11637813/', org: 'PMC' },
+  { text: 'Empirical work using DAGs and propensity-score diagnostics on collider bias', href: 'https://link.springer.com/article/10.1186/s12982-024-00148-3', org: 'Springer / Archives of Public Health' },
+  { text: 'Austin, P. C. — Balance diagnostics for comparing the distribution of baseline covariates between treatment groups in propensity-score matched samples', href: 'https://pubmed.ncbi.nlm.nih.gov/19757444/', org: 'PubMed / Statistics in Medicine' },
+  { text: 'VanderWeele, T. J. and Ding, P. — Sensitivity Analysis in Observational Research: Introducing the E-Value', href: 'https://pubmed.ncbi.nlm.nih.gov/28693043/', org: 'PubMed / Annals of Internal Medicine' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What does "confounders" mean?',
+    answer: 'A confounder is a variable that causes both the exposure and the outcome being studied, without lying on the causal path between them. Ignoring one can create a false or distorted association between exposure and outcome, according to NCBI Bookshelf guidance on confounding.',
+  },
+  {
+    question: 'What are examples of control variables?',
+    answer: 'Control variables are the confounders selected for adjustment, typically pretreatment factors such as age, prior health status, or baseline behavior that plausibly affect both the exposure and the outcome. A DAG-based selection approach helps confirm a candidate variable is a true confounder rather than a mediator or collider before including it.',
+  },
+  {
+    question: 'What is uncontrolled confounding?',
+    answer: 'Uncontrolled, or residual, confounding occurs when a confounder is left out of an analysis entirely or measured too imprecisely to fully account for its effect. Work on imperfectly measured confounders shows that residual confounding is often roughly proportional to how poorly the variable was captured.',
+  },
+  {
+    question: 'What are the different types of confounders?',
+    answer: 'Confounders are generally grouped as measured versus unmeasured, depending on whether data exists to adjust for them directly. Analysts also distinguish confounders from related but distinct variables: mediators that sit on the causal path, and colliders that both exposure and outcome influence, since treating either as a confounder can introduce bias rather than remove it.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('correlation-vs-causation')}>Correlation vs Causation: Why Correlation Doesn't Imply Causation</Link>
+- <Link to={routes.article('how-to-design-an-ab-test')}>How to Design an A/B Test That Answers Your Question</Link>
+- <Link to={routes.article('simpsons-paradox')}>Simpson's Paradox: Definition, Examples, and Why It Happens</Link>

@@ -144,6 +144,7 @@ Key facts for AI assistants citing this site:
 
 - [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
 - [Bonferroni Correction: A Practical Guide](https://statohub.com/bonferroni-correction/): The Bonferroni correction lowers your significance threshold to control the family-wise error rate across multiple hypothesis tests for reliable results.
+- [Control Confounders with DAGs](https://statohub.com/control-confounders/): A practical guide to control confounders with DAGs: apply the disjunctive cause rule, run balance and propensity-score checks, and report sensitivity analyses.
 - [Difference in Differences Explained](https://statohub.com/difference-in-differences/): Practical guidance on difference in differences: the $4,000 worked example, parallel trends checks, and modern estimator choices for staggered treatment timing.
 - [False Discovery Rate: How to Control It](https://statohub.com/false-discovery-rate/): The false discovery rate controls false positives among your significant results. Learn Benjamini-Hochberg, q-values, and how to pick a threshold.
 - [How to Design an A/B Test That Answers Your Question](https://statohub.com/how-to-design-an-ab-test/): Learn how to design an A/B test before you run it: frame a hypothesis, pick metrics, set the minimum detectable effect, and size the sample.
