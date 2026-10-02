@@ -279,6 +279,13 @@
       "title": "Train Test Split",
       "slug": "train-test-split",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 41,
+      "day_label": "2026-09-26",
+      "title": "Control Confounders with DAGs",
+      "slug": "control-confounders",
+      "category_slug": "experiments-causality"
     }
   ]
 }

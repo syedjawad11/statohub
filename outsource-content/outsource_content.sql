@@ -57,6 +57,7 @@ INSERT INTO "outsource_articles" VALUES('bias-variance-tradeoff','Bias-Variance 
 INSERT INTO "outsource_articles" VALUES('histogram-interpretation','Histogram Interpretation','data-analysis',38,'2026-09-22','886961','published','outsource-content/raw/histogram-interpretation.json','src/content/articles/histogram-interpretation.mdx',1,1,0,7,'','2026-09-29 09:14:11','2026-09-29 09:25:42');
 INSERT INTO "outsource_articles" VALUES('k-fold-cross-validation','K-Fold Cross Validation','machine-learning-statistics',39,'2026-09-24','891644','published','outsource-content/raw/k-fold-cross-validation.json','src/content/articles/k-fold-cross-validation.mdx',1,2,0,8,'','2026-09-30 09:13:42','2026-09-30 09:25:26');
 INSERT INTO "outsource_articles" VALUES('train-test-split','Train Test Split','machine-learning-statistics',40,'2026-09-24','893275','published','outsource-content/raw/train-test-split.json','src/content/articles/train-test-split.mdx',2,1,0,6,'','2026-10-01 09:13:13','2026-10-01 09:23:58');
+INSERT INTO "outsource_articles" VALUES('control-confounders','Control Confounders with DAGs','experiments-causality',41,'2026-09-26','899416','fetched','outsource-content/raw/control-confounders.json',NULL,0,0,0,NULL,'','2026-10-02 09:12:49','2026-10-02 09:12:58');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
