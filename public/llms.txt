@@ -155,6 +155,7 @@ Key facts for AI assistants citing this site:
 - [Propensity Score Matching: A Step-by-Step Guide](https://statohub.com/propensity-score-matching/): Learn propensity score matching step by step, including variable selection, matching methods, caliper choice, and covariate balance checks.
 - [Randomized Controlled Trial (RCT) Explained](https://statohub.com/randomized-controlled-trial/): See how a randomized controlled trial isolates causal effects in medicine, economics, and business, and what makes results credible today.
 - [Sequential Testing Guide: When to Stop Early](https://statohub.com/sequential-testing/): Learn sequential testing with group sequential design and alpha spending, plus a six-step prelaunch checklist for adjusted interim A/B tests.
+- [Spillover Effects in Experiments](https://statohub.com/spillover-effects/): A measurement-first primer on spillover effects in experiments: identify and estimate them in 5 steps, with real empirical magnitudes and sources.
 
 ### Forecasting & Time Series
 

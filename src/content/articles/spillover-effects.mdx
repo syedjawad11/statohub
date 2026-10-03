@@ -1,0 +1,199 @@
+---
+title: "Spillover Effects in Experiments"
+h1: "Make Spillover Effects Identifiable in 5 Steps"
+description: "A measurement-first primer on spillover effects in experiments: identify and estimate them in 5 steps, with real empirical magnitudes and sources."
+category: experiments-causality
+primaryKeyword: "spillover effects in experiments"
+keywords:
+  - spillover effects in experiments
+  - spillover effects
+  - economic spillover impacts
+  - spillover effects in economics
+  - how do spillover effects work
+  - spillover analysis
+  - sutva violation
+  - positive externalities
+phase: 1
+related:
+  - control-confounders
+  - intention-to-treat
+  - multiple-comparisons-problem
+draft: false
+pubDate: 2026-10-03
+updatedDate: 2026-10-03
+reviewedDate: 2026-10-03
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Spillover effects are the indirect consequences that an intervention, shock, or policy in one unit produces in other units that were never its intended target, and they can be positive or negative. They matter because ignoring them biases naive estimates, distorts causal interpretation, and skews the cost-benefit accounting that underlies most policy evaluation. Understanding how to measure and identify spillovers — using methods that address SUTVA violations, network exposure, and quasi-experimental designs — is what separates a defensible estimate from a misleading one.
+
+<KeyTakeaways rows={[
+  { point: 'Channel first', details: 'Spillover magnitude and the right method both depend on the transmission channel — trade, fiscal policy, migration, technology, or social networks.' },
+  { point: 'Methods follow data', details: 'MRIO models, instrumental variables, difference-in-differences, synthetic control, spatial econometrics, and saturation designs each fit a different data and assignment situation.' },
+  { point: 'Bias runs both ways', details: 'SUTVA violations and interference can inflate an estimate just as easily as shrink it toward zero — never assume a spillover-contaminated result is automatically conservative.' },
+  { point: 'Magnitudes are context-dependent', details: 'Trade spillovers average small but economically meaningful; fiscal spillovers intensify with economic slack or a constrained monetary policy.' },
+]} />
+
+## Concept and types: taxonomy of spillovers and transmission channels
+
+Analysts generally sort spillovers along a few dimensions before choosing a method. A spillover can be direct, affecting a treated unit's close neighbor, or indirect, propagating through several links in a chain. It can be positive, such as a productivity gain that diffuses to nearby firms, or negative, such as displacement effects that hurt a competitor. Some spillovers cross borders, others stay local, and some are the deliberate goal of a policy while others are an unintended byproduct that only shows up once you look for it.
+
+Classifying a spillover by its transmission channel is usually more useful for research design than classifying it by sign alone, because the channel determines what data you need and which method can plausibly isolate the effect.
+
+<Figure number={1} caption="The five transmission channels analysts sort a spillover into before choosing a measurement method.">
+  <TaxonomyTree
+    title="Spillover transmission channels"
+    desc="A root node, 'transmission channel,' branches into five categories: trade, financial, migration and labor mobility, technology and knowledge diffusion, and social networks and geographic proximity, each with a short example of how the channel transmits a spillover."
+    root="Transmission channel"
+    branches={[
+      { label: 'Trade channels', children: ['Currency or tariff change alters export competitiveness for firms in other countries'] },
+      { label: 'Financial channels', children: ['Capital flows, interest-rate changes, or a fiscal shock raise or lower demand in linked economies'] },
+      { label: 'Migration & labor mobility', children: ['A regional wage shock or job program changes labor supply and wages in neighboring markets'] },
+      { label: 'Technology & knowledge diffusion', children: ['An innovation at one firm spreads to competitors or suppliers through hiring or supply-chain contact'] },
+      { label: 'Social networks & geographic proximity', children: ['A behavior or health outcome change spreads to peers or neighbors through network structure'] },
+    ]}
+  />
+</Figure>
+
+Each channel implies a different unit of exposure. A trade spillover is best measured through bilateral trade intensity, a social spillover through network degree or geographic distance, and a fiscal spillover through the size of the shock relative to source-country GDP. Getting the channel right early keeps the rest of the analysis grounded, and it is the single most common design decision researchers get wrong when they treat every spillover as a generic contamination problem rather than a specific transmission mechanism.
+
+## How researchers measure spillovers: common methods and data requirements
+
+Once you know the channel, the choice of method mostly follows from what kind of data you can plausibly collect and whether you can influence assignment.
+
+<DataTable
+  caption="Common methods for measuring spillovers and what each one needs"
+  headers={['Method', 'What it traces', 'Data requirement']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Multi-regional input-output (MRIO) models', 'How demand or supply shocks propagate through production linkages across industries and regions', 'Detailed trade or input-output microdata'],
+    ['Instrumental variables (IV)', "A spillover's causal component when exposure correlates with confounders", 'An instrument that shifts exposure without directly affecting the outcome'],
+    ['Difference-in-differences (DiD)', 'Outcome changes between exposed and unexposed units over time', 'A plausible untreated comparison group outside the spillover\'s reach'],
+    ['Synthetic control', 'A weighted comparison unit built from untreated regions or countries', 'Few treated units, many untreated candidates to weight'],
+    ['Spatial econometrics', "A unit's outcome as a function of its own traits and a weighted average of neighbors", 'A network map or distance matrix'],
+    ['Clustered RCTs & saturation designs', 'Direct vs. indirect exposure effects by varying the treated share within clusters', 'Control over assignment and enough clusters to vary treated share'],
+  ]}
+/>
+
+Data requirements scale with the ambition of the method. MRIO work needs detailed trade or input-output microdata; spatial and network methods need a network map or a distance matrix; any panel-based causal design needs enough pre-period and post-period observations to support a credible comparison group; and saturation designs need enough clusters to vary the treated share meaningfully across them. The <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> hub covers the underlying logic of randomization, clustering, and statistical power in more depth, which is worth reviewing before designing a spillover-sensitive experiment.
+
+<Callout variant="tip" title="Pro tip">
+When you cannot randomize, treat exposure as a continuous variable (distance, trade share, network degree) rather than a binary in-or-out flag; it gives you more identifying variation and lets you test whether the effect actually declines with distance, which is a useful falsification check.
+</Callout>
+
+## Identification challenges: SUTVA violations, interference, and modeling pitfalls
+
+The Stable Unit Treatment Value Assumption (SUTVA) requires that one unit's outcome depends only on its own treatment status, not on the treatment assigned to any other unit. Spillovers violate this by construction: if a treated unit's neighbor also changes behavior because of the treatment, the neighbor's "control" outcome is no longer a clean counterfactual. This is the condition researchers call interference, and [network and causal-inference literature](https://blogs.iq.harvard.edu/violations_of_s) treats it as a common, not exotic, problem in field settings. The term SUTVA itself was formalized by Donald Rubin in his classic discussion of randomization-based causal inference.
+
+Several distinct pitfalls flow from this violation, and they do not all point the same direction:
+
+- **Contamination bias** occurs when control units are indirectly exposed to treatment, which shrinks the apparent effect toward zero.
+- **Cross-cluster interference** happens when clusters are defined by administrative boundaries that do not match the real trade, social, or commuting networks the spillover travels through.
+- **Measurement error in exposure** arises when the exposure variable is a rough proxy, such as regional dummy variables standing in for actual bilateral linkages.
+- **Linear-in-means misspecification** assumes a spillover's strength is a simple average of neighbors' outcomes, which can mask non-linear or threshold effects that only appear at high exposure levels.
+
+Interference does not always bias results toward zero. Some spillover structures amplify measured treatment effects rather than dilute them, so assuming that any SUTVA violation is conservative is a mistake worth avoiding explicitly in a robustness section.
+
+A [peer-reviewed policy-implementation framework](https://pmc.ncbi.nlm.nih.gov/articles/PMC8919154/) distinguishes intended from unintended spillovers and lays out identification strategies suited to policy-evaluation settings, which is a useful reference point when writing up a design that has to justify its exposure definition to a skeptical reviewer.
+
+Practical diagnostics include redefining the cluster using an alternative, plausible network boundary and checking whether results hold, running placebo exposure tests on units that should have zero real exposure, trying at least two different exposure measures (say, geographic distance and trade intensity) side by side, and reporting sensitivity bounds that show how the estimate moves as the assumed interference structure changes.
+
+## Representative empirical evidence and magnitudes from the literature
+
+Grounding the discussion in real numbers shows how much magnitude depends on channel, instrument, and macro context, rather than following one universal rule.
+
+Trade and exchange-rate spillovers are among the most studied. A [World Bank working paper (Mattoo, Mishra, and Subramanian, Policy Research Working Paper WPS5989)](https://openknowledge.worldbank.org/server/api/core/bitstreams/7c1bea8b-a5a3-54d3-8c12-27b1e71a560b/content) estimates that a 10 percent appreciation of the Chinese renminbi raises a typical developing country's exports of a given product category to third markets by about 1.5 to 2 percent on average, rising further in the most competitive product categories. A separate World Bank study on industrial policy and preferential trade agreements ([Barattieri, Mattoo, and Taglioni, Policy Research Working Paper WPS10806](https://openknowledge.worldbank.org/server/api/core/bitstreams/c08a5e37-f0e6-48f8-b7cd-151273550646/content)) finds that a new industrial policy measure in a destination market cuts export growth to that market by about 0.28% on average, while membership in a top-decile preferential trade agreement (PTA) with deep subsidy disciplines can raise imports from fellow members by about 0.39%, showing that institutional context can flip a spillover's sign for some countries even while the average effect stays negative.
+
+Fiscal spillovers behave differently, and their size depends heavily on the state of the business cycle. [IMF analysis](https://www.imf.org/-/media/files/publications/spillovernotes/spillovernote11.pdf) finds that a fiscal shock relative to the source country's GDP raises a recipient economy's output by a small amount on impact and somewhat more by its peak, with spending shocks producing larger and more persistent spillovers than tax shocks. These effects grow substantially larger when the recipient economy has economic slack or when its monetary policy is constrained near the effective lower bound, which means the same fiscal action taken in a recession can spill over much more strongly than the identical action taken in a fully employed economy.
+
+Regional transfer effects illustrate a case where a spillover that seems intuitive on paper turns out to be weak in practice. A [St. Louis Fed decomposition](https://www.stlouisfed.org/on-the-economy/2023/aug/decomposing-economic-impact-local-spillover-effects) of federal transfer payments finds that additional transfers to a state strongly increase that state's own income once induced effects are included, but finds little statistically significant evidence of income effects spilling into neighboring states in that historical sample.
+
+- Trade spillovers scale with product-level competitiveness, not just the size of the exchange-rate move.
+- Fiscal spillovers depend on slack, the policy instrument used, and how constrained monetary policy is at the time.
+- Some spillovers that theory predicts, like cross-state transfer effects, turn out to be local and contained rather than diffuse once measured carefully.
+
+## Practical steps for designing and estimating spillovers
+
+A workable spillover study follows a short sequence of design decisions made before data collection begins, not after.
+
+<Checklist
+  id="spillover-design-steps"
+  title="Designing and estimating spillovers"
+  style="numbered"
+  items={[
+    { text: 'Pre-specify the transmission mechanism and exposure definition', detail: 'State in advance whether exposure runs through trade, distance, or network ties.' },
+    { text: 'Collect network, spatial, or bilateral linkage data early', detail: 'Retrofitting exposure measures onto administrative boundaries after the fact is a common source of cross-cluster contamination.' },
+    { text: 'Choose the unit of randomization deliberately, or use a saturation design', detail: 'Vary the treated share within clusters to separate direct effects from indirect exposure effects.' },
+    { text: 'Compute at least two independent exposure measures', detail: 'Geographic distance alongside trade or network intensity, then check whether the results agree.' },
+    { text: 'Report a decomposition of direct versus indirect effects with sensitivity bounds', detail: 'Show how the estimate moves under alternative cluster or network definitions, rather than reporting a single point estimate.' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Run your entire spillover analysis twice, once with the administrative cluster definition and once with a network-based or distance-based cluster, before you trust the headline number; the <Link to={routes.calculator('chi-square')}>chi square calculator</Link> is a fast way to test whether exposure groups differ in ways that hint at contamination.
+</Callout>
+
+## Policy implications: how spillovers affect evaluation, coordination, and design
+
+Ignoring spillovers pushes cost-benefit accounting in a specific direction depending on their sign. Positive spillovers mean a program's true social return is understated when only the direct beneficiaries are counted, while negative spillovers, such as displacement, mean a program's apparent success overstates its actual net benefit once affected outsiders are included.
+
+The magnitude of that error is not fixed. It depends on macro conditions such as slack in the economy and constraints on monetary policy; on whether the transmission channel is exchange rates, trade agreements, or fiscal transfers; and on the specific policy instrument used, since IMF work on transmission channels shows spending and tax instruments propagate differently across borders.
+
+- Coordinate policy design across jurisdictions when spillovers are large relative to direct effects, since unilateral evaluation will miss most of the true impact.
+- Account for preferential trade agreement structure when assessing cross-border trade spillovers, since deep PTAs can shield member countries from distortions that hit non-members.
+- Match the policy instrument to the transmission channel you actually want to influence, rather than assuming any fiscal or trade tool spills over the same way.
+
+## What analysts often get wrong about spillover effects
+
+The most persistent mistake in applied spillover work is treating interference as a nuisance to be controlled away rather than as the actual object of study. Analysts routinely add a regional fixed effect, call the contamination problem solved, and move on, when the fixed effect usually just averages away the very indirect effect the research question was asking about in the first place.
+
+A second mistake is assuming SUTVA violations only bias estimates toward zero. That assumption is comfortable because it lets a researcher claim their estimate is conservative, but interference can just as easily inflate an effect, particularly in network settings where behavior change compounds through repeated contact. Treating every violation as conservative is a shortcut that quietly removes the burden of actually testing the direction of the bias.
+
+The strongest applied work in this space does not treat spillovers as a technical correction. It treats the transmission channel itself as the central hypothesis, worth designing around from the first data-collection decision rather than patching in afterward with a robustness check.
+
+## Putting the design to work
+
+Once exposure data is ready, run quick balance checks with the <Link to={routes.calculator('chi-square')}>chi square calculator</Link> or the <Link to={routes.calculator('mean')}>mean calculator</Link>, both indexed on the <Link to={routes.calculatorsHub()}>Calculators</Link> page, and start with <Link to={routes.article('fundamental-statistics')}>Fundamental Statistics</Link> if the causal-inference vocabulary covered above is new. Two related guides worth building on next: <Link to={routes.article('effect-size')}>effect size</Link> for sizing the magnitude you find, and <Link to={routes.article('regression-assumptions')}>linear regression assumptions</Link> for checking the model you build on top of a spillover-aware exposure measure.
+
+## Sources
+
+<Sources items={[
+  { text: 'Spillover Effects of Exchange Rates: A Study of the Renminbi (Policy Research Working Paper WPS5989)', href: 'https://openknowledge.worldbank.org/server/api/core/bitstreams/7c1bea8b-a5a3-54d3-8c12-27b1e71a560b/content', org: 'World Bank — Mattoo, Mishra & Subramanian (2012)' },
+  { text: 'Trade Effects of Industrial Policies: Are Preferential Agreements a Shield? (Policy Research Working Paper WPS10806)', href: 'https://openknowledge.worldbank.org/server/api/core/bitstreams/c08a5e37-f0e6-48f8-b7cd-151273550646/content', org: 'World Bank — Barattieri, Mattoo & Taglioni (2024)' },
+  { text: 'Spillover Note 11: Fiscal Spillovers — The Importance of Macroeconomic and Policy Conditions', href: 'https://www.imf.org/-/media/files/publications/spillovernotes/spillovernote11.pdf', org: 'International Monetary Fund' },
+  { text: 'Decomposing an Economic Impact into Its Local and Spillover Effects', href: 'https://www.stlouisfed.org/on-the-economy/2023/aug/decomposing-economic-impact-local-spillover-effects', org: 'Federal Reserve Bank of St. Louis' },
+  { text: 'Framework for Identification and Measurement of Spillover Effects in Policy Implementation', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8919154/', org: 'PMC / National Institutes of Health' },
+  { text: 'Randomization Analysis of Experimental Data: The Fisher Randomization Test (Comment) — the paper that formalizes SUTVA', href: 'https://doi.org/10.1080/01621459.1980.10477512', org: 'Donald B. Rubin, Journal of the American Statistical Association, 1980' },
+  { text: 'Optimal Design of Experiments in the Presence of Interference (Policy Research Working Paper)', href: 'https://openknowledge.worldbank.org/server/api/core/bitstreams/c12c79f1-5fcd-51e7-a6f7-fc908f506846/content', org: 'World Bank — Baird, Bohren, McIntosh & Özler' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is an example of the spillover effect?',
+    answer: "A currency appreciation in one country raising export competitiveness for producers in a third country is a concrete trade spillover. A World Bank study (Policy Research Working Paper WPS5989, Mattoo, Mishra & Subramanian) estimates this at roughly 1.5 to 2 percent higher exports on average after a 10 percent renminbi appreciation. Fiscal stimulus in one economy raising output in a trading partner is a similar, non-trade example.",
+  },
+  {
+    question: 'What are spillover effects in psychology?',
+    answer: 'In social and behavioral research, spillover effects describe how a treatment, intervention, or behavior change directed at one person or group influences peers, family members, or others connected through a social network. Because the outcomes of connected individuals are no longer independent, this pattern is a form of the SUTVA violation described in the identification literature, requiring network-aware analysis rather than simple group comparisons.',
+  },
+  {
+    question: 'What does "spillover" mean?',
+    answer: 'Spillover refers to an indirect effect that an action, shock, or intervention has on parties beyond its original target, and the effect can be positive, negative, intended, or unintended. The term applies broadly across economics, psychology, and policy research wherever an outcome depends partly on what happens to connected or nearby units.',
+  },
+  {
+    question: 'How do researchers know if a spillover is real and not just noise?',
+    answer: 'Researchers test for a real spillover by using multiple, independent exposure measures, such as geographic distance and trade or network intensity, and checking whether the estimated effect holds up across all of them. Running placebo tests on units that should have no plausible exposure, alongside the diagnostics described in the policy-implementation framework, helps rule out results driven by mismeasured clusters rather than a genuine mechanism.',
+  },
+]} />
