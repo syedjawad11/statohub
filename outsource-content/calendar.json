@@ -286,6 +286,13 @@
       "title": "Control Confounders with DAGs",
       "slug": "control-confounders",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 42,
+      "day_label": "2026-09-26",
+      "title": "Spillover Effects in Experiments",
+      "slug": "spillover-effects",
+      "category_slug": "experiments-causality"
     }
   ]
 }
