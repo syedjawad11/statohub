@@ -28,6 +28,8 @@ import sqlite3
 import sys
 from pathlib import Path
 
+import overlap_check  # sibling module; Python puts the script's folder on sys.path
+
 # `brief` emits non-ASCII (e.g. the FLAGGED marker), which raises
 # UnicodeEncodeError on a Windows console defaulting to cp1252. Force UTF-8 on
 # our own streams rather than stripping the characters.
@@ -458,17 +460,24 @@ def cmd_import_plan(args):
 def cmd_plan_next(args):
     conn = connect()
     rows = conn.execute(
-        "SELECT a.slug,a.title,a.category_slug,p.plan_id,p.priority,p.links_up_to "
-        "FROM articles a JOIN plan_rows p ON p.slug=a.slug "
+        "SELECT a.slug,a.title,a.category_slug,a.primary_keyword,p.plan_id,p.priority,"
+        "p.links_up_to FROM articles a JOIN plan_rows p ON p.slug=a.slug "
         "WHERE a.status='planned' AND a.flagged=0 "
         "ORDER BY p.priority,p.plan_id"
     ).fetchall()
     conn.close()
+    live = overlap_check.load_articles()
     for r in rows:
         if (ARTICLES_DIR / f"{r['slug']}.mdx").exists():
             continue  # a file already sits at this URL; needs a human
         if r["links_up_to"] and not _is_published(r["links_up_to"]):
             continue  # parent not live yet
+        clash = [c for c in overlap_check.title_conflicts(r["slug"], r["primary_keyword"], live)
+                 if c[2] == "FAIL"]
+        if clash:
+            print(f"Skipped {r['slug']}: its keyword is the topic of "
+                  f"{clash[0][0]}'s {clash[0][1]} - needs a human (overlap_check.py titles)")
+            continue
         print(f"Next up: {r['slug']}  ({r['plan_id']}, {r['priority']}, {r['category_slug']})")
         print(f"  {r['title']}")
         print(f"\nRun: python3 content-ops/content_db.py brief {r['slug']}")

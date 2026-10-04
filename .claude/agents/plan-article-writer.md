@@ -25,6 +25,18 @@ article covers, page type, software, target length, parent) is your scope.
    using a prop you have not seen in it.
 5. `src/lib/links.ts` for the `routes.*` helpers.
 
+## Check what the site already covers
+```
+python3 content-ops/overlap_check.py outline <slug>
+```
+It lists the H2s of the overlap-watch article, the parent and every live
+same-hub article. Plan your H2s so none answers a question one of those pages
+already answers; where your reader needs that idea, give it one or two
+sentences and link to the page. If the row has an overlap note, its angle is
+binding (e.g. "lead with SD vs SE" means the article is built around that).
+A `FAIL [title]` line means the keyword is another page's topic: stop and
+report it as a blocker without writing.
+
 ## Research before you write
 - Verify every definition, formula, threshold and software behaviour against an
   authoritative source (NIST/SEMATECH, a university stats department,
@@ -49,7 +61,18 @@ Then self-check:
 ```
 python3 outsource-content/check_sanitized.py --internal --verbose src/content/articles/<slug>.mdx
 ```
-Fix every FAIL that is yours to fix. Do not flip `draft` and do not build.
+```
+python3 content-ops/overlap_check.py check <slug>
+```
+Fix every FAIL that is yours to fix, using the `FIX:` line under it:
+- **[text]** shared passage: rewrite it in your own words around your own
+  example; if a whole section repeats another page, cut it to a 2–3 sentence
+  summary that links there.
+- **[h2]** matching headings: rename the H2 to the question your angle answers
+  (and rewrite the section to answer it), or fold it into a linked summary.
+  Refill length from the row's "covers" list, never from the other page's scope.
+- **[title]** is not yours to fix: report it as a blocker.
+Do not flip `draft` and do not build.
 
 ## Report back
 File path, approximate word count (from the gate), keyword coverage, the list of
@@ -59,7 +82,8 @@ published, keyword overlap with another article).
 
 ## Fixing a review
 When handed a reviewer's fix list, fix exactly those items in place with
-`Edit`, re-run the gate, and report what changed.
+`Edit`, re-run both gates (`check_sanitized.py --internal` and
+`overlap_check.py check`), and report what changed.
 
 ## Hard rules
 - Never invent a statistic, study, quote, dataset, company, case study, or

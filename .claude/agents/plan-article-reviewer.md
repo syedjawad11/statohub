@@ -52,11 +52,25 @@ Any `FAIL:` is a HARD failure (`draft` must still be `true` at this point).
   `routes.calculator(...)` target exists and is published; `related` points
   only at published articles.
 
-## 5. Cannibalization (HARD)
-For the primary keyword and each secondary: read-only
-`SELECT article_slug FROM keywords WHERE keyword = ?` against
-`content-ops/content.db`. Any owner other than `<slug>` fails. Also
-`grep -il` the primary keyword across other articles' `primaryKeyword`.
+## 5. Cannibalization and overlap (HARD)
+1. Keywords: for the primary and each secondary, read-only
+   `SELECT article_slug FROM keywords WHERE keyword = ?` against
+   `content-ops/content.db`. Any owner other than `<slug>` fails.
+2. Overlap gate:
+   ```
+   python3 content-ops/overlap_check.py check <slug>
+   ```
+   Every `FAIL` is HARD. Copy its `FIX:` line into your fix list, naming the
+   exact passage or H2 pair. `WARN` lines become WARN items (usually "add a
+   link to X").
+3. Angle (judged): when it prints `JUDGE [angle]`, read the named article and
+   the draft side by side. HARD fail if the draft's core sections re-explain
+   what that page already explains instead of taking the note's angle. Fix
+   item: name each section that repeats the other page, and say what it should
+   become ("cut to a 2-sentence summary linking to sampling-distributions;
+   rebuild the section around SD vs SE with its own example").
+4. Title conflict (`FAIL [title]`): not fixable by the writer. Fail the review
+   with that reason; the orchestrator sets the row `blocked`.
 
 ## 6. Score and log
 Score /100 (HARD failures cap it below 70). Then:

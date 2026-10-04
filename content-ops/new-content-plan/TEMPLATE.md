@@ -102,6 +102,14 @@ audience tags ("for Students") in `title`.
   are `.gov`/`.edu`, NIST/SEMATECH, peer-reviewed work, standards bodies, or
   official software docs.
 
+## Overlap with live pages
+
+Every H2 answers a question no other live page already answers; where a reader
+needs a neighbouring idea, give it one or two sentences and link to that page.
+The row's overlap note, if any, sets the angle. `content-ops/overlap_check.py`
+gates this (shared passages, matching H2s, title/H1 conflicts) and prints a fix
+for each finding.
+
 ## Never
 
 - `<StatCalc>` or `calculator:` frontmatter, in either section.

@@ -96,6 +96,9 @@ statohub/
 |   |-- content.db            # SQLite editorial DB (gitignored; tracked as content.sql)
 |   |-- content.sql           # committed dump -- the version-controlled board
 |   |-- content_db.py         # CLI: init/seed/list/brief/next/set-status/...
+|   |-- overlap_check.py      # content-plan overlap gate vs live pages (outline/check/titles)
+|   |-- new-content-plan/     # owner's plan sheet + plan.csv + TEMPLATE.md
+|   |-- routine/              # content-plan daily routine spec + PAUSED switch
 |   |-- schema.sql, seed.json
 |   |-- cloud-routine/        # retired -> docs/legacy/cloud-routine/; only PAUSED + a stub remain
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)

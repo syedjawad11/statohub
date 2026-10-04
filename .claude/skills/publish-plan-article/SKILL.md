@@ -35,7 +35,9 @@ rows are the ones with a `plan_rows` entry). Never route these through
    agent via SendMessage if available, else a new one with the brief + fix
    list), then re-review. **Max 2 review rounds.** Still failing →
    `set-status <slug> changes_requested` (or `blocked` if a human must decide,
-   e.g. a keyword conflict), make sure the MDX is `draft: true`.
+   e.g. a keyword conflict or `overlap_check.py` `FAIL [title]`, which no
+   rewrite can fix: block on the first round), make sure the MDX is
+   `draft: true`.
 
 6. **Wrap up.** `python3 scripts/db_sync.py check`; `git status --porcelain`
    must be empty. On a failed run, commit only the board
@@ -46,5 +48,7 @@ rows are the ones with a `plan_rows` entry). Never route these through
 ## Notes
 - Spot-check the published page yourself when running locally (review is the
   orchestrator's last line of defence in an interactive session).
+- Overlap: `content-ops/overlap_check.py` (outline before writing, check
+  before review; `plan-next` already skips title/H1 conflicts).
 - Flagged rows (keyword owned elsewhere, or parked: S136/S137/S156/S157) need
   a human first; see `content-ops/new-content-plan/README.md`.

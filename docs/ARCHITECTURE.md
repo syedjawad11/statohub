@@ -173,13 +173,14 @@ agents; approval is not auto-publish (a human flips `draft: false`). See
 `docs/standards/content.md` for the standards it enforces, and
 `content-ops/calc-prose/SESSION-PLAN.md` for the manual calc-prose procedure.
 
-**1b. Content plan (same board).** The owner's 338-row plan
+**1b. Content plan (same board).** The owner's plan (335 rows)
 (`content-ops/new-content-plan/`) is imported onto `content.db` with a
 `plan_rows` entry per article, which keeps those rows out of `next`. They are
 written in the babylovegrowth-style template (`TEMPLATE.md`) in **both**
 sections with no calculator embed, by `plan-article-writer`, and auto-published
 on a clean gate by `plan-article-reviewer` (`check_sanitized.py --internal` +
-fact/source review + the real build). The `/publish-plan-article` skill runs it
+`overlap_check.py` against every live page + fact/source review + the real
+build). The `/publish-plan-article` skill runs it
 locally; a daily cloud routine (`content-ops/routine/publish-daily.md`) runs one
 per day. See [[0028-content-plan-daily-routine]].
 
