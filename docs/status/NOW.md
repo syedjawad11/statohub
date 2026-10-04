@@ -18,11 +18,13 @@ enabled claude.ai schedule was disabled 2026-09-27.
 Its topics were never chosen; the plan's 143 Applied rows replace it. Still
 owed: visual QA vs `docs/ideas/homepage-redesign-mock-2026-08-16.png`.
 
-## Content plan: 338 rows on content.db, daily routine 03:00 Malta (2026-10-04)
+## Content plan: 335 rows on content.db, daily routine 03:00 Malta (2026-10-04)
 
-`content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, floor
-1,500, auto-publish ([[0028-content-plan-daily-routine]]). 1/day to 2026-11-04,
-then revisit. S077/S105/S135 flagged (keyword owned elsewhere).
+`content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, 1,500
+floor, auto-publish, 1/day to 2026-11-04 ([[0028-content-plan-daily-routine]]).
+**Owed: one dedicated session** to enrich 3 live articles instead of new pages:
+binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),
+linear-regression (+logistic). `sessions/2026-10-04-keyword-overlap-rewrites.md`.
 
 ## Outsource pipeline: 35 published, 2 queued, daily routine
 

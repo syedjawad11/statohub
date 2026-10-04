@@ -60,7 +60,10 @@ flows coexist without migrating rows or splitting boards again.
   routine's auto-queue collision check will skip vendor topics the plan
   already owns.
 - Three rows (S077, S105, S135) were flagged at import because their primary
-  keyword already belongs to another article; a human re-angles them.
+  keyword already belongs to another article. Amended 2026-10-04 (owner): they
+  are removed from the plan, and their topics are added to the live owning
+  articles in a dedicated rewrite session instead; their four logistic child
+  rows are parked.
 - AdSense was rejected for "low value content"; a daily AI-written article
   increases that risk unless the reviewer's accuracy and depth checks hold.
   Watch the first month's output.

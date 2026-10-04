@@ -28,7 +28,13 @@ them out of `/write-article`'s `next`. Adding rows: append to `plan.csv`,
 re-run `import-plan`, then `python3 scripts/db_sync.py dump`.
 
 A row is **flagged** when its primary keyword already belongs to another
-article (S077, S105, S135 at import). Re-angle it by hand before it can run.
+article; `plan-next` skips it until a human re-angles it. S077
+geometric-distribution, S105 pascals-triangle and S135 logistic-regression were
+**removed** (2026-10-04, owner): their topics go into a rewrite of the live
+owning articles instead (`docs/status/sessions/2026-10-04-keyword-overlap-rewrites.md`).
+S123 now links up to binomial-theorem; S136/S137/S156/S157 (logistic children)
+are flagged and parked until that session decides. `plan.csv` reflects this;
+the `.numbers` sheet still has the original 338 rows.
 
 Routine spec: `content-ops/routine/publish-daily.md`; pause by committing
 `content-ops/routine/PAUSED`.

@@ -46,5 +46,5 @@ rows are the ones with a `plan_rows` entry). Never route these through
 ## Notes
 - Spot-check the published page yourself when running locally (review is the
   orchestrator's last line of defence in an interactive session).
-- Rows flagged at import (S077 geometric-distribution, S105 pascals-triangle,
-  S135 logistic-regression) need a human to re-angle the keyword first.
+- Flagged rows (keyword owned elsewhere, or parked: S136/S137/S156/S157) need
+  a human first; see `content-ops/new-content-plan/README.md`.
