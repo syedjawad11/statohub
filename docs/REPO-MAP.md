@@ -85,6 +85,7 @@ statohub/
 |   |-- check-contrast.mjs   # CI GATE: design-token contrast ratios
 |   |-- check-docs.mjs       # BUILD GATE: docs/ link + wikilink resolution, ADR index
 |   |                        #   completeness, NOW.md/CLAUDE.md line caps, session archive age
+|   |-- indexnow.mjs         # POST-DEPLOY (CI): submits content-changed URLs to IndexNow
 |   |-- backfill-dates.mjs   # One-off: fills missing pubDate/updatedDate/reviewedDate from git (ADR 0024)
 |   `-- db_sync.py           # dump/rebuild/check the two SQLite boards <-> their .sql dumps
 |                            #   (ADR 0018). `check` runs in the build; `dump` before committing.

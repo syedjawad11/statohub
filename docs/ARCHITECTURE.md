@@ -141,6 +141,14 @@ enforced by `outsource-content/check_sanitized.py`. `public/_headers` sets secur
 X-Frame-Options, etc.) since Wrangler/Cloudflare Pages can't set these any other way
 for a Direct Upload project.
 
+**IndexNow.** After each production deploy, CI runs `scripts/indexnow.mjs`,
+which submits to `api.indexnow.org` (Bing, Yandex, Seznam, Naver) only the
+sitemap URLs whose content changed -- a hash of each page's `<title>`, meta
+description, canonical and `<main>`, diffed against the previous deploy's
+manifest in the Actions cache -- plus URLs that dropped out of the sitemap. The
+key is public by design and served from `public/<key>.txt`. A failed ping never
+fails the deploy. Google does not use IndexNow.
+
 **Ads.** AdSense (loader + Funding Choices CMP in `BaseLayout.astro`, `public/ads.txt`)
 is wired but unapproved. Adsterra serves in the meantime ([[0025-adsterra-interim-monetization]]):
 keys in `src/lib/ads.ts`, slots via `src/components/ads/AdSlot.astro`, one inline

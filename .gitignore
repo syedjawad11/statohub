@@ -39,3 +39,6 @@ Thumbs.db
 
 # machine-local Claude Code permissions (not shared)
 .claude/settings.local.json
+
+# IndexNow manifest -- persisted between deploys via the Actions cache
+.indexnow/

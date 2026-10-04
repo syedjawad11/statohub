@@ -60,3 +60,27 @@ jobs:
           accountId: 027007f4d056b885d434f48b4f136a07
           wranglerVersion: "3"
           command: pages deploy dist --project-name statohub --branch main
+
+      # IndexNow: ping Bing & co. with only the URLs whose content changed since
+      # the last deploy. The per-page hash manifest lives in the Actions cache
+      # (a new key per run; restore picks the latest). Runs after deploy so the
+      # key file is live. A failed ping never fails the deploy, and skips the
+      # cache save so the next run resubmits the same diff.
+      - name: Restore IndexNow manifest
+        uses: actions/cache/restore@v4
+        with:
+          path: .indexnow
+          key: indexnow-manifest-${{ github.run_id }}
+          restore-keys: indexnow-manifest-
+
+      - name: Submit changed URLs to IndexNow
+        id: indexnow
+        continue-on-error: true
+        run: node scripts/indexnow.mjs
+
+      - name: Save IndexNow manifest
+        if: steps.indexnow.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: .indexnow
+          key: indexnow-manifest-${{ github.run_id }}
