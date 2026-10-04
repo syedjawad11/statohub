@@ -293,6 +293,13 @@
       "title": "Spillover Effects in Experiments",
       "slug": "spillover-effects",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 43,
+      "day_label": "2026-09-28",
+      "title": "Feature Scaling Explained",
+      "slug": "feature-scaling-explained",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }

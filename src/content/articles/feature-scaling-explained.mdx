@@ -1,0 +1,251 @@
+---
+title: "Feature Scaling Explained: Formulas & Methods"
+h1: "Fit Scalers on Training Data Only: Feature Scaling Explained With Formulas"
+description: "Feature scaling explained: formulas for min-max, standardization, and RobustScaler, how to match a scaler to your model, and how to avoid data leakage."
+category: machine-learning-statistics
+primaryKeyword: feature scaling explained
+keywords:
+  - feature scaling explained
+  - min max scaling
+  - normalization machine learning
+  - standardization in machine learning
+  - feature scaling techniques
+  - difference between scaling and normalization
+  - what is feature scaling
+  - feature scaling in machine learning
+phase: 1
+related:
+  - train-test-split
+  - k-fold-cross-validation
+  - bias-variance-tradeoff
+draft: false
+pubDate: 2026-10-04
+updatedDate: 2026-10-04
+reviewedDate: 2026-10-04
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Feature scaling is the process of transforming numeric features so they share a comparable range or distribution before a model sees them. The core rule practitioners rely on is simple to state and easy to violate: pick a scaler based on the model and the data's shape, and always fit that scaler on training data only, then apply the same parameters to validation, test, and production data.
+
+<KeyTakeaways rows={[
+  { point: 'Scale when it affects the model', details: 'Distance-based, gradient-based, and regularized models benefit from scaling; tree-based models such as decision trees and random forests typically do not.' },
+  { point: 'Split before you scale', details: 'Fit a scaler only after separating training and test data, or test-set statistics leak into training and inflate reported accuracy.' },
+  { point: 'Standardization is the default', details: 'Z-score scaling is the safest starting point for linear models, support vector machines, and neural networks unless outliers require something more robust.' },
+  { point: 'Outliers call for RobustScaler', details: 'Use RobustScaler or a log transform when outliers or skew heavily distort a feature distribution.' },
+  { point: 'Verify by hand', details: 'Check a scaler output against a manual calculation before trusting a pipeline in production.' },
+]} />
+
+<Callout variant="tip" title="Statohub's take">
+Build better statistical understanding before you trust a pipeline: work through the mean, standard deviation, and standardized values yourself with <Link to={routes.calculator('z-score')}>Statohub's Z-score calculator</Link> and <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>, then compare that by-hand result against what your scaler actually outputs.
+</Callout>
+
+## What feature scaling is and why it matters
+
+Most scalers are affine transforms: they shift a feature by subtracting a value, then stretch or compress it by dividing by another value. Min-max scaling maps a feature to a bounded range, typically 0 to 1, using the formula (x minus the minimum) divided by (the maximum minus the minimum). Standardization, often called the [Z-score transform](https://thefinaltape.com/academy/lesson/33-r-distribution-tab-guide), subtracts the mean and divides by the standard deviation, producing a feature with a mean near zero and unit variance. Both operations are linear, so they preserve the shape of the original distribution. They just change its location and spread.
+
+The reason this matters comes down to how algorithms actually compute. Distance-based methods such as k-nearest neighbors or k-means treat every feature as a dimension in Euclidean space, so a feature measured in thousands of dollars will dominate a feature measured in single-digit percentages unless both are put on comparable footing. Gradient-based optimizers used in linear regression, logistic regression, and neural networks converge faster and more reliably when features share a similar scale, because a single learning rate then makes sensible progress across all dimensions at once. Regularized models such as ridge or lasso regression compare coefficient magnitudes directly, and that comparison only makes sense when the underlying features are scaled consistently. Scaling also helps with plain numerical stability, avoiding the kind of overflow or underflow that can creep into matrix operations when feature magnitudes span several orders of magnitude.
+
+Not every model needs this treatment. Tree-based methods including decision trees, random forests, and gradient-boosted trees split on thresholds within a single feature at a time, so the relative ordering of values matters, not their absolute scale. A tree that splits at "income above $52,000" behaves identically whether income is expressed in dollars or thousands of dollars.
+
+- Min-max and Z-score scaling are affine transforms that shift and stretch a feature without altering its shape.
+- Distance-based, gradient-based, and regularized models are sensitive to feature scale; tree-based models generally are not.
+- Scaling also improves numerical stability in matrix-heavy computations such as those behind PCA and support vector machines.
+
+## Main scaling and normalization methods with formulas
+
+Each scaler below solves a slightly different problem, and choosing among them depends on the shape of your data and how much it is contaminated by outliers.
+
+**Min-max scaling** rescales a feature to a fixed range, usually 0 to 1, with the formula x' equals (x minus min) divided by (max minus min). It preserves the exact shape of the distribution and is intuitive to explain, but it is highly sensitive to outliers: a single extreme value stretches the range and compresses every other observation toward zero. It works well for features that already have a natural bound, such as pixel intensities or percentages, and for algorithms that expect inputs within a defined interval.
+
+**Standardization** (the Z-score transform) uses x' equals (x minus mean) divided by standard deviation. According to the [scikit-learn documentation for StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html), the implementation computes the mean and standard deviation from the training set using a population-style calculation (ddof equals 0), stores those values, and reuses them for every later transform. Standardization does not bound values to a fixed range, but it centers the data and gives every feature comparable variance, which is why it is the default choice for linear models, support vector machines, and principal component analysis.
+
+**[RobustScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html)** replaces the mean and standard deviation with the median and the interquartile range: x' equals (x minus median) divided by IQR. Because the median and IQR are far less sensitive to extreme values than the mean and standard deviation, this scaler is the practical choice whenever a dataset has genuine outliers you do not want to discard, such as income data or transaction amounts with a long right tail.
+
+**MaxAbsScaler** divides each value by the maximum absolute value of that feature, producing a range of negative 1 to 1 without shifting the data's center. This matters for sparse data, where subtracting a mean would fill in zeros and destroy the sparsity that makes large feature matrices computationally manageable. **Unit-norm (L2) normalization** works at the row level rather than the column level: it rescales each sample so its vector has a length of 1, which is common practice for text vectors and embeddings where the direction of a vector carries more meaning than its magnitude.
+
+Beyond these, a few transforms address skew rather than scale directly:
+
+- **Power transforms** such as [Box-Cox](https://www.itl.nist.gov/div898/handbook/eda/section3/eda336.htm) and Yeo-Johnson apply a parametric map to pull a skewed distribution toward a roughly Gaussian shape.
+- **[Quantile transforms](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.QuantileTransformer.html)** map values to their rank-based position in the distribution, which is robust to outliers but can distort the relationships between features.
+- **Log transforms** compress right-skewed, power-law-like data such as income or web traffic counts into a more symmetric shape.
+- **Winsorization** caps extreme values at a chosen percentile instead of removing them, reducing the influence of outliers while keeping every observation in the dataset.
+
+<DataTable
+  caption="Main scalers compared: formula, output range, and where each one fits"
+  headers={['Scaler', 'Formula', 'Output range', 'Outlier sensitivity', 'Typical use']}
+  align={['left', 'left', 'left', 'left', 'left']}
+  rows={[
+    ['Min-max scaling', "x' = (x - min) / (max - min)", '0 to 1 (bounded)', 'High - one extreme value compresses the rest', 'Pixel intensities, percentages, bounded inputs'],
+    ['Standardization (Z-score)', "x' = (x - mean) / std dev", 'Mean 0, unit variance (unbounded)', 'Moderate', 'Linear models, SVMs, PCA, neural networks'],
+    ['RobustScaler', "x' = (x - median) / IQR", 'Unbounded, centered on median', 'Low - built for outliers', 'Income, transaction amounts, skewed data'],
+    ['MaxAbsScaler', "x' = x / max(|x|)", '-1 to 1, center unchanged', 'High (same mechanism as min-max)', 'Sparse data where centering breaks sparsity'],
+    ['L2 (unit-norm) normalization', "x' = x / ||x|| (row-wise)", 'Unit vector length', 'Not applicable - operates per row', 'Text vectors, embeddings'],
+  ]}
+/>
+
+**Statistic to note:** the scikit-learn [preprocessing guide](https://scikit-learn.org/stable/modules/preprocessing.html) recommends matching the scaler to the estimator and the data's outlier profile rather than applying one default transform everywhere. It points to StandardScaler for linear methods and PCA, MinMaxScaler for bounded feature requirements, and RobustScaler when outliers are heavy. That guidance is the closest thing to an industry consensus on which scaler fits which situation.
+
+As [lecture notes from Carnegie Mellon's statistics department](https://www.stat.cmu.edu/~cshalizi/350/lectures/09/lecture-09.pdf) put it, the goal of scaling is to reduce dependence on arbitrary measurement units, not necessarily to force a feature into a normal distribution. That distinction is worth holding onto: a transform is doing its job when it neutralizes the accident of whether a variable was recorded in dollars or thousands of dollars, whether or not the resulting histogram looks bell-shaped.
+
+## Matching the scaler to your model and data type
+
+The practical decision usually reduces to three questions: does the model compute distances or gradients, does the data contain outliers, and is the data sparse. Once you answer those, the choice of scaler mostly falls out on its own.
+
+Linear and logistic regression, support vector machines, and principal component analysis all rely on distance or variance calculations across features, which makes standardization the sensible default: it puts every feature on comparable footing without assuming a fixed range. Distance-based methods such as k-nearest neighbors and k-means work with either Z-score standardization or min-max scaling, since both put features on comparable footing; min-max is preferable when you want an interpretable bounded range.
+
+Neural networks generally converge faster when inputs are standardized before training, even though architectures increasingly include internal normalization layers. Course notes on [data normalization for machine learning](https://www.khoury.northeastern.edu/home/vip/teach/MLcourse/1_intro_DT_RULES_REG/data_normalization/normalization_when_to_use_what.pdf) point out that batch norm and layer norm help stabilize training internally, but input normalization still speeds up convergence and reduces the chance of early training instability. A log transform ahead of standardization can help when an input feature is heavily right-skewed, such as a count or a monetary amount.
+
+Tree-based models, including random forests and gradient-boosted trees, typically need no scaling at all, since their splits depend only on the relative ordering of values within a feature. Sparse data, such as bag-of-words text vectors or one-hot encoded categories with high cardinality, calls for MaxAbsScaler or L2 normalization, both of which avoid the memory blowup that comes from centering a sparse matrix.
+
+<Figure number={1} caption="Three questions - distance/gradient sensitivity, outliers, and sparsity - determine which scaler fits a given model and dataset.">
+  <DecisionTree
+    title="Scaler selection"
+    desc="A decision tree starts from whether the model computes distances, gradients, or regularization, then checks for sparse data and heavy outliers to arrive at a recommended scaler."
+    root={{
+      label: 'Does the model use distances, gradients, or regularization?',
+      no: { label: 'Tree-based model (decision trees, random forests, GBMs): scaling is typically unnecessary' },
+      yes: {
+        label: 'Is the data sparse (text vectors, one-hot encodings)?',
+        yes: { label: 'Use MaxAbsScaler or L2 normalization' },
+        no: {
+          label: 'Does the training set have heavy outliers?',
+          yes: { label: 'Use RobustScaler, or a log transform first' },
+          no: { label: 'Use standardization (Z-score) as the default' },
+        },
+      },
+    }}
+  />
+</Figure>
+
+- Linear models, SVMs, and PCA: standardization is the practical default.
+- Distance-based models like k-nearest neighbors: Z-score or min-max, depending on whether a bounded range is useful.
+- Neural networks: standardize inputs and consider a log transform for skewed features, even with batch or layer norm present.
+- Tree-based models: scaling is typically unnecessary.
+- Sparse or text data: MaxAbsScaler or L2 normalization.
+
+<Callout variant="tip" title="Pro tip">
+When combining scaling with other preprocessing steps such as one-hot encoding or polynomial features, scale numeric columns separately and let categorical columns pass through untouched, since scaling a one-hot column adds noise without any benefit.
+</Callout>
+
+## Applying scaling safely without leaking information
+
+The single most damaging mistake in applied scaling is fitting the scaler on the whole dataset before splitting it into training and test sets. Doing so lets statistics from the test set - its mean, its minimum, its interquartile range - quietly influence the training data, which is a textbook case of data leakage. The scikit-learn guide on [common pitfalls](https://scikit-learn.org/stable/common_pitfalls.html) is explicit on this point: split first, fit transformations only on the training data, and reuse those fitted parameters, never new ones, on validation and test data.
+
+<Checklist
+  id="leakage-safe-scaling-steps"
+  title="Fit and apply a scaler without leaking data"
+  style="numbered"
+  items={[
+    { text: 'Split your data into training and test sets before touching any scaler.' },
+    { text: 'Fit the scaler using only the training set', detail: 'It should learn the mean, standard deviation, minimum, maximum, or median and IQR from training observations alone.' },
+    { text: 'Transform training, then validation and test, with the same fitted parameters', detail: 'Never refit on validation or test data.' },
+    { text: 'Wrap the scaler and the estimator together in a Pipeline', detail: 'This guarantees the same preprocessing runs identically at prediction time.' },
+    { text: 'Store the fitted scaler parameters alongside the trained model', detail: 'Mean, scale, median, IQR, or min and max - so production code can reproduce the exact transform used during training.' },
+  ]}
+/>
+
+For sparse matrices, centering during standardization will densify the data and can exhaust memory on anything beyond a small dataset. The fix is to set with_mean to false in StandardScaler, or switch to MaxAbsScaler, which never subtracts a center value in the first place. When new data in production falls outside the range seen during training, min-max scaling will produce values below 0 or above 1, which is usually fine to pass through rather than clip, unless your downstream model strictly requires bounded inputs. For datasets too large to fit in memory at once, or for streaming data, partial_fit lets you update a scaler's statistics incrementally rather than recomputing them from a full pass over the data.
+
+<Callout variant="tip" title="Pro tip">
+Check your pipeline by transforming a single held-out row by hand using the stored mean and standard deviation. If your manual calculation matches the pipeline's output, you can trust that no refitting is happening behind the scenes.
+</Callout>
+
+## A worked example from raw data to scaled features
+
+Consider a small housing dataset used to predict sale price from square footage, number of bedrooms, and distance to the nearest school, an ordinary regression setup where the features have different scales: square footage has a wide numeric range, bedrooms is a small integer range, and distance to school is right-skewed.
+
+1. Split the dataset into training and test sets before any scaling happens.
+2. Inspect the training set's distributions: square footage looks roughly symmetric with a couple of large outlier homes, bedrooms is a small discrete range, and distance to school is right-skewed with a long tail of rural properties.
+3. Choose transforms accordingly: apply RobustScaler to square footage because of the outlier homes, leave bedrooms as a small integer range or apply standardization for consistency, and apply a log transform to distance before standardizing it to tame the right skew.
+4. Fit each scaler on the training set only, then transform both the training and test sets using those fitted parameters.
+5. Train a linear regression model on the scaled training features and evaluate with cross-validation, comparing scores against a version of the same model trained on the unscaled features.
+
+The comparison usually tells a clear story. On the unscaled version, the coefficient for square footage will be tiny (since it moves in units of one square foot across a range of thousands) while the coefficient for bedrooms will look artificially large, simply because bedrooms spans a much smaller numeric range. Once every feature is scaled, the coefficients become directly comparable in magnitude, which is exactly the property regularized models such as ridge regression depend on to penalize features fairly.
+
+Cross-validated accuracy for linear regression usually improves modestly when scaling is added, and the improvement tends to be larger for models fit with gradient descent than for one fit by an exact least-squares solver. The more consistent benefit shows up in convergence speed for gradient-based fits and in the interpretability of the resulting coefficients: a scaled coefficient tells you how many standard deviations the outcome moves for a one-standard-deviation change in the input, a statement you can compare directly across features.
+
+- Distribution shape and the presence of outliers determine the scaler, not a fixed rule of thumb.
+- RobustScaler protects a right-skewed or outlier-heavy feature from distorting the transform.
+- Coefficients become comparable across features only after scaling, which matters for both interpretation and regularization.
+
+You can reproduce each step of this arithmetic with the <Link to={routes.calculator('z-score')}>Z-score calculator</Link> and <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> on Statohub, checking your training-set mean and standard deviation before you trust a pipeline's output.
+
+## Common pitfalls and how to fix them
+
+The most frequent failure is fitting a scaler on the full dataset before splitting, which quietly leaks test-set information into training and inflates reported accuracy. The scikit-learn [common pitfalls guide](https://scikit-learn.org/stable/common_pitfalls.html) recommends catching this by always using a Pipeline, since a pipeline structurally prevents calling fit on anything but the training fold during cross-validation.
+
+A second common issue shows up with sparse matrices: centering a sparse feature set during standardization converts a mostly-zero matrix into a dense one, which can exhaust available memory on anything beyond a small dataset. Setting with_mean to false, or switching to MaxAbsScaler, avoids the problem entirely.
+
+A third pitfall involves min-max scaling on data with real outliers. A single extreme value stretches the entire 0 to 1 range and compresses every other observation into a narrow band near zero, which quietly degrades a distance-based model's performance. RobustScaler or a log transform ahead of scaling both address this more gracefully.
+
+- Run an ablation: compare model performance with and without scaling to confirm the transform is actually helping.
+- Visualize the transformed distribution before and after scaling to catch a range or skew problem early.
+- For gradient-based models, monitor gradient norms during early training; unusually large or unstable norms often point back to unscaled inputs.
+
+<Callout variant="note" title="Worth noting">
+The scikit-learn example on the importance of feature scaling demonstrates that applying a scaler indiscriminately, without regard to the estimator's mathematical structure, is not a reliable substitute for choosing the right transform in the first place.
+</Callout>
+
+## How Statohub supports applying these ideas
+
+Working through scaling formulas by hand before trusting a pipeline is good practice, and Statohub's Z-score calculator and standard deviation calculator let you verify the mean, standard deviation, and standardized values behind any StandardScaler step. The <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link> guide covers the model evaluation concepts that scaling choices ultimately feed into, including cross-validation and regression metrics, and the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub carries further worked examples connecting preprocessing decisions to model outcomes.
+
+## What experience suggests about scaling in practice
+
+Default to standardization unless you have a specific reason not to. It is the safest starting point for linear models, SVMs, and neural networks, and it rarely makes things worse. Reach for RobustScaler the moment you spot genuine outliers in a training-set histogram, and reach for min-max only when a model or downstream process genuinely requires a bounded range, such as certain neural network input layers.
+
+Power transforms, quantile transforms, and winsorization are worth the extra step when a feature's skew is severe enough to distort a linear model's assumptions, but they add complexity that is not always repaid. The only reliable way to know is to measure: run the same model with and without a given transform, on the same cross-validation folds, and trust the comparison over intuition.
+
+## Practice this with Statohub's tools
+
+Reading formulas is a start, but working through the mean, standard deviation, and standardized values yourself is what makes a scaling method stick. Statohub's Z-score calculator and standard deviation calculator let you check every step of the worked example in this article by hand, and the Applied Statistics hub carries further examples that connect preprocessing choices to model results. When you are ready to build a stronger foundation, the <Link to={routes.learnLanding()}>Learn Statistics</Link> hub is the place to start.
+
+## Sources
+
+<Sources items={[
+  { text: 'StandardScaler — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html', org: 'scikit-learn' },
+  { text: 'RobustScaler — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html', org: 'scikit-learn' },
+  { text: 'QuantileTransformer — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.QuantileTransformer.html', org: 'scikit-learn' },
+  { text: '8.3. Preprocessing data — scikit-learn user guide', href: 'https://scikit-learn.org/stable/modules/preprocessing.html', org: 'scikit-learn' },
+  { text: '12. Common pitfalls and recommended practices — scikit-learn user guide', href: 'https://scikit-learn.org/stable/common_pitfalls.html', org: 'scikit-learn' },
+  { text: '1.3.3.6. Box-Cox Normality Plot — NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda336.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Making Better Features (36-350: Data Mining lecture notes)', href: 'https://www.stat.cmu.edu/~cshalizi/350/lectures/09/lecture-09.pdf', org: 'Carnegie Mellon University Statistics' },
+  { text: 'Normalization in Machine Learning: When to Use What', href: 'https://www.khoury.northeastern.edu/home/vip/teach/MLcourse/1_intro_DT_RULES_REG/data_normalization/normalization_when_to_use_what.pdf', org: 'Khoury College of Computer Sciences, Northeastern University' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Is feature scaling needed for decision trees?',
+    answer: 'No. Decision trees and ensembles built from them, such as random forests and gradient-boosted trees, split on the relative order of values within a feature rather than their absolute magnitude, so scaling has no effect on their structure.',
+  },
+  {
+    question: 'Why is feature scaling done?',
+    answer: 'Scaling is done because many algorithms, including gradient-based optimizers, distance-based methods, and regularized linear models, treat feature magnitude as meaningful, so features recorded in different units can otherwise dominate or distort a model unfairly. It also improves numerical stability in calculations like those behind PCA and support vector machines.',
+  },
+  {
+    question: 'What are the two main types of scaling?',
+    answer: 'The two most common approaches are min-max scaling, which maps a feature to a fixed range using its minimum and maximum, and standardization, which centers a feature at zero and scales it by its standard deviation. Both are affine transforms that preserve the underlying shape of the distribution.',
+  },
+  {
+    question: 'Is feature scaling required for XGBoost?',
+    answer: 'No. XGBoost builds decision trees, and like other tree-based models it splits on feature order rather than magnitude, so scaling does not change how it fits or its resulting accuracy.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link>
+- <Link to={routes.article('data-drift-detection')}>Data Drift Detection: A Practical Guide for Production ML Systems</Link>
