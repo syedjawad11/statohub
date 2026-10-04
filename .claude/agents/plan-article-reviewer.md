@@ -63,6 +63,8 @@ Score /100 (HARD failures cap it below 70). Then:
 ```
 python3 content-ops/content_db.py log-review <slug> <score> pass|fail "one-line summary or fix list"
 ```
+Then `python3 scripts/db_sync.py dump` right away — the build's `db_sync.py
+check` otherwise reports DRIFT from your own review row.
 On fail, return a numbered fix list the writer can act on, item by item.
 
 ## 7. Publish (only after 1–6 all pass)
