@@ -72,6 +72,24 @@ CREATE TABLE IF NOT EXISTS reviews (
   created_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- CONTENT PLAN rows (content-ops/new-content-plan/plan.csv, imported by
+-- `content_db.py import-plan`). One row per planned article; the article itself
+-- lives in `articles`. Presence here routes the slug to the daily plan routine
+-- (`/publish-plan-article`, babylovegrowth-style template, no calculator embed)
+-- instead of `/write-article` -- see [[0028-content-plan-daily-routine]].
+CREATE TABLE IF NOT EXISTS plan_rows (
+  slug             TEXT PRIMARY KEY REFERENCES articles(slug) ON DELETE CASCADE,
+  plan_id          TEXT NOT NULL UNIQUE,         -- S001..S338
+  section          TEXT NOT NULL,                -- learn | applied (must match the category)
+  page_type        TEXT NOT NULL DEFAULT '',
+  software_covered TEXT NOT NULL DEFAULT '',
+  covers           TEXT NOT NULL DEFAULT '',     -- what_the_article_covers
+  est_words        INTEGER,                      -- target length (floor 1,500)
+  priority         TEXT NOT NULL DEFAULT 'P2',   -- P1 | P2 | P3
+  links_up_to      TEXT NOT NULL DEFAULT '',     -- parent article slug
+  overlap_watch    TEXT NOT NULL DEFAULT ''
+);
+
 CREATE INDEX IF NOT EXISTS idx_articles_status ON articles(status);
 CREATE INDEX IF NOT EXISTS idx_articles_category ON articles(category_slug);
 CREATE INDEX IF NOT EXISTS idx_keywords_article ON keywords(article_slug);

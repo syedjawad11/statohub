@@ -47,6 +47,9 @@ embedded when it adds real value; it just isn't mandatory.
     no-fabrication rule below. Enforced by `OUTSOURCE_WORD_FLOOR` in
     `outsource-content/check_sanitized.py`; rationale and cost in
     [[0019-outsource-word-floor]].
+  - **Exception — content-plan articles** (`content-ops/new-content-plan/`)
+    target the plan row's `est_words`, floor 1,500, and follow that folder's
+    `TEMPLATE.md` ([[0028-content-plan-daily-routine]]).
 - **Practitioner-focused**: the reader applies a method on the job (analyst,
   experimenter, forecaster, ML engineer), not a first-time learner. Assume
   they know what a p-value or confidence interval is; teach *how to use it in

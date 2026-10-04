@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-09-27 (outsource batch 6 + daily cloud routine). **Baseline:** 150
+**Last updated:** 2026-10-04 (content-plan pipeline). **Baseline:** 150
 pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 **Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
@@ -13,15 +13,16 @@ via SQL then `dump`. Routers are maps ([[0022-routers-are-maps-not-rulebooks]]).
 Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; their last
 enabled claude.ai schedule was disabled 2026-09-27.
 
-## Active: Applied Statistics -- *internal* batch 2 not started
+## Internal Applied batch 2 -- superseded by the content plan below
 
-Internal Applied content via `content_db.py` ([[0021-boards-split-by-source]]).
-Batch 1 (4 articles) is live; **batch 2 (4 more, one per hub) has never been
-started -- topics were never chosen.** Governed by
-[[0014-applied-section-url-family]] / [[0015-wedge-scoped-to-learn]]; recipe in
-`docs/status/sessions/archive/2026-08-16-applied-batch-1.md`. Still owed: visual QA vs
-`docs/ideas/homepage-redesign-mock-2026-08-16.png`. `time-series-forecasting`
-and `machine-learning-statistics` hold 1 article each.
+Its topics were never chosen; the plan's 143 Applied rows replace it. Still
+owed: visual QA vs `docs/ideas/homepage-redesign-mock-2026-08-16.png`.
+
+## Content plan: 338 rows on content.db, daily routine 03:00 Malta (2026-10-04)
+
+`content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, floor
+1,500, auto-publish ([[0028-content-plan-daily-routine]]). 1/day to 2026-11-04,
+then revisit. S077/S105/S135 flagged (keyword owned elsewhere).
 
 ## Outsource pipeline: 35 published, 2 queued, daily routine
 

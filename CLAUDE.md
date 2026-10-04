@@ -76,7 +76,8 @@ Full thesis: `docs/PROJECT.md`; live counts: `docs/status/NOW.md`.
 
 ## Content pipelines
 
-Internal (`content-ops/content.db`, `content_db.py`, `/write-article`) covers
+Internal (`content-ops/content.db`, `content_db.py`, `/write-article`, and the
+content plan's `/publish-plan-article` [[0028-content-plan-daily-routine]]) covers
 everything we write; outsourced (`outsource-content/outsource_content.db`,
 `outsource_db.py`, `/publish-outsource-article`) covers vendor articles only.
 Neither board alone answers "what is live". Mechanics: `docs/ARCHITECTURE.md`

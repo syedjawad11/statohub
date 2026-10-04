@@ -4,6 +4,11 @@
 Usage:
     python outsource-content/check_sanitized.py <path-to-mdx-file>
     python outsource-content/check_sanitized.py --verbose <path-to-mdx-file>
+    python outsource-content/check_sanitized.py --internal <path-to-mdx-file>
+
+`--internal` gates a Claude-written content-plan article (content-ops plan
+routine, [[0028-content-plan-daily-routine]]): same checks, but the category
+may be any of the ten hubs, and a calculator embed is a failure.
 
 The gate checks the Applied article build contract plus the vendor-specific
 cleanup rules. It does not grade prose, fact-check claims, or make network
@@ -29,6 +34,15 @@ ALLOWED_CATEGORIES = {
     "experiments-causality",
     "time-series-forecasting",
     "machine-learning-statistics",
+}
+# Content-plan articles use the same template in both sections.
+LEARN_CATEGORIES = {
+    "foundations",
+    "descriptive-statistics",
+    "inferential-statistics",
+    "probability-distributions",
+    "regression-correlation",
+    "combinatorics",
 }
 REQUIRED_FRONTMATTER = (
     "title", "description", "category", "primaryKeyword", "keywords",
@@ -270,7 +284,7 @@ def _is_vendor_url(target):
     return bool(parsed.hostname and parsed.hostname.lower().rstrip(".") in VENDOR_HOSTS)
 
 
-def run_checks(path, verbose=False):
+def run_checks(path, verbose=False, internal=False):
     try:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:
@@ -307,7 +321,8 @@ def run_checks(path, verbose=False):
             for keyword in frontmatter.get("keywords", [])
         )
     )
-    category_valid = frontmatter.get("category") in ALLOWED_CATEGORIES
+    allowed = ALLOWED_CATEGORIES | LEARN_CATEGORIES if internal else ALLOWED_CATEGORIES
+    category_valid = frontmatter.get("category") in allowed
     frontmatter_valid = (
         frontmatter_error is None
         and not missing
@@ -533,6 +548,16 @@ def run_checks(path, verbose=False):
         ),
     )
 
+    if internal:
+        embed = re.search(r"<StatCalc\b", body)
+        record(
+            15,
+            embed is None and "calculator" not in frontmatter,
+            "no calculator embed (content-plan articles link calculators instead)",
+            "calculator embed or `calculator` frontmatter found; content-plan "
+            "articles never embed one",
+        )
+
     for number, passed, message in sorted(results):
         if verbose or not passed:
             prefix = "PASS" if passed else "FAIL"
@@ -549,8 +574,10 @@ def main():
     )
     parser.add_argument("path", type=Path)
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--internal", action="store_true",
+                        help="content-plan article: any of the ten hubs, no calculator embed")
     args = parser.parse_args()
-    return run_checks(args.path, verbose=args.verbose)
+    return run_checks(args.path, verbose=args.verbose, internal=args.internal)
 
 
 if __name__ == "__main__":

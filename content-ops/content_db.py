@@ -12,6 +12,8 @@ Usage:
     python content_db.py show <slug>
     python content_db.py brief <slug>
     python content_db.py next
+    python content_db.py import-plan content-ops/new-content-plan/plan.csv
+    python content_db.py plan-next
     python content_db.py set-status <slug> <status>
     python content_db.py log-review <slug> <score> <pass|fail> "notes"
     python content_db.py stats
@@ -20,6 +22,7 @@ Statuses: planned -> briefed -> drafting -> in_review -> changes_requested
           -> approved -> published   (research_pending = stub, not writable yet)
 """
 import argparse
+import csv
 import json
 import sqlite3
 import sys
@@ -40,6 +43,21 @@ SCHEMA_PATH = HERE / "schema.sql"
 SEED_PATH = HERE / "seed.json"
 PLAYBOOK = ".claude/seo-playbook.md"  # repo-root relative
 APPLIED_PLAYBOOK = ".claude/applied-playbook.md"  # repo-root relative
+PLAN_TEMPLATE = "content-ops/new-content-plan/TEMPLATE.md"  # repo-root relative
+ARTICLES_DIR = HERE.parent / "src" / "content" / "articles"
+PLAN_WORD_FLOOR = 1500  # [[0028-content-plan-daily-routine]]
+PLAN_HUBS = {
+    "Foundations": "foundations",
+    "Descriptive Statistics": "descriptive-statistics",
+    "Inferential Statistics": "inferential-statistics",
+    "Probability & Distributions": "probability-distributions",
+    "Regression & Correlation": "regression-correlation",
+    "Combinatorics": "combinatorics",
+    "Data Analysis": "data-analysis",
+    "Experiments & Causality": "experiments-causality",
+    "Forecasting & Time Series": "time-series-forecasting",
+    "Machine Learning Statistics": "machine-learning-statistics",
+}
 
 STATUSES = [
     "planned", "briefed", "drafting", "in_review",
@@ -259,12 +277,13 @@ def cmd_brief(args):
         cat["section"] if cat else "learn", f"category '{a['category_slug']}'"
     )
     kws = _kw_list(cur, args.slug)
+    plan = cur.execute("SELECT * FROM plan_rows WHERE slug=?", (args.slug,)).fetchone()
     calc = None
     if a["embed_calculator"]:
         calc = cur.execute("SELECT * FROM calculators WHERE slug=?",
                            (a["embed_calculator"],)).fetchone()
     related = cur.execute(
-        "SELECT slug,title FROM articles WHERE category_slug=? AND slug!=? "
+        "SELECT slug,title FROM articles WHERE category_slug=? AND slug!=? AND status='published' "
         "ORDER BY combined_volume DESC LIMIT 5",
         (a["category_slug"], args.slug),
     ).fetchall()
@@ -300,6 +319,31 @@ def cmd_brief(args):
         for r in related:
             out.append(f"- [{r['title']}](/{r['slug']}/)")
         out.append("")
+    if plan is not None:
+        target = max(plan["est_words"] or PLAN_WORD_FLOOR, PLAN_WORD_FLOOR)
+        out.append(f"## Content plan row {plan['plan_id']} ({plan['priority']}, {plan['section']})")
+        out.append(f"- **What the article covers:** {plan['covers']}")
+        out.append(f"- **Page type:** {plan['page_type'] or '-'}")
+        out.append(f"- **Software covered:** {plan['software_covered'] or 'none'}")
+        out.append(f"- **Target length:** ~{target} words of body prose "
+                   f"(floor {PLAN_WORD_FLOOR}; never pad)")
+        if plan["links_up_to"]:
+            out.append(f"- **Parent (link up to it, list first in `related`):** "
+                       f"`{plan['links_up_to']}`")
+        if plan["overlap_watch"]:
+            out.append(f"- **Overlap watch:** {plan['overlap_watch']}")
+        out.append("")
+        out.append("## Rules")
+        out.append(f"- Follow **`{PLAN_TEMPLATE}`** exactly (the babylovegrowth-style "
+                   "template), with sourcing and link rules from "
+                   f"`{APPLIED_PLAYBOOK}`. This overrides the playbook's word count.")
+        out.append("- **No calculator embed** (`<StatCalc>`) and no `calculator` frontmatter, "
+                   "in either section. Link calculator pages instead.")
+        out.append("- Frontmatter must satisfy `src/content/config.ts`. Write with `draft: true`.")
+        out.append("- Internal links ONLY via `Link` + `routes.*` - never hand-typed hrefs.")
+        print("\n".join(out))
+        conn.close()
+        return
     out.append("## Rules")
     if section == "applied":
         out.append(
@@ -328,6 +372,7 @@ def cmd_next(args):
     r = cur.execute(
         "SELECT slug,title,phase,kd_min,kd_max,combined_volume FROM articles "
         "WHERE status='planned' AND flagged=0 AND phase IS NOT NULL "
+        "AND slug NOT IN (SELECT slug FROM plan_rows) "  # plan rows: use plan-next
         "ORDER BY phase,kd_min,combined_volume DESC LIMIT 1"
     ).fetchone()
     if not r:
@@ -339,6 +384,96 @@ def cmd_next(args):
     print(f"  {r['title']}")
     print(f"\nRun: python content-ops/content_db.py brief {r['slug']}")
     conn.close()
+
+
+# ---------------------------------------------------------------- content plan
+def _is_published(slug):
+    """True when src/content/articles/<slug>.mdx exists and is not a draft."""
+    path = ARTICLES_DIR / f"{slug}.mdx"
+    if not path.exists():
+        return False
+    head = path.read_text(encoding="utf-8").split("---", 2)[1]
+    return not any(line.strip() == "draft: true" for line in head.splitlines())
+
+
+def cmd_import_plan(args):
+    rows = list(csv.DictReader(open(args.csv, encoding="utf-8", newline="")))
+    conn = connect()
+    cur = conn.cursor()
+    sections = {r["slug"]: r["section"] for r in cur.execute("SELECT slug,section FROM categories")}
+    added = skipped = 0
+    flagged = []
+    try:
+        for r in rows:
+            slug = r["proposed_slug"].strip()
+            category = PLAN_HUBS.get(r["subcategory"].strip())
+            if not slug or not category:
+                sys.exit(f"{r['id']}: bad slug or unknown subcategory '{r['subcategory']}'")
+            section = r["hub"].strip().lower()
+            if sections.get(category) != section:
+                sys.exit(f"{r['id']}: hub '{r['hub']}' does not match category "
+                         f"'{category}' (section {sections.get(category)})")
+            if cur.execute("SELECT 1 FROM articles WHERE slug=?", (slug,)).fetchone():
+                skipped += 1
+                continue
+            primary = norm(r["primary_keyword"])
+            owner = cur.execute("SELECT article_slug FROM keywords WHERE keyword=?",
+                                (primary,)).fetchone()
+            note = ""
+            if owner:
+                note = (f"content plan {r['id']}: primary keyword '{primary}' is owned by "
+                        f"'{owner['article_slug']}' - pick a new angle/keyword before writing")
+                flagged.append(f"{r['id']} {slug} -> {owner['article_slug']}")
+            cur.execute(
+                "INSERT INTO articles(slug,title,category_slug,primary_keyword,phase,"
+                "status,flagged,notes) VALUES(?,?,?,?,1,'planned',?,?)",
+                (slug, r["article_title"].strip(), category, primary, 1 if owner else 0, note),
+            )
+            est = r["est_words"].strip()
+            cur.execute(
+                "INSERT INTO plan_rows(slug,plan_id,section,page_type,software_covered,covers,"
+                "est_words,priority,links_up_to,overlap_watch) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (slug, r["id"].strip(), section, r["page_type"].strip(),
+                 "" if r["software_covered"].strip() in ("", "—") else r["software_covered"].strip(),
+                 r["what_the_article_covers"].strip(), int(float(est)) if est else None,
+                 r["my_priority"].strip() or "P2", r["links_up_to"].strip(),
+                 r["overlap_watch"].strip()),
+            )
+            kws = [(primary, 1)] if not owner else []
+            kws += [(norm(k), 0) for k in r["secondary_keywords"].split(";") if k.strip()]
+            for kw, is_primary in kws:
+                if cur.execute("SELECT 1 FROM keywords WHERE keyword=?", (kw,)).fetchone():
+                    continue  # owned elsewhere: never attach a keyword twice
+                cur.execute("INSERT INTO keywords(article_slug,keyword,is_primary) VALUES(?,?,?)",
+                            (slug, kw, is_primary))
+            added += 1
+        conn.commit()
+    finally:
+        conn.close()
+    print(f"Imported {added} plan row(s); {skipped} already on the board.")
+    for f in flagged:
+        print(f"  FLAGGED (primary keyword owned): {f}")
+
+
+def cmd_plan_next(args):
+    conn = connect()
+    rows = conn.execute(
+        "SELECT a.slug,a.title,a.category_slug,p.plan_id,p.priority,p.links_up_to "
+        "FROM articles a JOIN plan_rows p ON p.slug=a.slug "
+        "WHERE a.status='planned' AND a.flagged=0 "
+        "ORDER BY p.priority,p.plan_id"
+    ).fetchall()
+    conn.close()
+    for r in rows:
+        if (ARTICLES_DIR / f"{r['slug']}.mdx").exists():
+            continue  # a file already sits at this URL; needs a human
+        if r["links_up_to"] and not _is_published(r["links_up_to"]):
+            continue  # parent not live yet
+        print(f"Next up: {r['slug']}  ({r['plan_id']}, {r['priority']}, {r['category_slug']})")
+        print(f"  {r['title']}")
+        print(f"\nRun: python3 content-ops/content_db.py brief {r['slug']}")
+        return
+    print("No writable plan rows left (all done, flagged, or waiting on a parent).")
 
 
 def cmd_set_status(args):
@@ -409,6 +544,8 @@ def main():
     sp = sub.add_parser("show"); sp.add_argument("slug"); sp.set_defaults(func=cmd_show)
     bp = sub.add_parser("brief"); bp.add_argument("slug"); bp.set_defaults(func=cmd_brief)
     sub.add_parser("next").set_defaults(func=cmd_next)
+    ip = sub.add_parser("import-plan"); ip.add_argument("csv"); ip.set_defaults(func=cmd_import_plan)
+    sub.add_parser("plan-next").set_defaults(func=cmd_plan_next)
     ss = sub.add_parser("set-status"); ss.add_argument("slug"); ss.add_argument("new_status")
     ss.set_defaults(func=cmd_set_status)
     lr = sub.add_parser("log-review"); lr.add_argument("slug"); lr.add_argument("score", type=int)
