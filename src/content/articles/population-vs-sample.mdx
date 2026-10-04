@@ -1,0 +1,254 @@
+---
+title: "Population vs Sample: Key Differences & Formula"
+h1: "Population vs Sample: Definitions, Notation and the n − 1 Rule"
+description: "Population vs sample: the key differences, N vs n notation, sampling frames, the population vs sample formula, and why sample variance uses n minus 1."
+category: foundations
+primaryKeyword: population vs sample
+keywords:
+  - population vs sample
+  - census vs sample
+  - population vs sample formula
+  - sample vs population
+phase: 1
+related:
+  - parameter-vs-statistic
+  - types-of-variables
+  - statistics-symbols-cheatsheet
+draft: false
+pubDate: 2026-10-04
+updatedDate: 2026-10-04
+reviewedDate: 2026-10-04
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Population vs sample** comes down to one question: did you measure every member of the group you care about, or only part of it? A **population** is the complete, defined group — every student, every transaction, every unit off a production line — labeled N. A **sample** is the subset you actually measured, labeled n. That single scope difference decides which symbol you write (μ or x̄, σ or s), which formula you reach for, and why the sample version of the variance formula divides by n − 1 instead of n. Get the scope wrong and every notation choice downstream is wrong with it.
+
+<KeyTakeaways rows={[
+  { point: 'Scope decides everything', details: 'A population is the entire defined group (size N); a sample is the subset you measured (size n). Every other difference follows from that one choice.' },
+  { point: 'Greek letters name the population', details: 'μ, σ, σ², N, and P (or π) describe population values, which are usually fixed but unknown.' },
+  { point: 'Latin letters name the sample', details: 'x̄, s, s², n, and p̂ describe sample values, which you calculated directly and which change from sample to sample.' },
+  { point: 'Sample formulas divide by n − 1, not n', details: "Bessel's correction keeps the sample variance s² an unbiased estimator of the population variance σ², because computing x̄ from the same data uses up one degree of freedom." },
+  { point: 'A census measures the whole population', details: 'It eliminates sampling error but is often too slow, too expensive, or impossible for a large or changing population — which is why most real-world numbers are sample statistics.' },
+]} />
+
+## Quick Checklist: How to Tell a Population From a Sample
+
+Before you compute anything, settle the scope question. These five checks catch almost every population vs sample mix-up, including the ones that show up on exams.
+
+<Checklist
+  id="population-vs-sample-checklist"
+  title="Quick checklist: population vs sample"
+  style="check"
+  items={[
+    { text: 'Check who was actually measured', detail: 'Every member of the defined group measured means a population; only part of it measured means a sample — group size is irrelevant.' },
+    { text: 'Match the symbol to the source', detail: 'Greek letters (N, μ, σ, P) name population values; Latin letters (n, x̄, s, p̂) name sample values.' },
+    { text: 'Confirm the sampling frame covers the population', detail: 'A frame that leaves out or duplicates members introduces coverage error before a single unit is sampled.' },
+    { text: 'Use n − 1 only on sample data', detail: 'Apply Bessel’s correction when estimating variance or standard deviation from a sample; divide by N when you truly have every population value.' },
+    { text: 'Decide census vs sample on cost and size', detail: 'A census fits a small, stable population; a sample is the realistic choice once a population runs into the thousands or keeps changing.' },
+  ]}
+/>
+
+Most sample vs population confusion traces back to skipping the first item on this list — assuming a "big enough" sample must be the population. It never is, by definition, unless every member was measured.
+
+## What Is the Difference Between a Population and a Sample?
+
+A population is the complete, defined set of individuals, objects, or measurements a study is actually about; a sample is a subset of that population selected for study. [OpenStax Introductory Statistics](https://openstax.org/books/introductory-statistics-2e/pages/1-1-definitions-of-statistics-probability-and-key-terms) puts it directly: "the idea of sampling is to select a portion (or subset) of the larger population and study that portion (the sample) to gain information about the population." Everything else — notation, formulas, which test applies — follows from that scope distinction.
+
+<DataTable
+  caption="Population vs sample: the core differences"
+  headers={['Feature', 'Population', 'Sample']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['What it is', 'The entire defined group of interest', 'A subset drawn from the population'],
+    ['Size symbol', 'N', 'n'],
+    ['Mean symbol', 'μ (mu)', 'x̄ (x-bar)'],
+    ['Standard deviation symbol', 'σ (sigma)', 's'],
+    ['Variance symbol', 'σ²', 's²'],
+    ['Proportion symbol', 'P (or π)', 'p̂ (p-hat)'],
+    ['Usually known?', 'No — rarely measured in full', 'Yes — calculated directly from collected data'],
+    ['Varies across studies?', 'No — fixed for a given population at a given time', 'Yes — a new sample gives a new x̄, s, and p̂'],
+  ]}
+/>
+
+Population size and sample size answer different questions, too. N is "how many units exist in the group I defined," while n is "how many units I actually measured." A population of N = 50,000 customers might be studied through a sample of n = 400 — the ratio between them says nothing about which symbol applies; only what was measured does.
+
+## What Is a Sampling Frame, and Why Does It Matter?
+
+A sampling frame is the actual list or source you draw a sample from — a customer database, a voter roll, a class roster — and it is only useful if it matches the population you intend to study. [Yale University's course notes on sampling](http://www.stat.yale.edu/Courses/1997-98/101/sample.htm) define simple random sampling as the technique "where we select a group of subjects (a sample) for study from a larger group (a population)," with "each member of the population" having "an equal chance of being included." That guarantee only holds if the frame you sample from truly represents the population.
+
+In practice, frames slip out of sync with the population they're supposed to represent. A customer list exported last week misses anyone who signed up since; a voter roll includes people who have since moved away. Both are frame problems, not sample-size problems — no amount of additional sampling fixes a frame that doesn't match the population.
+
+<Callout variant="tip" title="Pro tip">
+When a result looks implausible, check the frame before you check the math. A perfectly calculated x̄ from a frame that excludes 20% of the population is still a biased estimate of μ — bigger n will not fix coverage error.
+</Callout>
+
+- **Undercoverage**: the frame misses population members (new signups not yet in the export).
+- **Overcoverage**: the frame includes units outside the population (duplicate or closed accounts still listed).
+- **Fix**: refresh the frame close to the sampling date, and name the population's cutoff explicitly ("all accounts active as of June 30") rather than leaving it open-ended.
+
+## Why Do Sample Formulas Use n − 1 Instead of n?
+
+Sample variance and sample standard deviation divide by n − 1, not n, because x̄ is calculated from the same data it measures spread around, which makes the sum of squared deviations from x̄ slightly smaller, on average, than the sum of squared deviations from the true population mean μ. Dividing by n alone would systematically underestimate σ²; dividing by n − 1 — **Bessel's correction** — removes that bias.
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) defines sample variance for a sample of values Y with mean Ȳ as the sum of squared deviations divided by one less than the sample size, and the [chi-square test for a nominal standard deviation](https://www.itl.nist.gov/div898/handbook/prc/section2/prc23.htm) uses that same n − 1 divisor with n − 1 degrees of freedom in its test statistic. Once x̄ is fixed by the data, only n − 1 of the deviations are free to vary — the last one is determined by the constraint that all deviations from x̄ sum to zero. That lost degree of freedom is exactly what n − 1 accounts for.
+
+<DataTable
+  caption="The population vs sample formula for mean, variance, standard deviation, and proportion"
+  headers={['Quantity', 'Population formula', 'Sample formula']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Mean', 'μ = (Σxᵢ) / N', 'x̄ = (Σxᵢ) / n'],
+    ['Variance', 'σ² = Σ(xᵢ − μ)² / N', 's² = Σ(xᵢ − x̄)² / (n − 1)'],
+    ['Standard deviation', 'σ = √[Σ(xᵢ − μ)² / N]', 's = √[Σ(xᵢ − x̄)² / (n − 1)]'],
+    ['Proportion', 'P = (count with trait) / N', 'p̂ = (count with trait) / n'],
+  ]}
+/>
+
+Mean and proportion don't need a correction — they're simple sums divided by count either way. Only the formulas that measure spread (variance and standard deviation) need n − 1, because only those formulas depend on a mean that was itself estimated from the sample.
+
+## What's the Difference Between a Census and a Sample?
+
+A census measures every member of a population; a sample measures a subset and uses it to estimate what a census would have shown. The [Eurostat statistical glossary](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Census) defines a census as "a survey conducted on the full set of observation objects belonging to a given population or universe" — no sampling error, because nothing was left unmeasured.
+
+<Callout variant="quote" source="Eurostat, Statistics Explained — Glossary: Census" sourceHref="https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Census">
+A census is a survey conducted on the full set of observation objects belonging to a given population or universe.
+</Callout>
+
+A census vs sample decision almost always comes down to cost, time, and how fast the population changes. The U.S. Census Bureau runs a full population census only once a decade, because enumerating the entire country is enormous; in the years between censuses, its [Population Estimates Program](https://www.census.gov/programs-surveys/popest/about.html) annually uses current data on births, deaths, and migration to calculate population change since the most recent census, rather than re-enumerating everyone from scratch. That's the general trade-off in miniature: a census is authoritative but slow and costly; a sample is faster and cheaper but carries sampling error that has to be quantified, typically with a confidence interval built around x̄, s, or p̂ — the same sampling variability [NIST's guide to confidence limits for the mean](https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm) describes.
+
+A census also has a hidden cost a sample doesn't: by the time a large, moving population finishes being counted, it has usually already changed. A sample can be drawn and analyzed quickly enough that the population it describes hasn't shifted much in the meantime — one reason samples remain the default tool even when a census is technically possible.
+
+## How Do You Know Whether to Use Population or Sample Formulas?
+
+Use population formulas (N, μ, σ, P) only when every member of the defined group was actually measured; use sample formulas (n, x̄, s, p̂) the moment any part of the group was left unmeasured. The deciding question is always the same — was this a census of the group, or a subset of it — and the four scenarios below apply that question to the situations that most often trip people up, including on exams.
+
+1. **A teacher records the test scores of all 28 students in her class.** Population. Every member of the defined group — this one class — was measured, so the size is N = 28 and the mean is μ, not x̄.
+2. **A pollster calls 600 of the 2.1 million registered voters in a city.** Sample. Only n = 600 of the much larger population were reached, so the result is a statistic — x̄ or p̂ — estimating an unknown population value.
+3. **A factory inspects every one of the 40 bolts in a single production batch before shipping it.** Population, even though 40 is a small number. Size never decides the label; coverage does, and every bolt in the defined group — this one batch — was checked.
+4. **A researcher emails a survey to 300 students using last year's enrollment roster, which is missing the 500 students who enrolled this term.** Sample, and a biased one. n = 300 were drawn, but the sampling frame excluded this term's enrollees entirely, so they had zero chance of being selected — a frame problem layered on top of an ordinary sample.
+
+Scenario 3 catches the most people: a population isn't defined by being large, it's defined by being completely measured, so a small fully-inspected batch is still a population relative to itself. Scenario 4 shows the reverse trap — a sample can look procedurally fine, with clean random selection and a clear n, while still being compromised by an outdated sampling frame.
+
+## A Worked Example: Surveying 12,000 Students About Study Hours
+
+A university wants to know the average number of hours its students study per week. The registrar's office treats the full student body as the population and runs a small pilot survey before deciding whether to scale up or attempt a full census.
+
+<Figure number={1} caption="The five-step path from defining the population to deciding what to do with the sample result.">
+  <ProcessFlow
+    title="Population-to-decision pipeline"
+    desc="Five connected steps: define the population and frame, draw the sample, compute the sample mean, compute variance and standard deviation with Bessel's correction, compute the sample proportion, then decide whether to resample or run a census."
+    steps={[
+      { label: 'Define population and frame', detail: 'N = 12,000 enrolled students; frame = 11,840 on the current roster.' },
+      { label: 'Draw the sample', detail: 'n = 8 students sampled at random for a pilot check.' },
+      { label: 'Compute x̄', detail: 'Mean weekly study hours across the 8 sampled students.' },
+      { label: 'Compute s² and s', detail: "Apply Bessel's correction: divide by n − 1, not n." },
+      { label: 'Compute p̂, then decide', detail: 'Sample proportion studying 8 or more hours; resample, trust it, or run a census.' },
+    ]}
+  />
+</Figure>
+
+1. **Define the population and the frame.** The population is N = 12,000 currently enrolled students. The registrar's roster — the sampling frame — lists only 11,840 students, because 160 students who enrolled late haven't been added yet. That gap is a real sampling frame problem: anyone outside the frame has zero chance of being sampled, no matter how the sample is drawn.
+
+2. **Draw the sample.** From the 11,840-student frame, the office draws a simple random sample of n = 8 students for a fast pilot check (a tiny n, picked here purely so the arithmetic stays easy to follow by hand). Their weekly study hours: 5, 7, 6, 9, 8, 7, 10, 6.
+
+```
+sum = 5 + 7 + 6 + 9 + 8 + 7 + 10 + 6 = 58
+x̄ = 58 / n = 58 / 8 = 7.25 hours
+```
+
+3. **Compute the sample variance and standard deviation — with and without Bessel's correction.** Squared deviations from x̄ = 7.25 are 5.0625, 0.0625, 1.5625, 3.0625, 0.5625, 0.0625, 7.5625, and 1.5625, which sum to 19.5.
+
+```
+Correct (n − 1):  s² = 19.5 / 7 = 2.7857  ->  s = √2.7857 ≈ 1.67 hours
+Biased (n):       s² = 19.5 / 8 = 2.4375  ->  s = √2.4375 ≈ 1.56 hours
+```
+
+Dividing by n instead of n − 1 understates the standard deviation by about 6.5% here. That gap looks small at n = 8, but the underestimate is systematic — it does not average out as you repeat the study, which is exactly why the n − 1 correction exists in the formula rather than being left to chance.
+
+4. **Compute the sample proportion.** Of the 8 sampled students, 3 reported studying 8 or more hours a week.
+
+```
+p̂ = 3 / 8 = 0.375 (37.5%)
+```
+
+p̂ = 0.375 estimates the unknown population proportion P — the true share of all 12,000 students who study 8 or more hours a week — but it is not P itself.
+
+5. **Decide.** An n = 8 pilot is far too small to trust on its own: the margin of error around x̄ = 7.25 and p̂ = 0.375 is wide enough that the true population values could plausibly sit well outside this sample's numbers. The honest next step is to use a <Link to={routes.calculator('sample-size')}>sample size calculator</Link> to find an n that gives an acceptable margin of error — [NIST's procedure for required sample sizes](https://www.itl.nist.gov/div898/handbook/prc/section2/prc232.htm) lays out the same logic for standard-deviation tests — then run that larger sample, reserving a full census of all 12,000 students for the rare case where the budget and timeline allow measuring the entire population directly.
+
+## Common Mistakes and Exam Traps to Avoid
+
+- **Assuming a large sample becomes a population.** Size is irrelevant to the population vs sample distinction. A sample of n = 9,000 drawn from a population of N = 12,000 is still a sample — it just has a smaller margin of error than a sample of n = 50 would.
+- **Dividing by n instead of n − 1 for a sample variance.** This is the single most common exam trap: use N in the denominator only when every value truly belongs to the population; use n − 1 the moment the data came from a sample.
+- **Writing μ when you mean x̄.** If the number came from a sample, write x̄ = … and say you're estimating μ, not that you measured it. Reporting "μ = 4.9" from sample data overstates what you actually know.
+- **Treating the sampling frame as the population.** A customer list, a roster, or a database export is a tool for reaching the population — not a guarantee that it equals the population. Check for undercoverage and overcoverage before trusting a sample drawn from it.
+- **Confusing a census with "a sample of everyone."** A census is not a special case of sampling; it is the absence of sampling. There's no sampling error to correct for, because nothing was left out.
+- **Forgetting that p̂ and P are different objects.** A sample proportion p̂ = 0.375 is an estimate; the population proportion P is the fixed, usually unknown truth it's estimating. They can coincide by chance, but they are never the same kind of number.
+
+## Statohub's Take on Population vs Sample
+
+Statohub's position is that population vs sample is the one distinction worth over-teaching, because almost every later mistake in statistics — a wrong formula, an overstated claim, a misread p-value — traces back to someone losing track of whether their number came from the whole group or a piece of it. Spend the extra ten seconds naming the population and the frame before you compute anything; the right formula and the right symbol follow automatically once that's settled.
+
+## Put Population vs Sample to Work With Statohub's Tools
+
+Reading the definitions is the easy part; applying them to your own numbers is where the n − 1 rule actually sticks. Statohub's <Link to={routes.categoryHub('foundations')}>Foundations hub</Link> builds on this with the notation this article leans on, starting with <Link to={routes.article('parameter-vs-statistic')}>parameter vs statistic</Link> and the full <Link to={routes.article('statistics-symbols-cheatsheet')}>statistics symbols cheat sheet</Link>. If your data are numeric versus categorical, the article on <Link to={routes.article('types-of-variables')}>types of variables</Link> settles which symbol — a mean or a proportion — even applies.
+
+When you're ready to compute, Statohub's calculators apply these exact formulas to your own data: the <Link to={routes.calculator('mean')}>mean calculator</Link> for x̄ or μ, the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> and <Link to={routes.calculator('variance')}>variance calculator</Link> for s vs σ with the n − 1 switch built in, and the <Link to={routes.calculator('sample-size')}>sample size calculator</Link> for deciding how large a sample needs to be before you trust it. Browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link> for more, or start from the <Link to={routes.learnLanding()}>Learn section</Link> for the rest of the foundations.
+
+## Sources
+
+<Sources items={[
+  { text: 'OpenStax — "1.1 Definitions of Statistics, Probability, and Key Terms," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/1-1-definitions-of-statistics-probability-and-key-terms', org: 'OpenStax' },
+  { text: 'Yale University — Course notes on Sampling (simple random sampling definition)', href: 'http://www.stat.yale.edu/Courses/1997-98/101/sample.htm', org: 'Yale University' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.6. Measures of Scale (sample variance formula)', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.3. Are the Data Consistent with a Nominal Standard Deviation? (n − 1 degrees of freedom)', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc23.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.3.2. Sample Sizes Required', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc232.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.2. Confidence Limits for the Mean (sampling variability)', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm', org: 'NIST' },
+  { text: 'Eurostat — Statistics Explained, Glossary: Census', href: 'https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Census', org: 'Eurostat' },
+  { text: 'U.S. Census Bureau — About Population and Housing Unit Estimates', href: 'https://www.census.gov/programs-surveys/popest/about.html', org: 'U.S. Census Bureau' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is the Difference Between a Population and a Sample?',
+    answer: 'A population is the entire defined group a study is about, labeled N; a sample is the subset actually measured, labeled n. Population values use Greek symbols (μ, σ, P) and are usually unknown; sample values use Latin symbols (x̄, s, p̂) and are calculated directly from the data you collected. Every formula and notation choice in statistics flows from this single scope distinction.',
+  },
+  {
+    question: 'What Is a Census vs a Sample?',
+    answer: "A census measures every member of a population, so it has no sampling error; a sample measures a subset and estimates what a census would have shown, which introduces sampling error that has to be quantified. The census vs sample choice usually comes down to cost and time — a census is realistic for a small, stable population, while a sample is the practical default once a population is large or changes quickly.",
+  },
+  {
+    question: 'What Is the Population vs Sample Formula for Standard Deviation?',
+    answer: 'The population standard deviation is σ = √[Σ(xᵢ − μ)² / N], dividing by the full population size N. The sample standard deviation is s = √[Σ(xᵢ − x̄)² / (n − 1)], dividing by n − 1 instead of n. That n − 1 divisor, Bessel\'s correction, keeps s an unbiased estimator of σ, since x̄ is itself estimated from the same sample data.',
+  },
+  {
+    question: 'Is a Larger Sample the Same as a Population?',
+    answer: 'No. Sample vs population is a categorical distinction, not a matter of degree — a sample of 9,000 drawn from a population of 12,000 is still a sample, not a population, because 3,000 members were not measured. A larger sample reduces sampling error and narrows the margin of error around x̄, s, or p̂, but it never converts a sample into a population unless every remaining member is also measured.',
+  },
+  {
+    question: "Why Do We Divide by n − 1 Instead of n for Sample Variance?",
+    answer: "Because the sample mean x̄ is calculated from the same data whose spread you're measuring, the sum of squared deviations from x̄ is, on average, smaller than the sum of squared deviations from the true population mean μ. Dividing by n alone would systematically understate the variance; dividing by n − 1 — Bessel's correction — removes that bias and keeps s² an unbiased estimator of σ².",
+  },
+  {
+    question: "What Happens When the Sampling Frame Doesn't Match the Population?",
+    answer: "You get coverage error: undercoverage when the frame leaves out members of the population (such as new accounts not yet added to an export), and overcoverage when it includes units that no longer belong (such as closed accounts still listed). Both bias the resulting x̄, s, or p̂ regardless of how carefully the sample itself is drawn, since no sampling method can reach population members who were never in the frame to begin with.",
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('fundamental-statistics')}>Fundamental Statistics: What Statistics Is and Why It Matters</Link>
+- <Link to={routes.article('sampling-distributions')}>Sampling Distributions: How a Statistic Varies From Sample to Sample</Link>
+- <Link to={routes.calculator('sample-size')}>Sample Size Calculator</Link>
+- <Link to={routes.calculator('standard-deviation')}>Standard Deviation Calculator</Link>
