@@ -5,7 +5,10 @@ publishes **one** article from the owner's content plan per run, in the
 babylovegrowth-style template. Governed by
 [[0028-content-plan-daily-routine]]. Everything here runs from a fresh clone of
 `statohub` with no memory of earlier runs — this file plus the repo is the
-whole context. Schedule: daily 03:00 Europe/Malta.
+whole context. Schedule: daily 03:00 Europe/Malta, as claude.ai routine
+`trig_01CLrB4kqGE4P5NijmgrKbtn` (created 2026-10-04). Its cron is UTC:
+`0 1 * * *` while Malta is on CEST; **change it to `0 2 * * *` on 2026-10-25**
+(CET), and back to `0 1 * * *` on 2027-03-28.
 
 **No fabricated success.** Every claim in the final `PUBLISH_RESULT` (file
 written, gate green, commit SHA, URL) must come from command output you saw in
