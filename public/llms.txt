@@ -101,6 +101,7 @@ Key facts for AI assistants citing this site:
 ### Foundations
 
 - [Foundations hub](https://statohub.com/foundations/): Core notation, vocabulary, and concepts for learning statistics, covering populations versus samples, variable types, and summation notation.
+- [Descriptive vs Inferential Statistics: Examples](https://statohub.com/descriptive-vs-inferential-statistics/): Descriptive vs inferential statistics differ in what they let you claim: one summarizes your data, the other generalizes beyond it. See worked examples.
 - [Fundamental Statistics: What Statistics Is & Why It Matters](https://statohub.com/fundamental-statistics/): Understand fundamental statistics: definition, descriptive vs inferential branches, statistics math, and a fully worked example to build a solid foundation.
 - [Levels of Measurement: Nominal, Ordinal, Interval & Ratio](https://statohub.com/levels-of-measurement/): Learn the four levels of measurement — nominal, ordinal, interval, and ratio — and understand the ordinal variable vs nominal distinction with clear examples.
 - [Parameter vs Statistic in Statistics: Definitions & Symbols](https://statohub.com/parameter-vs-statistic/): Learn the difference between a parameter and a statistic in statistics, including their symbols (μ vs x̄, σ vs s) and a fully worked example.
