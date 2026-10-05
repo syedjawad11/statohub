@@ -300,6 +300,13 @@
       "title": "Feature Scaling Explained",
       "slug": "feature-scaling-explained",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 44,
+      "day_label": "2026-10-02",
+      "title": "Time Series Cross Validation",
+      "slug": "cross-validation-time-series",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }
