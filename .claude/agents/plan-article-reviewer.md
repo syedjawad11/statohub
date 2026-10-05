@@ -50,7 +50,9 @@ Any `FAIL:` is a HARD failure (`draft` must still be `true` at this point).
   compare the page `<title>` to the citation text; a mismatch is mis-citation.
 - At least 6 Sources (WARN under 8). Every internal `routes.article(...)` /
   `routes.calculator(...)` target exists and is published; `related` points
-  only at published articles.
+  only at published articles. `routes.calculator(id)` needs `standalone: true`
+  in `src/content/calculators/<id>.yaml` — a `standalone: false` one has no page
+  and fails the build link gate; require `routes.article(...)` instead.
 
 ## 5. Cannibalization and overlap (HARD)
 1. Keywords: for the primary and each secondary, read-only

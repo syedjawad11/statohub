@@ -50,6 +50,10 @@ report it as a blocker without writing.
 - Internal links: confirm each target exists and is published —
   `src/content/articles/<slug>.mdx` with `draft: false`, or
   `src/content/calculators/<id>`. Planned slugs from the board are not pages yet.
+  `routes.calculator(id)` only for calculators with `standalone: true` in their
+  YAML; a `standalone: false` calculator lives inside its article, so link it
+  with `routes.article(<that article's slug>)` (e.g. `mean-median-mode-range`).
+  A wrong one passes review but fails the build's link gate.
 
 ## Write
 `src/content/articles/<slug>.mdx`, flat, `draft: true`, following TEMPLATE.md
