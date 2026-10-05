@@ -13,15 +13,15 @@ via SQL then `dump`. Routers are maps ([[0022-routers-are-maps-not-rulebooks]]).
 Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; their last
 enabled claude.ai schedule was disabled 2026-09-27.
 
-## Internal Applied batch 2 -- superseded by the content plan below
-
-Never chosen; the plan replaces it. Still owed: homepage visual QA vs the mock.
+## Owed: homepage visual QA vs the mock (batch 2 superseded by the plan)
 
 ## Content plan: 335 rows on content.db, daily routine 03:00 Malta (2026-10-04)
 
 `content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, 1,500
 floor, auto-publish, 1/day to 2026-11-04 ([[0028-content-plan-daily-routine]]);
-routine `trig_01CLrB4kqGE4P5NijmgrKbtn` cron 01:00 UTC, **set 02:00 on 10-25**.
+routine `trig_01CLrB4kqGE4P5NijmgrKbtn` cron 01:00 UTC, **set 02:00 on 10-25**;
+run 1 (10-05) failed link gate, fixed 7cd6fb9 + agents hardened 51a1bc0.
+Overlap gate: `content-ops/overlap_check.py`.
 **Owed: one dedicated session** to enrich 3 live articles instead of new pages:
 binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),
 linear-regression (+logistic). `sessions/2026-10-04-keyword-overlap-rewrites.md`.
