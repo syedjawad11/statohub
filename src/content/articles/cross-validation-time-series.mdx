@@ -1,0 +1,210 @@
+---
+title: "Time Series Cross Validation: A Practical Guide"
+h1: "Stop Tuning Splits: Time Series Cross Validation"
+description: "Research based guide to time series cross validation. Pick reproducible splits, fix window size before tuning, and use Statohub calculators."
+category: time-series-forecasting
+primaryKeyword: time series cross validation
+phase: 1
+keywords:
+  - time series cross validation
+  - rolling-origin validation
+  - walk-forward validation
+  - cross validation time series
+related:
+  - holt-winters
+  - sarima-model
+  - granger-causality
+draft: false
+pubDate: 2026-10-05
+updatedDate: 2026-10-05
+reviewedDate: 2026-10-05
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Cross validation time series methods evaluate a forecasting or machine learning model by moving a training and test window forward through time, never letting the model see data from the future. Analysts working with time-ordered data should use this rolling-origin approach instead of random <Link to={routes.article('k-fold-cross-validation')}>k-fold splitting</Link>, and should still reserve a final holdout period for an honest last check on performance.
+
+<KeyTakeaways rows={[
+  { point: 'Window size trade-off', details: 'Smaller validation windows increase the number of splits but may fail to capture future variability, risking less reliable model selection.' },
+  { point: 'Align test_size to the calendar', details: 'Setting test_size to align with actual calendar periods ensures error comparisons are consistent across different month lengths.' },
+  { point: 'No lookahead in features', details: 'Using features and scaling that only rely on data available before training prevents lookahead bias and overfitting.' },
+  { point: 'Report errors per horizon', details: "Reporting per-horizon errors and their standard error helps assess a model's stability across different forecast steps and regimes." },
+  { point: 'Lock the setup before tuning', details: 'Fixing window sizes, gaps, and parameters before tuning provides a more truthful evaluation, avoiding contamination from model overfitting.' },
+]} />
+
+> **TL;DR:**
+>
+> - Smaller validation windows increase the number of splits but may fail to capture future variability, risking less reliable model selection.
+> - Setting test_size to align with actual calendar periods ensures error comparisons are consistent across different month lengths.
+> - Using features and scaling that only rely on data available before training prevents lookahead bias and overfitting.
+> - Reporting per-horizon errors and their standard error helps assess a model's stability across different forecast steps and regimes.
+> - Fixing window sizes, gaps, and parameters before tuning provides a more truthful evaluation, avoiding contamination from model overfitting.
+
+## Core split patterns: rolling origin, expanding, and sliding windows
+
+The textbook version of this idea is rolling-origin cross-validation, sometimes called walk-forward validation: the training set grows (or shifts) forward one step at a time, and the model is tested on the observations immediately following it, repeated across many origins. The [Forecasting: Principles and Practice](https://otexts.com/fpptr/tscv.html) treatment of this method describes it as averaging accuracy across many forward test origins, explicitly forbidding any training set that includes observations occurring after the test period.
+
+Two variants matter in practice:
+
+- Expanding (cumulative) windows keep every past observation and simply extend the training set forward, which suits stable processes where older data still carries signal.
+- Sliding (fixed-length) windows drop the oldest observations as new ones arrive, which suits nonstationary processes or series with regime changes, where old patterns actively mislead the model.
+
+Multi-step horizons fit naturally into either pattern: instead of testing one step ahead, the test window spans the full forecast horizon (say, 1 to 8 periods ahead), and the model's error is tracked separately at each step before any averaging happens.
+
+## Implementing time series cross validation: parameters and API analogues
+
+Most statistical software implements rolling-origin validation through a small set of parameters, and getting them right determines whether the resulting folds actually reflect how the model will be used. Scikit-learn's [TimeSeriesSplit](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html) is the clearest reference point, since its documentation spells out exactly how each parameter reshapes the folds.
+
+1. **n_splits** sets how many train-test folds are generated, directly controlling how many out-of-sample periods the model gets judged on.
+2. **test_size** fixes how many observations fall in each test fold, and should match a meaningful calendar period (a week, a month, a quarter) rather than an arbitrary row count.
+3. **gap** inserts a buffer between the end of training and the start of testing, which matters when a target variable is only known with a reporting delay.
+4. **max_train_size** caps how far back training data reaches, turning an expanding window into a sliding one.
+
+Scikit-learn's own TimeSeriesSplit documentation notes that successive training sets are supersets of previous ones, and that folds assume equally spaced samples, so irregular timestamps need resampling before splitting. For multi-step forecasts, set test_size equal to the forecast horizon and report errors per step rather than lumping every horizon into a single number.
+
+**Pro Tip:** *Align test_size across every fold to the same calendar duration (not just the same row count), so a 31-day month and a 28-day month do not quietly distort your error comparisons.*
+
+## Choosing validation window size and number of splits: trade-offs that matter
+
+Window size is not a cosmetic choice. A theoretical result on validation-sample size in time series cross validation, from [Deng (2023)](https://ideas.repec.org/a/eee/ecolet/v233y2023ics0165176523003944.html), shows that the size of the validation window directly affects model-selection performance: smaller windows allow more splits and more test observations overall, but each individual window may fail to capture how much the series actually varies in the future.
+
+**A validation window's size, not just the number of folds, shapes how well cross-validation selects the right model.** This matters because a practitioner chasing more folds by shrinking each test window can end up with a less reliable selection procedure overall.
+
+Some operational guidance follows directly from this trade-off:
+
+- Fix window sizes and the number of splits before any hyperparameter tuning begins, so the evaluation setup itself is not part of what gets optimized.
+- Consider unequal validation window sizes when the sample is small, since Deng's simulation evidence shows this can improve finite-sample model selection in some data-generating processes.
+- Condition split boundaries on known seasonality or regime structure rather than cutting folds at arbitrary calendar points.
+
+Readers who want to go further should look at hv-block and purged or deflated cross-validation variants, which build explicit gaps around each test window to reduce contamination from autocorrelated observations near fold boundaries.
+
+## Evaluation metrics and aggregation across folds and horizons
+
+Forecast accuracy needs a metric that matches the question being asked. Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) penalize errors in the original units, with RMSE weighting large misses more heavily; Mean Absolute Percentage Error (MAPE) expresses error as a percentage, which helps compare series of different scales but breaks down near zero values; Mean Absolute Scaled Error (MASE) compares the model against a naive seasonal baseline, which Forecasting: Principles and Practice recommends specifically when aggregating across series.
+
+<DataTable
+  caption="Forecast accuracy metrics and what to watch for"
+  headers={['Metric', 'What it measures', 'Watch for']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['MAE (Mean Absolute Error)', 'Average error in the original units.', 'Weights every error equally, regardless of size.'],
+    ['RMSE (Root Mean Squared Error)', 'Average error in the original units, weighting large misses more heavily.', 'A few large misses can dominate the score.'],
+    ['MAPE (Mean Absolute Percentage Error)', 'Error expressed as a percentage, useful for comparing series of different scales.', 'Breaks down near zero values.'],
+    ['MASE (Mean Absolute Scaled Error)', 'Compares the model against a naive seasonal baseline.', 'Recommended specifically when aggregating error across series.'],
+  ]}
+/>
+
+- Report per-horizon errors separately for multi-step forecasts, since a model's one-step accuracy rarely predicts its eight-step accuracy.
+- Pool averages only after per-horizon numbers are reported, never instead of them.
+- Include the standard error across folds alongside the mean metric, so a small difference between two models is not mistaken for a real improvement.
+
+**A model's average RMSE across folds means little without its standard error attached**, since fold-to-fold variability can easily exceed the gap between two competing models.
+
+## Common pitfalls: lookahead bias and second-order overfitting
+
+Data leakage in time series validation rarely looks like an obvious mistake. It shows up as a feature computed with information not yet available at prediction time, a scaler fit on the full series before splitting, or a target-derived feature (a rolling average that includes the current period's outcome) that sneaks future information into the training set.
+
+1. Compute every feature using only information available up to the training cutoff, including scaling and imputation statistics.
+2. Fix window sizes and split counts before tuning, since adjusting them based on validation performance is itself a form of overfitting to the test data, a point practitioners on [Stats StackExchange](https://stats.stackexchange.com/questions/139175/aic-versus-cross-validation-in-time-series-the-small-sample-case) raise when discussing time series model selection.
+3. Insert a purging gap between training and test folds whenever labels or events can bleed across the boundary, such as a multi-day event window.
+4. Reserve a final holdout period, untouched by any tuning decision, for the last reported performance figure.
+
+<Checklist
+  id="lookahead-bias-checklist"
+  title="Avoiding lookahead bias and second-order overfitting"
+  style="check"
+  items={[
+    { text: 'Compute every feature using only information available up to the training cutoff', detail: 'Including scaling and imputation statistics.' },
+    { text: 'Fix window sizes and split counts before tuning', detail: 'Adjusting them based on validation performance is itself a form of overfitting to the test data.' },
+    { text: 'Insert a purging gap between training and test folds', detail: 'Whenever labels or events can bleed across the boundary, such as a multi-day event window.' },
+    { text: 'Reserve a final holdout period', detail: 'Untouched by any tuning decision, for the last reported performance figure.' },
+  ]}
+/>
+
+**Pro Tip:** *Keep a short written log of every window size, gap, and metric choice made during validation. It turns "we tried a few setups" into a defensible, repeatable evaluation.*
+
+## A practical workflow for running time series cross validation
+
+Start by diagnosing the series: its frequency, seasonal pattern, and any known regime shifts, which determines whether an expanding or sliding window fits better. Decide test_size and gap next, and lock both before any tuning. Run the splits, report per-horizon metrics with their standard error, and hold out a final period untouched by the whole process. Statohub's <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub and <Link to={routes.categoryHub('machine-learning-statistics')}>machine learning statistics</Link> category walk through worked versions of this sequence.
+
+<Figure number={1} caption="The four-step sequence for running a rolling-origin cross-validation pass, from diagnosing the series to the untouched final holdout.">
+  <ProcessFlow
+    title="Time series cross-validation workflow"
+    desc="A four-step horizontal pipeline moves from diagnosing the series, to setting test_size and gap, to running the splits and reporting per-horizon metrics, to holding out a final untouched period."
+    steps={[
+      { label: 'Diagnose the series', detail: 'Check frequency, seasonal pattern, and known regime shifts to pick an expanding or sliding window.' },
+      { label: 'Set test_size and gap', detail: 'Lock both before any tuning begins.' },
+      { label: 'Run the splits', detail: 'Report per-horizon metrics together with their standard error.' },
+      { label: 'Hold out a final period', detail: 'Keep it untouched by the whole process for the last reported check.' },
+    ]}
+  />
+</Figure>
+
+## Research highlights what to prioritize
+
+Most discussions of time series cross validation spend their energy on the splitting mechanics: expanding versus sliding windows, how many folds, what gap to use. Those choices matter, but the evidence on validation-sample size points somewhere less discussed: the width of each test window shapes model-selection reliability as much as the splitting pattern itself, and treating window size as a minor configuration detail is where a lot of otherwise careful evaluations go wrong.
+
+The conventional advice to "just use more folds" also deserves some skepticism in the context of [deterministic vs stochastic modeling](https://quantgenie.ai/blog/deterministic-vs-stochastic) applied to AI and trading systems. Walk-forward frameworks applied in finance, including the validation approach described in a recent [walk-forward trading study](https://arxiv.org/html/2512.12924v1), show that averaging across many folds can hide a model that fails badly in specific regimes while looking fine on average. A reader who takes one thing from this guide should prioritize reporting fold-level and regime-level results over chasing a single polished average metric. The second priority is discipline: fix your window sizes and gap before you start tuning, because an evaluation setup that bends to the results it's supposed to judge isn't really validation at all.
+
+## Where Statohub helps you put this into practice
+
+Working through a validation setup is easier with the underlying statistics laid out plainly first. Statohub's <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics guide</Link> breaks down when MAE, RMSE, and MAPE each give a misleading picture, and the <Link to={routes.calculator('sample-size')}>sample size calculator</Link> helps size validation windows before you lock them in.
+
+- Start with the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub for worked forecasting and model-validation examples.
+- Use the <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics guide</Link> to pick the right error measure for your horizon.
+- Check window and sample sizing with the <Link to={routes.calculator('sample-size')}>sample size calculator</Link> before running your folds.
+
+Each guide links back to the calculators behind it, following Statohub's own Learn, Calculate, and Apply structure, so the statistical reasoning and the computation stay on the same page. Browse the full <Link to={routes.home()}>Statohub</Link> library to start from whichever stage fits your project.
+
+## Recommended
+
+- <Link to={routes.categoryHub('machine-learning-statistics')}>Machine Learning Statistics</Link>
+- <Link to={routes.article('data-drift-detection')}>Data Drift Detection: A Practical Guide for Production ML Systems</Link>
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
+- <Link to={routes.appliedLanding()}>Applied Statistics</Link>
+
+## Sources
+
+<Sources items={[
+  { text: '5.10 Time series cross-validation — Forecasting: Principles and Practice (3rd ed)', href: 'https://otexts.com/fpptr/tscv.html', org: 'Hyndman & Athanasopoulos' },
+  { text: 'sklearn.model_selection.TimeSeriesSplit — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html', org: 'scikit-learn' },
+  { text: 'Time series cross validation: A theoretical result and finite sample performance — Deng (2023)', href: 'https://ideas.repec.org/a/eee/ecolet/v233y2023ics0165176523003944.html', org: 'Economics Letters / IDEAS-RePEc' },
+  { text: 'Interpretable hypothesis-driven trading: a rigorous walk-forward validation framework', href: 'https://arxiv.org/html/2512.12924v1', org: 'arXiv' },
+  { text: '5.8 Evaluating point forecast accuracy — Forecasting: Principles and Practice (3rd ed)', href: 'https://otexts.com/fpptr/accuracy.html', org: 'Hyndman & Athanasopoulos' },
+  { text: '3.1 Cross-validation: evaluating estimator performance — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/cross_validation.html', org: 'scikit-learn' },
+  { text: 'Another look at measures of forecast accuracy — Hyndman & Koehler (2006)', href: 'https://robjhyndman.com/papers/mase.pdf', org: 'International Journal of Forecasting' },
+  { text: '1.3.5.12 Autocorrelation — NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35c.htm', org: 'National Institute of Standards and Technology' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'When should I use ARIMA versus LSTM for a time series?',
+    answer: 'ARIMA suits smaller, linear, and clearly seasonal series where interpretability matters, while LSTM models suit larger datasets with complex nonlinear patterns where enough data exists to train a deep network reliably. Either choice still needs rolling-origin validation rather than random splitting, since both models can leak future information if tested carelessly.',
+  },
+  {
+    question: 'Can you explain cross-validation in simple terms?',
+    answer: 'Cross-validation tests a model by repeatedly holding back part of the data, training on the rest, and checking how well the model predicts the held-back part. For time series, this holdout always comes from a later period than the training data, which is what makes rolling-origin validation different from standard random cross-validation.',
+  },
+  {
+    question: 'Is cross-validation still a standard practice?',
+    answer: "Yes, cross-validation remains a standard tool for model evaluation and selection, including time-aware versions like rolling-origin validation for time-dependent data. Scikit-learn's TimeSeriesSplit and similar tools in other statistical software keep it a practical default for forecasting work.",
+  },
+  {
+    question: 'What counts as a good cross-validation score?',
+    answer: 'A good score is one that stays consistent across folds and horizons rather than looking strong on average while hiding poor performance in specific periods or regimes. Reporting the standard error alongside the mean metric, as recommended for rolling-origin evaluation, helps distinguish a genuinely strong model from one that got lucky on a few folds.',
+  },
+  {
+    question: 'How do I avoid lookahead bias when validating a time series model?',
+    answer: 'Compute every feature, scaling parameter, and imputation value using only information available before the training cutoff for each fold. Adding a purging gap between training and test windows, as practitioners on Stats StackExchange advise, further reduces the risk of labels or events bleeding across fold boundaries.',
+  },
+]} />

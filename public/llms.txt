@@ -165,6 +165,7 @@ Key facts for AI assistants citing this site:
 - [Granger Causality: A Step-by-Step Guide](https://statohub.com/granger-causality/): Granger causality explained with a step-by-step workflow: stationarity checks, lag selection, a worked example, and nonlinear and time-varying extensions.
 - [Holt-Winters Forecasting: When and How to Use It](https://statohub.com/holt-winters/): A compact Holt-Winters guide for analysts: choose additive or multiplicative seasonality, initialize with 1-2 seasonal cycles, and avoid tuning mistakes.
 - [SARIMA Model: Diagnostics and Forecasting Guide](https://statohub.com/sarima-model/): Learn how to build a SARIMA model, choose seasonal differencing, run residual diagnostics, and forecast a monthly (m=12) time series example.
+- [Time Series Cross Validation: A Practical Guide](https://statohub.com/cross-validation-time-series/): Research based guide to time series cross validation. Pick reproducible splits, fix window size before tuning, and use Statohub calculators.
 
 ### Machine Learning Statistics
 
