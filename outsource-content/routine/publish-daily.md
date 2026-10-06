@@ -39,6 +39,18 @@ Missing key, failed `npm ci`, or failed rebuild → `PUBLISH_FAILED [1]: <reason
 and stop. The key comes from the cloud environment's variables, never from a
 committed file; never print it.
 
+**Preflight build.** Before picking or writing anything, prove `main` itself is
+green:
+
+```bash
+npm run build
+```
+
+Failure → `PUBLISH_FAILED [1]: preflight build red on main — <failing check and
+first error line>` and stop. Touch no board rows and commit nothing: the repo,
+not an article, is broken, and a human must fix it. This costs one build instead
+of a full write-and-review that would fail at the final gate anyway (2026-10-06).
+
 ## Step 2 — Pick one article
 
 Read `docs/status/NOW.md` (Outsource pipeline section) and

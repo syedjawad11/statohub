@@ -81,13 +81,20 @@ Skip it for content-only or edit-only sessions.
 - One agent on the repo at a time (ADR `0004`) still holds — you are performing
   the single gated write here.
 
-## 6. Monthly archive note (housekeeping)
+## 6. Archive aged session files (housekeeping)
 
-Session snapshots live under `docs/status/sessions/`; at month-end, files older
-than ~30 days move to `docs/status/sessions/archive/` (immutable snapshots,
-per `docs/MEMORY-SYSTEM.md` §7). If you notice top-level session files from a prior
-month still sitting outside `archive/`, flag it in the summary — don't silently
-reorganize history mid-session unless the user asks.
+Session snapshots live under `docs/status/sessions/`; files older than 30 days
+move to `docs/status/sessions/archive/` (immutable snapshots, per
+`docs/MEMORY-SYSTEM.md` §7). The build only *warns* about them (a wall-clock
+check must not fail the build that the daily routines publish through), so this
+step is where the rule is enforced:
+
+```bash
+node scripts/check-docs.mjs --strict
+```
+
+`git mv` every session file it flags into `archive/` (never edit their
+contents), re-run until it exits 0, and list the moves in the summary.
 
 ## 7. Print a one-screen summary
 

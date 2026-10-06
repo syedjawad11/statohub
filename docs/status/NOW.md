@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-10-04 (content-plan pipeline). **Baseline:** 150
+**Last updated:** 2026-10-06 (routine build-gate fix). **Baseline:** 150
 pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 **Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
@@ -20,7 +20,7 @@ enabled claude.ai schedule was disabled 2026-09-27.
 `content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, 1,500
 floor, auto-publish, 1/day to 2026-11-04 ([[0028-content-plan-daily-routine]]);
 routine `trig_01CLrB4kqGE4P5NijmgrKbtn` cron 01:00 UTC, **set 02:00 on 10-25**;
-run 1 (10-05) failed link gate, fixed 7cd6fb9 + agents hardened 51a1bc0.
+run 2 (10-06) blocked by check-docs session age: now warn-only, routines preflight build.
 Overlap gate: `content-ops/overlap_check.py`.
 **Owed: one dedicated session** to enrich 3 live articles instead of new pages:
 binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),

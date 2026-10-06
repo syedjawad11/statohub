@@ -14,6 +14,12 @@
  *   3. Every ADR file appears in the docs/decisions/README.md index.
  *   4. NOW.md and CLAUDE.md stay under their stated line caps.
  *   5. No session file older than 30 days sits outside sessions/archive/.
+ *      Warn-only by default, fatal with --strict. It is the one check that
+ *      depends on the wall clock, not the repo: as a hard build gate it turned
+ *      the same commit red overnight and blocked an approved daily-routine
+ *      publish (2026-10-06). A build gate must give the same answer for the
+ *      same commit, so age is enforced by /session-close, which runs --strict
+ *      and archives.
  *
  * Plain Node, no dependencies, exit 1 on violation -- same idiom as
  * scripts/check-links.mjs.
@@ -23,6 +29,8 @@ import path from 'node:path';
 
 const ROOT = path.resolve('.');
 const violations = [];
+const warnings = [];
+const STRICT = process.argv.includes('--strict');
 
 const LINE_CAPS = [
   { file: 'docs/status/NOW.md', max: 60 },
@@ -34,6 +42,10 @@ const SESSION_MAX_AGE_DAYS = 30;
 
 function report(file, message) {
   violations.push({ file, message });
+}
+
+function warn(file, message) {
+  warnings.push({ file, message });
 }
 
 function walk(dir, out = []) {
@@ -166,7 +178,7 @@ if (existsSync(sessionsDir)) {
       ? Date.parse(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}T00:00:00Z`)
       : statSync(path.join(sessionsDir, entry.name)).mtimeMs;
     if (stamp < cutoff) {
-      report(
+      (STRICT ? report : warn)(
         `docs/status/sessions/${entry.name}`,
         `older than ${SESSION_MAX_AGE_DAYS} days and still outside archive/`,
       );
@@ -179,6 +191,10 @@ if (existsSync(sessionsDir)) {
 console.log(
   `check-docs: scanned ${markdownFiles.length} markdown files, ${adrFiles.length} ADRs, found ${violations.length} violations.`,
 );
+
+for (const w of warnings) {
+  console.warn(`check-docs: warning: ${w.file} -- ${w.message} (archive it; /session-close does)`);
+}
 
 if (violations.length === 0) {
   console.log('check-docs: OK - links resolve, ADR index complete, caps respected.');
