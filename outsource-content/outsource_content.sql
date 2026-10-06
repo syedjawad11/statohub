@@ -61,6 +61,7 @@ INSERT INTO "outsource_articles" VALUES('control-confounders','Control Confounde
 INSERT INTO "outsource_articles" VALUES('spillover-effects','Spillover Effects in Experiments','experiments-causality',42,'2026-09-26','902102','published','outsource-content/raw/spillover-effects.json','src/content/articles/spillover-effects.mdx',2,0,0,7,'','2026-10-03 09:13:44','2026-10-03 21:26:39');
 INSERT INTO "outsource_articles" VALUES('feature-scaling-explained','Feature Scaling Explained','machine-learning-statistics',43,'2026-09-28','906634','published','outsource-content/raw/feature-scaling-explained.json','src/content/articles/feature-scaling-explained.mdx',2,0,0,8,'','2026-10-04 09:12:50','2026-10-04 09:28:33');
 INSERT INTO "outsource_articles" VALUES('cross-validation-time-series','Time Series Cross Validation','time-series-forecasting',44,'2026-10-02','924844','published','outsource-content/raw/cross-validation-time-series.json','src/content/articles/cross-validation-time-series.mdx',2,0,0,8,'','2026-10-05 09:14:21','2026-10-05 09:29:57');
+INSERT INTO "outsource_articles" VALUES('t-test-vs-z-test','T-Test vs Z-Test','data-analysis',45,'2026-09-29','912414','fetched','outsource-content/raw/t-test-vs-z-test.json',NULL,0,0,0,NULL,'','2026-10-06 09:14:51','2026-10-06 09:15:01');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
