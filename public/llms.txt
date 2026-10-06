@@ -141,6 +141,7 @@ Key facts for AI assistants citing this site:
 - [One-Tailed vs Two-Tailed Tests: How to Choose](https://statohub.com/one-tailed-vs-two-tailed/): A practical checklist for choosing one-tailed vs two-tailed tests: four questions, worked examples, and why switching tails after seeing data is invalid.
 - [Pearson vs Spearman: When to Use Each One](https://statohub.com/pearson-vs-spearman/): Compare Pearson vs Spearman correlation with a plot-first checklist, worked examples, and guidance on choosing the right coefficient for your data.
 - [Scatter Plot Interpretation Guide](https://statohub.com/scatter-plot-interpretation/): A practical guide to scatter plot interpretation: a 6-step checklist covering form, direction, strength, and outliers before trusting a correlation number.
+- [T-Test vs Z-Test: How to Choose](https://statohub.com/t-test-vs-z-test/): Choose a t-test vs z-test by whether the population standard deviation is known, not sample size. Includes a 6-step checklist and a worked example.
 
 ### Experiments & Causality
 

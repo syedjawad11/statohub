@@ -1,0 +1,192 @@
+---
+title: "T-Test vs Z-Test: How to Choose"
+h1: "Stop Using n≥30: Choose T Test vs Z Test by Whether σ Is Known"
+description: "Choose a t-test vs z-test by whether the population standard deviation is known, not sample size. Includes a 6-step checklist and a worked example."
+category: data-analysis
+primaryKeyword: t-test vs z-test
+keywords:
+  - t-test vs z-test
+  - z-test vs t-test
+phase: 1
+related:
+  - one-tailed-vs-two-tailed
+  - confidence-level-vs-significance-level
+  - normality-tests
+draft: false
+pubDate: 2026-10-06
+updatedDate: 2026-10-06
+reviewedDate: 2026-10-06
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Use a t-test when the population standard deviation σ is unknown and must be estimated from the sample using s; use a z-test only when σ is genuinely known in advance. The widely repeated "n ≥ 30" rule is a heuristic about how quickly a sampling distribution approximates normal, not the actual criterion for choosing between the two tests. In practice, most applied work defaults to the t-test.
+
+<KeyTakeaways variant="bullets" bullets={[
+  "The t-test is generally used when the population standard deviation is unknown and must be estimated from the sample, which is almost always the case in applied work.",
+  "A z-test only applies when the population standard deviation is known in advance, a rare situation outside standard testing or quality control.",
+  "The common \"n ≥ 30\" rule is a guideline for normal approximation, not a decision point; small samples can still use a z-test if the population variance is known and data are normal.",
+  "For two-sample comparisons, Welch's t-test is the default choice when variances are unequal or unknown, while pooled t-test assumes equal variances.",
+  "When data are paired or matched, a paired t-test analyzes within-pair differences directly, avoiding between-group variability.",
+]} />
+
+## Decision criteria: known σ, sample size, and what each test assumes
+
+The choice between a t-test and a z-test rests on one question: does the analyst know the population standard deviation, or must it be estimated from the sample? A [one-sample z-test](https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm) is appropriate only when σ is known ahead of time, a situation that rarely occurs outside of standardized testing or quality-control processes with long-established process variability. When σ is unknown and replaced with the sample standard deviation s, the resulting statistic no longer follows a standard normal distribution. It follows a t distribution with n − 1 degrees of freedom, which has heavier tails that widen confidence intervals and require larger critical values to reach the same significance threshold.
+
+The n ≥ 30 guideline concerns how closely a sampling distribution of the mean approximates normality under the central limit theorem, not a rule for switching between t and z. A z-test can be valid with a small sample if σ is genuinely known and the underlying data are close to normal, while a t-test remains correct for any sample size once σ must be estimated.
+
+- One-sample mean: use t if σ is unknown, z if σ is known.
+- Two-sample means: use a t procedure (pooled or Welch), since population variances are almost never known.
+- Proportions: large-sample inference typically relies on a z statistic because the variance is a function of the estimated proportion itself.
+
+**The t distribution's extra spread reflects the added uncertainty of estimating σ from data**, and [Berkeley's statistics materials](https://www.stat.berkeley.edu/~stark/SticiGui/Text/zTest.htm) tie this directly to wider confidence intervals for smaller samples.
+
+## Formulas and a compact worked example for a one-sample mean
+
+The z statistic for a one-sample test is z = (x̄ − μ0)/(σ/√n), compared against the standard normal distribution. The t statistic replaces σ with s: t = (x̄ − μ0)/(s/√n), evaluated against a t distribution with n − 1 degrees of freedom. Confidence intervals follow the same logic: x̄ ± z*·(σ/√n) when σ is known, or x̄ ± t*·(s/√n), with df = n − 1, when it is not.
+
+<DataTable
+  caption="One-sample z statistic vs t statistic: formula, reference distribution, and when each applies"
+  headers={['Test', 'Test statistic', 'Reference distribution', 'Use when']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['z-test', 'z = (x̄ − μ0)/(σ/√n)', 'Standard normal', 'σ is known in advance'],
+    ['t-test', 't = (x̄ − μ0)/(s/√n)', 't distribution, df = n − 1', 'σ is unknown and estimated by s'],
+  ]}
+/>
+
+Consider a quality analyst checking whether the average weight of cereal boxes differs from a labeled 500 grams. A sample of 16 boxes gives a mean of 496 grams and a sample standard deviation of 8 grams, with σ unknown, so a t-test applies.
+
+1. Compute the standard error: 8/√16 = 2 grams.
+2. Compute the t statistic: t = (496 − 500)/2 = −2.0, with df = 15.
+3. Compare −2.0 against the t distribution with 15 degrees of freedom to find the two-tailed <Link to={routes.article('p-value')}>p-value</Link>, roughly 0.064.
+4. Build the 95% CI using t* for df = 15 (about 2.131): 496 ± 2.131(2) = [491.7, 500.3].
+
+The <Link to={routes.article('confidence-interval')}>confidence interval</Link> spans the labeled weight of 500 grams, so the result is not significant at the 5% level even though the point estimate falls below the target.
+
+**Pro Tip:** *Report the confidence interval alongside the p-value: the interval shows the plausible range of the true mean, while the p-value only signals whether it crosses a threshold.*
+
+<Figure number={1} caption="95% confidence interval for the cereal-box worked example. The labeled 500 g value sits inside the interval, so the result is not significant at the 5% level.">
+  <AnnotatedChart
+    title="Cereal weight results"
+    desc="Bar chart comparing the 95% confidence interval lower bound of 491.7 grams, the sample mean of 496 grams, the labeled value of 500 grams, and the 95% confidence interval upper bound of 500.3 grams for the cereal box weight example."
+    type="bar"
+    points={[
+      { label: '95% CI lower', value: 491.7 },
+      { label: 'Sample mean', value: 496 },
+      { label: 'Labeled value', value: 500 },
+      { label: '95% CI upper', value: 500.3 },
+    ]}
+    yLabel="Grams"
+  />
+</Figure>
+
+## Two-sample and paired comparisons: pooled t vs Welch's t and paired t-test
+
+Comparing two independent groups introduces a second decision: whether to assume the groups share a common variance. The pooled t-test assumes equal population variances and uses df = n1 + n2 − 2, borrowing strength across both samples to estimate a single pooled standard error. Welch's t-test drops that assumption and instead uses the Welch-Satterthwaite approximation to calculate degrees of freedom, which often come out as a non-integer value reflecting the relative sizes and variances of each group.
+
+When measurements come from the same subjects or matched units, such as before-and-after readings, a <Link to={routes.article('paired-vs-independent-t-test')}>paired t-test</Link> analyzes the within-pair differences directly rather than treating the two sets as independent, with df = n − 1 based on the number of pairs.
+
+- Pooled t: requires defensible evidence that variances are equal across groups.
+- Welch's t: the safer default when sample sizes or spreads differ, since it does not require an equal-variance assumption.
+- Paired t: appropriate whenever observations are naturally linked, since it removes between-subject variability from the comparison.
+
+Most statistical software now defaults to Welch's t for independent samples, a practical acknowledgment that equal variances are the exception rather than the rule.
+
+## Practical workflow and checklist: choose, run, and report the right test
+
+A consistent workflow keeps test selection from becoming guesswork, particularly when deadlines push analysts toward shortcuts.
+
+1. Define the parameter of interest and state the null and alternative hypotheses.
+2. Confirm the observations are independent and match the study design (paired, one-sample, or two-sample).
+3. Determine whether σ is known: choose z only if it genuinely is, otherwise use t.
+4. Check the distribution for skewness or outliers, especially with small samples.
+5. Compute the test statistic, the p-value, and the confidence interval together.
+6. Report the point estimate, the CI, the degrees of freedom, and the assumptions used to reach the conclusion.
+
+<Checklist
+  id="t-test-z-test-workflow"
+  title="Choose, run, and report the right test"
+  style="numbered"
+  items={[
+    { text: 'Define the parameter of interest and state the null and alternative hypotheses.' },
+    { text: 'Confirm the observations are independent and match the study design (paired, one-sample, or two-sample).' },
+    { text: 'Determine whether σ is known: choose z only if it genuinely is, otherwise use t.' },
+    { text: 'Check the distribution for skewness or outliers, especially with small samples.' },
+    { text: 'Compute the test statistic, the p-value, and the confidence interval together.' },
+    { text: 'Report the point estimate, the CI, the degrees of freedom, and the assumptions used to reach the conclusion.' },
+  ]}
+/>
+
+Pre-specify the significance level and whether the alternative hypothesis is one-sided or two-sided before looking at the data, since choosing the tail direction afterward inflates the false-positive rate. A statistically significant result still needs context: an effect size that is real but trivial in practical terms rarely justifies the cost of acting on it.
+
+**Pro Tip:** *Walk through the <Link to={routes.categoryHub('inferential-statistics')}>inferential statistics</Link> workflow once with a practice dataset before applying it to results that matter, so the steps become automatic under deadline pressure.*
+
+## Assumptions, limitations, and alternatives when standard assumptions fail
+
+Both tests rest on independence between observations, an assumption that clustered sampling, repeated measures, or time-dependent data can violate outright. Small samples additionally require the underlying population to be approximately normal, since the CLT has less room to smooth over irregular shapes when n is small.
+
+- Independence: observations must not be linked in ways that inflate apparent precision.
+- Approximate normality: matters most at small sample sizes, less as n grows.
+- Correct standard error: an unaccounted design effect can make a p-value badly optimistic.
+
+When these conditions fail, [transformations, bootstrap confidence intervals, permutation tests, or nonparametric alternatives](https://pressbooks.montgomerycollege.edu/statnotes/chapter/10-1-two-population-means-with-unknown-standard-deviations/) such as the Wilcoxon test often serve better than forcing a t-test onto skewed or clustered data. A claimed "known" σ deserves skepticism in most applied settings, since it is rarely available outside long-run industrial or standardized-testing processes.
+
+## Authoritative backing: what NIST, Penn State, Berkeley, and LibreTexts say
+
+NIST documents the z-test's dependence on known σ, while its t-test reference covers Welch's approximation for unequal variances. Penn State explains why the t distribution's tails shrink toward normal as degrees of freedom rise, and Berkeley ties the same reference distribution to both p-values and interval width.
+
+> The reference distribution chosen for a test determines both its p-value and the width of its confidence interval.
+
+## Statohub perspective: teaching choice and interpretation in applied statistics
+
+The recurring mistake we see is treating "n ≥ 30" as a switch rather than what it actually is: a rough guide to approximation quality. The sturdier habit is pairing every test with its confidence interval and a quick check of the independence and normality assumptions behind it, since a p-value alone hides how precise or fragile the estimate really is. Readers building this habit can practice it directly with Statohub's calculators and worked examples in the Learn and Apply sections.
+
+## Try Statohub calculators and guides for your next analysis
+
+Once the decision between t and z is clear, the remaining work is arithmetic best left to a calculator rather than a spreadsheet formula typed from memory. The <Link to={routes.calculator('t-test')}>T-Test Calculator</Link> runs one-sample, two-sample, and paired t-tests and returns the statistic, degrees of freedom, and confidence interval in one pass, while the <Link to={routes.calculator('z-table')}>Z Table Calculator</Link> converts z statistics into tail probabilities for the rarer cases where σ is genuinely known. Both map directly onto the workflow above: define the hypothesis, compute the statistic, check the interval, and report the assumptions. For a broader library of worked examples connecting statistical theory to real datasets, the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub is the next stop, and the <Link to={routes.learnLanding()}>Learn Statistics</Link> section covers the underlying concepts in more depth for readers who want the theory before the computation.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Are the Data Consistent with the Assumed Process Mean? (one-sample t/z test)', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'P.B. Stark, "Approximate Hypothesis Tests: The z Test and the t Test," SticiGui', href: 'https://www.stat.berkeley.edu/~stark/SticiGui/Text/zTest.htm', org: 'UC Berkeley, Department of Statistics' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Two-Sample t-Test for Equal Means', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda353.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Confidence Limits for the Mean', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Do Two Processes Have the Same Mean?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc31.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Do Two Processes Have the Same Standard Deviation?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc32.htm', org: 'National Institute of Standards and Technology' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'When would you use a t-test instead of a z-test?',
+    answer: 'Use a t-test whenever the population standard deviation is unknown and must be estimated from the sample, which describes nearly every applied analysis. A z-test is reserved for the narrower case where σ is genuinely known in advance, such as certain standardized measurement processes.',
+  },
+  {
+    question: 'How do you determine whether to use a z-test or a t-test?',
+    answer: 'Check whether the population standard deviation σ is known: if it is, use a z-test; if it must be estimated with the sample standard deviation s, use a t-test. Sample size alone, including the common n ≥ 30 guideline, does not decide the choice.',
+  },
+  {
+    question: 'When should you use a t-test in practice?',
+    answer: "A t-test applies to one-sample, two-sample, or paired comparisons of means whenever σ is unknown, which covers most real-world datasets from surveys, experiments, and business metrics. Independent two-sample comparisons typically default to Welch's t-test unless equal variances are clearly justified.",
+  },
+  {
+    question: 'Why is a t-test often preferred over a z-test?',
+    answer: "The t-test is preferred because population standard deviations are rarely known outside controlled industrial or standardized-testing contexts, making the z-test's core assumption impractical for most analysts. The t distribution also adjusts for the extra uncertainty of estimating σ by widening its tails, which keeps confidence intervals honest at smaller sample sizes.",
+  },
+]} />
+
+## Recommended
+
+For related reading, continue with the <Link to={routes.calculator('z-table')}>Z Table Calculator</Link>, the <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics</Link> hub, the <Link to={routes.calculator('t-test')}>T-Test Calculator</Link>, and the <Link to={routes.article('paired-vs-independent-t-test')}>Paired vs. Independent T-Test</Link> guide, which walks through the pooled-versus-Welch and paired-sample comparisons covered above in more depth, with worked examples of its own.
