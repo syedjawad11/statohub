@@ -99,6 +99,7 @@ statohub/
 |   |-- overlap_check.py      # content-plan overlap gate vs live pages (outline/check/titles)
 |   |-- new-content-plan/     # owner's plan sheet + plan.csv + TEMPLATE.md
 |   |-- routine/              # content-plan daily routine spec + PAUSED switch
+|   |-- drafts/               # failed plan drafts parked for revision (plan-next resumes them first)
 |   |-- schema.sql, seed.json
 |   |-- cloud-routine/        # retired -> docs/legacy/cloud-routine/; only PAUSED + a stub remain
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)

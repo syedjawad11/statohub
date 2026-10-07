@@ -71,9 +71,11 @@ confirm it has no `<StatCalc>`, no `calculator:` and no `{`/`}` in prose.
 
 **Failure path** (still one article; do not pick another): the row ends
 `changes_requested` or `blocked`, the MDX is never committed at
-`draft: false`, only the board is committed
-(`content-plan: <slug> <status> (daily routine)`) and pushed, and the untracked
-draft MDX is deleted (that one path only).
+`draft: false`. The draft is **parked**, not deleted: moved to
+`content-ops/drafts/<slug>.mdx` (outside `src/content`, so never built) and
+committed with the board (`content-plan: <slug> <status> (daily routine)`),
+then pushed. A later run's `plan-next` resumes it first and the writer revises
+it against the last fix list (see SKILL.md step 1).
 
 ## Step 4 — Final checks and result
 

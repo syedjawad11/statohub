@@ -47,6 +47,8 @@ PLAYBOOK = ".claude/seo-playbook.md"  # repo-root relative
 APPLIED_PLAYBOOK = ".claude/applied-playbook.md"  # repo-root relative
 PLAN_TEMPLATE = "content-ops/new-content-plan/TEMPLATE.md"  # repo-root relative
 ARTICLES_DIR = HERE.parent / "src" / "content" / "articles"
+DRAFTS_DIR = HERE / "drafts"  # failed plan drafts parked between runs, revised not rewritten
+PARKED_MAX_FAILS = 6  # failed reviews before a parked draft is left for a human
 PLAN_WORD_FLOOR = 1500  # [[0028-content-plan-daily-routine]]
 PLAN_HUBS = {
     "Foundations": "foundations",
@@ -459,6 +461,31 @@ def cmd_import_plan(args):
 
 def cmd_plan_next(args):
     conn = connect()
+    # A parked draft (failed review, saved by the failure path) is resumed before
+    # anything new is started: it is usually one fix from passing, and plan rows
+    # downstream of it stay blocked until it is live.
+    parked = conn.execute(
+        "SELECT a.slug,a.title,p.plan_id,p.priority,a.category_slug,"
+        "(SELECT COUNT(*) FROM reviews r WHERE r.article_slug=a.slug AND r.passed=0) AS fails "
+        "FROM articles a JOIN plan_rows p ON p.slug=a.slug "
+        "WHERE a.status='changes_requested' AND a.flagged=0 "
+        "ORDER BY p.priority,p.plan_id"
+    ).fetchall()
+    for r in parked:
+        if not (DRAFTS_DIR / f"{r['slug']}.mdx").exists():
+            continue
+        if (ARTICLES_DIR / f"{r['slug']}.mdx").exists():
+            continue  # a file already sits at this URL; needs a human
+        if r["fails"] >= PARKED_MAX_FAILS:
+            print(f"Skipped parked {r['slug']}: {r['fails']} failed reviews - needs a human")
+            continue
+        conn.close()
+        print(f"Next up (resume parked draft): {r['slug']}  "
+              f"({r['plan_id']}, {r['priority']}, {r['category_slug']})")
+        print(f"  {r['title']}")
+        print(f"\nRevise, don't rewrite: content-ops/drafts/{r['slug']}.mdx + the last fix list "
+              f"(python3 content-ops/content_db.py show {r['slug']})")
+        return
     rows = conn.execute(
         "SELECT a.slug,a.title,a.category_slug,a.primary_keyword,p.plan_id,p.priority,"
         "p.links_up_to FROM articles a JOIN plan_rows p ON p.slug=a.slug "

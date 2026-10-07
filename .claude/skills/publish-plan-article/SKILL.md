@@ -17,6 +17,14 @@ rows are the ones with a `plan_rows` entry). Never route these through
    block). Otherwise `python3 content-ops/content_db.py plan-next`.
    It skips flagged rows (primary keyword owned elsewhere) and rows whose
    parent is not live yet. If nothing is left, report that and stop.
+   It offers a **parked draft** first ("resume parked draft"): a
+   `changes_requested` row whose failed draft sits in
+   `content-ops/drafts/<slug>.mdx`. To resume it: `mv` that file to
+   `src/content/articles/<slug>.mdx` (keep `draft: true`), set the row
+   `drafting`, and in step 3 tell the writer to **revise that draft** against
+   the last review's fix list (`content_db.py show <slug>`), not rewrite it.
+   On publish the reviewer's `git add content-ops/` records the parked copy's
+   removal.
 
 2. **Brief + mark drafting.**
    ```
@@ -42,8 +50,13 @@ rows are the ones with a `plan_rows` entry). Never route these through
 6. **Wrap up.** `python3 scripts/db_sync.py check`; `git status --porcelain`
    must be empty. On a failed run, commit only the board
    (`python3 scripts/db_sync.py dump`, `git add content-ops/content.sql`,
-   commit `content-plan: <slug> <status>`), push, and delete the untracked
-   draft MDX so the next run doesn't trip over it.
+   commit `content-plan: <slug> <status>`), push. Park the draft instead of
+   deleting it: `mkdir -p content-ops/drafts && mv src/content/articles/<slug>.mdx
+   content-ops/drafts/<slug>.mdx`, and commit it with the board. A retry then
+   revises it; a near-pass is never thrown away for a from-scratch rewrite
+   (2026-10-06: a 90/100 draft was lost to an unrelated gate failure, and the
+   rewrite failed review twice). `plan-next` stops offering a parked draft after
+   6 failed reviews; then it needs a human.
 
 ## Notes
 - Spot-check the published page yourself when running locally (review is the
