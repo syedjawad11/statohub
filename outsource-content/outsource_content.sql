@@ -62,6 +62,7 @@ INSERT INTO "outsource_articles" VALUES('spillover-effects','Spillover Effects i
 INSERT INTO "outsource_articles" VALUES('feature-scaling-explained','Feature Scaling Explained','machine-learning-statistics',43,'2026-09-28','906634','published','outsource-content/raw/feature-scaling-explained.json','src/content/articles/feature-scaling-explained.mdx',2,0,0,8,'','2026-10-04 09:12:50','2026-10-04 09:28:33');
 INSERT INTO "outsource_articles" VALUES('cross-validation-time-series','Time Series Cross Validation','time-series-forecasting',44,'2026-10-02','924844','published','outsource-content/raw/cross-validation-time-series.json','src/content/articles/cross-validation-time-series.mdx',2,0,0,8,'','2026-10-05 09:14:21','2026-10-05 09:29:57');
 INSERT INTO "outsource_articles" VALUES('t-test-vs-z-test','T-Test vs Z-Test','data-analysis',45,'2026-09-29','912414','published','outsource-content/raw/t-test-vs-z-test.json','src/content/articles/t-test-vs-z-test.mdx',1,1,0,6,'','2026-10-06 09:14:51','2026-10-06 09:38:54');
+INSERT INTO "outsource_articles" VALUES('logistic-regression-interpretation','Logistic Regression Interpretation','machine-learning-statistics',46,'2026-10-06','940779','fetched','outsource-content/raw/logistic-regression-interpretation.json',NULL,0,0,0,NULL,'','2026-10-07 09:17:30','2026-10-07 09:17:46');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

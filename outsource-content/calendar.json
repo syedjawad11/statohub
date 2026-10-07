@@ -314,6 +314,13 @@
       "title": "T-Test vs Z-Test",
       "slug": "t-test-vs-z-test",
       "category_slug": "data-analysis"
+    },
+    {
+      "queue_position": 46,
+      "day_label": "2026-10-06",
+      "title": "Logistic Regression Interpretation",
+      "slug": "logistic-regression-interpretation",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }
