@@ -1,0 +1,247 @@
+---
+title: "Sampling Methods: Probability & Non-Probability"
+h1: "Sampling Methods: Probability vs Non-Probability Sampling"
+description: "Sampling methods explained: probability techniques (simple random, systematic, stratified, cluster) vs non-probability sampling, bias, and how to choose."
+category: foundations
+primaryKeyword: sampling methods
+keywords:
+  - sampling methods
+  - non probability sampling
+  - probability sampling
+  - sampling techniques
+  - systematic sampling
+  - types of sampling
+phase: 1
+related:
+  - population-vs-sample
+  - parameter-vs-statistic
+  - types-of-variables
+draft: false
+pubDate: 2026-10-07
+updatedDate: 2026-10-07
+reviewedDate: 2026-10-07
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+**Sampling methods** are the procedures researchers use to pick which members of a population actually get measured, and the choice splits into two families: probability sampling, where every unit has a known chance of selection, and non-probability sampling, where it does not. The two families are not interchangeable. Probability sampling techniques — simple random, systematic, stratified, cluster, and multistage sampling — let you calculate a margin of error and generalize to the population with a stated confidence level. Non-probability techniques — convenience, quota, snowball, and purposive (judgment) sampling — trade that guarantee for speed and lower cost, which is a reasonable trade when a full frame doesn't exist or isn't worth building. Picking the right one starts with knowing which trade-off your study can actually afford.
+
+<KeyTakeaways rows={[
+  { point: 'Two families, one dividing line', details: 'Probability sampling gives every population unit a known, nonzero chance of selection; non-probability sampling does not, which is what blocks a formal margin of error.' },
+  { point: 'Five probability techniques cover most designs', details: 'Simple random, systematic, stratified, cluster, and multistage sampling each trade efficiency for practicality in a different way.' },
+  { point: 'Four non-probability techniques trade rigor for reach', details: 'Convenience, quota, snowball, and purposive sampling are faster and cheaper, but every one of them risks an unmeasurable selection bias.' },
+  { point: 'Systematic sampling has one hidden trap', details: 'A fixed sampling interval can silently align with a periodic pattern in the list and produce a badly unrepresentative sample.' },
+  { point: 'The choice usually comes down to the frame', details: 'Whether a complete list of the population exists — and how spread out that population is geographically — decides more of the method choice than theory does.' },
+]} />
+
+## Quick Checklist: Choosing a Sampling Method
+
+Before you pick a technique, settle these five questions. They decide more of the outcome than any formula does.
+
+<Checklist
+  id="choosing-a-sampling-method"
+  title="Quick checklist: choosing a sampling method"
+  style="check"
+  items={[
+    { text: 'Do you have (or can you build) a full list of the population?', detail: 'No list usually rules out simple random and systematic sampling and pushes you toward cluster, multistage, or a non-probability method.' },
+    { text: 'Does the population split into meaningful subgroups?', detail: 'Stratified sampling is worth the extra setup when a subgroup (region, age band, product tier) needs its own precise estimate.' },
+    { text: 'How spread out is the population geographically?', detail: 'Wide geographic spread favors cluster or multistage sampling, which concentrate data collection instead of scattering it.' },
+    { text: 'Do you need to generalize with a stated margin of error?', detail: 'If yes, you need a probability method; non-probability samples cannot support that calculation, no matter the sample size.' },
+    { text: 'Is the population rare or hard to reach?', detail: 'Hidden or stigmatized populations without a sampling frame often require snowball or purposive sampling despite the bias risk.' },
+  ]}
+/>
+
+A common mistake is skipping the first question entirely and reaching for simple random sampling out of habit, even when no frame exists to sample from.
+
+## What's the Difference Between Probability and Non-Probability Sampling?
+
+Probability sampling selects units using randomization, so every unit's chance of selection is known and can be calculated; non-probability sampling selects units through a subjective, non-random process, so that chance is unknown. [Statistics Canada's training module on probability sampling](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm) puts it directly: "Probability sampling refers to the selection of a sample from a population, when this selection is based on the principle of randomization, that is, random selection or chance... because units from the population are randomly selected and each unit's selection probability can be calculated, reliable estimates can be produced and statistical inferences can be made about the population." Non-probability sampling, by contrast, "is a method of selecting units from a population using a subjective (i.e. non-random) method," and "since elements are chosen arbitrarily, there is no way to estimate the probability of any one element being included in the sample," per [Statistics Canada's companion module on non-probability sampling](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/nonprob/5214898-eng.htm).
+
+That single difference — known versus unknown selection probability — is what separates the two families in practice, not sample size or how "random" a method feels.
+
+- **Probability sampling** supports design-based statistical inference: a calculated margin of error, a confidence interval, and a defensible generalization to the population.
+- **Non-probability sampling** supports neither, by construction. A larger non-probability sample reduces some forms of noise but never converts into a valid margin of error, because there is no known selection probability to build one from.
+
+The [AAPOR Task Force Report on Nonprobability Sampling](https://aapor.org/wp-content/uploads/2022/11/NPS_TF_Report_Final_7_revised_FNL_6_22_13-1.pdf) frames this as a requirement for statistical inference itself: a valid inference "requires some theoretical basis and explicit set of assumptions for making the estimates and for judging the accuracy of those estimates," and methods that lack that basis are not appropriate for the kind of inference a probability sample supports. That is the real cost of non-probability sampling — not that it's always wrong, but that it can't answer "how far off might this be?" the way a probability sample can.
+
+## What Are the Five Probability Sampling Techniques?
+
+The five probability sampling techniques are simple random, systematic, stratified, cluster, and multistage sampling, and each one solves a different practical constraint — cost, geographic spread, or subgroup precision — while keeping every unit's selection probability known.
+
+<Figure number={1} caption="Probability and non-probability sampling, broken into their nine common techniques.">
+  <TaxonomyTree
+    title="Sampling methods taxonomy"
+    desc="A root node labeled Sampling Methods splits into two branches: Probability Sampling, containing simple random, systematic, stratified, cluster, and multistage sampling; and Non-Probability Sampling, containing convenience, quota, snowball, and purposive sampling."
+    root="Sampling Methods"
+    branches={[
+      { label: 'Probability Sampling', children: ['Simple random', 'Systematic', 'Stratified', 'Cluster', 'Multistage'] },
+      { label: 'Non-Probability Sampling', children: ['Convenience', 'Quota', 'Snowball', 'Purposive (judgment)'] },
+    ]}
+  />
+</Figure>
+
+**Simple random sampling (SRS)** gives every unit in the population an equal chance of selection, and every possible sample of a given size the same chance of being chosen. [Statistics Canada's training module on probability sampling](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm) walks through drawing an SRS from a numbered list: to sample 2,000 entries from a 10,000-entry phone book, a computer generates 2,000 random numbers between 1 and 10,000, and the entries matching those numbers make up the sample, with every entry equally likely to be picked. Its advantage, per the same module, is that it "does not require any information on the survey frame other than the complete list of units of the survey population," and because the method is simple and well established, "standard formulas exist to determine the sample size, the estimates and so on" that are easy to apply. The trade-off is that building that complete list becomes expensive or impossible once the population is large and unlisted, or spread across a wide area.
+
+**Systematic sampling** selects every *k*th unit from an ordered list after a random starting point, where *k* is the population size divided by the desired sample size. To sample 100 units from a population of 400, you'd set *k* = 400 / 100 = 4, pick a random start between 1 and 4, then take every fourth unit after that, per [Statistics Canada's walkthrough of the method](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm). It's simpler to execute than SRS — one random number instead of many — and gives comparable precision when the list order is effectively random. Its bias risk is periodicity: if the sampling interval happens to line up with a repeating pattern on the list (say, every list of 10 employees starts with the department manager), systematic sampling can select only managers, or only one type of unit, and miss the rest of the population entirely.
+
+**Stratified sampling** divides the population into homogeneous, non-overlapping groups (strata) — such as region, age band, or product tier — and draws an independent sample from each one. Statistics Canada's guidance notes this is useful "when the stratifying variables are simple to work with, easy to observe, [and] closely related to the topic of the survey," and that it guarantees an adequate sample size for subgroups that a simple random sample might otherwise barely touch (a national SRS of 25,000 people, for instance, could easily undersample a small province to the point that provincial estimates aren't usable). The bias it controls for is subgroup under-coverage; the cost is the extra work of defining strata and sampling within each one.
+
+**Cluster sampling** divides the population into naturally occurring groups (clusters) — schools, factories, city blocks — randomly selects some of those clusters, then measures every unit inside the selected clusters. It exists to cut travel and collection costs when a population is spread across a wide area: instead of visiting addresses scattered across a country, a researcher visits a limited number of selected locations and measures everyone there. The trade-off is efficiency. Units within the same cluster tend to resemble each other (students at the same school tend to play the same sports, for instance, because those are the sports their school has facilities for), so a cluster sample typically needs more total observations than an SRS to reach the same precision.
+
+**Multistage sampling** extends cluster sampling by selecting a sample *within* each chosen cluster, rather than measuring every unit inside it. Clusters chosen in the first round are called primary sampling units (PSUs); the units sampled within them are secondary sampling units (SSUs), and a third round adds tertiary sampling units (TSUs). [Yale's course notes describe multistage sampling](http://www.stat.yale.edu/Courses/1997-98/101/sample.htm) as "often more practical" than simple random sampling "for studies requiring 'on location' analysis, such as door-to-door surveys." [Statistics Canada's walkthrough of the technique](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm) adds the reason why: even in a less-concentrated multistage form, "you still have the benefit of a more concentrated sample for cost reduction" compared with spreading an SRS across the entire population.
+
+Compared with SRS, multistage sampling never needs a full population list — only a list of the units selected at the previous stage, at each stage. Statistics Canada's worked example shows what that means in practice: for a hypothetical survey of Grade 11 students across Canada, a **two-stage design** (schools, then students) needs "a list of all Grade 11 students from these selected schools" — the full student roster, but only for the schools already chosen, not a national roster. A **three-stage design** (schools, then classes, then students) narrows that further: a list of the classes in the selected schools, then a list of the students in the selected classes only. Either way, per Statistics Canada, "you would not need to have a list of all Grade 11 students" — but "each time a stage is added, the process becomes more complex."
+
+<Callout variant="tip" title="Pro tip">
+If a complete population frame already exists, simple random or stratified sampling avoids the efficiency loss that comes with clustering — Statistics Canada's guidance notes that cluster designs usually need a bigger sample than SRS to reach the same precision, and that multistage designs do too, because the method is less efficient.
+</Callout>
+
+## What Are the Four Common Non-Probability Sampling Techniques?
+
+The four common non-probability sampling techniques are convenience, quota, snowball, and purposive (judgment) sampling, and each one skips randomization for a different practical reason — speed, cost, access to a hidden population, or reliance on expert judgment.
+
+**Convenience sampling** (also called haphazard sampling) selects whichever units are easiest to reach, with little or no planning. A classic example is a "vox pop" survey, where an interviewer simply stops whoever happens to walk by. Per [Statistics Canada's description](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/nonprob/5214898-eng.htm), this method assumes the population units are interchangeable — an assumption that rarely holds, since "selection is subject to the biases of the interviewer and whoever happened to walk by at the time of sampling." It's the fastest and cheapest option, and the riskiest for generalizing results.
+
+**Quota sampling** sets target counts for subpopulations and samples until each quota is filled — for example, interviewing 10 men and 10 women out of a planned sample of 20 to match a population that's roughly half men and half women. It resembles stratified sampling in structure but differs in one critical way: selection within each quota group is non-random, usually left to the interviewer's discretion, so it still carries an uncontrolled selection bias that stratified sampling avoids. Market researchers commonly use it for telephone surveys because it's cheaper than true stratified sampling while still hitting target demographic proportions.
+
+**Snowball (or network) sampling** starts with a few known members of a hard-to-reach population, then asks each one to refer others like them, growing the sample the way a snowball grows rolling downhill. It is one of the few practical options for populations with no accessible sampling frame — a 2017 analysis of eight studies that recruited female sex workers and men who have sex with men for HIV surveillance in Swaziland and Cameroon used venue-based snowball sampling (alongside respondent-driven sampling), with study staff approaching participants at venues that key informants had identified. The trade-off showed up directly in the results: per the [peer-reviewed study published via PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5670312/), the venue-based snowball samples and the respondent-driven samples produced different demographic and behavioral estimates for what was meant to be the same population; the authors conclude that differences in sampling methods "influence both the type of individuals captured and whether or not these individuals are representative."
+
+**Purposive sampling** — which Statistics Canada's materials label judgment sampling — relies on an expert's knowledge of the population to hand-pick units considered representative, rather than selecting at random. It's useful in exploratory work, such as choosing participants for a focus group or pre-testing a questionnaire, but it imports the researcher's own assumptions directly into the sample: if those assumptions about what's "representative" are wrong, the resulting bias can be larger than a simple convenience sample would produce.
+
+## What Are the Pros and Cons of Each Sampling Method?
+
+Every sampling method trades some combination of cost, speed, and bias control for the others; no single technique wins on all three at once.
+
+<DataTable
+  caption="Pros and cons of the nine common sampling techniques"
+  headers={['Method', 'Type', 'Pros', 'Cons']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Simple random', 'Probability', 'Needs no frame info beyond the full list; simple, well-established formulas', 'Needs a complete population list; can spread a sample too thin geographically'],
+    ['Systematic', 'Probability', 'Easy to execute; only one random number needed', 'A periodic list pattern can wreck representativeness'],
+    ['Stratified', 'Probability', 'Precise subgroup estimates; can reduce needed sample size', 'Requires pre-existing data to define strata'],
+    ['Cluster', 'Probability', 'Cuts travel and collection costs for spread-out populations', 'Less statistically efficient than SRS; similar units cluster together'],
+    ['Multistage', 'Probability', 'Concentrates fieldwork; later stages can avoid needing a full population list', 'More complex to design and analyze than single-stage methods'],
+    ['Convenience', 'Non-probability', 'Fast, cheap, minimal planning', 'High, uncontrolled selection bias'],
+    ['Quota', 'Non-probability', 'Guarantees subgroup representation in the sample counts', 'Non-random selection within quotas hides bias'],
+    ['Snowball', 'Non-probability', 'Only practical option for some hidden or hard-to-reach populations', 'Sample depends entirely on initial contacts\' networks'],
+    ['Purposive (judgment)', 'Non-probability', 'Useful for exploratory or expert-driven selection', 'Entirely dependent on the accuracy of the researcher\'s assumptions'],
+  ]}
+/>
+
+## How Do You Choose the Right Sampling Method for Your Study?
+
+You choose a sampling method by working through four constraints in order: whether a population list exists, whether precise subgroup estimates matter, how geographically spread the population is, and whether you need a calculable margin of error.
+
+1. **Start with the frame.** If a complete, current list of the population exists, simple random or systematic sampling are the simplest options, needing no frame information beyond that list. If no list exists and building one is impractical, you're pushed toward cluster, multistage, or — if even a partial frame is out of reach — a non-probability method.
+2. **Check whether subgroups matter.** If specific subgroups (regions, age bands, customer tiers) need their own reliable estimates, stratify the sample by those subgroups rather than relying on a plain SRS to cover them by chance.
+3. **Weigh geographic spread against budget.** A population scattered across a wide area usually makes cluster or multistage sampling the only affordable probability option, even though both lose some statistical efficiency compared to SRS.
+4. **Decide whether you need formal inference.** If the deliverable is a population estimate with a margin of error, a non-probability method cannot deliver that, no matter how large the sample gets. If the goal is exploratory — early-stage product feedback, a pilot questionnaire, access to a population with no frame — a non-probability method may be the only realistic path, as long as the limitation is stated plainly.
+
+Large surveys document their probability designs and quality checks publicly. Pew Research Center's American Trends Panel, for example, is described as "a randomly selected, probability-based sample of U.S. adults ages 18 and older," per [Pew's own survey methodology documentation](https://www.pewresearch.org/methods/u-s-survey-methodology/), which also states that most of Pew's surveys "are representative of the entire noninstitutionalized adult population of the United States." The U.S. Census Bureau's American Community Survey takes a similar accountability approach from a different angle: its [published quality standards metrics page](https://www.census.gov/programs-surveys/acs/methodology/sample-size-and-data-quality/quality-standards-metrics-definitions.html) defines the unit response rate, housing-unit and population coverage rates, item response rates, combined rates, and the coefficient of variation for its key estimates, along with the threshold each one must meet, giving data users a documented way to judge how much to trust a given estimate.
+
+## A Worked Example: Sizing a Multistage Student Survey
+
+A school district wants to estimate average daily screen time, in hours, among its N = 14,000 high school students, reported to within ±0.5 hours at 95% confidence. Visiting students one at a time across every school in the district isn't practical, so the design team plans a two-stage sample: schools first, then students within schools.
+
+1. **Define the population and the design.** N = 14,000 students across 20 schools (the PSUs). The team will randomly select 8 of the 20 schools, then randomly sample students within each selected school (the SSUs) — a two-stage design that needs a student roster only for the 8 selected schools, not a list of all 14,000 students in the district.
+
+2. **Set the precision target.** The team wants the sample mean to fall within δ = 0.5 hours of the true population mean, at 95% confidence (z = 1.96), using σ = 2.1 hours as a planning estimate of the standard deviation, taken from a prior pilot survey.
+
+3. **Compute the minimum total sample size.** The [NIST/SEMATECH e-Handbook's formula for sample sizes required to limit the error of estimation](https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm) gives the required sample size (NIST's formula calls it *N*; this article calls it *n* to keep it distinct from the district's population, N = 14,000) as n ≥ (z / δ)² × σ² for a desired margin of error δ with known σ.
+
+```
+z = 1.96, delta = 0.5, sigma = 2.1
+
+z / delta = 1.96 / 0.5 = 3.92
+(z / delta)^2 = 3.92^2 = 15.3664
+sigma^2 = 2.1^2 = 4.41
+
+n >= 15.3664 x 4.41 = 67.77
+
+Round up: n = 68 students (minimum, under a simple random sampling design)
+```
+
+4. **Add a planning buffer for the multistage design.** n = 68 is only a floor, and only under simple random sampling. Statistics Canada's guidance above confirms that cluster and multistage designs need a bigger sample than SRS to reach the same precision, because students within the same school tend to be more alike than students drawn at random from across the whole district — without specifying by how much. Rather than treat n = 68 as a target, the team plans for a larger practical sample of n = 120 students as a buffer, split across the 8 selected schools (about 15 per school). That 120 is a planning cushion, not a number verified to hit exactly ±0.5 hours — the team would need to recompute the actual margin of error from the clustered data once it's collected.
+
+5. **Decide.** With 8 of 20 schools selected and a planning sample of n = 120 students split across them (about 15 per school), the design keeps fieldwork concentrated in a manageable number of locations while still giving every student in the district a known, nonzero chance of selection — the property that makes a calculable margin of error possible in the first place, even though the final margin has to be computed from the data actually collected.
+
+<Callout variant="tip" title="Pro tip">
+Treat a simple-random-sampling sample size formula as a floor, not a target, the moment your actual design is stratified, clustered, or multistage. Build in a buffer rather than stopping data collection the instant you hit the SRS-based minimum.
+</Callout>
+
+## Common Mistakes to Avoid When Choosing a Sampling Method
+
+- **Assuming a big non-probability sample behaves like a probability sample.** Size does not fix the underlying problem — a non-probability sample has no known selection probabilities to begin with, so no amount of additional data produces a valid margin of error.
+- **Assuming multistage sampling needs zero lists.** It avoids needing a full population list the way SRS does, but each stage still needs a list of the units selected at the stage before it — a two-stage design needs student rosters for the selected schools; a three-stage design needs class rosters for the selected schools, then student rosters for the selected classes.
+- **Ignoring periodicity in systematic sampling.** A sampling interval that happens to match a repeating pattern in the list can produce a sample that looks random but isn't — check the list's ordering before locking in the interval.
+- **Treating quota sampling as equivalent to stratified sampling.** Quota sampling matches population proportions but still selects non-randomly within each quota, which stratified sampling does not do.
+- **Picking a method before checking whether a frame exists.** The sampling frame — not researcher preference — is usually what rules methods in or out; settle that question first.
+
+## Statohub's Take on Sampling Methods
+
+Statohub's position is that the probability-versus-non-probability split matters more than memorizing all nine technique names. If a study needs to generalize to a population with a stated margin of error, the method has to come from the probability family, full stop — no sample size rescues a non-probability design from that limit. Reach for non-probability sampling deliberately, when a frame genuinely doesn't exist or the population is hard to reach, and say so plainly in how the results are reported.
+
+## Put Sampling Methods to Work With Statohub's Tools
+
+Choosing a sampling method is the first step; estimating how large a probability sample needs to be is the next one. Statohub's <Link to={routes.article('population-vs-sample')}>population vs sample guide</Link> covers the N-versus-n notation and sampling frame basics this article builds on, and the <Link to={routes.article('sampling-distributions')}>sampling distributions article</Link> explains why a sample statistic varies from sample to sample in the first place. For the subgroup estimates a stratified design produces, <Link to={routes.article('parameter-vs-statistic')}>parameter vs statistic</Link> settles which symbol applies to a population value versus a sample one.
+
+When you're ready to size a probability sample, Statohub's <Link to={routes.calculator('sample-size')}>sample size calculator</Link> applies the same margin-of-error logic used in the worked example above, and the <Link to={routes.calculator('confidence-interval')}>confidence interval calculator</Link> turns a completed sample into a reportable range. Browse the <Link to={routes.categoryHub('foundations')}>Foundations hub</Link> for the rest of the notation this article leans on, or the full <Link to={routes.calculatorsHub()}>calculators hub</Link> to run your own numbers.
+
+## Sources
+
+<Sources items={[
+  { text: 'Statistics Canada — "3.2.2 Probability sampling," Statistics: Power from Data!', href: 'https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm', org: 'Statistics Canada' },
+  { text: 'Statistics Canada — "3.2.3 Non-probability sampling," Statistics: Power from Data!', href: 'https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/nonprob/5214898-eng.htm', org: 'Statistics Canada' },
+  { text: 'Yale University — Course notes on Sampling (simple random and multistage sampling definitions)', href: 'http://www.stat.yale.edu/Courses/1997-98/101/sample.htm', org: 'Yale University' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.2.2. Sample Sizes Required (error of estimation)', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm', org: 'NIST' },
+  { text: 'Pew Research Center — U.S. Survey Methodology', href: 'https://www.pewresearch.org/methods/u-s-survey-methodology/', org: 'Pew Research Center' },
+  { text: 'U.S. Census Bureau — American Community Survey, Quality Standards Metrics Definitions', href: 'https://www.census.gov/programs-surveys/acs/methodology/sample-size-and-data-quality/quality-standards-metrics-definitions.html', org: 'U.S. Census Bureau' },
+  { text: 'AAPOR Task Force — Report of the AAPOR Task Force on Nonprobability Sampling (June 2013)', href: 'https://aapor.org/wp-content/uploads/2022/11/NPS_TF_Report_Final_7_revised_FNL_6_22_13-1.pdf', org: 'AAPOR' },
+  { text: 'Sampling Key Populations for HIV Surveillance: Results From Eight Cross-Sectional Studies Using Respondent-Driven Sampling and Venue-Based Snowball Sampling', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5670312/', org: 'PMC / NCBI' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Are the Main Types of Sampling in Statistics?',
+    answer: 'The main types of sampling split into two families: probability sampling (simple random, systematic, stratified, cluster, and multistage sampling), where every unit has a known chance of selection, and non-probability sampling (convenience, quota, snowball, and purposive sampling), where it does not. The family matters more than the specific technique, because only probability sampling supports a calculated margin of error.',
+  },
+  {
+    question: 'What Is the Difference Between Probability and Non-Probability Sampling?',
+    answer: "Probability sampling selects units at random, so each unit's selection probability is known and can be calculated, which allows a formal margin of error. Non-probability sampling selects units through a non-random, subjective process, so that probability is unknown and no amount of additional sampling turns it into a calculable margin of error.",
+  },
+  {
+    question: 'What Is Systematic Sampling, and What Can Go Wrong With It?',
+    answer: "Systematic sampling selects every kth unit from an ordered list after a random starting point, where k equals the population size divided by the desired sample size. It is easy to execute, but if the sampling interval happens to coincide with a repeating pattern in the list — such as a manager appearing first in every group of employees — the resulting sample can badly misrepresent the population even though the selection process looks random.",
+  },
+  {
+    question: 'When Should You Use Non-Probability Sampling Instead of Probability Sampling?',
+    answer: 'Use non-probability sampling when a population frame genuinely does not exist or is not worth building — a hard-to-reach population with no accessible list, an exploratory pilot study, or quick feedback where a formal margin of error is not the goal. Once the study needs to generalize to a population with a stated confidence level, only a probability sampling technique can deliver that.',
+  },
+  {
+    question: "What's the Difference Between Cluster Sampling and Stratified Sampling?",
+    answer: 'Stratified sampling selects units from every stratum (subgroup) in the population, which is why it improves subgroup precision. Cluster sampling selects a sample of clusters and then measures every unit inside only the selected clusters, leaving every non-selected cluster out entirely — which is why it reduces travel and collection costs but is usually less statistically efficient than a simple random sample of the same size.',
+  },
+  {
+    question: 'Does a Larger Sample Fix the Bias in Non-Probability Sampling?',
+    answer: "No. A larger non-probability sample can reduce some forms of random noise, but it does not address the underlying issue, which is that selection probabilities are unknown by design. The AAPOR Task Force on Nonprobability Sampling frames valid statistical inference as requiring a theoretical basis for the estimates; a bigger convenience or quota sample still lacks that basis, regardless of sample size.",
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('descriptive-vs-inferential-statistics')}>Descriptive vs Inferential Statistics</Link>
+- <Link to={routes.article('confidence-interval')}>Confidence Interval: Definition, Formula & Interpretation</Link>
+- <Link to={routes.calculator('sample-size')}>Sample Size Calculator</Link>
+- <Link to={routes.article('central-limit-theorem')}>Central Limit Theorem: Definition & Examples</Link>
