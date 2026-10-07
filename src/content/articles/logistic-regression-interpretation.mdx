@@ -1,0 +1,206 @@
+---
+title: "Logistic Regression Interpretation Guide"
+h1: "Interpret Probabilities, Not Odds: Logistic Regression"
+description: "This logistic regression interpretation guide turns coefficients into odds ratios, marginal effects, and predicted probabilities, verified with diagnostics."
+category: machine-learning-statistics
+primaryKeyword: logistic regression interpretation
+phase: 1
+keywords:
+  - logistic regression interpretation
+  - logistic regression coefficients
+  - marginal effects
+  - predicted probabilities
+  - odds ratio interpretation
+related:
+  - confusion-matrix-explained
+  - f1-score-explained
+  - bias-variance-tradeoff
+draft: false
+pubDate: 2026-10-07
+updatedDate: 2026-10-07
+reviewedDate: 2026-10-07
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Logistic regression coefficients represent changes in log-odds, and exponentiating a coefficient converts it into an odds ratio, the multiplicative change in the odds of the outcome per one-unit increase in a predictor. Because odds are not probabilities, we recommend pairing every coefficient with its exponentiated confidence interval and, when the audience needs real-world meaning, a marginal effect or predicted probability. Model fit and diagnostics determine whether any of these numbers deserve trust.
+
+<KeyTakeaways rows={[
+  { point: 'Odds ratios are multiplicative, not constant', details: 'Each one-unit increase multiplies the odds by exp(β), but the same ratio produces different probability swings depending on the baseline probability.' },
+  { point: 'Categorical coefficients need a reference level', details: 'Each coefficient compares one category level to its baseline, so exp(β) only means something once you state what it is being compared to.' },
+  { point: 'The intercept is a log-odds baseline', details: 'β0 is the log-odds when every predictor sits at zero or its reference level; centering predictors turns it into the log-odds for an average-profile case.' },
+  { point: 'A confidence interval spanning 1 means no clear effect', details: 'Odds-ratio confidence intervals that include 1 are compatible with no association, and odds ratios only approximate relative risk when the outcome is rare.' },
+  { point: 'Diagnostics decide whether to trust the coefficients', details: 'Check linearity in the logit, separation, multicollinearity, and calibration before interpreting any coefficient as real.' },
+]} />
+
+## What the model estimates: log-odds, odds, and probability
+
+A logistic regression model does not predict probability directly. It predicts the logit, the natural log of the odds of the event, as a linear function of the predictors: logit(p) = ln(p / (1 minus p)) = β0 + β1x1 + ... + βpxp. This structure, formally the logit model, keeps predicted probabilities bounded between 0 and 1, something ordinary linear regression cannot guarantee for a binary outcome, as the [CASRAI guide to logistic regression](https://casrai.org/guides/logistic-regression-logit-model) explains.
+
+To move from the linear predictor back to something intuitive, we exponentiate it to get odds, then apply the inverse logit to recover probability: p = 1 / (1 + exp(negative linear predictor)). Because this transformation is a curve rather than a straight line, the same coefficient produces a larger probability swing near p = 0.5 than it does near p = 0.05 or p = 0.95. That nonlinearity is the reason raw coefficients can mislead readers who expect a constant effect.
+
+<Figure number={1} caption="The logit transformation moves from a linear predictor through odds to a bounded probability — nonlinear throughout.">
+  <ProcessFlow
+    title="From linear predictor to probability"
+    desc="Four-step flow: the linear predictor is exponentiated into odds, converted via the inverse logit into a bounded probability, with nonlinearity producing a larger probability change near 0.5 than near the extremes."
+    steps={[
+      { label: 'Linear predictor', detail: 'logit = linear function' },
+      { label: 'Odds', detail: 'exp(linear predictor)' },
+      { label: 'Probability', detail: 'inverse-logit, 0-1 bounded' },
+      { label: 'Nonlinearity', detail: 'larger change near 0.5' },
+    ]}
+  />
+</Figure>
+
+## Reading coefficients: continuous vs. categorical predictors
+
+For a continuous predictor, the coefficient β is the expected change in log-odds for a one-unit increase, holding other variables constant; exp(β) converts that into an odds multiplier for the same one-unit increase. When a unit is awkward (age in days, income in dollars), we suggest reporting the effect per meaningful increment instead, exponentiating β multiplied by that increment (say, per 10 units) rather than the raw per-unit value, a practice outlined in the [Illinois guide to slope and intercept interpretation](https://exploration.stat.illinois.edu/learn/Logistic-Regression/Slope-and-Intercept-Interpretations/).
+
+Categorical predictors work differently. Each coefficient reflects the log-odds difference between one level and an explicit reference category, so exp(β) is the odds ratio comparing that level to the reference rather than a standalone effect, as [Minitab's documentation on binary logistic coefficients](https://support.minitab.com/en-us/minitab/help-and-how-to/statistical-modeling/regression/supporting-topics/regression-models/interpreting-the-estimated-coefficients-in-binary-logistic-regression/) notes. Always state the reference level in your write-up, and document how each factor was coded before anyone tries to sign-check your results.
+
+## Intercept and reference levels: what β0 really means
+
+The intercept β0 is the log-odds of the event when every continuous predictor equals zero and every categorical predictor sits at its reference level, and exp(β0) gives that baseline odds, according to the Illinois exploration notes on logistic regression. When zero is not a realistic value, like age zero or income zero, the intercept becomes a mathematical artifact rather than a meaningful baseline. Centering continuous predictors (subtracting their mean before fitting) turns the intercept into the log-odds for an average-profile individual, which is usually far more useful to report.
+
+## Odds ratios, confidence intervals, and p-values
+
+Once you exponentiate a coefficient to get an odds ratio, exponentiate the confidence interval endpoints too, producing an interval on the odds-ratio scale rather than the log-odds scale. An interval that spans 1 is compatible with no multiplicative association between that predictor and the odds of the outcome, a point emphasized in the [UCLA FAQ on interpreting odds ratios](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/).
+
+A few practical rules keep this honest:
+
+- A p-value tests the coefficient against a null hypothesis conditional on the specified model; it says nothing about effect size or predictive accuracy.
+- Odds ratios approximate relative risk only when the outcome is rare (roughly below 10%); for common outcomes, predicted probabilities or risk differences communicate the effect more faithfully.
+- Outcome coding changes everything: reversing which category counts as the event flips coefficient signs and turns each odds ratio into its reciprocal, so confirm the event coding before interpreting any sign.
+
+## Marginal effects and predicted probabilities: translating to the probability scale
+
+Odds ratios are multiplicative and constant across the predictor's range, but the probability change they produce is not. Marginal effects solve this by reporting the expected change in probability for a one-unit change in a predictor, computed in several ways: the average marginal effect (AME) across all observations, the effect at the sample mean, or the effect at chosen representative values, as the [University of Colorado Denver course notes on marginal effects](https://clas.ucdenver.edu/marcelo-perraillon/sites/default/files/attached-files/week_6_margins_perraillon.pdf) describe.
+
+Two predictors with identical odds ratios can produce very different absolute probability changes depending on where the baseline sits, which is exactly the nonlinearity described earlier. We recommend reporting predicted probabilities for a handful of representative profiles alongside any odds ratio, especially once interactions enter the model.
+
+<Callout variant="tip" title="Pro tip">
+Always state which marginal effect you reported — average, at-mean, or at specific values — since the three can differ meaningfully for the same model.
+</Callout>
+
+<Figure number={2} caption="Four common ways to compute and report a marginal effect, each answering a slightly different question.">
+  <TaxonomyTree
+    title="Marginal effects: key points"
+    desc="Four ways to summarize a marginal effect: the average marginal effect across observations, the effect at the sample mean, the effect at chosen representative values, and reporting predicted probabilities for example profiles."
+    root="Marginal effect types"
+    branches={[
+      { label: 'AME', children: ['Average effect across observations'] },
+      { label: 'At-mean', children: ['Effect at the sample mean'] },
+      { label: 'At-values', children: ['Effect at chosen representative values'] },
+      { label: 'Predicted probs', children: ['Report probabilities for example profiles'] },
+    ]}
+  />
+</Figure>
+
+## Interactions and conditional effects
+
+Adding an interaction term changes what a main-effect coefficient means. Once a predictor interacts with another, its main-effect coefficient only describes the effect when the interacting variable equals zero, not an effect that holds everywhere, as the margins literature cautions. Interpreting an interacted model correctly means computing the full linear predictor for the subgroup of interest first (main effects plus the relevant interaction terms), then exponentiating or converting to probability, rather than exponentiating each coefficient in isolation.
+
+For communicating interaction results, margins and plotted predicted probabilities across the range of one variable, split by levels of the other, tend to convey the conditional pattern far more clearly than a table of individually exponentiated coefficients.
+
+## Diagnostics and model adequacy you must report
+
+A coefficient's interpretation is only as trustworthy as the model producing it. Several checks belong in any serious write-up, drawn from standard logistic regression diagnostic guidance — including a screen for <Link to={routes.article('multicollinearity-vif')}>multicollinearity using variance inflation factors</Link> and a check of the <Link to={routes.article('regression-assumptions')}>standard regression assumptions</Link> that carry over to the logit scale:
+
+<Checklist
+  id="diagnostics-checklist"
+  title="Diagnostics to run before trusting a coefficient"
+  style="check"
+  items={[
+    { text: 'Check linearity in the logit', detail: 'Use component-plus-residual plots or splines for continuous predictors instead of assuming a straight-line relationship.' },
+    { text: 'Watch for separation', detail: "Small or empty cells, or a predictor that perfectly predicts the outcome, produce unstable or infinite estimates — consider a penalized likelihood method such as Firth's correction." },
+    { text: 'Screen for multicollinearity and influence', detail: "Check variance inflation factors, examine influential observations through leverage and Cook's distance, and verify standard regression assumptions on the logit scale." },
+    { text: 'Assess calibration and discrimination separately', detail: 'Compare predicted probability to observed frequency (calibration) and check ROC/AUC (discrimination) — a model can do well on one and poorly on the other.' },
+  ]}
+/>
+
+Statistical significance on its own never confirms that a predictor matters practically; a well-estimated but tiny effect can be significant in a large sample and irrelevant in practice.
+
+## Short worked example: read an output and state three clear interpretation statements
+
+Say a model predicts loan default from income (in thousands) and a binary variable for prior default history (reference: no prior default). Suppose the output gives a coefficient of negative 0.04 for income and 1.10 for prior default history, with an intercept of negative 1.2.
+
+1. For income, exp(negative 0.04) is about 0.96, so each additional $1,000 of income is associated with roughly a 4% reduction in the odds of default, holding prior history constant.
+2. For prior default history, exp(1.10) is about 3.0, so someone with a prior default has about three times the odds of defaulting again compared to someone without one, at the same income.
+3. For a borrower with $50,000 income and no prior default, the linear predictor is negative 1.2 plus (negative 0.04 times 50) equals negative 3.2, giving a predicted probability of about 1 / (1 + exp(3.2)), roughly 0.04, or a 4% chance of default.
+
+<DataTable
+  caption="Reading the worked example's coefficients as odds ratios"
+  headers={['Predictor', 'Coefficient (β)', 'exp(β)', 'Interpretation']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Income (per $1,000)', '-0.04', '0.96', '~4% lower odds of default per additional $1,000 of income'],
+    ['Prior default history (vs. none)', '1.10', '3.0', '~3x the odds of default vs. no prior default'],
+    ['Intercept', '-1.2', 'n/a', 'Baseline log-odds at $0 income, no prior default'],
+  ]}
+/>
+
+A quick diagnostics check, confirming no separation, acceptable VIF values, and reasonable calibration, should accompany any of these three statements before they go into a report.
+
+Put together, these three statements trace the full interpretation chain: a raw coefficient becomes an odds ratio through exponentiation, an odds ratio becomes a probability through the inverse logit, and neither number means much on its own until the model behind it has passed the diagnostics checklist above.
+
+## How Statohub helps: calculators and applied guides to check your interpretation
+
+Our <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub walks through examples like this one in full, and our calculators let you verify each step rather than trust arithmetic alone. We built our guides and tools to sit side by side, so a concept explained in a Learn article connects directly to a calculator built for that exact computation.
+
+## Reader perspective: common interpretation mistakes students make
+
+The mistake we see most often is treating an odds ratio as if it were a risk ratio, which overstates the effect whenever the outcome is not rare. A close second is quoting a coefficient without naming the reference level, which leaves the reader guessing what "higher" even means. The third is reporting a significant coefficient from a model nobody checked for separation or calibration. Running the marginal effects and glancing at a predicted-probability table for a few representative cases catches most of these before they reach a final report.
+
+## Statohub resources: links to relevant guides and calculators
+
+Reading an output table is one skill; reproducing the numbers yourself is another, and that second step is where interpretation actually sticks. Our <Link to={routes.calculatorsHub()}>Calculators</Link> page includes a <Link to={routes.calculator('probability')}>probability calculator</Link> for converting log-odds to probability by hand, and the Applied Statistics section carries worked examples that extend the one above into full datasets. The Learn, Calculate, Apply sequence on <Link to={routes.home()}>Statohub</Link> exists specifically so a formula you read about becomes a number you can check yourself, then a decision you can defend.
+
+## Related reading
+
+- <Link to={routes.calculator('linear-regression')}>Linear Regression Calculator</Link>
+- <Link to={routes.categoryHub('probability-distributions')}>Probability & Distributions</Link>
+- <Link to={routes.calculator('probability')}>Probability Calculator</Link>
+- <Link to={routes.article('bayes-theorem')}>Bayes' Theorem (Bayes' Rule): Formula & Examples</Link>
+
+## Sources
+
+<Sources items={[
+  { text: 'Logistic regression (logit model)', href: 'https://casrai.org/guides/logistic-regression-logit-model', org: 'CASRAI' },
+  { text: 'Interpreting the estimated coefficients in binary logistic regression', href: 'https://support.minitab.com/en-us/minitab/help-and-how-to/statistical-modeling/regression/supporting-topics/regression-models/interpreting-the-estimated-coefficients-in-binary-logistic-regression/', org: 'Minitab Support' },
+  { text: 'Slope and intercept interpretations — Exploration: Statistical Learning', href: 'https://exploration.stat.illinois.edu/learn/Logistic-Regression/Slope-and-Intercept-Interpretations/', org: 'University of Illinois' },
+  { text: "How do I interpret odds ratios in logistic regression?", href: 'https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/', org: 'UCLA Statistical Consulting' },
+  { text: 'Logistic Regression — Stata Data Analysis Examples', href: 'https://stats.oarc.ucla.edu/stata/dae/logistic-regression/', org: 'UCLA Statistical Consulting' },
+  { text: 'What is complete or quasi-complete separation in logistic/probit regression, and how do we deal with them?', href: 'https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-complete-or-quasi-complete-separation-in-logisticprobit-regression-and-how-do-we-deal-with-them/', org: 'UCLA Statistical Consulting' },
+  { text: '"P < 0.05" Might Not Mean What You Think: American Statistical Association Clarifies P Values', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5017929/', org: 'PMC / American Statistical Association' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Can you explain logistic regression in a simple way?',
+    answer: "Logistic regression estimates the probability of a binary outcome (yes or no, event or no event) by modeling the log-odds as a straight-line combination of predictors, then converting that back to a probability between 0 and 1. Each predictor's coefficient tells you how the log-odds shift, and exponentiating it tells you how the odds multiply.",
+  },
+  {
+    question: 'What does a P-value of 0.05 mean in regression analysis?',
+    answer: 'A p-value of 0.05 means that, assuming the coefficient is truly zero and the model is correctly specified, a result this extreme or more extreme would occur about 5% of the time by chance. It does not measure how large or important the effect is, only how compatible the data are with no effect.',
+  },
+  {
+    question: 'How do you interpret an odds ratio?',
+    answer: 'An odds ratio above 1 means the odds of the event increase as the predictor increases (or for that category versus the reference); below 1 means the odds decrease. Confirm which outcome is coded as the event first, since reversing that coding flips the ratio to its reciprocal.',
+  },
+  {
+    question: 'What is the difference between logistic and linear regression?',
+    answer: "Linear regression predicts a continuous outcome directly as a straight-line function of predictors, while logistic regression predicts the log-odds of a binary outcome and converts that back to a bounded probability. A linear regression coefficient is a direct change in the outcome, while a logistic coefficient is a change in log-odds that must be exponentiated or converted to probability to interpret intuitively, as covered in our guide to regression assumptions.",
+  },
+]} />
