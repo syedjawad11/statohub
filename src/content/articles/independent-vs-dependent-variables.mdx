@@ -1,0 +1,244 @@
+---
+title: "Independent vs Dependent Variable: Examples"
+h1: "Independent, Dependent and Control Variables (With Examples)"
+description: "Independent vs dependent variable, explained plainly: how to spot each one, plus control variables and 10 practice examples with answers."
+category: foundations
+primaryKeyword: independent vs dependent variable
+keywords:
+  - independent vs dependent variable
+  - control variable
+  - dependent variable
+  - independent variable
+phase: 1
+related:
+  - types-of-variables
+  - parameter-vs-statistic
+  - fundamental-statistics
+draft: false
+pubDate: 2026-10-07
+updatedDate: 2026-10-07
+reviewedDate: 2026-10-07
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The independent vs dependent variable distinction is the first thing to pin down before you design a study, read someone else's, or plot a single point on a graph. The **independent variable** is whatever the researcher deliberately changes or compares groups on; the **dependent variable** is whatever gets measured afterward to see if that change had an effect. A **control variable** is anything else that could plausibly affect the result and is deliberately held the same across every group, so it cannot explain away the outcome. Mixing these three up changes what a research question is actually testing, so it is worth sorting out before reaching for a formula or a chart.
+
+<KeyTakeaways rows={[
+  { point: 'The independent variable is the cause being tested', details: 'It is the condition the researcher manipulates or the grouping variable used to split participants, chosen before any data is measured.' },
+  { point: 'The dependent variable is the outcome being measured', details: "Its value is read off the data after the fact — it \"depends on\" whatever the independent variable did." },
+  { point: 'A control variable is held constant on purpose', details: 'It is a factor that could affect the outcome but is deliberately kept the same across every group so it cannot explain the result.' },
+  { point: 'The axis convention follows the variable, not the other way around', details: 'The independent variable sits on the x-axis and the dependent variable on the y-axis because the graph is showing how y responds to x.' },
+  { point: 'An uncontrolled factor becomes a confounding variable', details: "If a factor is not held constant and it happens to move together with the independent variable, it can fake or hide the real relationship with the dependent variable." },
+]} />
+
+## Quick Checklist: How to Spot Each Variable in a Research Question
+
+Before you label anything, read the research question once and ask what the researcher is deliberately changing versus what they are simply measuring afterward. Work through the five checks below in order.
+
+<Checklist
+  id="iv-dv-control-checklist"
+  title="Quick checklist: independent, dependent, or control?"
+  style="check"
+  items={[
+    { text: 'Find what is deliberately changed or compared', detail: 'That is the independent variable — the cause the study is testing, set before any data comes in.' },
+    { text: 'Find what is measured as the result', detail: 'That is the dependent variable — its value is only known after the study runs.' },
+    { text: 'List what is held the same on purpose', detail: 'Those are control variables — conditions fixed across every group so they cannot explain the outcome.' },
+    { text: 'Ask "does the question compare groups or report one group over time?"', detail: 'Group comparisons usually signal an independent variable with two or more levels (for example, drug vs. placebo).' },
+    { text: 'Flag anything left unmeasured and uncontrolled', detail: 'An uncontrolled factor that moves with the independent variable is a potential confounding variable, not a control variable.' },
+  ]}
+/>
+
+Run through all five checks in order before committing to an answer; each one targets a different point in the question where the three variables can get swapped.
+
+## What Is an Independent Variable?
+
+A variable in general is any characteristic or measurement that can take different values across observations, as [OpenStax's Introductory Statistics](https://openstax.org/books/introductory-statistics-2e/pages/1-1-definitions-of-statistics-probability-and-key-terms) defines it. An independent variable is the factor a researcher deliberately manipulates, assigns, or uses to split participants into groups, in order to test whether it causes a change in something else. OpenStax's introductory psychology textbook puts it directly: "An independent variable is manipulated or controlled by the experimenter," and in a well-designed study it is meant to be "the only important difference between the experimental and control groups," per [OpenStax Psychology 2e](https://openstax.org/books/psychology-2e/pages/2-3-analyzing-findings).
+
+A study can test more than one independent variable at once — comparing, say, both drug dosage and patient age group in the same experiment — which is exactly what a factorial design is built for, as the [NIST/SEMATECH e-Handbook's chapter on full factorial designs](https://www.itl.nist.gov/div898/handbook/pri/section3/pri333.htm) lays out when it describes experiments with multiple input "factors" tested together. In engineering and quality-control contexts, the independent variable is often called a **factor**, and the [NIST/SEMATECH e-Handbook's introduction to experimental design](https://www.itl.nist.gov/div898/handbook/pri/section1/pri11.htm) frames it as a controllable input that the experimenter can vary at will to see how it moves a response.
+
+In a purely observational (non-experimental) study, nothing is physically manipulated, but the variable used to split or order the groups — income bracket, diagnosis, time period — is still conventionally treated as the independent variable for analysis purposes, even though causal claims from that kind of study are much weaker than from a true experiment.
+
+## What Is a Dependent Variable?
+
+A dependent variable is what the researcher measures to see how much effect the independent variable had; its value "depends on" what happened to the independent variable, which is exactly where the name comes from. As the same OpenStax chapter explains, "A dependent variable is what the researcher measures to see how much effect the independent variable had," and the expectation going in is that the dependent variable "will change as a function of the independent variable" — see [OpenStax Psychology 2e, Section 2.3](https://openstax.org/books/psychology-2e/pages/2-3-analyzing-findings).
+
+A study can also track more than one dependent variable from the same experiment — a drug trial might measure both blood pressure and reported side effects — without that changing which variable was manipulated. What never changes is the direction of the relationship being tested: the independent variable is suspected of causing a change, and the dependent variable is where that change, if any, would show up.
+
+<Callout variant="quote" source="OpenStax Psychology 2e, Section 2.3 — Analyzing Findings" sourceHref="https://openstax.org/books/psychology-2e/pages/2-3-analyzing-findings">
+An independent variable is manipulated or controlled by the experimenter... A dependent variable is what the researcher measures to see how much effect the independent variable had.
+</Callout>
+
+## What Is a Control Variable, and How Is It Different From a Confounding Variable?
+
+A control variable is a factor that could plausibly affect the dependent variable but is deliberately kept the same across every group in the study, so it cannot be mistaken for the effect of the independent variable. In simple terms, "a control is a part of the experiment that does not change," while "a variable is any part of the experiment that can vary or change during the experiment," as [OpenStax's Concepts of Biology](https://openstax.org/books/concepts-biology/pages/1-2-the-process-of-science) puts it.
+
+That same chapter illustrates the idea with an experiment testing whether phosphate limits algae growth in artificial ponds: half the ponds are treated with phosphate each week (the treatment group), while the other half get an inert salt instead of phosphate (the control group). That is a control *group* — a set of cases that does not receive the manipulated variable — which is a different tool from a control *variable*. A control variable is a condition held the same across every pond regardless of group, such as the water volume, pond size, and sunlight exposure; those conditions do not vary by design, so they cannot explain any difference in algae growth between the phosphate and no-phosphate ponds.
+
+A **confounding variable** is the problem that shows up when a factor is *not* controlled, and it happens to change alongside the independent variable anyway — making it impossible to tell which one actually caused the result. OpenStax Psychology 2e's well-known example: ice cream sales and crime rates rise together, but temperature is the confounding variable driving both, "actually causing the systematic movement in our variables of interest" (same source as above). A closely related term, the **extraneous variable**, is any factor outside the independent variable that could affect the dependent variable at all. Engineering and quality-control literature calls this same kind of outside factor a **nuisance factor** — the [NIST/SEMATECH e-Handbook's chapter on completely randomized designs](https://www.itl.nist.gov/div898/handbook/pri/section3/pri331.htm) describes such designs as letting an experimenter study one primary factor "without the need to take other nuisance factors into account," typically by randomizing them away. A confounding variable is simply the subset of extraneous (or nuisance) variables that a study failed to control or randomize, and that happens to correlate with the independent variable.
+
+The practical difference: a control variable is extraneous-but-handled (held constant, so it is neutralized); a confounding variable is extraneous-and-unhandled (left loose, so it distorts the result). For the deeper statistical toolkit used to identify and adjust for confounders in observational data — DAGs, propensity scores, sensitivity analysis — see <Link to={routes.article('control-confounders')}>controlling for confounders</Link>, which picks up where this article's plain-language version leaves off.
+
+<Callout variant="tip" title="Pro tip">
+A quick memory check: manipulate the independent variable, measure the dependent variable, hold the control variables still. If a factor does not fit cleanly into one of those three jobs, it is probably an uncontrolled extraneous variable that needs a decision — control it, measure it, or at least report it.
+</Callout>
+
+## How Do You Identify Independent, Dependent, and Control Variables in a Research Question?
+
+Work through a research question in a fixed order: find the cause being tested first, then the outcome being measured, then everything deliberately held the same. Skipping straight to "what sounds like the variable" is exactly how the three get swapped.
+
+<Figure number={1} caption="Four-step process for sorting a research question into its independent variable, dependent variable, and control variables.">
+  <ProcessFlow
+    title="Identifying variables in a research question"
+    desc="A four-step horizontal process flow: read the question, find what is manipulated, find what is measured, then list what is held constant."
+    steps={[
+      { label: 'Read the question', detail: 'Identify the groups being compared or the factor being changed.' },
+      { label: 'Find what is manipulated', detail: 'This is the independent variable.' },
+      { label: 'Find what is measured', detail: 'This is the dependent variable.' },
+      { label: 'List what is held constant', detail: 'These are the control variables.' },
+    ]}
+  />
+</Figure>
+
+Take the question: "Does the amount of sleep a student gets affect their exam score?" The amount of sleep is manipulated or grouped by the researcher (or naturally varies and is measured as the grouping factor), so it is the independent variable. The exam score is what gets measured afterward, so it is the dependent variable. Anything the researcher deliberately keeps fixed — same exam, same room, same time of day — is a control variable. Anything left loose that still might matter, like each student's caffeine intake that morning, is an extraneous variable worth either controlling or at least noting as a limitation.
+
+## Which Variable Goes on the X-Axis and Which Goes on the Y-Axis?
+
+By convention, the independent variable goes on the horizontal (x) axis and the dependent variable goes on the vertical (y) axis, because a graph is built to show how the outcome responds to the thing being changed. [OpenStax's Introductory Statistics](https://openstax.org/books/introductory-statistics-2e/pages/12-1-linear-equations) states this directly for a basic linear relationship: "The variable x is the independent variable, and y is the dependent variable. Typically, you choose a value to substitute for the independent variable and then solve for the dependent variable."
+
+The same convention carries into regression and scatter plots. As [OpenStax's chapter on scatter plots](https://openstax.org/books/introductory-statistics-2e/pages/12-2-scatter-plots) puts it, a regression line is only worth computing "if one of the variables helps to explain or predict the other" — and that explanatory variable is plotted on x, with the predicted (dependent) variable plotted on y. Flipping the axes does not change the math underneath a scatter plot, but it does make the chart harder to read correctly, since readers expect cause-like information on the bottom and outcome information on the side.
+
+<DataTable
+  caption="Independent vs dependent vs control variable: the key differences"
+  headers={['Feature', 'Independent variable', 'Dependent variable', 'Control variable']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Role in the study', 'What the researcher deliberately changes or groups by', 'What the researcher measures as the result', 'What the researcher deliberately holds the same'],
+    ['When its value is known', 'Before the study runs — it is set by the design', 'Only after the study runs — it is read off the data', 'Before the study runs, and kept fixed throughout'],
+    ['Typical graph axis', 'Horizontal (x-axis)', 'Vertical (y-axis)', 'Not plotted — reported as a fixed study condition'],
+    ['Example in a fertilizer study', 'Amount of fertilizer applied', 'Number of tomatoes harvested per plant', 'Sunlight, water, pot size, plant variety'],
+    ['What goes wrong if mishandled', 'You end up testing the wrong cause', 'You end up measuring the wrong effect', 'An uncontrolled version becomes a confounding variable'],
+  ]}
+/>
+
+## 10 Practice Examples: Identify the Variables
+
+Cover the last three columns of each row, decide the independent variable, dependent variable, and control variable(s) for yourself, then slide your hand over to check your answer against the columns alongside that scenario.
+
+<DataTable
+  caption="10 practice examples: independent, dependent, and control variables"
+  headers={['Scenario', 'Independent variable', 'Dependent variable', 'Control variable(s)']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['A teacher tests whether background music changes quiz scores.', 'Presence or absence of music', 'Quiz score', 'Same quiz, same room, same study time'],
+    ['A trainer tests whether a new stretching routine reduces next-day soreness.', 'Stretching routine used', 'Self-reported soreness rating', 'Same workout intensity, same participants'],
+    ['A marketer tests whether button color changes a webpage\'s click-through rate.', 'Button color', 'Click-through rate', 'Same page layout, same traffic source, same time window'],
+    ['A farmer tests whether seed spacing changes corn yield.', 'Spacing between seeds', 'Yield per acre', 'Same soil, same water, same corn variety'],
+    ['A nurse tests whether a new drug lowers blood pressure more than the standard drug.', 'Medication type', 'Blood pressure reading', 'Same dosage schedule, same patient age range, same diet'],
+    ['A UX researcher tests whether font size changes reading speed.', 'Font size', 'Time to read a passage', 'Same passage, same screen, same lighting'],
+    ['A coach tests whether pre-game visualization improves free-throw accuracy.', 'Whether a player does visualization', 'Free-throw percentage', 'Same number of practice shots, same court, same time of day'],
+    ['A chemist tests whether reaction temperature changes product yield.', 'Reaction temperature', 'Product yield in grams', 'Same reactant concentration, same reaction time, same catalyst amount'],
+    ['A school tests whether class size changes average standardized test scores.', 'Class size', 'Average test score', 'Same curriculum, same teacher, same grade level'],
+    ['A café tests whether loyalty discounts increase repeat visits.', 'Discount amount offered', 'Number of repeat visits in a month', 'Same store location, same season, same menu prices'],
+  ]}
+/>
+
+Notice the pattern: the independent variable column always answers "what did the researcher set or compare," and the control-variable column always answers "what stayed identical across every row of the comparison."
+
+## A Worked Example: Fertilizer Amount and Tomato Yield
+
+A gardener wants to know whether the amount of fertilizer applied to tomato plants changes how many tomatoes each plant produces. Twelve identical tomato plants, all the same variety and age, are split into three groups of four and grown side by side in the same greenhouse.
+
+1. **Identify the independent variable.** The gardener deliberately assigns each group a different fertilizer amount: 0 grams, 20 grams, or 40 grams per plant. Fertilizer amount is the independent variable, with three levels.
+2. **Identify the dependent variable.** At harvest, the gardener counts the number of tomatoes each plant produced. Tomato count is the dependent variable — its value is only known after the growing season.
+3. **Identify the control variables.** Sunlight exposure, watering schedule, pot size, soil type, and plant variety are all held identical across the three groups, so none of them can explain a difference in yield.
+4. **Record and compare the results.** Tomato counts per plant come in as follows:
+
+```
+0 g group:  7, 8, 9, 8   → mean = (7+8+9+8) / 4 = 32 / 4 = 8.0
+20 g group: 13, 14, 15, 14 → mean = (13+14+15+14) / 4 = 56 / 4 = 14.0
+40 g group: 10, 11, 12, 11 → mean = (10+11+12+11) / 4 = 44 / 4 = 11.0
+```
+
+5. **Interpret and decide.** Yield rises from 8.0 tomatoes per plant at 0 grams to a peak of 14.0 at 20 grams, then drops to 11.0 at 40 grams — an optimum in the middle, not a straight line where more fertilizer keeps producing more tomatoes. Based on these three levels, the decision is to use 20 grams going forward, and to run a follow-up test with levels between 20 g and 40 g to find out whether the true optimum sits closer to 20 g or somewhere in between. Plotting these three points would put fertilizer amount (the independent variable) on the x-axis and mean tomato count (the dependent variable) on the y-axis, exactly following the convention described above.
+
+<Callout variant="tip" title="Pro tip">
+Before trusting a pattern like this, check whether anything the gardener did not control — say, one group happening to sit closer to a window — moved together with fertilizer amount. If it did, that factor is now a confounding variable and the optimum-at-20-g conclusion is no longer safe to draw.
+</Callout>
+
+## Common Mistakes When Identifying Variables
+
+- **Swapping which variable is manipulated and which is measured.** In "Does study time affect test score," study time is manipulated or grouped (independent) and test score is measured (dependent) — reversing them flips every downstream claim about cause and effect.
+- **Calling an uncontrolled factor a "control variable."** Simply naming a factor in a methods section does not control it; a control variable must actually be held the same across every group, not just mentioned.
+- **Treating a predictor in an observational study like a manipulated independent variable.** Comparing income brackets after the fact is not the same as randomly assigning people an income — the causal claim is much weaker even though the variable still plays the independent-variable role in the analysis.
+- **Listing too many "control variables" without checking they are actually constant.** A list of covariates that still varies somewhat between groups has not controlled anything; it has only given you more variables to worry about.
+- **Putting the dependent variable on the x-axis.** This reverses the standard reading of the chart and makes it look like the outcome is driving the cause rather than the other way around.
+- **Confusing a confounding variable with a control variable.** A control variable is handled (held constant); a confounding variable is the same kind of factor left unhandled — see <Link to={routes.article('control-confounders')}>controlling for confounders</Link> for how to catch the ones that slip through.
+
+## Statohub's Take on Independent vs Dependent Variables
+
+Statohub's position is that this distinction earns its reputation as a "basic" skill precisely because skipping it quietly undermines everything built on top of it — a mislabeled independent variable produces a confidently wrong causal story, not an obviously broken one. Before reaching for a test or a chart, write down in plain words what was changed, what was measured, and what was held the same; the formula choice almost always follows once those three are correctly sorted.
+
+## Put Independent, Dependent, and Control Variables to Work With Statohub's Tools
+
+This distinction sits underneath almost every other topic in Statohub's <Link to={routes.categoryHub('foundations')}>Foundations hub</Link>, starting with the broader <Link to={routes.article('types-of-variables')}>types of variables</Link> guide this article builds on, and the notation covered in <Link to={routes.article('parameter-vs-statistic')}>parameter vs statistic</Link> and <Link to={routes.article('fundamental-statistics')}>fundamental statistics</Link>.
+
+Once you can label a study's variables correctly, Statohub's <Link to={routes.calculator('correlation-coefficient')}>correlation coefficient calculator</Link> and <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> show how one variable's relationship to another gets quantified, and the <Link to={routes.calculator('sample-size')}>sample size calculator</Link> helps you plan how many observations a comparison like the ones above actually needs. Browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link> for more, or continue through the <Link to={routes.learnLanding()}>Learn section</Link> for the rest of the statistical groundwork.
+
+## Sources
+
+<Sources items={[
+  { text: 'OpenStax — "2.3 Analyzing Findings," Psychology 2e', href: 'https://openstax.org/books/psychology-2e/pages/2-3-analyzing-findings', org: 'OpenStax' },
+  { text: 'OpenStax — "1.2 The Process of Science," Concepts of Biology', href: 'https://openstax.org/books/concepts-biology/pages/1-2-the-process-of-science', org: 'OpenStax' },
+  { text: 'OpenStax — "12.1 Linear Equations," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/12-1-linear-equations', org: 'OpenStax' },
+  { text: 'OpenStax — "12.2 Scatter Plots," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/12-2-scatter-plots', org: 'OpenStax' },
+  { text: 'OpenStax — "1.1 Definitions of Statistics, Probability, and Key Terms," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/1-1-definitions-of-statistics-probability-and-key-terms', org: 'OpenStax' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 5.1.1. What Is Experimental Design?', href: 'https://www.itl.nist.gov/div898/handbook/pri/section1/pri11.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 5.3.3.3. Full Factorial Designs', href: 'https://www.itl.nist.gov/div898/handbook/pri/section3/pri333.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 5.3.3.1. Completely Randomized Designs', href: 'https://www.itl.nist.gov/div898/handbook/pri/section3/pri331.htm', org: 'NIST' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is the Difference Between an Independent and a Dependent Variable?',
+    answer: 'The independent variable is what a researcher deliberately changes, assigns, or groups by, chosen before the study runs. The dependent variable is what the researcher measures afterward to see whether that change had an effect; its value is only known once the data comes in. In the question "does fertilizer amount affect tomato yield," fertilizer amount is independent and tomato yield is dependent.',
+  },
+  {
+    question: 'What Is a Control Variable in an Experiment?',
+    answer: 'A control variable is any factor besides the independent variable that could affect the outcome, but that the researcher deliberately keeps identical across every group being compared — same room, same equipment, same time window. Holding it constant means it cannot be the real explanation for any difference seen in the dependent variable, which is what lets the study credit the independent variable instead.',
+  },
+  {
+    question: 'Is a Confounding Variable the Same as a Control Variable?',
+    answer: "No, they are opposites in effect. A control variable is a factor that has been deliberately held constant, so it is neutralized. A confounding variable is a factor that was not held constant and happens to change along with the independent variable anyway, so it distorts the apparent relationship between the independent and dependent variable. The fix for a suspected confounder is usually to control it, measure and adjust for it, or redesign the study so it can no longer move with the independent variable.",
+  },
+  {
+    question: 'Can a Study Have More Than One Independent Variable?',
+    answer: 'Yes. A factorial design deliberately tests two or more independent variables at once — for example, both drug dosage and exercise level in the same trial — to see how they affect the dependent variable individually and in combination. This is standard practice in experimental design and does not change the basic definitions; each factor is still manipulated by the researcher before the outcome is measured.',
+  },
+  {
+    question: 'Which Variable Goes on the X-Axis in a Graph?',
+    answer: 'The independent variable goes on the horizontal x-axis, and the dependent variable goes on the vertical y-axis. This follows the same convention used in basic linear equations and scatter plots, where x is the variable you choose or control and y is the variable whose value depends on, or is predicted from, x.',
+  },
+  {
+    question: 'What Is an Extraneous Variable?',
+    answer: "An extraneous variable is any factor outside the independent variable that could influence the dependent variable, whether or not the study accounts for it. A control variable is an extraneous variable the researcher successfully held constant. A confounding variable is an extraneous variable that was not held constant and that happens to move together with the independent variable, which is the specific combination that threatens a study's conclusions.",
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('statistics-symbols-cheatsheet')}>Statistics Symbols Cheat Sheet: All 40+ Signs Explained</Link>
+- <Link to={routes.article('control-confounders')}>Control Confounders with DAGs</Link>
+- <Link to={routes.article('correlation-vs-causation')}>Correlation vs Causation</Link>
+- <Link to={routes.calculator('correlation-coefficient')}>Correlation Coefficient Calculator</Link>
