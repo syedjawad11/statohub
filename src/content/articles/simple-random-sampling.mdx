@@ -1,0 +1,292 @@
+---
+title: "Simple Random Sampling: How to Draw a Sample"
+h1: "How to Draw a Simple Random Sample: by Hand, Excel, and Python"
+description: "Simple random sampling gives every unit an equal chance of selection. Learn how to draw one by hand, in Excel, Google Sheets, and Python's pandas."
+category: foundations
+primaryKeyword: simple random sampling
+keywords:
+  - simple random sampling
+  - how to select a random sample
+  - pandas sample
+  - random sample in excel
+  - simple random sample excel
+phase: 1
+related:
+  - sampling-methods
+  - population-vs-sample
+  - parameter-vs-statistic
+draft: false
+pubDate: 2026-10-08
+updatedDate: 2026-10-08
+reviewedDate: 2026-10-08
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Simple random sampling (SRS) is a probability sampling method in which every unit in a population has an equal chance of selection, and every possible sample of the chosen size has an equal chance of being the one that gets picked. That second clause is the part people miss: it's not enough for each person to have a fair shot individually — the selection process itself has to be free of any pattern that would favor one combination of units over another. You can draw an SRS by hand with a random number table, with `RAND()` or `RANDARRAY()` in Excel and Google Sheets, or with pandas' `.sample()` in Python. The mechanics differ, but every valid method needs the same two things: a complete list of the population and a source of randomness you actually trust.
+
+<KeyTakeaways rows={[
+  { point: 'Equal chance, by definition', details: 'Every unit — and every possible sample of the chosen size — has the same probability of selection; that is what separates a simple random sample from "some random-feeling people."' },
+  { point: 'With vs. without replacement changes the odds', details: 'Without replacement (the default for most real surveys) a selected unit leaves the pool for good; with replacement it stays in and can be drawn again.' },
+  { point: 'Excel and Sheets have no seed', details: 'RAND(), RANDBETWEEN(), and RANDARRAY() all recalculate on every edit, so you freeze a draw by pasting the values, not by setting a seed.' },
+  { point: 'Python makes the draw reproducible', details: "pandas' DataFrame.sample(random_state=...) and the standard library's random.seed() let you regenerate the exact same sample again later." },
+  { point: 'Most "random" mistakes are frame mistakes', details: 'A duplicate row, an incomplete list, or re-sorting after you already generated your random numbers breaks randomness before the generator ever does.' },
+]} />
+
+## Quick Checklist: How to Select a Random Sample
+
+Before you touch a formula or a line of code, these five steps decide whether the sample you end up with is actually a simple random sample.
+
+<Checklist
+  id="how-to-select-a-random-sample"
+  title="Quick checklist: how to select a random sample"
+  style="check"
+  items={[
+    { text: 'Build a complete, duplicate-free list of the population', detail: 'Give every unit a unique ID number — this is your sampling frame, and an SRS can only be as random as the list it is drawn from.' },
+    { text: 'Decide with or without replacement before you draw', detail: 'Most studies sample without replacement, so no person or unit gets counted twice.' },
+    { text: 'Pick your method', detail: 'A random number table by hand, RAND() or RANDARRAY() in Excel or Google Sheets, or pandas’ .sample() in Python all produce a valid SRS.' },
+    { text: 'Set a seed if you need to reproduce the draw', detail: 'random_state in pandas, or random.seed() in Python, freezes the exact sample for later; Excel and Sheets have no equivalent.' },
+    { text: 'Freeze the result immediately', detail: 'Paste any Excel or Sheets random values as values, not formulas, the moment you have your sample — before the sheet recalculates and changes it.' },
+  ]}
+/>
+
+Skipping the first step is the most common failure mode: no formula or function fixes a sampling frame that was incomplete or full of duplicates to begin with.
+
+## What Is Simple Random Sampling?
+
+Simple random sampling is the sampling design in which, per [Yale University's statistics course notes](http://www.stat.yale.edu/Courses/1997-98/101/sample.htm), "each individual is chosen entirely by chance and each member of the population has an equal chance of being included in the sample. Every possible sample of a given size has the same chance of selection." That second sentence is what makes SRS a specific technique rather than a vague description — it rules out any method where some combinations of units are more likely to end up together than others.
+
+SRS sits inside a bigger family of probability sampling techniques. <Link to={routes.article('sampling-methods')}>Statohub's sampling methods guide</Link> covers the other four — systematic, stratified, cluster, and multistage sampling — and when each one beats a plain SRS; the short version is that SRS is the baseline every other probability method gets compared against, and it's the right choice whenever a complete population list exists and the population isn't so spread out that cost becomes the deciding factor.
+
+In practice, SRS needs a **sampling frame**: a list of every unit in the population, each with a unique identifier. <Link to={routes.article('population-vs-sample')}>Statohub's population vs sample guide</Link> covers how that frame relates to the population it's drawn from, and why a frame that's missing units or stuck with duplicates undermines the "equal chance" guarantee before a single random number gets generated.
+
+## Simple Random Sampling With vs Without Replacement: What's the Difference?
+
+Sampling **without replacement** removes a unit from the population once it's selected, so it cannot be chosen again; sampling **with replacement** returns the unit to the pool immediately, so it could be picked a second or third time. [Statistics Canada's training module on probability sampling](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm) states it plainly: "SRS can be done with or without replacement. An SRS with replacement means that there is a possibility that the sampled telephone entry may be selected twice or more. Usually, the SRS approach is conducted without replacement because it is more convenient and gives more precise results."
+
+That precision difference is why almost every real survey — customer satisfaction studies, political polling, quality audits — samples without replacement. Sampling the same person twice wastes a unit of your sample size on information you already have. With replacement shows up mainly in two places: bootstrap resampling, which deliberately replaces units to build a resampling distribution, and any simulation where each draw genuinely needs to be independent of the ones before it (think rolling a die repeatedly, where the same face can obviously come up twice).
+
+The practical tell: if you're drawing people, products, or records for a one-time study, you almost certainly want without replacement. If you're simulating repeated independent trials, you want with replacement.
+
+## How Do You Select a Random Sample by Hand With a Random Number Table?
+
+The hand method numbers every unit in the population, reads random digits one group at a time, and keeps a number only if it falls inside the valid range and hasn't already been used. Suppose a class has N = 20 students, numbered 01 through 20, and you need n = 5 for a short survey. Reading two-digit groups from a random-number source gives you this sequence:
+
+```
+41, 19, 50, 83, 06, 09, 68, 12, 46, 74, 07
+```
+
+Walk through them in order, discarding anything outside 01–20 or already chosen:
+
+```
+41 -> out of range (>20), discard
+19 -> valid, select  (1st): {19}
+50 -> out of range, discard
+83 -> out of range, discard
+06 -> valid, select  (2nd): {19, 06}
+09 -> valid, select  (3rd): {19, 06, 09}
+68 -> out of range, discard
+12 -> valid, select  (4th): {19, 06, 09, 12}
+46 -> out of range, discard
+74 -> out of range, discard
+07 -> valid, select  (5th): {19, 06, 09, 12, 07} -> n = 5 reached, stop
+```
+
+The sample is students #06, #07, #09, #12, and #19. This is slower than any spreadsheet or code method, but it's worth doing once by hand, because it makes the underlying logic — number, generate, filter, stop at n — obvious before you hand the job to software.
+
+## How Do You Generate a Random Sample in Excel?
+
+The standard Excel method attaches a random number to every row, then sorts by that column and keeps the top n rows. With a population in `A2:A501` (500 rows):
+
+```
+B2:  =RAND()
+     (fill down to B501)
+
+Select A1:B501 -> Data -> Sort -> sort by column B, Smallest to Largest
+Take the first n rows of column A as your sample.
+```
+
+Per the [Microsoft Support reference for RAND](https://support.microsoft.com/en-us/office/rand-function-4cbfa695-8869-4788-8d90-021ea9f5be73), `RAND()` "returns an evenly distributed random real number greater than or equal to 0 and less than 1. A new random real number is returned every time the worksheet is calculated" — which is exactly why you sort and then paste the result as values before you do anything else with it.
+
+If you have Microsoft 365, `RANDARRAY()` and `SORTBY()` skip the helper column entirely:
+
+```
+=INDEX(SORTBY(A2:A501, RANDARRAY(500)), SEQUENCE(10))
+```
+
+`RANDARRAY([rows],[columns],[min],[max],[whole_number])` fills a 500-row array of random decimals, per the [Microsoft Support reference for RANDARRAY](https://support.microsoft.com/en-us/office/randarray-function-21261e55-3bec-4885-86a6-8b0a47fd4d33); `SORTBY` shuffles the population by those random values, and `INDEX(...,SEQUENCE(10))` returns the first 10 rows of the shuffled list. Excel's [Analysis ToolPak add-in](https://support.microsoft.com/en-us/office/use-the-analysis-toolpak-to-perform-complex-data-analysis-6c67ccf0-f4a9-487c-8dec-bdb5a2cefab6) also ships a dedicated Sampling tool that "creates a sample from a population by treating the input range as a population," which is a reasonable alternative when you'd rather not build the formula yourself.
+
+<Callout variant="tip" title="Pro tip">
+Paste Special > Values (Ctrl+Alt+V, then V; Ctrl+Shift+V in current Microsoft 365) the moment you've picked your rows. Every RAND() or RANDARRAY() cell recalculates on the next edit, which silently reshuffles — or deletes — the sample you thought you'd already drawn.
+</Callout>
+
+## How Do You Generate a Random Sample in Google Sheets?
+
+Google Sheets uses the same logic as Excel because its `RAND()` function behaves the same way. Per [Google's documentation for RAND](https://support.google.com/docs/answer/3093438), the function "returns a random number between 0 inclusive and 1 exclusive" with no arguments. Like Excel's version, it's volatile: per [Google's documentation for RANDARRAY](https://support.google.com/docs/answer/9211904), "like the RAND function, hitting enter will cause RANDARRAY's results to update," and `RAND()` updates the same way on every edit. The sort-based workflow is identical:
+
+```
+B2:  =RAND()   (fill down to match your population range)
+Select both columns -> Data -> Sort range -> sort by column B, A to Z
+Keep the first n rows of column A.
+```
+
+Google Sheets also has `RANDARRAY()`, documented at [Google's RANDARRAY reference](https://support.google.com/docs/answer/9211904), and `RANDBETWEEN(low, high)`, which per [Google's RANDBETWEEN reference](https://support.google.com/docs/answer/3093507) "returns a uniformly random integer between two values, inclusive." `RANDBETWEEN` is useful for picking a single random starting point (for example, a random starting row for systematic sampling), but don't use it directly to pick n row numbers for an SRS — nothing stops it from returning the same integer twice, since each call is independent of the last.
+
+As with Excel, there's no seed argument on any of these functions, so use **Paste special > Values only** right after sorting if you need the sample to stay fixed.
+
+<Callout variant="tip" title="Pro tip">
+Label the helper column something like "sort_key" instead of leaving it as a bare RAND() column, and delete it only after you've pasted your sample as values. A stray, unlabeled random-number column is the easiest thing to accidentally re-sort by later.
+</Callout>
+
+## How Do You Select a Random Sample in Python With pandas .sample()?
+
+Pandas draws a simple random sample directly from a DataFrame with one method call. Per the [pandas documentation for DataFrame.sample](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sample.html), `sample(n=None, frac=None, replace=False, weights=None, random_state=None, axis=None, ignore_index=False)` returns "a random sample of items from an axis of object," and replace defaults to `False` — without replacement is the out-of-the-box behavior, matching how most real studies sample.
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({'customer_id': range(1, 501)})
+sample = df.sample(n=10, random_state=42)
+```
+
+If your data isn't in a DataFrame, Python's standard library covers the same ground with no dependencies. Per the [Python documentation for the random module](https://docs.python.org/3/library/random.html), `random.sample(population, k)` "return[s] a k length list of unique elements chosen from the population sequence. Used for random sampling without replacement." For sampling with replacement instead, the same module's `random.choices()` is the one to reach for, since `random.sample()` never repeats an element by design.
+
+```python
+import random
+
+population = list(range(1, 501))
+sample = random.sample(population, k=10)
+```
+
+## Why Does a Random Seed Matter for Reproducibility?
+
+A random seed fixes the starting state of the pseudorandom number generator, so the exact same code produces the exact same "random" sequence every time it runs. Per the [Python documentation for random.seed](https://docs.python.org/3/library/random.html), `random.seed(a=None, version=2)` "initialize[s] the random number generator," and passing a fixed value for `a` makes every subsequent call to `random.sample()` or `random.choices()` deterministic — rerun the script, get the same sample. Pandas works the same way through its `random_state` argument, which the library's own docs describe as the parameter you "use ... for reproducibility."
+
+That matters for anything you need to defend or repeat later: an audit sample you might need to justify to a regulator, a training/test split you want a colleague to reconstruct exactly, or a classroom exercise with a known answer key. Excel and Google Sheets simply don't offer this — `RAND()`, `RANDBETWEEN()`, and `RANDARRAY()` take no seed argument in either tool, which is exactly why "paste as values, then save the list" is the spreadsheet equivalent of setting a seed.
+
+<Callout variant="tip" title="Pro tip">
+Record the seed value itself, not just the fact that you used one. "random_state=42" means nothing to a colleague trying to reproduce your sample six months from now unless the exact number is written down next to the code that used it.
+</Callout>
+
+## A Worked Example: Drawing a Random Sample of 10 From 500 Customers
+
+A support team wants to audit call quality for 10 customers out of 500 who contacted support last month, and they need to be able to show exactly which 10 customers were selected if asked.
+
+1. **Build the frame.** The 500 customers are listed with a unique `customer_id` from 1 to 500 — no duplicates, no gaps.
+2. **Set n and the replacement rule.** n = 10, without replacement, since auditing the same customer's call twice wouldn't add information.
+3. **Draw the sample with a fixed seed.**
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({'customer_id': range(1, 501)})
+sample = df.sample(n=10, random_state=42)
+print(sorted(sample['customer_id'].tolist()))
+  # output: [69, 74, 105, 125, 156, 362, 375, 378, 395, 451]
+```
+
+4. **Verify.** The result is 10 unique IDs, all between 1 and 500 — exactly what `replace=False` guarantees. Each of the 500 customers had the same 10 / 500 = 2% chance of landing in this sample.
+5. **Decide.** The team pulls call records for customers #69, #74, #105, #125, #156, #362, #375, #378, #395, and #451. Because `random_state=42` is recorded alongside the result, re-running the exact same two lines of code next month — or a year from now — reproduces this identical list of 10, which is what lets the team show their work if the audit is ever questioned.
+
+<Figure number={1} caption="The four-step process behind every simple random sample, applied to the 500-customer audit example.">
+  <ProcessFlow
+    title="Simple random sampling process"
+    desc="A four-step horizontal process flow: build the frame of 500 numbered customers, set n = 10 without replacement, generate the draw with pandas df.sample(n=10, random_state=42), then verify and freeze the 10 unique customer IDs."
+    steps={[
+      { label: 'Build the frame', detail: 'Number all 500 customers 1-500, no duplicates.' },
+      { label: 'Set n and replacement rule', detail: 'n = 10, without replacement.' },
+      { label: 'Generate the draw', detail: "df.sample(n=10, random_state=42)." },
+      { label: 'Verify and freeze', detail: 'Confirm 10 unique IDs, then save the list.' },
+    ]}
+  />
+</Figure>
+
+<DataTable
+  caption="How each tool draws a simple random sample"
+  headers={['Tool', 'Method', 'Without replacement by default?', 'Reproducible with a seed?']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Excel (desktop/365)', '=RAND() in a helper column, sort, keep top n rows (or RANDARRAY + SORTBY in 365)', 'Yes, once sorted and rows are not reused', 'No seed argument; paste values to freeze the draw'],
+    ['Google Sheets', '=RAND() in a helper column, Data > Sort range (or RANDARRAY)', 'Yes, once sorted and rows are not reused', 'No seed argument; use Paste special > Values only'],
+    ['Python, pandas', 'DataFrame.sample(n=..., random_state=...)', 'Yes, replace=False is the default', 'Yes, via random_state'],
+    ['Python, standard library', 'random.sample(population, k)', 'Yes, by construction (never repeats an element)', 'Yes, via random.seed()'],
+  ]}
+/>
+
+## Common Mistakes That Break Randomness in a Simple Random Sample
+
+- **Sampling from a frame with duplicates or gaps.** No random-number function can fix a population list that double-counts some units and omits others before you even start; audit the frame first.
+- **Re-sorting the sheet after generating random numbers.** If you sort a spreadsheet by a different column (say, alphabetically) before pasting your `RAND()` column as values, the random numbers no longer line up with the rows they were generated for, and the "sample" you take afterward isn't the one you thought you drew.
+- **Using RANDBETWEEN() to pick n row numbers directly.** Each call is independent, so nothing stops it from returning the same row number twice — that's fine for a single random starting point, but it silently breaks a without-replacement draw.
+- **Forgetting to freeze a volatile formula.** RAND(), RANDBETWEEN(), and RANDARRAY() all recalculate on the next edit or even the next keystroke elsewhere in the sheet; if you haven't pasted values, your "sample" can change without you noticing.
+- **Treating a convenience list as the real sampling frame.** A customer email list that excludes anyone who opted out of email isn't the same population as "all customers" — the sample can be perfectly random and still misrepresent the group you meant to study. <Link to={routes.article('sampling-methods')}>Statohub's sampling methods guide</Link> covers how that gap shows up when a probability method's frame is incomplete.
+
+## Statohub's Take on Simple Random Sampling
+
+Statohub's position is that SRS earns its place as the default probability method, not because it's the fanciest option but because it's the easiest one to audit: every step is checkable, from the frame to the random numbers to the final list. The real skill isn't picking between a spreadsheet and Python — it's building a complete, duplicate-free frame and recording whatever makes the draw reproducible, whether that's a saved list of pasted values or a logged random seed.
+
+## Put Simple Random Sampling to Work With Statohub's Tools
+
+Simple random sampling is one of five probability techniques covered in <Link to={routes.article('sampling-methods')}>Statohub's sampling methods guide</Link>, which walks through when stratified, cluster, or multistage sampling beats a plain SRS. Once you've drawn a sample, <Link to={routes.article('sampling-distributions')}>Statohub's sampling distributions article</Link> explains why your sample's mean or proportion varies from draw to draw, and <Link to={routes.article('parameter-vs-statistic')}>parameter vs statistic</Link> settles which symbol belongs to the population value versus the one your sample produced.
+
+Before you draw a sample, it helps to know how large it needs to be: Statohub's <Link to={routes.calculator('sample-size')}>sample size calculator</Link> applies the standard margin-of-error formula to estimate n before you build your frame. Browse the <Link to={routes.categoryHub('foundations')}>Foundations hub</Link> for the rest of the sampling and notation basics this article builds on, or the full <Link to={routes.calculatorsHub()}>calculators hub</Link> to run your own numbers.
+
+## Sources
+
+<Sources items={[
+  { text: "Yale University — Course notes on Sampling (Simple Random Sampling definition)", href: 'http://www.stat.yale.edu/Courses/1997-98/101/sample.htm', org: 'Yale University' },
+  { text: 'Statistics Canada — "3.2.2 Probability sampling," Statistics: Power from Data! (with/without replacement)', href: 'https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch13/prob/5214899-eng.htm', org: 'Statistics Canada' },
+  { text: 'RAND function — Microsoft Support', href: 'https://support.microsoft.com/en-us/office/rand-function-4cbfa695-8869-4788-8d90-021ea9f5be73', org: 'Microsoft' },
+  { text: 'RANDARRAY function — Microsoft Support', href: 'https://support.microsoft.com/en-us/office/randarray-function-21261e55-3bec-4885-86a6-8b0a47fd4d33', org: 'Microsoft' },
+  { text: 'Use the Analysis ToolPak to perform complex data analysis — Microsoft Support', href: 'https://support.microsoft.com/en-us/office/use-the-analysis-toolpak-to-perform-complex-data-analysis-6c67ccf0-f4a9-487c-8dec-bdb5a2cefab6', org: 'Microsoft' },
+  { text: 'RAND — Google Docs Editors Help', href: 'https://support.google.com/docs/answer/3093438', org: 'Google' },
+  { text: 'RANDARRAY function — Google Docs Editors Help', href: 'https://support.google.com/docs/answer/9211904', org: 'Google' },
+  { text: 'RANDBETWEEN — Google Docs Editors Help', href: 'https://support.google.com/docs/answer/3093507', org: 'Google' },
+  { text: 'pandas.DataFrame.sample — pandas documentation', href: 'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sample.html', org: 'pandas' },
+  { text: 'random — Generate pseudo-random numbers — Python documentation', href: 'https://docs.python.org/3/library/random.html', org: 'Python Software Foundation' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'How Do You Select a Random Sample?',
+    answer: 'Number every unit in your population to build a complete sampling frame, decide whether you are sampling with or without replacement, then generate random numbers and keep the units they point to until you reach your target sample size. You can do this with a random number table by hand, with RAND() or RANDARRAY() in Excel or Google Sheets, or with pandas’ .sample() in Python — the logic is identical across all of them.',
+  },
+  {
+    question: 'How Do You Take a Simple Random Sample in Excel?',
+    answer: 'Add a helper column with =RAND() next to your population list, select both columns, sort by the RAND() column from smallest to largest, and keep the first n rows. Paste the sorted result as values immediately, since RAND() recalculates on the next edit and would otherwise reshuffle your sample. Microsoft 365 users can skip the helper column with =INDEX(SORTBY(range, RANDARRAY(rows)), SEQUENCE(n)).',
+  },
+  {
+    question: 'Does pandas.DataFrame.sample() Sample With or Without Replacement by Default?',
+    answer: 'Without replacement. The replace parameter defaults to False, so each row can only appear once in the result unless you explicitly set replace=True. Pass random_state with an integer value to make the draw reproducible across runs.',
+  },
+  {
+    question: 'Can You Set a Seed for RAND() in Excel or Google Sheets?',
+    answer: 'No. Neither RAND(), RANDBETWEEN(), nor RANDARRAY() accepts a seed argument in Excel or Google Sheets, and all three recalculate on every worksheet edit. To make a spreadsheet-based sample reproducible, sort by the random column once, then paste the result as values so the list stops changing — and save that pasted list as your record of the draw.',
+  },
+  {
+    question: 'What Is the Difference Between Simple Random Sampling and Random Sampling?',
+    answer: '"Random sampling" is an umbrella term that includes several probability techniques — simple random, systematic, stratified, cluster, and multistage sampling — all of which use randomization somewhere in the selection process. Simple random sampling is the specific technique where every unit, and every possible sample of the chosen size, has an identical chance of selection with no additional structure (like strata or clusters) layered on top.',
+  },
+  {
+    question: 'Should You Sample With or Without Replacement?',
+    answer: 'Sample without replacement for almost any one-time study of people, products, or records, since selecting the same unit twice wastes part of your sample size without adding new information. Sample with replacement when you specifically need independent, repeatable draws, such as bootstrap resampling or simulating a process like repeated dice rolls where the same outcome can legitimately occur more than once.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('sampling-distributions')}>Sampling Distributions: Definition & How They Work</Link>
+- <Link to={routes.article('types-of-variables')}>Types of Variables: Qualitative vs. Quantitative</Link>
+- <Link to={routes.calculator('confidence-interval')}>Confidence Interval Calculator</Link>
+- <Link to={routes.article('statistics-symbols-cheatsheet')}>Statistics Symbols Cheat Sheet</Link>
