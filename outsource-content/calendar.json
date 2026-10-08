@@ -321,6 +321,13 @@
       "title": "Logistic Regression Interpretation",
       "slug": "logistic-regression-interpretation",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 47,
+      "day_label": "2026-10-08",
+      "title": "Choose a Correlation Test",
+      "slug": "choose-correlation-test",
+      "category_slug": "data-analysis"
     }
   ]
 }

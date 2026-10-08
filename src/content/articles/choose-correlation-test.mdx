@@ -1,0 +1,215 @@
+---
+title: "Choose a Correlation Test: Pearson vs Spearman"
+h1: "Choose a Correlation Test: 6 Checks Before You Run One"
+description: "Choose a correlation test with a quick checklist: Pearson, Spearman, or Kendall, assumption checks, a worked example, and alternative methods."
+category: data-analysis
+primaryKeyword: choose a correlation test
+phase: 1
+keywords:
+  - choose a correlation test
+  - pearson vs spearman
+  - kendall tau
+  - correlation test checklist
+related:
+  - scatter-plot-interpretation
+  - normality-tests
+  - pearson-vs-spearman
+draft: false
+pubDate: 2026-10-08
+updatedDate: 2026-10-08
+reviewedDate: 2026-10-08
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+For continuous, roughly linear, and near-normal data, use the Pearson correlation. When the relationship is monotonic but not strictly linear, or when the data are ordinal or clearly non-normal, Spearman's rank correlation is the better choice. With small samples or many tied ranks, Kendall's tau tends to perform more reliably. When in doubt, compute both a Pearson and a rank-based measure, compare them, and consider distance correlation or polychoric correlation for less conventional data structures.
+
+<KeyTakeaways rows={[
+  { point: 'Plot before you pick', details: 'Inspect a scatterplot for linearity, curvature, clusters, and uneven spread, and check skew and outliers, before relying on Pearson.' },
+  { point: 'Match the test to the data', details: "Pearson for linear, near-normal continuous data; Spearman for monotonic or ordinal data; Kendall's tau for small samples or many tied ranks." },
+  { point: 'Special variable types need special tests', details: "Phi or tetrachoric correlation for binary pairs, point-biserial for binary-continuous pairs, and Cramer's V for nominal pairs." },
+  { point: 'Report more than the coefficient', details: 'Pair the coefficient with its p-value and confidence interval, plus diagnostic plots — correlation shows association, not agreement or proof of causation.' },
+  { point: 'Bending or reversing relationships need a different tool', details: 'Standard linear and rank-based coefficients can miss or understate dependence when a relationship curves or reverses direction; reach for distance correlation instead.' },
+]} />
+
+## What Pearson, Spearman, and Kendall measure and when each is appropriate
+
+Each of the three main correlation tests answers a slightly different question, and the distinction matters more than many students expect. Pearson's coefficient quantifies the strength and direction of a **linear** relationship between two continuous variables. Spearman's coefficient measures a **monotonic** relationship by correlating the ranks of the data rather than the raw values. Kendall's tau takes a different route entirely, comparing every pair of observations and counting how often they agree (concordant) or disagree (discordant) in ordering.
+
+The required data scale differs accordingly. Pearson's correlation assumes interval or ratio data, linearity, homoscedasticity, and the absence of influential outliers, according to [UVA Library's guide to correlation coefficients](https://library.virginia.edu/data/articles/correlation-pearson-spearman-and-kendalls-tau). Spearman and Kendall relax most of these requirements, needing only ordinal or continuous data that can be ranked.
+
+Robustness is where the practical differences show up most clearly:
+
+- Spearman's coefficient is less sensitive to outliers than Pearson's because it works on ranks rather than raw magnitudes.
+- Kendall's tau is often preferred with small samples or when many tied ranks are present, since it is built from pairwise comparisons with known exact distributions for small n.
+- Pearson remains the most efficient estimator when its assumptions genuinely hold.
+
+For interpreting magnitude, a coefficient closer to 1 or negative 1 indicates a stronger association, but the practical meaning depends on the field and the stakes of the decision. A <Link to={routes.article('p-value')}>p-value</Link> tells you whether an association is unlikely to be due to chance in your sample, not how large or meaningful that association is, so we recommend reporting the coefficient alongside the p-value rather than either one alone, a point echoed in the [PMC guide to correlation coefficients](https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/).
+
+The table below lines the three tests up side by side, so you can see at a glance which column describes the data sitting in front of you:
+
+<DataTable
+  caption="Pearson, Spearman, and Kendall at a glance"
+  headers={['Test', 'Data type required', 'Relationship captured', 'Sensitivity to outliers', 'Best for']}
+  align={['left', 'left', 'left', 'left', 'left']}
+  rows={[
+    ['Pearson', 'Interval or ratio (continuous)', 'Linear', 'Sensitive — outliers can swing the coefficient', 'Normally distributed, evenly spread data'],
+    ['Spearman', 'Ordinal or continuous (ranked)', 'Monotonic', 'Less sensitive — works on ranks, not raw magnitudes', 'Non-normal or ordinal data, monotonic but non-linear patterns'],
+    ['Kendall', 'Ordinal or continuous (ranked)', 'Concordant / discordant pairs (monotonic)', 'Robust — built from pairwise comparisons', 'Small samples or many tied ranks'],
+  ]}
+/>
+
+In short: lean on Pearson when the relationship is linear and the data behave, and fall back to a rank-based test the moment either assumption looks shaky.
+
+## Practical decision checklist: step-by-step rules to choose a test for your dataset
+
+Choosing the right test is a sequence of small decisions, not a single lookup. Working through the steps in order keeps the choice defensible when you write it up.
+
+<Checklist
+  id="correlation-test-checklist"
+  title="Practical decision checklist"
+  style="numbered"
+  items={[
+    { text: 'Classify your variables', detail: 'Decide whether each one is continuous, ordinal, binary, or nominal, and confirm whether observations are paired or independent.' },
+    { text: 'Plot the relationship', detail: 'A scatterplot tells you immediately whether the pattern looks linear, monotonic but curved, or scattered with no clear trend.' },
+    { text: 'Check normality and spread', detail: 'If both variables are reasonably normal and the spread of points looks even across the range (homoscedastic), Pearson is usually appropriate, provided the sample size is adequate.' },
+    { text: 'Switch to rank-based methods when needed', detail: "Non-normal distributions, ordinal scales, or a monotonic but non-linear pattern point toward Spearman; small samples or heavy tie counts point toward Kendall." },
+    { text: 'Handle special variable combinations separately', detail: "Binary-binary pairs call for phi or tetrachoric correlation, binary-continuous pairs for point-biserial correlation, nominal-nominal pairs for Cramer's V, and ordinal data reflecting an underlying continuous trait for polychoric correlation." },
+    { text: 'When uncertain, run both', detail: 'Computing Pearson and a rank-based measure side by side, alongside your diagnostic plots, gives readers of your report enough information to judge the choice themselves.' },
+  ]}
+/>
+
+Binary, nominal, and latent-trait variables fall outside the Pearson/Spearman/Kendall trio entirely and need their own coefficient, worked out in full in the [smartcor theory vignette](https://cran.r-project.org/web/packages/smartcor/vignettes/theory.html):
+
+<DataTable
+  caption="Correlation methods for special variable combinations"
+  headers={['Variable pairing', 'Recommended method']}
+  align={['left', 'left']}
+  rows={[
+    ['Binary × binary', 'Phi coefficient or tetrachoric correlation'],
+    ['Binary × continuous', 'Point-biserial correlation'],
+    ['Nominal × nominal', "Cramer's V"],
+    ['Ordinal reflecting an underlying continuous trait', 'Polychoric correlation'],
+  ]}
+/>
+
+These four rows are the exceptions, not the rule — most datasets you'll meet still resolve to the Pearson, Spearman, or Kendall choice above.
+
+<Callout variant="tip" title="Pro tip">
+Keep your scatterplot in the final report, even a small one. It does more to justify your test choice than a paragraph of explanation ever will.
+</Callout>
+
+## Assumptions and diagnostics to check before you pick and report a test
+
+A correlation test is only as trustworthy as the checks that precede it. Start with the scatterplot: look for a straight-line trend (supports Pearson), a curved but consistently increasing or decreasing pattern (supports Spearman or Kendall), distinct clusters, or a fan-shaped spread that signals <Link to={routes.article('heteroscedasticity-test')}>heteroscedasticity</Link>.
+
+Normality checks come next:
+
+- A histogram or a Q-Q plot gives a quick visual read on whether a variable departs from normality.
+- The Shapiro-Wilk test offers a formal check, though on very large samples even trivial departures can appear statistically significant.
+- Clear <Link to={routes.article('skewed-distribution')}>skew</Link> or heavy tails is usually enough reason to move to a rank-based test rather than forcing Pearson.
+
+<Link to={routes.article('how-to-find-outliers')}>Outliers</Link> deserve their own look, through a <Link to={routes.article('box-plot-interpretation')}>boxplot</Link> or a measure like Cook's distance for regression-adjacent work, since a single extreme point can swing a Pearson coefficient substantially while leaving Spearman largely unaffected.
+
+**Ties matter too.** When many observations share the same rank, Kendall's tau tends to produce more stable inference than Spearman, because it rests on exact distributions for small samples, as the [cor.test documentation](https://rweb.stat.umn.edu/R/library/stats/html/cor.test.html) notes: R computes exact Kendall p-values when n is below 50 and there are no ties, switching to normal approximations otherwise.
+
+One caution worth remembering: correlation measures association, not agreement between two measurement methods. Readers trying to evaluate whether two instruments produce the same readings should turn to Bland-Altman analysis instead, since correlation coefficients can be misleadingly high even when two methods disagree systematically, a distinction spelled out in [UCSF course materials on correlation](https://courses.ucsf.edu/pluginfile.php/823268/mod_resource/content/4/c05.pdf).
+
+<Figure number={1} caption="A stop-and-decide path from the data's shape to a recommended correlation test.">
+  <DecisionTree
+    title="Correlation test selection"
+    desc="A decision tree asks whether the relationship is linear with normal, evenly spread data and no influential outliers; if not, it asks whether the sample is small or has many tied ranks to choose between Kendall's tau and Spearman's rank correlation."
+    root={{
+      label: 'Linear relationship, normal data, even spread, no influential outliers?',
+      yes: { label: 'Use Pearson correlation' },
+      no: {
+        label: 'Small sample or many tied ranks?',
+        yes: { label: "Use Kendall's tau" },
+        no: { label: "Use Spearman's rank correlation" },
+      },
+    }}
+  />
+</Figure>
+
+In short: if the scatterplot looks linear and the data are well-behaved, default to Pearson. Otherwise, check whether the sample is small or heavily tied — that case favors Kendall's tau, and everything else lands on Spearman's rank correlation.
+
+## Worked example: choose, run, and interpret the right correlation test for a sample dataset
+
+Say we have survey responses from 40 participants: a continuous variable (hours of weekly exercise) and an ordinal variable (self-reported stress level on a 5-point scale). The goal is to see whether more exercise relates to lower stress.
+
+1. **Plot first.** A scatterplot of exercise hours against stress rank shows a downward trend that looks monotonic but not perfectly straight, with a few participants reporting very high exercise and moderate stress.
+2. **Check the distributions.** A histogram of stress scores shows clustering at the low and high ends rather than a bell shape, and the variable is ordinal by design, not continuous.
+3. **Choose the test.** Because one variable is ordinal and the relationship is monotonic rather than strictly linear, Spearman's rank correlation is the appropriate choice over Pearson.
+4. **Run and report.** Suppose the resulting Spearman coefficient is rho equals negative 0.42, with a 95% <Link to={routes.article('confidence-interval')}>confidence interval</Link> and a p-value below 0.05. We would report all three: the coefficient, the interval, and the p-value, then interpret the coefficient in plain English as a moderate negative association between exercise and self-reported stress in this sample, not proof that exercise reduces stress for any individual.
+
+This sequence, plotting, checking distribution shape, then matching the test to what you found, works the same way regardless of the subject matter, and it mirrors the broader <Link to={routes.article('exploratory-data-analysis')}>exploratory data analysis</Link> workflow we recommend before any formal test.
+
+## Advanced and alternative methods to try when standard tests are inadequate
+
+Standard correlation tests cover most situations, but a few scenarios call for something else. When a scatterplot reveals a clear non-linear pattern, such as a U-shape or a relationship that reverses direction, Pearson, Spearman, and Kendall can all understate or miss the dependence entirely.
+
+- **Distance correlation** can detect non-linear dependence that both Pearson and rank-based measures tend to miss, making it worth a look when a scatterplot shows an unmistakable curve, as discussed in the [correlation types vignette](https://cloud.r-project.org/web/packages/correlation/vignettes/types.html).
+- **Polychoric, polyserial, and tetrachoric correlations** suit ordinal items that reflect an underlying continuous latent trait, such as Likert-scale survey responses; when latent normality is plausible, these methods reduce the attenuation bias that affects rank-based measures on the same data.
+- **Permutation tests** offer a way to compute significance for very small or unusually shaped samples, since they avoid relying on large-sample approximations.
+
+When two methods disagree meaningfully, the honest approach is to report both results along with the diagnostics that led you to consider each one, rather than quietly choosing whichever number looks better.
+
+Across the checklist, the comparison table, and the decision path above, the throughline is the same: plot the relationship first, let what you see decide which assumptions you need to check, match the test to what the plot and the checks actually showed, and report the coefficient together with its p-value and confidence interval rather than as a number standing alone. That habit is what turns "I ran a correlation" into a result someone else can evaluate and trust.
+
+## Statohub resources and proof points that support this guidance
+
+Our <Link to={routes.calculatorsHub()}>correlation calculator</Link> runs Pearson and rank-based computations directly from your data, so the checklist above turns into a result in minutes rather than a manual calculation. For a deeper comparison of when each method applies, our <Link to={routes.article('pearson-vs-spearman')}>Pearson vs Spearman guide</Link> walks through the reasoning side by side.
+
+This fits the path we built our site around: Learn the concept, Calculate it on your own data, then Apply it to a real question, with plain-English explanations and worked examples at every step.
+
+## Author perspective: pragmatic priorities when selecting a correlation test
+
+When time is short, the checklist still holds: plot the data, check for skew and outliers, then run both Pearson and Spearman. If they tell the same story, you have a sturdier result. If they diverge, that gap is itself informative and worth reporting rather than hiding.
+
+We care more about a report that shows its diagnostics than one that presents a single coefficient with no context. Reproducibility starts with transparency about what you checked.
+
+## How Statohub can help: calculators and step-by-step guides
+
+Working through the checklist above by hand is good practice, but our correlation calculator handles the computation the moment your data is ready, while our Pearson vs Spearman guide and the broader <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> walk through interpretation and reporting in plain language. Start with <Link to={routes.learnLanding()}>Learn Statistics</Link> if you want the foundational concepts first.
+
+## Sources
+
+<Sources items={[
+  { text: "Correlation: Pearson, Spearman, and Kendall's tau", href: 'https://library.virginia.edu/data/articles/correlation-pearson-spearman-and-kendalls-tau', org: 'UVA Library' },
+  { text: 'cor.test — Test for Association/Correlation Between Paired Samples', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.test.html', org: 'The R Project (R-devel manual)' },
+  { text: 'Choosing the Right Correlation Method: Theory and Rationale (smartcor vignette)', href: 'https://cran.r-project.org/web/packages/smartcor/vignettes/theory.html', org: 'CRAN' },
+  { text: 'Reliability and Measurement Error (correlation vs. Bland-Altman agreement)', href: 'https://courses.ucsf.edu/pluginfile.php/823268/mod_resource/content/4/c05.pdf', org: 'UCSF' },
+  { text: "User's Guide to Correlation Coefficients", href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/', org: 'PMC / National Library of Medicine' },
+  { text: 'Correlation Types (correlation package vignette)', href: 'https://cloud.r-project.org/web/packages/correlation/vignettes/types.html', org: 'CRAN' },
+  { text: 'Correlation does not imply causation', href: 'https://en.wikipedia.org/wiki/Correlation_does_not_imply_causation', org: 'Wikipedia' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'How do I test for statistical correlation?',
+    answer: "Plot your two variables on a scatterplot first to see whether the relationship looks linear or monotonic, then compute the matching coefficient: Pearson for linear continuous data, or Spearman and Kendall for ranked or non-normal data. Software such as R's cor.test function, described in the cor.test documentation, reports the coefficient alongside a p-value and confidence interval.",
+  },
+  {
+    question: 'What is a spurious correlation?',
+    answer: 'A spurious correlation is a statistical association between two variables that does not reflect a real or direct relationship, often arising from chance, a shared third factor, or coincidence. Even a strong, statistically significant correlation does not establish that one variable causes the other, a distinction covered in our correlation vs causation guide and explained generally on Wikipedia\'s entry on correlation and causation.',
+  },
+  {
+    question: 'Is a correlation of 0.7 considered strong?',
+    answer: 'A coefficient closer to 1 or negative 1 indicates a stronger association, but what counts as strong depends heavily on the field and what you are measuring. Reporting the coefficient alongside its confidence interval and the diagnostics behind your test choice gives a fuller picture than the number alone, as the PMC guide to correlation coefficients recommends.',
+  },
+  {
+    question: 'What does correlation mean in statistics?',
+    answer: 'Correlation describes the degree to which two quantitative variables move together, either in the same direction (positive) or in opposite directions (negative). It is a narrower concept than association, which also covers relationships between categorical or mixed variable types. Our introduction to correlation covers the basic types in more depth.',
+  },
+]} />
