@@ -1,0 +1,242 @@
+---
+title: "Types of Bias in Statistics: 12 Biases"
+h1: "12 Types of Bias in Statistics (and How to Catch Them)"
+description: "Types of bias in statistics include selection, sampling, response, confirmation, and eight more, plus how to catch each one before it skews your results."
+category: foundations
+primaryKeyword: types of bias in statistics
+keywords:
+  - types of bias in statistics
+  - response bias
+  - sampling bias
+  - sampling bias types
+  - selection bias
+  - statistical bias
+phase: 1
+related:
+  - sampling-methods
+  - parameter-vs-statistic
+  - types-of-variables
+draft: true
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The types of bias in statistics are the systematic ways a study, survey, or dataset can drift away from the truth it's trying to measure — not by chance, but in a predictable direction every time. Twelve types show up most often in practice: selection, sampling, non-response, response, recall, measurement, observer, confirmation, publication, survivorship, attrition, and omitted-variable bias. They strike at different points — while you're building a sample, while you're collecting data, or while you're analyzing and reporting it — and more than one can hit the same study at once. None of them are fixed by a bigger sample size; all of them are fixed, or at least caught, by how the study is designed and documented.
+
+<KeyTakeaways rows={[
+  { point: 'Bias is systematic, not random', details: 'A biased estimate is wrong in the same direction every time, unlike random error, which shrinks as sample size grows but leaves bias untouched.' },
+  { point: '12 types cluster into four stages', details: 'Selection, sampling, non-response, response, and recall bias strike while you build and collect the sample; measurement and observer bias strike while you record data; confirmation, publication, and omitted-variable bias strike during analysis and reporting; survivorship and attrition bias strike as the sample erodes over time.' },
+  { point: 'Bias can flip the answer, not just shift it', details: 'Early observational research found hormone replacement therapy lowered heart disease risk; later, more rigorous trials found the opposite effect once that research corrected for bias.' },
+  { point: 'Response rate is a built-in warning flag', details: "The U.S. Census Bureau's statistical quality standards require a formal nonresponse bias analysis once a survey's unit response rate drops below 80 percent." },
+  { point: 'Prevention beats correction', details: 'Pre-registering a study, blinding whoever collects the data, and tracking dropouts as they happen catch most bias before it ever reaches your dataset.' },
+]} />
+
+## Quick Checklist: Is Your Study or Dataset at Risk of Bias?
+
+Run through these six questions before you trust a comparison, a survey result, or a regression coefficient. Each one maps to a cluster of the 12 bias types below.
+
+<Checklist
+  id="bias-risk-checklist"
+  title="Quick checklist: is your study or dataset at risk of bias?"
+  style="check"
+  items={[
+    { text: 'What was the response rate, and did it differ by group?', detail: "A rate under roughly 80 percent, or a big gap between groups, is the Census Bureau's own trigger for a nonresponse bias check." },
+    { text: 'Who is missing, and why?', detail: 'Dropouts, non-responders, and anyone excluded for "data quality" reasons are rarely a random subset of the original sample.' },
+    { text: 'Are the measurements self-reported or subjective?', detail: 'Self-report and memory-based data invite recall bias and social-desirability-driven response bias.' },
+    { text: 'Did the person collecting or scoring data know the group or outcome?', detail: 'Unblinded data collection is the textbook setup for observer bias to creep in.' },
+    { text: 'Was the study or analysis plan registered before the results came in?', detail: 'Pre-registration is the standard defense against both confirmation bias and publication bias.' },
+    { text: 'Could an unmeasured variable explain both sides of the comparison?', detail: "If so, you're looking at a candidate for omitted-variable bias, not a clean causal effect." },
+  ]}
+/>
+
+Treat a "no" on any of these as a reason to qualify your conclusion, not a reason to throw the data out.
+
+## What Is Statistical Bias?
+
+Statistical bias is a systematic difference between what a measurement, estimate, or sample shows and the true value it's supposed to represent. The U.S. National Institute of Standards and Technology's statistics handbook defines bias as the difference between a measurement result and its unknown true value ([NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc45.htm)).
+
+That's a different problem from random error, and the distinction matters more than any single bias type. A peer-reviewed review of bias in clinical research spells it out: unlike random error, which comes from sampling variability and shrinks as sample size increases, bias is independent of both sample size and statistical significance, and in extreme cases it can produce an association that points in the opposite direction of the truth ([Pannucci & Wilkins, *Plastic and Reconstructive Surgery*](https://pmc.ncbi.nlm.nih.gov/articles/PMC2917255/)). That paper's clearest example is hormone replacement therapy (HRT): multiple observational studies conducted before 1998 found that HRT lowered heart disease risk in postmenopausal women, but later trials designed specifically to minimize bias found the opposite — HRT increased that risk. The bias in the earlier studies wasn't a rounding error; it reversed the conclusion entirely.
+
+<Figure number={1} caption="The 12 types of bias covered below, grouped by the stage of a study where each one typically strikes.">
+  <TaxonomyTree
+    title="Four stages where statistical bias strikes"
+    desc="A taxonomy tree with a root labeled Statistical Bias branching into four stages: collection-stage bias, measurement-stage bias, sample-erosion bias, and analysis and reporting bias, each listing its component bias types."
+    root="Statistical Bias"
+    branches={[
+      { label: 'Collection-Stage Bias', children: ['Selection bias', 'Sampling bias', 'Non-response bias', 'Response bias', 'Recall bias'] },
+      { label: 'Measurement-Stage Bias', children: ['Measurement bias', 'Observer bias'] },
+      { label: 'Sample-Erosion Bias', children: ['Survivorship bias', 'Attrition bias'] },
+      { label: 'Analysis & Reporting Bias', children: ['Confirmation bias', 'Publication bias', 'Omitted-variable bias'] },
+    ]}
+  />
+</Figure>
+
+## What Are Selection Bias and the Main Sampling Bias Types?
+
+Selection bias occurs when the way units enter a study makes the resulting sample systematically unlike the population it's meant to represent. The current Cochrane risk-of-bias tool for randomized trials names this "bias arising from the randomization process" as one of its five formal domains, because a flawed allocation sequence or broken concealment can let healthier or more motivated participants cluster in one arm before the study even starts ([Cochrane Handbook, Chapter 8](https://training.cochrane.org/handbook/current/chapter-08)). Pannucci and Wilkins describe a related real-world version they call channeling bias: in surgical literature comparing operative to non-operative treatment, surgeons tend to be more aggressive about operating on younger, healthier patients with low perioperative risk, so the operative group ends up healthier than the non-operative group before either side has produced an outcome.
+
+Sampling bias is the related, broader problem of a sampling method itself favoring certain members of the population — it's the mechanism, while selection bias is often the result. The main sampling bias types are:
+
+- **Convenience bias** — sampling whoever is easiest to reach (the first 50 people in a mall) rather than a representative cross-section.
+- **Undercoverage bias** — the sampling frame leaves out part of the population, such as a phone survey that only reaches people with landlines.
+- **Voluntary-response bias** — only people with strong opinions bother to respond, such as an online poll anyone can opt into.
+
+Introductory statistics texts group these under the broader lesson that *how* a sample is drawn determines whether it can represent the population at all, independent of how large it is ([OpenStax, *Introductory Statistics 2e*, §1.2](https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling)). Statohub's <Link to={routes.article('sampling-methods')}>sampling methods guide</Link> covers how to pick a probability method that avoids these problems by design; this article focuses on what happens when that choice goes wrong.
+
+## What Are Non-Response Bias and Response Bias?
+
+Non-response bias shows up when the people who don't answer a survey differ systematically from the people who do, so the responses you collect no longer represent the full sample you drew. The U.S. Census Bureau's statistical quality standards require a formal nonresponse bias analysis once a survey's unit response rate falls below 80 percent, or its item or total-quantity response rates fall below 70 percent — a concrete, government-set line for when non-response is likely to matter ([U.S. Census Bureau, *Statistical Quality Standards*](https://www2.census.gov/about/policies/quality/quality-standards-apr2023.pdf)). Pew Research Center's own survey methodology documentation treats nonresponse error as one of the core components of total survey error, alongside coverage, sampling, measurement, and processing error, which is why Pew builds its surveys around minimizing all of them together rather than nonresponse alone ([Pew Research Center, *U.S. Survey Methodology*](https://www.pewresearch.org/methods/u-s-survey-methodology/)).
+
+Response bias is different: it's not about who answers, but how honestly or accurately they answer once they do. It covers social-desirability answers (rounding up healthy habits, rounding down bad ones), leading or loaded question wording, and an interviewer's own influence on what a respondent says. Pannucci and Wilkins describe this last form as interviewer bias — a systematic difference in how information is solicited or recorded — and give a concrete example: an interviewer who knows a patient has Buerger's disease may probe harder for a smoking history ("Are you sure you've never smoked? Not even once?") than they would with a control patient, inflating the apparent association between smoking and the disease.
+
+Recall bias is a specific, common form of response bias: a respondent's memory of past events gets colored by what they know now. Pannucci and Wilkins point to the much-discussed, since-discredited apparent link between the MMR vaccine and autism as a textbook case — parents of children later diagnosed with autism were more likely to recall the vaccine's timing specifically because it coincided with a developmental regression they were already watching for, not because the vaccine caused it.
+
+## What Are Measurement Bias and Observer Bias?
+
+Measurement bias is a systematic error introduced by the instrument or procedure used to collect data, rather than by who's in the sample. NIST's handbook lists concrete sources of measurement bias in a gauge or instrument: a lack of resolution, non-linearity across its range, drift over time, hysteresis, and differences between gauges, geometries, or operators — any of which can shift every reading in the same direction. Pannucci and Wilkins give a clinical example of the same problem: physical exam alone correctly diagnoses venous thromboembolism in under half of true cases, which is why it's an inappropriate primary measure next to an objective test like duplex ultrasound.
+
+Observer bias is measurement bias caused specifically by the person doing the observing or rating, rather than the instrument itself. It's at its worst when the observer knows which group a subject belongs to, because that knowledge can unconsciously shift how borderline cases get scored. Blinding — withholding group assignment from whoever is recording or evaluating outcomes — is the standard fix, which is also why "bias in measurement of the outcome" is its own formal domain in the current Cochrane risk-of-bias tool for trials ([Cochrane Handbook, Chapter 8](https://training.cochrane.org/handbook/current/chapter-08)). Pannucci and Wilkins describe a real version of that fix: a hand-surgery study comparing two fracture-fixation techniques standardized the surgical approach and had functional outcomes scored by a blinded examiner who had never seen the operative notes or x-rays, so the rating couldn't be colored by knowing which technique a patient received. Statohub's <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>guide to Cohen's kappa</Link> covers how to quantify agreement between raters directly, which is the main way observer bias gets caught rather than just assumed away.
+
+## What Are Confirmation Bias and Publication Bias?
+
+Confirmation bias is the tendency to notice, trust, and recall evidence that supports a belief you already hold, while discounting evidence that contradicts it. A CIA Center for the Study of Intelligence book on analytic reasoning traces this to a classic experiment: given the sequence 2-4-6 and asked to discover the rule generating it, most participants tested only examples consistent with their first guess instead of trying to disprove it. In the original run, only 6 of 29 participants guessed the correct rule on their first attempt; when a different researcher repeated the task, none of 51 participants did ([Heuer, *Psychology of Intelligence Analysis*, CIA Center for the Study of Intelligence](https://www.cia.gov/resources/csi/static/Pyschology-of-Intelligence-Analysis.pdf)). In data analysis, the same pattern shows up as stopping a hypothesis search the moment a test confirms the expected answer, instead of seriously trying to rule it out.
+
+Publication bias is confirmation bias at the level of an entire field: positive, "interesting" results are more likely to get written up and accepted than null or unfavorable ones, which skews the published literature toward overstating an effect. Pannucci and Wilkins call this citation bias and point to the field's main fix — in 2004 the International Committee of Medical Journal Editors required trials to be registered with a public registry before results could be published, and a 2007 update required that registration happen before patient enrollment even begins, so a study can't quietly disappear just because its results were disappointing. The current Cochrane Handbook still treats missing results from unregistered or unpublished studies as a distinct source of bias in any synthesis across studies ([Cochrane Handbook, Chapter 7](https://training.cochrane.org/handbook/current/chapter-07)).
+
+## What Are Survivorship Bias and Attrition Bias?
+
+Survivorship bias occurs when an analysis only includes the cases that made it to a later stage, silently dropping the cases that didn't — which makes whatever got you to that stage look safer or more effective than it really is. A 2026 methodological critique published in *Pediatric Transplantation* raises exactly this concern about how a meta-analysis handled pre-transplant ventricular assist device (VAD) support and post-transplant survival in children: comparing survival only among patients who lived long enough to actually receive a transplant, rather than everyone who started pre-transplant VAD support, is the kind of comparison survivorship bias can distort ([Ishtiaq, Malik & Ahmad, *Pediatric Transplantation*](https://pmc.ncbi.nlm.nih.gov/articles/PMC13425747/)).
+
+Attrition bias is the mechanism that often creates survivorship bias: participants drop out of a study unevenly across groups, and the ones who leave are rarely a random subset of the ones who stay. The current Cochrane tool calls this "bias due to missing outcome data" and treats it as a standalone risk-of-bias domain precisely because the reason people drop out is so often tied to the outcome itself — patients who aren't improving are more likely to stop showing up for follow-up visits than patients who are. Pannucci and Wilkins describe a real version of this under the name transfer bias: in a study comparing two breast-reduction techniques, patients with fewer post-operative contour problems had less reason to come back for follow-up visits than patients still concerned about their results, so the two groups could end up with unequal, non-random loss to follow-up even though no one dropped out on purpose. Watching for unequal, differential dropout between groups — not just a shrinking total sample — is how you catch it before it reaches your final numbers.
+
+## What Is Omitted-Variable Bias in Regression?
+
+Omitted-variable bias occurs when a regression leaves out a variable that affects the outcome and is also correlated with a variable that's still in the model, so the missing variable's effect leaks into the coefficient on the one you kept. Pannucci and Wilkins describe the same underlying problem under the name confounding — their examples include the well-known association between coffee drinking and heart attack, which is confounded by smoking, and the association between income and health status, confounded by access to care.
+
+The leakage follows a simple rule. If the true relationship is Score = β₀ + β₁·Hours + β₂·GPA + error, but a regression omits GPA, the coefficient on Hours that comes out of the shorter regression is biased by β₂ multiplied by the slope of GPA on Hours:
+
+```
+True model:      Score = 50 + 5·Hours + 10·GPA + error
+Omitted model:   Score = a + b·Hours + error   (GPA left out)
+
+If regressing GPA on Hours gives: GPA ≈ a' + 0.3·Hours
+Then the expected bias in b is: β₂ × 0.3 = 10 × 0.3 = 3
+
+Expected naive estimate:  b ≈ β₁ + bias = 5 + 3 = 8
+```
+
+A regression that only has Hours in it would report that each additional hour of studying is worth roughly 8 points — 60 percent more than the true effect of 5 — because part of GPA's real effect on Score gets misattributed to Hours, since the two are correlated. Statohub's <Link to={routes.article('control-confounders')}>guide to controlling for confounders</Link> covers how to add the missing variable back in or use a design (matching, stratification, randomization) that controls for it directly.
+
+<DataTable
+  caption="The 12 types of bias at a glance"
+  headers={['Bias type', 'When it strikes', 'Quick fix']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Selection bias', 'Building the sample or assigning groups', 'Randomize allocation; conceal the sequence'],
+    ['Sampling bias', 'Choosing who is eligible to be sampled', 'Use a probability sampling method with a real frame'],
+    ['Non-response bias', 'Collecting survey or trial responses', 'Track and compare response rates by subgroup'],
+    ['Response bias', 'Collecting answers from respondents', 'Use neutral wording; validate self-report with objective data'],
+    ['Recall bias', 'Asking about past events', 'Use records instead of memory where possible'],
+    ['Measurement bias', 'Recording a value with an instrument', 'Calibrate instruments; use objective, validated measures'],
+    ['Observer bias', 'Scoring or rating an outcome', 'Blind the rater to group assignment'],
+    ['Confirmation bias', 'Interpreting results', 'Pre-register hypotheses; seek disconfirming evidence'],
+    ['Publication bias', 'Deciding what gets published', 'Register trials before enrollment; search for unpublished results'],
+    ['Survivorship bias', 'Analyzing only cases that reached a later stage', 'Include dropouts and non-survivors in the analysis'],
+    ['Attrition bias', 'Losing participants over time', 'Compare dropout rates and reasons across groups'],
+    ['Omitted-variable bias', 'Fitting a regression model', 'Add the missing variable or control for it by design'],
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Most real studies carry two or three of these at once, not just one. Work through the checklist above section by section rather than stopping once you've ruled out the first bias type you thought of — that habit is itself a mild case of confirmation bias.
+</Callout>
+
+## A Worked Example: Comparing Weight Loss Between a Free and Premium App Tier
+
+Picture a fitness app comparing average self-reported weight loss between its free and premium tiers after a 12-week program, using an end-of-program survey.
+
+1. **Check attrition first.** Premium enrolled 650 users; 500 were still active subscribers at week 12 (150 lost, or 150 ÷ 650 ≈ 23.1% attrition). Free enrolled 900 users; only 500 were still active at week 12 (400 lost, or 400 ÷ 900 ≈ 44.4% attrition). Free lost nearly twice the share of its starting group — and the people most likely to quit a free weight-loss program early are the ones for whom it isn't working, which is attrition bias feeding directly into survivorship bias in whichever users remain.
+2. **Check the response rate among survivors.** Of the 500 still-active users in each tier who were invited to the survey, 320 premium users responded (320 ÷ 500 = 64%) versus 80 free users (80 ÷ 500 = 16%). Both rates sit well below the Census Bureau's 80% threshold for requiring a nonresponse bias check, and the four-to-one gap between tiers means the two groups of respondents aren't comparable to begin with.
+3. **Question the measurement.** The reported outcome — "average weight loss" — comes from self-report, not a connected scale. Premium users who paid for the service have an extra incentive to round their results up (response bias), and anyone recalling a 12-week-old starting weight is subject to recall bias.
+4. **Decide.** The raw numbers show premium responders reporting 12 lbs lost versus 9 lbs for free responders — a 33% relative gap ((12 − 9) ÷ 9 ≈ 33.3%). After steps 1 through 3, that gap can't be read as "premium works better": it could just as easily be explained by which users survived to be asked, which users bothered to answer, and how generously they remembered their own results. The fix is to track outcomes with objective data (a connected scale) for everyone enrolled, including dropouts counted as non-responders rather than silently removed, ideally inside a randomized comparison rather than an opt-in survey.
+
+<Callout variant="tip" title="Pro tip">
+When a result looks clean enough to be a press-release number, that's exactly when to check attrition and response rates first — big, tidy gaps are often where the most bias is hiding, not the least.
+</Callout>
+
+## Common Mistakes to Avoid When Checking for Bias
+
+- **Assuming a bigger sample fixes bias.** It doesn't. Bias is a systematic error independent of sample size; a larger biased sample just gives you a more confident, equally wrong answer.
+- **Treating a decent overall response rate as safe.** A combined response rate can look fine while hiding a large gap between subgroups — check response rates by group, not just overall, the way the worked example above does.
+- **Letting unblinded staff both collect and judge outcomes.** This is the direct setup for observer bias; separate who assigns groups from who scores results whenever the budget allows it.
+- **Dropping dropouts from the denominator.** Counting only people who finished a study, rather than everyone who started it, converts ordinary attrition into survivorship bias in your headline number.
+- **Declaring a study "unbiased" after ruling out one type.** The 12 types aren't mutually exclusive — a single flawed survey can carry selection, non-response, and response bias at the same time, as the worked example shows.
+
+## Statohub's Take on Types of Bias in Statistics
+
+Statohub's position is that bias is a design problem before it's ever a statistics problem — no test run after the fact substitutes for randomization, blinding, and a pre-registered plan decided in advance. Treat each of the 12 types as a checklist item during study design, not a label to apply retroactively once a result looks surprising. When a correction after the fact is genuinely the only option, say so plainly in how the result is reported, rather than letting a clean-looking number stand in for a clean study.
+
+## Put These Checks to Work With Statohub's Tools
+
+Spotting bias starts with understanding the sample it came from. Statohub's <Link to={routes.article('sampling-methods')}>sampling methods guide</Link> covers how to choose a probability-based method that heads off selection and sampling bias before data collection even starts, and the <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>reliability guide</Link> explains how to measure and report inter-rater agreement to catch observer bias directly. For the regression side of things, <Link to={routes.article('control-confounders')}>controlling for confounders</Link> walks through adding a left-out variable back into a model instead of just flagging that it's missing.
+
+When you're ready to plan a survey or trial with the response rate in mind, Statohub's <Link to={routes.calculator('sample-size')}>sample size calculator</Link> helps you set a target sample size large enough to still be useful after expected non-response whittles it down. The <Link to={routes.categoryHub('foundations')}>Foundations hub</Link> rounds up the rest of the notation this guide assumes, and the <Link to={routes.calculatorsHub()}>calculators hub</Link> has every other tool for checking a dataset once bias has been ruled out.
+
+## Sources
+
+<Sources items={[
+  { text: 'Pannucci CJ, Wilkins EG — "Identifying and Avoiding Bias in Research," Plastic and Reconstructive Surgery (2010)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2917255/', org: 'PMC / NCBI' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 2.4.5. Analysis of Bias', href: 'https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc45.htm', org: 'NIST' },
+  { text: 'Cochrane Handbook for Systematic Reviews of Interventions — Chapter 8: Assessing Risk of Bias in a Randomized Trial', href: 'https://training.cochrane.org/handbook/current/chapter-08', org: 'Cochrane' },
+  { text: 'Cochrane Handbook for Systematic Reviews of Interventions — Chapter 7: Considering Bias and Conflicts of Interest Among the Included Studies', href: 'https://training.cochrane.org/handbook/current/chapter-07', org: 'Cochrane' },
+  { text: 'U.S. Census Bureau — Statistical Quality Standards (April 2023)', href: 'https://www2.census.gov/about/policies/quality/quality-standards-apr2023.pdf', org: 'U.S. Census Bureau' },
+  { text: 'Pew Research Center — U.S. Survey Methodology', href: 'https://www.pewresearch.org/methods/u-s-survey-methodology/', org: 'Pew Research Center' },
+  { text: 'OpenStax — "1.2 Data, Sampling, and Variation in Data and Sampling," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling', org: 'OpenStax / Rice University' },
+  { text: 'Heuer, Richards J. Jr. — Psychology of Intelligence Analysis', href: 'https://www.cia.gov/resources/csi/static/Pyschology-of-Intelligence-Analysis.pdf', org: 'CIA Center for the Study of Intelligence' },
+  { text: 'Ishtiaq S, Malik ZM, Ahmad AR — "Survivorship Bias in the Shadows: A Methodological Concern Regarding Post-Transplant Survival Analysis in Pediatric VAD Recipients," Pediatric Transplantation (2026)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13425747/', org: 'PMC / NCBI' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is the Difference Between Sampling Bias and Selection Bias?',
+    answer: "Sampling bias is a property of the sampling method itself — convenience, undercoverage, or voluntary-response sampling all favor certain members of the population before anyone is assigned to a group. Selection bias is the broader result: any systematic difference between who ends up in a study (or in a particular study arm) and who the study was meant to represent, whether that difference came from the sampling method, non-random group assignment, or how participants were recruited.",
+  },
+  {
+    question: 'What Is Response Bias in a Survey?',
+    answer: "Response bias happens when respondents answer inaccurately, not when they fail to answer at all. Common sources include social-desirability pressure (rounding healthy behaviors up and unhealthy ones down), leading question wording, an interviewer's influence on what gets said, and recall bias when the question asks about the past. It's distinct from non-response bias, which is about who skips the survey rather than how the people who do respond answer.",
+  },
+  {
+    question: 'How Do You Know If Your Sample Has Nonresponse Bias?',
+    answer: "Start by comparing your response rate against the U.S. Census Bureau's own trigger: a unit response rate under 80 percent, or item and total-quantity response rates under 70 percent, is the government's own line for requiring a formal nonresponse bias analysis. More telling than the overall number is whether the response rate differs by subgroup — a large gap between groups, the way premium and free users differed in the worked example above, is a stronger warning sign than a merely low overall rate.",
+  },
+  {
+    question: "What's the Difference Between Bias and Random Error in Statistics?",
+    answer: 'Random error is noise that scatters estimates above and below the true value and shrinks, on average, as sample size grows. Statistical bias is a systematic error that pushes an estimate in the same direction every time, and it does not shrink with a larger sample — a bigger biased dataset simply produces a more confident wrong answer, which is why fixing bias is a design question rather than a sample-size question.',
+  },
+  {
+    question: 'Can a Large Sample Size Fix Statistical Bias?',
+    answer: 'No. A larger sample reduces random sampling variability, but it has no effect on systematic bias, because every additional observation is pulled in the same biased direction as the ones before it. The only real fixes are methodological: randomize allocation, use a proper probability sampling frame, blind observers, track and report response and attrition rates by group, and pre-register the analysis plan.',
+  },
+  {
+    question: 'What Is Survivorship Bias in Plain Terms?',
+    answer: "Survivorship bias is drawing a conclusion from only the cases that made it to a later stage of a process, while the cases that didn't make it are invisible to the analysis. A mutual fund's track record that only counts funds still operating today looks better than reality because the funds that failed and shut down have been dropped from the comparison entirely; the same mechanism applies to any study that only analyzes outcomes for people who stayed in it.",
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('statistics-symbols-cheatsheet')}>Statistics Symbols Cheat Sheet</Link>
+- <Link to={routes.article('randomized-controlled-trial')}>Randomized Controlled Trials: Design & Analysis</Link>
+- <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>Reliability in Statistics: Cronbach's Alpha & Cohen's Kappa</Link>
+- <Link to={routes.calculator('sample-size')}>Sample Size Calculator</Link>
