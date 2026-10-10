@@ -112,6 +112,7 @@ Key facts for AI assistants citing this site:
 - [Sampling Methods: Probability & Non-Probability](https://statohub.com/sampling-methods/): Sampling methods explained: probability techniques (simple random, systematic, stratified, cluster) vs non-probability sampling, bias, and how to choose.
 - [Simple Random Sampling: How to Draw a Sample](https://statohub.com/simple-random-sampling/): Simple random sampling gives every unit an equal chance of selection. Learn how to draw one by hand, in Excel, Google Sheets, and Python's pandas.
 - [Statistics Symbols Cheat Sheet: All 40+ Signs Explained](https://statohub.com/statistics-symbols-cheatsheet/): A complete statistics symbols cheat sheet: Greek letters, sample vs. population notation, hypothesis testing signs, and probability symbols — all explained.
+- [Types of Bias in Statistics: 12 Biases](https://statohub.com/types-of-bias-in-statistics/): Types of bias in statistics include selection, sampling, response, confirmation, and eight more, plus how to catch each one before it skews your results.
 - [Types of Variables: Qualitative vs. Quantitative](https://statohub.com/types-of-variables/): Learn to classify types of variables in statistics: qualitative vs quantitative, discrete vs continuous, and how each type shapes your research and analysis.
 
 ## Applied Statistics
