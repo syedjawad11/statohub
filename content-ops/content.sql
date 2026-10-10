@@ -405,7 +405,7 @@ INSERT INTO "articles" VALUES('confusion-matrix-python','Confusion Matrix and Cl
 INSERT INTO "articles" VALUES('confusion-matrix-excel','Confusion Matrix in Excel: Build One and Compute Every Metric','machine-learning-statistics','confusion matrix excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('roc-curve-python','ROC Curves and AUC in Python','machine-learning-statistics','roc curve python',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('feature-scaling-sklearn','Feature Scaling in scikit-learn: StandardScaler, MinMaxScaler and RobustScaler','machine-learning-statistics','standardscaler vs minmaxscaler',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
-INSERT INTO "articles" VALUES('class-imbalance-python','Handling Class Imbalance in Python: Resampling, SMOTE and Class Weights','machine-learning-statistics','smote python',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('class-imbalance-python','Handling Class Imbalance in Python: Resampling, SMOTE and Class Weights','machine-learning-statistics','smote python',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''class-imbalance-handling'' (ADR 0029).',NULL,NULL,'2026-10-10 18:57:37');
 INSERT INTO "articles" VALUES('hyperparameter-tuning','Hyperparameter Tuning: Grid Search, Random Search and Bayesian Optimization','machine-learning-statistics','gridsearchcv',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('bootstrap-confidence-intervals','Bootstrap Confidence Intervals in Python and R','machine-learning-statistics','bootstrap confidence interval python',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('pca-python','PCA in Python: Step by Step with scikit-learn','machine-learning-statistics','pca python',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -414,7 +414,7 @@ INSERT INTO "articles" VALUES('precision-vs-recall','Precision vs Recall: Which 
 INSERT INTO "articles" VALUES('roc-auc-explained','ROC Curve and AUC Explained','machine-learning-statistics','roc curve',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('pr-curve-vs-roc','Precision-Recall Curves vs ROC Curves','machine-learning-statistics','precision recall curve',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('sensitivity-specificity','Sensitivity, Specificity, PPV and NPV','machine-learning-statistics','sensitivity vs specificity',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
-INSERT INTO "articles" VALUES('class-imbalance','Class Imbalance: Why Accuracy Lies','machine-learning-statistics','imbalanced dataset',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('class-imbalance','Class Imbalance: Why Accuracy Lies','machine-learning-statistics','imbalanced dataset',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''class-imbalance-handling'' (ADR 0029).',NULL,NULL,'2026-10-10 18:57:37');
 INSERT INTO "articles" VALUES('overfitting-vs-underfitting','Overfitting vs Underfitting: How to Spot and Fix Each','machine-learning-statistics','overfitting vs underfitting',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('ridge-lasso-elastic-net','Regularization: Ridge, Lasso and Elastic Net','machine-learning-statistics','ridge vs lasso regression',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('bootstrapping','Bootstrapping Explained','machine-learning-statistics','bootstrapping statistics',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -1850,9 +1850,6 @@ INSERT INTO "keywords" VALUES(3259,'roc-curve-python','precision recall curve py
 INSERT INTO "keywords" VALUES(3260,'feature-scaling-sklearn','standardscaler vs minmaxscaler',1);
 INSERT INTO "keywords" VALUES(3261,'feature-scaling-sklearn','feature scaling',0);
 INSERT INTO "keywords" VALUES(3262,'feature-scaling-sklearn','robustscaler',0);
-INSERT INTO "keywords" VALUES(3263,'class-imbalance-python','smote python',1);
-INSERT INTO "keywords" VALUES(3264,'class-imbalance-python','imbalanced data python',0);
-INSERT INTO "keywords" VALUES(3265,'class-imbalance-python','class weight sklearn',0);
 INSERT INTO "keywords" VALUES(3266,'hyperparameter-tuning','gridsearchcv',1);
 INSERT INTO "keywords" VALUES(3267,'hyperparameter-tuning','hyperparameter tuning',0);
 INSERT INTO "keywords" VALUES(3268,'hyperparameter-tuning','randomizedsearchcv',0);
@@ -1878,9 +1875,6 @@ INSERT INTO "keywords" VALUES(3287,'pr-curve-vs-roc','average precision',0);
 INSERT INTO "keywords" VALUES(3288,'sensitivity-specificity','sensitivity vs specificity',1);
 INSERT INTO "keywords" VALUES(3289,'sensitivity-specificity','positive predictive value',0);
 INSERT INTO "keywords" VALUES(3290,'sensitivity-specificity','sensitivity and specificity formula',0);
-INSERT INTO "keywords" VALUES(3291,'class-imbalance','imbalanced dataset',1);
-INSERT INTO "keywords" VALUES(3292,'class-imbalance','class imbalance',0);
-INSERT INTO "keywords" VALUES(3293,'class-imbalance','accuracy paradox',0);
 INSERT INTO "keywords" VALUES(3294,'overfitting-vs-underfitting','overfitting vs underfitting',1);
 INSERT INTO "keywords" VALUES(3295,'overfitting-vs-underfitting','overfitting',0);
 INSERT INTO "keywords" VALUES(3296,'overfitting-vs-underfitting','how to prevent overfitting',0);
@@ -2258,7 +2252,7 @@ INSERT INTO "plan_rows" VALUES('confusion-matrix-python','S305','applied','Softw
 INSERT INTO "plan_rows" VALUES('confusion-matrix-excel','S306','applied','Software walkthrough','Excel','COUNTIFS build; accuracy, precision, recall, F1, specificity formulas; threshold slider; template',1200,'P2','confusion-matrix-explained','');
 INSERT INTO "plan_rows" VALUES('roc-curve-python','S307','applied','Software walkthrough','Python','roc_curve and roc_auc_score; plotting; comparing models; multiclass; PR curves alongside',1300,'P1','roc-auc-explained','');
 INSERT INTO "plan_rows" VALUES('feature-scaling-sklearn','S308','applied','Software walkthrough','Python','Which models need scaling; each scaler; pipelines to avoid leakage; inverse transforms',1300,'P2','standardization-vs-normalization','');
-INSERT INTO "plan_rows" VALUES('class-imbalance-python','S309','applied','Software walkthrough','Python','Undersampling, oversampling, SMOTE; class_weight; threshold tuning; evaluating correctly; pitfalls',1600,'P2','class-imbalance','');
+INSERT INTO "plan_rows" VALUES('class-imbalance-python','S309','applied','Software walkthrough','Python','Undersampling, oversampling, SMOTE; class_weight; threshold tuning; evaluating correctly; pitfalls',1600,'P2','class-imbalance-handling','');
 INSERT INTO "plan_rows" VALUES('hyperparameter-tuning','S310','applied','Software walkthrough','Python','GridSearchCV and RandomizedSearchCV; nested CV; Optuna; overfitting the validation set',1600,'P2','k-fold-cross-validation','');
 INSERT INTO "plan_rows" VALUES('bootstrap-confidence-intervals','S311','applied','Software walkthrough','Python; R','Percentile and BCa intervals; scipy.stats.bootstrap; boot package; model metric CIs',1400,'P2','bootstrapping','');
 INSERT INTO "plan_rows" VALUES('pca-python','S312','applied','Software walkthrough','Python','Scaling; fitting; explained variance and scree plot; loadings; biplots; using components downstream',1500,'P1','pca-explained','');

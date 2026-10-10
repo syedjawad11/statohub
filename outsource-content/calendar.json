@@ -342,6 +342,13 @@
       "title": "Regression Discontinuity Design",
       "slug": "regression-discontinuity-design",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 50,
+      "day_label": "2026-09-30",
+      "title": "Class Imbalance Handling",
+      "slug": "class-imbalance-handling",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }
