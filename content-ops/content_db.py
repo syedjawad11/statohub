@@ -547,8 +547,8 @@ def cmd_retire(args):
     if _is_published(args.slug):
         sys.exit(f"{args.slug} is live at src/content/articles/{args.slug}.mdx: "
                  "retiring a live page needs a 301 and a human decision")
-    if args.by == args.slug:
-        sys.exit("--by must name the outsourced article's slug, not the retired row")
+    # --by may equal the slug: the vendor sometimes picks our exact slug, and
+    # the repoints below are then harmless no-ops.
     released = [r["keyword"] for r in cur.execute(
         "SELECT keyword FROM keywords WHERE article_slug=?", (args.slug,))]
     cur.execute("DELETE FROM keywords WHERE article_slug=?", (args.slug,))

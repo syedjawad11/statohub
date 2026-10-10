@@ -20,7 +20,7 @@ enabled claude.ai schedule was disabled 2026-09-27.
 `content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, 1,500
 floor, auto-publish, 1/day to 2026-11-04 ([[0028-content-plan-daily-routine]]);
 routine `trig_01CLrB4kqGE4P5NijmgrKbtn` cron 01:00 UTC, **set 02:00 on 10-25**;
-run 2 (10-06) blocked by check-docs session age: now warn-only, routines preflight build.
+**PAUSED by owner 2026-10-10** (fixing published articles first; owner resumes it).
 Overlap gate: `content-ops/overlap_check.py`.
 **Owed: one dedicated session** to enrich 3 live articles instead of new pages:
 binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),
@@ -34,7 +34,7 @@ auto-queues new vendor drafts ([[0026-outsource-daily-cloud-routine]];
 **Partner backlinks are never stripped** -- replacing an unreachable Sources
 entry keeps the vendor's inline href ([[0023-outsource-keeps-partner-backlinks]]).
 Rows left `changes_requested`/`blocked` by the routine need a local session.
-**Vendor wins collisions**: unwritten plan rows are retired, not the vendor draft ([[0029-vendor-articles-win-topic-collisions]]).
+**Vendor wins collisions** ([[0029-vendor-articles-win-topic-collisions]]); 10 plan rows retired; 6 vendor drafts backlogged, oldest-first.
 
 ## Blocked / waiting
 
