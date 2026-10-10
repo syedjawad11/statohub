@@ -1,0 +1,268 @@
+---
+title: "Regression Discontinuity Design Explained"
+h1: "Regression Discontinuity: 9–17× Power Checks"
+description: "Methods-first guide to regression discontinuity design: run McCrary and covariate checks, test bandwidths, and plan for 9 to 17x larger samples."
+category: experiments-causality
+primaryKeyword: "regression discontinuity design"
+keywords:
+  - regression discontinuity design
+  - regression discontinuity
+phase: 1
+related:
+  - spillover-effects
+  - control-confounders
+  - multiple-comparisons-problem
+draft: false
+pubDate: 2026-10-10
+updatedDate: 2026-10-10
+reviewedDate: 2026-10-10
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A regression discontinuity design estimates a local causal effect by comparing units just above and just below a known cutoff in a continuous score. It becomes credible when assignment to treatment follows a fixed rule tied to that score and there is no evidence that units manipulated their position around the threshold. Because the comparison happens only near the cutoff, the resulting estimate applies locally, not to the full population.
+
+<KeyTakeaways rows={[
+  { point: 'Local effect, not a population average', details: 'Regression discontinuity estimates a local treatment effect right at a known cutoff, and it is only credible when there is no evidence units manipulated their score to land on one side.' },
+  { point: 'Local linear beats a global polynomial', details: 'Local linear regression with robust bias correction, checked across multiple bandwidths, is more reliable than fitting a single high-order polynomial across the full range.' },
+  { point: 'Diagnostics are mandatory, not optional', details: 'The McCrary density test and covariate-continuity checks have to pass before any jump at the cutoff gets interpreted as causal.' },
+  { point: 'Budget a far larger sample than an RCT', details: 'Because estimation uses only observations near the cutoff, RDD needs a much bigger dataset than a comparable randomized trial — up to 9 to 17 times larger in some education examples, and the gap widens further for fuzzy designs with a small treatment jump.' },
+  { point: 'Plot it without manufacturing a jump', details: 'Use small, principled bins and a simple linear fit on each side of a clearly marked cutoff with confidence intervals, never a high-order polynomial overlay that can curve suspiciously right at the threshold.' },
+]} />
+
+## Running variables, cutoffs, and the logic of comparison
+
+Every regression discontinuity design rests on three ingredients: a running variable (sometimes called a score), a cutoff, and a treatment rule that flips at that cutoff. A student who scores 79 on an entrance exam might be denied a scholarship that a student scoring 80 receives; the exam score is the running variable, 80 is the cutoff, and the scholarship is the treatment.
+
+The design borrows its credibility from a simple idea: a unit scoring 79.9 and a unit scoring 80.1 are, on average, almost identical in every way except which side of the line they fell on. Nothing about their underlying ability, motivation, or circumstances should jump abruptly at that exact point, so any sharp change in outcomes right at the cutoff is attributable to treatment.
+
+- **Running variable**: the continuous score that determines eligibility.
+- **Cutoff**: the fixed threshold that separates treated from untreated units.
+- **Local comparison**: outcomes are compared only within a narrow window around the cutoff, not across the entire range of the score.
+
+Formally, the estimand is the difference in the conditional expectation of the outcome, evaluated from above and below the cutoff, as the running variable approaches that point. This works because potential outcomes are assumed continuous through the threshold, so any discontinuity in the observed outcome reflects treatment rather than some coincidental shift in the population.
+
+## Sharp vs fuzzy RDD: what changes in identification and estimation
+
+In a sharp regression discontinuity design, treatment status is a deterministic function of the running variable: everyone above the cutoff is treated, everyone below is not. This is the cleanest version of the design and the treatment effect at the cutoff can be estimated directly as the jump in the outcome variable.
+
+A fuzzy regression discontinuity design arises when crossing the cutoff changes the probability of treatment but does not guarantee it. Some eligible units never take up treatment, and some ineligible units find a way in. In these cases, described in detail in a [regression discontinuity explanation](https://pmc.ncbi.nlm.nih.gov/articles/PMC10760478/), the cutoff indicator becomes an instrumental variable, and researchers estimate the ratio of the jump in outcomes to the jump in treatment probability at the threshold.
+
+- **Sharp RDD**: treatment probability jumps from 0 to 1 exactly at the cutoff.
+- **Fuzzy RDD**: treatment probability jumps by less than one, requiring an instrumental-variables interpretation.
+- **Interpretation**: the fuzzy estimate is a local average treatment effect for compliers, those whose treatment status was actually changed by crossing the cutoff.
+
+Reporting a fuzzy design without showing the first-stage jump in treatment probability is a common oversight. That jump tells the reader how strong the instrument is and whether the resulting complier-only estimate is even meaningful for the population of interest.
+
+## Choosing between polynomial and local linear estimation
+
+Early applications of regression discontinuity design often fit a single high-order polynomial across the entire range of the running variable, then read off the value at the cutoff. This approach can produce misleading estimates because a polynomial fit to distant data points can wiggle near the cutoff in ways that have nothing to do with the true relationship there.
+
+Local linear regression, estimated only within a narrow bandwidth on each side of the cutoff, avoids this problem by relying on data closer to the point of interest. The trade-off is between bias and variance: a wide bandwidth includes more observations and reduces variance but risks bias from points that are not truly comparable to the cutoff; a narrow bandwidth reduces that bias but leaves fewer observations to estimate the jump precisely.
+
+- **Bandwidth selectors**: the Imbens-Kalyanaraman procedure and cross-validation are common data-driven choices for the window width.
+- **Robust bias correction**: methods developed by Calonico, Cattaneo, and Titiunik adjust standard errors and point estimates for the bias introduced by the local linear fit.
+- **Multiple bandwidths**: estimating the effect at several bandwidths and reporting how the result changes is standard practice, not an optional extra.
+
+<Callout variant="tip" title="Pro tip">
+Report your main result using local linear regression with robust bias-corrected inference, then show a bandwidth-sensitivity table so readers can judge how stable the estimate is.
+</Callout>
+
+## Diagnostics and robustness checks you must run
+
+A regression discontinuity design is only as credible as its diagnostics. Before interpreting any jump as causal, a researcher needs to rule out the possibility that units sorted themselves around the cutoff or that unrelated factors happen to shift at the same point.
+
+1. **McCrary density test**: check whether the density of the running variable is smooth through the cutoff, since a spike just below or above it can signal manipulation — the formal test behind this check is documented in [McCrary's density-test working paper](https://www.nber.org/papers/t0334), with further applied discussion in the [DIME Wiki guidance on regression discontinuity](https://dimewiki.worldbank.org/Regression_Discontinuity).
+2. **Covariate continuity**: confirm that baseline characteristics unrelated to treatment, such as age or prior test scores, do not jump at the cutoff.
+3. **Placebo cutoffs**: rerun the analysis at artificial thresholds away from the true cutoff; a genuine effect should not appear there.
+4. **Bandwidth and functional-form sensitivity**: vary the bandwidth and polynomial order to see whether the estimated effect holds up.
+
+If any of these checks fail, the honest response is to stop short of a causal claim and investigate further, whether that means examining how the assignment rule was actually implemented in practice or considering an alternative identification strategy.
+
+## Why RDD needs far larger samples than a randomized trial
+
+Because a regression discontinuity design effectively estimates a treatment effect using only observations near the cutoff, it throws away most of the sample's information. This "design effect" means an RDD needs a much bigger dataset than a randomized controlled trial to detect the same effect size with the same confidence.
+
+- **Design effect**: restricting estimation to a narrow bandwidth around the cutoff discards distant observations that would otherwise sharpen the estimate.
+- **Fuzzy designs compound the problem**: a small first-stage jump in treatment probability shrinks the effective sample further, since the complier population is smaller than the full population near the cutoff.
+- **Simulation over guesswork**: before collecting data, simulate detectable effect sizes given plausible running-variable distributions and bandwidths rather than assuming an RDD will behave like a smaller RCT.
+
+Power calculations show that a regression discontinuity design may require much larger sample sizes than a comparable randomized trial in some education examples, as discussed in [power calculations for regression discontinuity evaluations](https://blogs.worldbank.org/en/impactevaluations/power-calculations-regression-discontinuity-evaluations-part-1). That range reflects how much information is lost when optimal bandwidth selection excludes observations far from the threshold, and it underscores why RDD studies with modest sample sizes often struggle to detect anything but large effects.
+
+## How to plot RDD data without misleading readers
+
+A regression discontinuity graph is often the first thing a reader looks at, so it deserves the same scrutiny as the regression itself. The two most common mistakes are binning the data too coarsely and fitting a high-order polynomial that curves suspiciously right at the cutoff.
+
+- **Use small, principled bins**: quantile-based or mimicking-variance bin widths avoid the over-smoothing that can manufacture the appearance of a jump.
+- **Skip the high-order polynomial overlay**: show binned averages with a simple local linear fit on each side instead.
+- **Mark the cutoff clearly**: a vertical line at the threshold, plus confidence intervals around the binned averages, lets the reader judge the size and precision of the jump directly.
+- **State the bandwidth used**: annotating the graph with the bandwidth ties the visual evidence to the statistical result reported in the text.
+
+## Step-by-step checklist for implementing an RDD
+
+Running a regression discontinuity design well is less about sophisticated math and more about disciplined sequencing. The checklist below reflects the order most applied papers follow, from data preparation through reporting.
+
+<Checklist
+  id="rdd-implementation-checklist"
+  title="Step-by-step RDD implementation checklist"
+  style="numbered"
+  items={[
+    { text: 'Prepare the data', detail: 'Center the running variable at zero (subtract the cutoff), construct the treatment indicator, and inspect the running variable for mass points or rounding that could signal manipulation.' },
+    { text: 'Run the core diagnostics', detail: 'Plot the outcome against the running variable, run the McCrary density test, check covariate continuity, and test placebo cutoffs.' },
+    { text: 'Estimate the effect', detail: 'Fit local linear regression within a chosen bandwidth, report the first-stage jump in treatment probability for fuzzy designs, and present the local average treatment effect alongside a robustness table across bandwidths.' },
+    { text: 'Report transparently', detail: 'List every bandwidth used, the number of observations inside each bandwidth, the robust standard-error method, and how sensitive the estimate is to these choices.' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Treat the robustness table as part of the main result, not an appendix afterthought; readers judge an RDD by how stable the estimate looks, not by a single point estimate.
+</Callout>
+
+## Extensions of RDD such as geographic and donut RDD designs
+
+Standard regression discontinuity design assumes a single continuous running variable and a single cutoff, but real applications often stretch that framework. Geographic RDD replaces the running variable with distance from a boundary, such as a state line, school district border, or coastline, and compares outcomes for units on either side. This is useful when a policy or program applies strictly within a jurisdiction, but it introduces a subtlety: the "cutoff" is now a line in two-dimensional space, so researchers typically estimate the effect using distance to the nearest boundary point and check that other policies do not also change at that same border.
+
+Donut RDD addresses a different concern: observations sitting extremely close to the cutoff are sometimes the ones most likely to have been manipulated, whether through rounding, administrative discretion, or deliberate sorting. A donut design drops a small band of observations immediately around the threshold and re-estimates the effect using only points slightly farther away, leaving a "hole" in the data near the cutoff. If the result changes substantially once that band is removed, it suggests the original estimate was contaminated by whatever was happening right at the threshold.
+
+Bertanha's work on RDD with many thresholds, described in [Regression Discontinuity Design with Many Thresholds](https://arxiv.org/abs/2101.01245), extends the framework further by addressing settings where several cutoffs exist across different sites or programs, allowing researchers to combine local estimates into a broader average treatment effect while still respecting the local nature of each individual discontinuity. These extensions share a common thread: they adapt the sharp comparison-at-a-threshold logic to messier real-world assignment rules without abandoning the core continuity assumption.
+
+## Fuzzy RDD application scenarios and examples
+
+Fuzzy regression discontinuity design shows up wherever a rule nudges people toward treatment without fully determining it. A test-score cutoff for a remedial education program is a common example: students below the cutoff are strongly encouraged to enroll, but some skip it and some students just above the cutoff enroll anyway because a school administrator grants an exception. The cutoff still shifts the probability of enrollment sharply, just not from zero to one.
+
+Age-based eligibility rules for social programs behave the same way. Reaching a minimum age might make someone eligible for a benefit, but actual take-up depends on whether the person applies, whether they know about the program, and whether administrative delays get in the way. The eligibility rule creates a jump in the probability of receiving the benefit, not a guarantee of it, which is exactly the structure a fuzzy design is built to handle.
+
+In each case, the analysis proceeds by first confirming the size of the jump in treatment probability at the cutoff, since a weak first stage produces a noisy and hard-to-interpret complier estimate. The result is then reported as a local average treatment effect for compliers, the subset of people whose treatment status was actually changed by which side of the cutoff they fell on, rather than for everyone near the threshold. This distinction matters most when the policy question is about expanding a program rather than reshaping who complies with an existing rule.
+
+<Figure number={1} caption="The fuzzy RDD workflow: the cutoff shifts treatment probability without guaranteeing it, so the first-stage jump has to be confirmed before a complier-only effect can be estimated.">
+  <ProcessFlow
+    title="Fuzzy RDD workflow"
+    desc="A three-step workflow: the cutoff jump shifts treatment probability rather than moving it from 0 to 1; the first stage is confirmed by measuring the jump size and identifying compliers; the local average treatment effect for compliers is then estimated and reported."
+    steps={[
+      { label: 'Cutoff jump', detail: 'Shifts treatment probability, not 0 to 1' },
+      { label: 'Confirm first stage', detail: 'Measure jump size; identify compliers' },
+      { label: 'Estimate LATE', detail: 'Report local average treatment effect for compliers' },
+    ]}
+  />
+</Figure>
+
+## Common pitfalls and how to avoid them in RDD implementation
+
+The most frequent failure in applied regression discontinuity design work is treating the running variable as fixed and untouched when it was not. If individuals know the cutoff in advance and have any ability to influence their score, whether by retaking a test or lobbying an administrator, the comparison near the threshold stops approximating a random assignment. The McCrary density test exists precisely to catch this, and skipping it is one of the easiest ways to publish a spurious result.
+
+A second pitfall is over-fitting the functional form. Analysts sometimes add polynomial terms until the fit looks good near the cutoff, which can manufacture a discontinuity that has nothing to do with treatment. Sticking with local linear regression and checking robustness across a few reasonable bandwidths avoids this trap far more reliably than chasing a better-looking curve.
+
+A third pitfall is assuming the "official" assignment rule matches how treatment was actually administered. Field implementation notes from J-PAL point out that the rule written in a program's guidelines is sometimes not the rule street-level staff actually follow, whether due to discretion, error, or local adaptation. Verifying implementation fidelity before trusting a discontinuity is not an optional step, especially in field settings with multiple administrators.
+
+Finally, researchers sometimes generalize an RDD estimate well beyond the cutoff, treating a local effect as if it applied to the entire population. Since the design only identifies the effect for units near the threshold, any claim about units far from the cutoff requires additional assumptions that the data alone cannot support.
+
+## Software packages and code examples for conducting RDD
+
+Most regression discontinuity work today runs through a handful of well-documented packages rather than custom code built from scratch. In R, the `rdrobust` package implements local linear estimation with the robust bias-corrected inference developed by Calonico, Cattaneo, and Titiunik, along with automated bandwidth selection — the full family of these packages is documented on the [rdpackages project site](https://rdpackages.github.io/). The `rddensity` package runs the McCrary-style density test for manipulation, and `rddtools` offers a broader set of plotting and diagnostic functions. The `rddapp` package, documented in its [reference manual](https://mirrors.zju.edu.cn/CRAN/web/packages/rddapp/refman/rddapp.html), bundles estimation, power analysis, and assumption checks into a single workflow, which is useful for students working through a design from start to finish.
+
+Stata users have access to the same `rdrobust` command, ported directly from the R package, alongside `rdplot` for producing binned scatter plots that follow the visualization guidance researchers recommend. The `DCdensity` command performs the McCrary density test in Stata.
+
+Python users can turn to the `rdrobust` Python port, which mirrors the R and Stata implementations, or build estimates manually using `statsmodels` for the local linear regression step. Whichever language is used, the underlying statistical steps are identical: center the running variable, select a bandwidth, fit local linear models on each side of the cutoff, and report robust standard errors. The choice of software rarely changes the substance of the analysis; what matters is running the same set of diagnostics and robustness checks regardless of which package produces the output.
+
+## Guidance on choosing the running variable and cutoff
+
+The strength of a regression discontinuity design depends heavily on the running variable chosen, and not every score that determines eligibility makes a good candidate. A useful running variable is continuous, has enough observations near the cutoff to estimate a precise local effect, and is difficult for individuals to manipulate with fine precision. A standardized test score administered by an outside body is usually a stronger choice than a self-reported measure that participants could adjust to cross a threshold.
+
+The cutoff itself should be a genuine, sharply enforced rule rather than an approximate guideline. Program administrators sometimes describe a threshold informally, only for their actual practice to involve exceptions and discretion, which is exactly the scenario J-PAL's implementation notes warn against. Before treating a stated cutoff as the operative one, it is worth confirming with administrative data that treatment status actually jumps at that value rather than drifting gradually around it.
+
+Density around the cutoff matters as much as the rule itself. A running variable with very few observations near the threshold, whether because the underlying distribution is sparse there or because the population being studied is small, will produce an imprecise estimate no matter how clean the identification strategy is. Reviewing a histogram of the running variable before committing to a design saves considerable effort later, since a low-density cutoff often means the study is underpowered before a single regression is run.
+
+When multiple candidate running variables exist, choosing the one with a stronger, more mechanical link to treatment assignment generally produces a sharper design. A fuzzy design built around a weakly enforced rule will always be harder to interpret than a sharp design built around a rule with no exceptions.
+
+<DataTable
+  caption="Choosing a running variable and cutoff: what to do and what to avoid"
+  headers={['Do', 'Avoid']}
+  align={['left', 'left']}
+  rows={[
+    ['Choose a continuous running variable', 'Relying on a manipulable self-report'],
+    ['Prefer an externally administered, standardized score', 'Treating an informally enforced threshold as sharp'],
+    ['Confirm treatment status actually jumps at the stated cutoff', 'Relying on sparse observations near the cutoff'],
+    ['Review a histogram of running-variable density near the cutoff', 'Building the design around a weakly enforced rule'],
+  ]}
+/>
+
+## Comparing RDD with related causal inference methods
+
+Regression discontinuity design sits alongside several other quasi-experimental tools, and understanding how it differs from them clarifies when to reach for each one. An instrumental variable, for instance, relies on a variable that shifts treatment but is otherwise unrelated to the outcome, exactly the role the cutoff indicator plays in fuzzy RDD; the difference is that a general instrumental-variables setup does not require a continuous running variable with a known threshold, which makes RDD a special, more visually verifiable case of the broader IV framework.
+
+Regression kink design is a close cousin that exploits a change in the slope of a policy rule rather than a jump in its level. Instead of treatment switching on or off at a cutoff, a kink design looks for situations where a benefit rate or tax rate changes abruptly, and it identifies effects through the change in the outcome's slope at that point rather than a discrete jump. The identification logic is similar, continuity of potential outcomes through the threshold, but the estimand and the visual diagnostic differ.
+
+<Link to={routes.article('difference-in-differences')}>Difference-in-differences</Link>, by contrast, relies on comparing changes over time between a treated group and a comparison group, rather than a threshold in a single running variable. It is often a better fit when treatment is assigned to entire groups, such as regions adopting a policy at different times, while RDD is suited to settings where a numeric rule assigns individuals to treatment. Matching methods attempt to construct a comparison group from observationally similar untreated units across the full sample, which trades the sharp local credibility of RDD for broader applicability at the cost of relying on the assumption that all relevant confounders are observed. As Lee and Lemieux's review of [regression discontinuity designs in economics](https://www.princeton.edu/~davidlee/wp/RDDEconomics.pdf) notes, RDD is generally considered one of the most credible non-experimental strategies precisely because its identification rests on a narrower, more verifiable assumption than these alternatives.
+
+<DataTable
+  caption="How RDD compares to related quasi-experimental and observational methods"
+  headers={['Method', 'What identifies the effect', 'Best fit when']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Regression discontinuity', 'Units just above vs. just below a known cutoff', 'A numeric rule assigns individual units to treatment'],
+    ['Instrumental variables', 'A variable that shifts treatment but is otherwise unrelated to the outcome', 'No continuous running variable with a known threshold exists'],
+    ['Regression kink design', 'A change in the slope of a policy rule rather than a jump in its level', 'A benefit or tax rate changes abruptly at a threshold'],
+    ['Difference-in-differences', 'Changes over time between a treated group and a comparison group', 'Treatment is assigned to entire groups rather than by a numeric rule'],
+    ['Matching', 'A comparison group built from observationally similar untreated units', 'Broader applicability is needed and relevant confounders are observed'],
+  ]}
+/>
+
+## Where RDD earns its reputation, and where it overpromises
+
+Regression discontinuity design has a reputation as the closest thing to a randomized experiment available in observational data, and near the cutoff, that reputation is largely earned. What gets underestimated is how much statistical power that credibility costs. Researchers planning an RDD often budget for a sample size that would comfortably power a randomized trial, then discover that the effective sample near the cutoff is a fraction of the total.
+
+The bigger issue is not the method itself but how its results get communicated afterward. A local average treatment effect at a scholarship cutoff of 80 points says nothing definitive about what would happen if the cutoff moved to 60, yet policy discussions routinely stretch RDD findings well past the threshold that produced them. The honest use of this design treats its narrowness as a feature, a guarantee that the comparison is clean, rather than a limitation to explain away. Applied researchers who respect that boundary tend to produce work that holds up under scrutiny; those who do not tend to produce estimates that look precise and mean less than they claim.
+
+## Turning RDD theory into applied practice with Statohub
+
+Statohub's Learn to Calculate to Apply structure exists for exactly this kind of question, moving from the definitions covered here toward hands-on checks and calculations. Readers building intuition for causal methods can start with the <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> hub, then use Statohub's <Link to={routes.calculatorsHub()}>calculators</Link> to run supporting checks, such as basic probability and averaging calculations, while working through a design's power and diagnostic requirements. For a broader foundation in statistical reasoning before tackling quasi-experimental methods, the <Link to={routes.article('fundamental-statistics')}>Fundamental Statistics</Link> guide is a practical starting point.
+
+## Sources
+
+<Sources items={[
+  { text: 'Regression Discontinuity Designs in Economics (Lee & Lemieux, 2010)', href: 'https://www.princeton.edu/~davidlee/wp/RDDEconomics.pdf', org: 'Princeton University' },
+  { text: 'Power calculations for regression discontinuity evaluations', href: 'https://blogs.worldbank.org/en/impactevaluations/power-calculations-regression-discontinuity-evaluations-part-1', org: 'World Bank Blogs' },
+  { text: 'Fuzzy regression discontinuity design explanation', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10760478/', org: 'PMC / National Library of Medicine' },
+  { text: 'Bertanha, M. — Regression Discontinuity Design with Many Thresholds', href: 'https://arxiv.org/abs/2101.01245', org: 'arXiv' },
+  { text: 'McCrary, J. — Manipulation of the Running Variable in the Regression Discontinuity Design: A Density Test', href: 'https://www.nber.org/papers/t0334', org: 'National Bureau of Economic Research' },
+  { text: 'Imbens, G. and Kalyanaraman, K. — Optimal Bandwidth Choice for the Regression Discontinuity Estimator', href: 'https://www.nber.org/papers/w14726', org: 'National Bureau of Economic Research' },
+  { text: 'rdpackages — rdrobust, rddensity, and related RD/RK estimation tools (Calonico, Cattaneo, Titiunik)', href: 'https://rdpackages.github.io/', org: 'rdpackages project' },
+  { text: 'rddapp package reference manual', href: 'https://cran.r-project.org/web/packages/rddapp/rddapp.pdf', org: 'CRAN' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What are the disadvantages of using a regression discontinuity design?',
+    answer: 'The main disadvantages are a local estimate that cannot be generalized far from the cutoff and a substantial power penalty, since power calculations for RDD evaluations show it can require 9 to 17 times the sample size of a comparable randomized trial in some education examples. It also depends heavily on the running variable not being manipulated near the cutoff, which must be tested rather than assumed.',
+  },
+  {
+    question: 'Who invented regression discontinuity design?',
+    answer: "Regression discontinuity design traces its methodological development largely to work synthesized in Lee and Lemieux's 2010 review, which consolidated decades of applied use into the modern framework economists and social scientists rely on today. The design itself grew out of earlier applied studies rather than a single inventor, with the review formalizing its identification logic and best practices.",
+  },
+  {
+    question: 'What is the difference between regression discontinuity and difference-in-differences?',
+    answer: 'Regression discontinuity design compares units just above and below a cutoff in a continuous running variable, while difference-in-differences compares changes over time between a treated group and a comparison group. RDD suits settings with a numeric assignment rule, while difference-in-differences suits settings where treatment is assigned to whole groups at different points in time.',
+  },
+  {
+    question: 'What is a fuzzy regression discontinuity?',
+    answer: 'A fuzzy regression discontinuity design occurs when crossing the cutoff changes the probability of receiving treatment without guaranteeing it, unlike a sharp design where treatment status changes completely at the threshold. It is analyzed using an instrumental-variables approach that yields a local average treatment effect for compliers.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('descriptive-vs-inferential-statistics')}>Descriptive vs. Inferential Statistics</Link>
+- <Link to={routes.article('regression-assumptions')}>Linear Regression Assumptions: What They Are & How to Check</Link>
+- <Link to={routes.article('post-hoc-tests')}>Post-Hoc Tests: Tukey, Bonferroni & When to Use Them</Link>
+- <Link to={routes.calculator('t-test')}>T-Test Calculator</Link>
