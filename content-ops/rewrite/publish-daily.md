@@ -23,6 +23,10 @@ this run. If a gate fails, take the failure path; never push a failing build.
 
 **Exactly one article per run.** Never loop to a second article.
 
+**Run every subagent in the foreground** (`run_in_background: false`) and wait
+for its report. Never end your turn while a writer or reviewer is still
+running: a cloud run can stop when your turn ends, leaving a half-written file.
+
 **The page is live.** Never set it to `draft: true`; a failed rewrite is undone
 with `git checkout -- src/content/articles/<slug>.mdx`.
 
