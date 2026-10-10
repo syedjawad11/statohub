@@ -348,7 +348,7 @@ INSERT INTO "articles" VALUES('ab-testing-metrics','A/B Testing Metrics: Primary
 INSERT INTO "articles" VALUES('ab-testing-mistakes','15 Common A/B Testing Mistakes (and How to Avoid Them)','experiments-causality','ab testing mistakes',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('confounding-variables','Confounding Variables: How to Identify and Control Them','experiments-causality','confounding variable',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('instrumental-variables','Instrumental Variables Explained','experiments-causality','instrumental variables',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
-INSERT INTO "articles" VALUES('regression-discontinuity','Regression Discontinuity Design','experiments-causality','regression discontinuity design',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('regression-discontinuity','Regression Discontinuity Design','experiments-causality','regression discontinuity design',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''regression-discontinuity-design'' (ADR 0029).',NULL,NULL,'2026-10-10 18:38:00');
 INSERT INTO "articles" VALUES('natural-experiments','Natural Experiments','experiments-causality','natural experiment',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('synthetic-control','Synthetic Control Method','experiments-causality','synthetic control method',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('causal-dags','Causal Diagrams (DAGs) for Beginners','experiments-causality','directed acyclic graph',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -1683,9 +1683,6 @@ INSERT INTO "keywords" VALUES(3085,'confounding-variables','how to control confo
 INSERT INTO "keywords" VALUES(3086,'instrumental-variables','instrumental variables',1);
 INSERT INTO "keywords" VALUES(3087,'instrumental-variables','instrumental variable regression',0);
 INSERT INTO "keywords" VALUES(3088,'instrumental-variables','2sls',0);
-INSERT INTO "keywords" VALUES(3089,'regression-discontinuity','regression discontinuity design',1);
-INSERT INTO "keywords" VALUES(3090,'regression-discontinuity','rdd',0);
-INSERT INTO "keywords" VALUES(3091,'regression-discontinuity','regression discontinuity example',0);
 INSERT INTO "keywords" VALUES(3092,'natural-experiments','natural experiment',1);
 INSERT INTO "keywords" VALUES(3093,'natural-experiments','natural experiment examples',0);
 INSERT INTO "keywords" VALUES(3094,'synthetic-control','synthetic control method',1);

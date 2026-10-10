@@ -65,6 +65,7 @@ INSERT INTO "outsource_articles" VALUES('t-test-vs-z-test','T-Test vs Z-Test','d
 INSERT INTO "outsource_articles" VALUES('logistic-regression-interpretation','Logistic Regression Interpretation','machine-learning-statistics',46,'2026-10-06','940779','published','outsource-content/raw/logistic-regression-interpretation.json','src/content/articles/logistic-regression-interpretation.mdx',1,2,0,7,'','2026-10-07 09:17:30','2026-10-07 09:31:54');
 INSERT INTO "outsource_articles" VALUES('choose-correlation-test','Choose a Correlation Test','data-analysis',47,'2026-10-08','948866','published','outsource-content/raw/choose-correlation-test.json','src/content/articles/choose-correlation-test.mdx',3,0,0,7,'','2026-10-08 09:16:41','2026-10-08 09:42:23');
 INSERT INTO "outsource_articles" VALUES('time-series-stationarity','Time Series Stationarity','time-series-forecasting',48,'2026-10-04','932756','published','outsource-content/raw/time-series-stationarity.json','src/content/articles/time-series-stationarity.mdx',2,0,0,6,'','2026-10-09 09:14:57','2026-10-10 18:32:58');
+INSERT INTO "outsource_articles" VALUES('regression-discontinuity-design','Regression Discontinuity Design','experiments-causality',49,'2026-09-28','908794','fetched','outsource-content/raw/regression-discontinuity-design.json',NULL,0,0,0,NULL,'','2026-10-10 18:38:56','2026-10-10 18:39:44');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

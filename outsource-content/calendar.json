@@ -335,6 +335,13 @@
       "title": "Time Series Stationarity",
       "slug": "time-series-stationarity",
       "category_slug": "time-series-forecasting"
+    },
+    {
+      "queue_position": 49,
+      "day_label": "2026-09-28",
+      "title": "Regression Discontinuity Design",
+      "slug": "regression-discontinuity-design",
+      "category_slug": "experiments-causality"
     }
   ]
 }
