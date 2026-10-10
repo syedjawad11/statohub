@@ -4,7 +4,7 @@
 > 60 lines by `scripts/check-docs.mjs`. Durable rules go in
 > `docs/ARCHITECTURE.md` + ADRs; operational detail in the skill or agent.
 
-**Last updated:** 2026-10-06 (routine build-gate fix). **Baseline:** 150
+**Last updated:** 2026-10-10 (template-rewrite routines). **Baseline:** 174
 pages, 128 tests, 0 violations, 5 redirects in `public/_redirects`.
 **Board quirks:** `db_sync.py check` always recommends `dump` even when the `.db`
 is stale (if the `.sql` looks newer, `rebuild --force`). `seed.json` is stale vs
@@ -14,20 +14,22 @@ Internal cloud routines RETIRED to `docs/legacy/cloud-routine/`; their last
 enabled claude.ai schedule was disabled 2026-09-27.
 
 ## Owed: homepage visual QA vs the mock (batch 2 superseded by the plan)
-
 ## Content plan: 335 rows on content.db, daily routine 03:00 Malta (2026-10-04)
-
 `content-ops/new-content-plan/`; babylovegrowth template, no calc embeds, 1,500
 floor, auto-publish, 1/day to 2026-11-04 ([[0028-content-plan-daily-routine]]);
 routine `trig_01CLrB4kqGE4P5NijmgrKbtn` cron 01:00 UTC, **set 02:00 on 10-25**;
 **PAUSED by owner 2026-10-10** (fixing published articles first; owner resumes it).
 Overlap gate: `content-ops/overlap_check.py`.
-**Owed: one dedicated session** to enrich 3 live articles instead of new pages:
-binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),
-linear-regression (+logistic). `sessions/2026-10-04-keyword-overlap-rewrites.md`.
+Owed: enrich linear-regression (+logistic); the binomial pair moved to the rewrite queue.
+
+## Template rewrites: 25 live articles, 2 lanes/day (2026-10-10)
+In-place rewrites into the plan template, calculator embed kept
+([[0030-template-rewrite-routines]]; `content-ops/rewrite/`, pause via
+`rewrite/PAUSED`). Lane A `trig_01WTqom5UWikThJtJZup1h7C` 02:30 Malta
+(`30 0` UTC), lane B `trig_014YcH93xfeJAjkC5NpJjTBN` 12:00 (`0 10` UTC);
+**set `30 1` / `0 11` on 10-25** if rows remain. Ends ~2026-10-23.
 
 ## Outsource pipeline: 47 published, 1 queued, daily routine
-
 **Daily cloud routine** publishes one article at 09:00 UTC and
 auto-queues new vendor drafts ([[0026-outsource-daily-cloud-routine]];
 `outsource-content/routine/publish-daily.md`, pause via `routine/PAUSED`).
@@ -37,7 +39,6 @@ Rows left `changes_requested`/`blocked` by the routine need a local session.
 **Vendor wins collisions** ([[0029-vendor-articles-win-topic-collisions]]); 10 plan rows retired; 6 vendor drafts backlogged, oldest-first.
 
 ## Blocked / waiting
-
 - **Rotate the GitHub PAT.** The classic `ghp_` token in `~/.claude.json` is
   plaintext (printed in a 2026-09-01 transcript); only the MCP server needs it.
 - **AdSense rejected ("low value content") -- phases 1-3 done, 4-5 parked by
@@ -47,14 +48,12 @@ Rows left `changes_requested`/`blocked` by the routine need a local session.
   Phase 5 = resubmit. **Adsterra banners run meanwhile ([[0025]]) -- re-tighten the CSP first.**
 
 ## Parked (do not silently resume)
-
 - Sanitizer gaps: processors drop "Statohub's Take"/CTA, leave bare `{` in
   prose (MDX ReferenceError), and leave the vendor `— Statohub` sign-off (still
   live in confusion-matrix-explained, f1-score-explained, granger-causality).
   None is a `check_sanitized.py` check yet.
 - Meta title lengths -- ~50 Learn at 61-70 chars, 22 calculators at 26-43
   still open; `sessions/2026-09-10-meta-title-lengths.md`.
-- Article schema `image` missing (`articleSchema()`); `how-to-find-the-range`
-  refresh -- 5 range keywords in DB, unused in copy.
+- Article schema `image` missing (`articleSchema()`).
 - `relative frequency` / `cumulative frequency` -- uncovered Learn candidates
   (now partly inside `/frequency-table/`); Phase C / D not started.
