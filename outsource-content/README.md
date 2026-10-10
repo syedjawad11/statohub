@@ -27,9 +27,13 @@ it's live. The only thing that differs is where the prose came from and how
 it got sanitized on the way in.
 
 `content-ops/content.db`'s `keywords` table (the sitewide cannibalization
-guard) is read **read-only** from here, as a cross-check before an article
-is marked `approved` — this pipeline never writes to `content.db`, and
-`content_db.py` never touches `outsource_content.db`.
+guard) is checked before an article is marked `approved`. **Vendor articles
+win topic collisions with our unwritten plan rows**
+([[0029-vendor-articles-win-topic-collisions]]): the internal row is retired
+with `content_db.py retire <owner> --by <slug>`, which is the only write this
+pipeline makes to `content.db`. A collision with a **live** page still blocks.
+`content_db.py` never touches `outsource_content.db`, and rows never move
+between boards ([[0021-boards-split-by-source]]).
 
 ## Layout
 

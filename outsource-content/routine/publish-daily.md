@@ -75,7 +75,9 @@ Choose in this order:
 
 1. **Queued rows first.** The lowest-`queue_position` row with status `queued`
    whose topic exists upstream (vendor slug or title matches). Upstream
-   presence decides workability, never position alone.
+   presence decides workability, never position alone. Run the collision
+   check below on it too (retire an unwritten internal owner; skip only for a
+   live owner).
 2. **Otherwise auto-queue** the **oldest** unhandled upstream article:
    - **Slug:** reuse the vendor's slug when it is a clean keyword slug
      (lowercase, hyphenated, no hook words); otherwise derive a short
@@ -84,12 +86,21 @@ Choose in this order:
      `data-analysis`, `experiments-causality`, `time-series-forecasting`,
      `machine-learning-statistics`. Pick by topic; when torn, match the hub of
      the closest existing outsourced article.
-   - **Collision check (read-only):** the likely primary keyword must not hit
-     `content-ops/content.db` (`SELECT article_slug FROM keywords WHERE keyword = ?`
-     via `python3 -c` + `sqlite3`) and must not be the core topic of an
-     existing article (`grep -ril` titles/primaryKeyword in `src/content/articles/`).
-     On a collision, skip that candidate (note it for the result) and try the
-     next oldest.
+   - **Collision check — vendor wins over our plan**
+     ([[0029-vendor-articles-win-topic-collisions]]). Look up the likely
+     primary keyword (and obvious variants, e.g. word order) in
+     `content-ops/content.db` (`SELECT a.slug, a.status FROM keywords k JOIN
+     articles a ON a.slug = k.article_slug WHERE k.keyword = ?`, plus a
+     `primary_keyword LIKE` scan of `articles`), and `grep -ril` the topic in
+     titles/primaryKeyword of `src/content/articles/`.
+     - Owner is an **unwritten** internal row (any status except `published`,
+       `merged`, `retired`, and no live MDX): retire it and keep this vendor
+       article — `python3 content-ops/content_db.py retire <owner-slug> --by
+       <vendor-slug>`. Retire every such owner the topic hits. Note each
+       retirement for the result.
+     - Owner is a **live** page (published internal or outsourced article):
+       skip that candidate (note it for the result) and try the next oldest.
+       Retiring a live page needs a 301 and a human.
    - Append an entry to `outsource-content/calendar.json` `articles`:
      `queue_position` = max existing + 1, `day_label` = the vendor
      `created_at` date (`YYYY-MM-DD`), `title` = a plain topic title,
@@ -119,15 +130,16 @@ non-babylovegrowth, non-image, non-`statohub.com` href in
 that inline-only vendor links may return 403 to curl (Cloudflare) and are
 gated by parity, not by status.
 
-If a `calendar.json` change from Step 2 was not included in the reviewer's
-commit (it runs `git add outsource-content/`, which should cover it), commit
-it yourself.
+If a `calendar.json` change or a `content_db.py retire` from Step 2 was not
+included in the reviewer's commit, run `python3 scripts/db_sync.py dump` and
+commit `outsource-content/` and `content-ops/` yourself (the reviewer stages
+both; confirm `content-ops/content.sql` is in the commit).
 
 **Failure paths** (still one article; do not pick another):
 - Blocked / CHANGES_REQUESTED after round 2: the board row is set
   `changes_requested` or `blocked` by the reviewer. Make sure the draft MDX is
   **not** committed with `draft: false`. Commit only the board
-  (`python3 scripts/db_sync.py dump`, then `git add outsource-content/`,
+  (`python3 scripts/db_sync.py dump`, then `git add outsource-content/ content-ops/`,
   commit `outsource: <slug> <status> (daily routine)`) and push, so tomorrow's
   run skips it. Delete the untracked draft MDX (`git clean` that one path only).
 

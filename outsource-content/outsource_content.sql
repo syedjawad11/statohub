@@ -64,7 +64,7 @@ INSERT INTO "outsource_articles" VALUES('cross-validation-time-series','Time Ser
 INSERT INTO "outsource_articles" VALUES('t-test-vs-z-test','T-Test vs Z-Test','data-analysis',45,'2026-09-29','912414','published','outsource-content/raw/t-test-vs-z-test.json','src/content/articles/t-test-vs-z-test.mdx',1,1,0,6,'','2026-10-06 09:14:51','2026-10-06 09:38:54');
 INSERT INTO "outsource_articles" VALUES('logistic-regression-interpretation','Logistic Regression Interpretation','machine-learning-statistics',46,'2026-10-06','940779','published','outsource-content/raw/logistic-regression-interpretation.json','src/content/articles/logistic-regression-interpretation.mdx',1,2,0,7,'','2026-10-07 09:17:30','2026-10-07 09:31:54');
 INSERT INTO "outsource_articles" VALUES('choose-correlation-test','Choose a Correlation Test','data-analysis',47,'2026-10-08','948866','published','outsource-content/raw/choose-correlation-test.json','src/content/articles/choose-correlation-test.mdx',3,0,0,7,'','2026-10-08 09:16:41','2026-10-08 09:42:23');
-INSERT INTO "outsource_articles" VALUES('time-series-stationarity','Time Series Stationarity','time-series-forecasting',48,'2026-10-04','932756','blocked','outsource-content/raw/time-series-stationarity.json',NULL,0,0,0,NULL,'','2026-10-09 09:14:57','2026-10-09 09:16:48');
+INSERT INTO "outsource_articles" VALUES('time-series-stationarity','Time Series Stationarity','time-series-forecasting',48,'2026-10-04','932756','queued','outsource-content/raw/time-series-stationarity.json',NULL,0,0,0,NULL,'','2026-10-09 09:14:57','2026-10-10 18:18:01');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

@@ -15,17 +15,20 @@ Usage:
     python content_db.py import-plan content-ops/new-content-plan/plan.csv
     python content_db.py plan-next
     python content_db.py set-status <slug> <status>
+    python content_db.py retire <slug> --by <outsource-slug>
     python content_db.py log-review <slug> <score> <pass|fail> "notes"
     python content_db.py stats
 
 Statuses: planned -> briefed -> drafting -> in_review -> changes_requested
           -> approved -> published   (research_pending = stub, not writable yet)
+          retired = unwritten row superseded by an outsourced article (ADR 0029)
 """
 import argparse
 import csv
 import json
 import sqlite3
 import sys
+from datetime import date
 from pathlib import Path
 
 import overlap_check  # sibling module; Python puts the script's folder on sys.path
@@ -67,6 +70,7 @@ STATUSES = [
     "planned", "briefed", "drafting", "in_review",
     "changes_requested", "approved", "published", "research_pending",
     "merged",  # URL retired with a 301 into another brief; keywords moved there
+    "retired",  # never written: an outsourced article took the topic; keywords released
 ]
 SECTIONS = ["learn", "applied"]
 
@@ -528,6 +532,52 @@ def cmd_set_status(args):
     conn.close()
 
 
+def cmd_retire(args):
+    """Give an unwritten plan row's topic to an outsourced article
+    ([[0029-vendor-articles-win-topic-collisions]]): free its keywords so the
+    vendor article passes the cannibalization check, and point child rows at
+    the vendor slug so they unblock once it is live."""
+    conn = connect()
+    cur = conn.cursor()
+    row = cur.execute("SELECT status,notes FROM articles WHERE slug=?", (args.slug,)).fetchone()
+    if not row:
+        sys.exit(f"No article '{args.slug}'")
+    if row["status"] in ("published", "merged", "retired"):
+        sys.exit(f"{args.slug} is {row['status']}: only an unwritten row can be retired")
+    if _is_published(args.slug):
+        sys.exit(f"{args.slug} is live at src/content/articles/{args.slug}.mdx: "
+                 "retiring a live page needs a 301 and a human decision")
+    if args.by == args.slug:
+        sys.exit("--by must name the outsourced article's slug, not the retired row")
+    released = [r["keyword"] for r in cur.execute(
+        "SELECT keyword FROM keywords WHERE article_slug=?", (args.slug,))]
+    cur.execute("DELETE FROM keywords WHERE article_slug=?", (args.slug,))
+    children = [r["slug"] for r in cur.execute(
+        "SELECT slug FROM plan_rows WHERE links_up_to=?", (args.slug,))]
+    cur.execute("UPDATE plan_rows SET links_up_to=? WHERE links_up_to=?", (args.by, args.slug))
+    for r in cur.execute("SELECT slug,overlap_watch FROM plan_rows").fetchall():
+        w = r["overlap_watch"]
+        if w == args.slug or w.startswith(args.slug + " "):
+            cur.execute("UPDATE plan_rows SET overlap_watch=? WHERE slug=?",
+                        (args.by + w[len(args.slug):], r["slug"]))
+    today = date.today().isoformat()
+    note = f"{today}: retired - topic taken by outsourced article '{args.by}' (ADR 0029)."
+    cur.execute(
+        "UPDATE articles SET status='retired',notes=?,updated_at=datetime('now') WHERE slug=?",
+        ((row["notes"] + " " + note).strip(), args.slug),
+    )
+    conn.commit()
+    conn.close()
+    for path in (DRAFTS_DIR / f"{args.slug}.mdx", ARTICLES_DIR / f"{args.slug}.mdx"):
+        if path.exists():  # an unpublished draft of the retired row
+            path.unlink()
+            print(f"  removed draft {path.relative_to(HERE.parent)}")
+    print(f"{args.slug} -> retired (by {args.by}); released {len(released)} keyword(s)"
+          + (f": {', '.join(released)}" if released else ""))
+    if children:
+        print(f"  children now link up to {args.by}: {', '.join(children)}")
+
+
 def cmd_log_review(args):
     passed = 1 if args.result.lower() in ("pass", "passed", "p") else 0
     conn = connect()
@@ -584,6 +634,8 @@ def main():
     sub.add_parser("plan-next").set_defaults(func=cmd_plan_next)
     ss = sub.add_parser("set-status"); ss.add_argument("slug"); ss.add_argument("new_status")
     ss.set_defaults(func=cmd_set_status)
+    rt = sub.add_parser("retire"); rt.add_argument("slug"); rt.add_argument("--by", required=True)
+    rt.set_defaults(func=cmd_retire)
     lr = sub.add_parser("log-review"); lr.add_argument("slug"); lr.add_argument("score", type=int)
     lr.add_argument("result"); lr.add_argument("notes", nargs="?", default="")
     lr.set_defaults(func=cmd_log_review)

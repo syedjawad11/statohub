@@ -53,7 +53,9 @@ no slug, pick the lowest queued slug that **exists upstream** (see step 1).
 
 5. **Review.** Spawn the **outsource-content-reviewer** agent on the draft.
    It runs `check_sanitized.py`, spot-checks fidelity, cross-checks
-   cannibalization, and — on a full pass — flips `draft: false`, re-runs the
+   cannibalization (an unwritten internal plan row on the same keyword is
+   retired with `content_db.py retire <owner> --by <slug>`, not a failure —
+   [[0029-vendor-articles-win-topic-collisions]]), and — on a full pass — flips `draft: false`, re-runs the
    real build gate against that published state, then commits and pushes
    itself. No human checkpoint on PASS; that's the defined behavior for this
    pipeline.
@@ -64,7 +66,8 @@ no slug, pick the lowest queued slug that **exists upstream** (see step 1).
      set the article to `blocked` if it isn't already, and summarize for the
      user — don't grind.
    - **blocked:** stop immediately and summarize why (can't reach 6 sources,
-     no convertible table/infographic, keyword collision, or a title
+     no convertible table/infographic, a keyword owned by a **live** internal
+     article, or a title
      mismatch from a bad `map`). This needs a human decision, not a retry.
    - **PASS:** the article is now live. Report the URL (`/<slug>/`), what
      was stripped/converted, and the final source count.

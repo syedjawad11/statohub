@@ -65,3 +65,6 @@ rows are the ones with a `plan_rows` entry). Never route these through
   before review; `plan-next` already skips title/H1 conflicts).
 - Flagged rows (keyword owned elsewhere, or parked: S136/S137/S156/S157) need
   a human first; see `content-ops/new-content-plan/README.md`.
+- `retired` rows are never picked: an outsourced article took that topic
+  ([[0029-vendor-articles-win-topic-collisions]]). Their children link up to
+  the vendor slug instead. Never un-retire a row to write it.

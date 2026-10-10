@@ -374,7 +374,7 @@ INSERT INTO "articles" VALUES('time-series-pandas','Time Series in pandas: Dates
 INSERT INTO "articles" VALUES('prophet-forecasting','Forecasting with Prophet: A Practical Tutorial','time-series-forecasting','prophet forecasting',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('seasonal-decomposition','Seasonal Decomposition in Python and R (Classical and STL)','time-series-forecasting','seasonal decomposition',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('acf-pacf','ACF and PACF: How to Read Them','time-series-forecasting','acf and pacf',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
-INSERT INTO "articles" VALUES('stationarity','Stationarity and the ADF and KPSS Tests','time-series-forecasting','stationarity time series',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('stationarity','Stationarity and the ADF and KPSS Tests','time-series-forecasting','stationarity time series',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''time-series-stationarity'' (ADR 0029).',NULL,NULL,'2026-10-10 18:17:37');
 INSERT INTO "articles" VALUES('growth-rates-excel','CAGR and Growth Rates in Excel: CAGR, YoY, MoM and Compounding','time-series-forecasting','cagr excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('sales-forecast-excel','Sales Forecasting in Excel: A Step-by-Step Model','time-series-forecasting','sales forecast excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('budget-forecasting-excel','Budget and Revenue Forecasting in Excel for Finance Teams','time-series-forecasting','budget forecasting excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -1760,10 +1760,6 @@ INSERT INTO "keywords" VALUES(3162,'seasonal-decomposition','seasonal_decompose 
 INSERT INTO "keywords" VALUES(3163,'acf-pacf','acf and pacf',1);
 INSERT INTO "keywords" VALUES(3164,'acf-pacf','how to read acf and pacf',0);
 INSERT INTO "keywords" VALUES(3165,'acf-pacf','acf pacf plot python',0);
-INSERT INTO "keywords" VALUES(3166,'stationarity','stationarity time series',1);
-INSERT INTO "keywords" VALUES(3167,'stationarity','adf test',0);
-INSERT INTO "keywords" VALUES(3168,'stationarity','kpss test',0);
-INSERT INTO "keywords" VALUES(3169,'stationarity','augmented dickey fuller',0);
 INSERT INTO "keywords" VALUES(3170,'growth-rates-excel','cagr excel',1);
 INSERT INTO "keywords" VALUES(3171,'growth-rates-excel','cagr formula',0);
 INSERT INTO "keywords" VALUES(3172,'growth-rates-excel','growth rate excel',0);
@@ -2242,10 +2238,10 @@ INSERT INTO "plan_rows" VALUES('seasonal-index-excel','S282','applied','Software
 INSERT INTO "plan_rows" VALUES('time-series-analysis','S283','applied','Concept guide','','Time-ordered data; goals (describe, explain, forecast); core concepts; method map; examples',1800,'P1','forecast-accuracy-metrics','');
 INSERT INTO "plan_rows" VALUES('time-series-components','S284','applied','Concept guide','','Each component with charts; additive vs multiplicative; spotting them; examples from sales and tourism',1300,'P1','time-series-analysis','');
 INSERT INTO "plan_rows" VALUES('autocorrelation','S285','applied','Concept guide','','Lag correlation; why it breaks OLS; Durbin-Watson and Ljung-Box; remedies',1400,'P1','time-series-analysis','');
-INSERT INTO "plan_rows" VALUES('arima-explained','S286','applied','Concept guide','','AR, I and MA parts; choosing orders; seasonal extension; diagnostics; strengths and limits',1800,'P1','stationarity','');
+INSERT INTO "plan_rows" VALUES('arima-explained','S286','applied','Concept guide','','AR, I and MA parts; choosing orders; seasonal extension; diagnostics; strengths and limits',1800,'P1','time-series-stationarity','');
 INSERT INTO "plan_rows" VALUES('simple-exponential-smoothing','S287','applied','Concept guide','','Level-only smoothing; alpha intuition; Holt''s trend; damped trend; worked example',1500,'P1','holt-winters','');
-INSERT INTO "plan_rows" VALUES('differencing','S288','applied','Concept guide','','First and seasonal differences; log and Box-Cox; over-differencing; back-transforming forecasts',1100,'P3','stationarity','');
-INSERT INTO "plan_rows" VALUES('white-noise-random-walk','S289','applied','Concept guide','','Definitions; tests; why stock prices look like random walks; forecasting implications',1100,'P3','stationarity','');
+INSERT INTO "plan_rows" VALUES('differencing','S288','applied','Concept guide','','First and seasonal differences; log and Box-Cox; over-differencing; back-transforming forecasts',1100,'P3','time-series-stationarity','');
+INSERT INTO "plan_rows" VALUES('white-noise-random-walk','S289','applied','Concept guide','','Definitions; tests; why stock prices look like random walks; forecasting implications',1100,'P3','time-series-stationarity','');
 INSERT INTO "plan_rows" VALUES('forecasting-methods','S290','applied','Concept guide','','Judgemental, naive, smoothing, ARIMA, regression and ML; data needs; accuracy evidence; choosing a method',2000,'P1','time-series-analysis','');
 INSERT INTO "plan_rows" VALUES('naive-forecast','S291','applied','Concept guide','Excel','Naive, seasonal naive, drift and mean methods; why benchmarks matter; MASE link; Excel build',1100,'P2','forecast-accuracy-metrics','');
 INSERT INTO "plan_rows" VALUES('forecast-prediction-intervals','S292','applied','Concept guide','','Why point forecasts mislead; computing intervals; widening with horizon; bootstrapped intervals; communicating them',1200,'P3','confidence-interval-vs-prediction-interval','');

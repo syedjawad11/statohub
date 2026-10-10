@@ -162,16 +162,17 @@ article below that floor.
   `draft`; Applied articles are exempt from the calculator requirement — see
   playbook §1; never force a contrived embed).
 
-## Cannibalization cross-check (read-only)
-Before finalizing, check whether `primaryKeyword` (or an obvious variant)
-already belongs to another article: `python content-ops/content_db.py show
-<a-guess-at-a-colliding-slug>` isn't practical — instead `grep -i` the
-keyword against `content-ops/content.db` isn't directly readable as text, so
-use `python -c` with `sqlite3` (read-only `SELECT` against
-`content-ops/content.db`, never write to it) to check
-`SELECT article_slug FROM keywords WHERE keyword = ?`. If it collides, do
-not proceed — mark the article `blocked` with a note naming the colliding
-slug; a human needs to pick a different angle.
+## Cannibalization cross-check
+Vendor articles win topic collisions with our **unwritten** plan rows
+([[0029-vendor-articles-win-topic-collisions]]). Before finalizing, look up
+`primaryKeyword` (and obvious variants such as word order) with `python -c`
++ `sqlite3`: `SELECT a.slug, a.status FROM keywords k JOIN articles a ON
+a.slug = k.article_slug WHERE k.keyword = ?` against `content-ops/content.db`.
+- Owner is an unwritten row (not `published`/`merged`/`retired`, no live
+  MDX): retire it — `python3 content-ops/content_db.py retire <owner-slug>
+  --by <slug>` — report that you did, and proceed.
+- Owner is a **live** page: do not proceed — mark the article `blocked` with
+  a note naming the colliding slug; a human needs to pick a different angle.
 
 ## Write the file
 `src/content/articles/<slug>.mdx`, flat (never a subfolder — see playbook
@@ -186,7 +187,8 @@ available command) rather than writing a half-satisfying file when:
   and no image existed to try;
 - you can't reach 6 genuine sources for claims already in the text;
 - the babylovegrowth title looks like the wrong topic for this queue slot;
-- the primary keyword collides with an existing internal article.
+- the primary keyword belongs to a **live** internal article (an unwritten
+  plan row is retired instead, see above).
 Never invent data, a claim, or a citation to avoid a block.
 
 ## After writing

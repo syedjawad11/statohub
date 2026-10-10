@@ -26,15 +26,16 @@ Overlap gate: `content-ops/overlap_check.py`.
 binomial-distribution (+geometric), binomial-theorem (+Pascal's triangle),
 linear-regression (+logistic). `sessions/2026-10-04-keyword-overlap-rewrites.md`.
 
-## Outsource pipeline: 35 published, 2 queued, daily routine
+## Outsource pipeline: 47 published, 1 queued, daily routine
 
-Batch 6 (2026-09-27): intention-to-treat, multiple-comparisons-problem,
-normality-tests. **Daily cloud routine** publishes one article at 09:00 UTC and
+**Daily cloud routine** publishes one article at 09:00 UTC and
 auto-queues new vendor drafts ([[0026-outsource-daily-cloud-routine]];
 `outsource-content/routine/publish-daily.md`, pause via `routine/PAUSED`).
 **Partner backlinks are never stripped** -- replacing an unreachable Sources
 entry keeps the vendor's inline href ([[0023-outsource-keeps-partner-backlinks]]).
 Rows left `changes_requested`/`blocked` by the routine need a local session.
+**Vendor wins collisions** ([[0029-vendor-articles-win-topic-collisions]]): an unwritten
+plan row on the same keyword is retired (`content_db.py retire`); a live page still blocks.
 
 ## Blocked / waiting
 

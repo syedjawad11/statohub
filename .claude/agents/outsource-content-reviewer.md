@@ -39,11 +39,19 @@ original markdown table or the image the processor converted. A component
 with plausible-looking but unverifiable numbers is a HARD failure (possible
 fabrication) — send it back.
 
-## 3. Cannibalization cross-check (read-only)
-Confirm the frontmatter `primaryKeyword` doesn't collide with an existing
-internal article: read-only `SELECT article_slug FROM keywords WHERE
-keyword = ?` against `content-ops/content.db` (via `python -c` +
-`sqlite3` — never write to that database). A collision is a HARD failure.
+## 3. Cannibalization cross-check
+Vendor articles win topic collisions with our **unwritten** plan rows
+([[0029-vendor-articles-win-topic-collisions]]). Look up the frontmatter
+`primaryKeyword` (and obvious variants such as word order): `SELECT a.slug,
+a.status FROM keywords k JOIN articles a ON a.slug = k.article_slug WHERE
+k.keyword = ?` against `content-ops/content.db` (via `python -c` + `sqlite3`).
+- Owner is a **live** page (status `published`, or a non-draft MDX in
+  `src/content/articles/`): HARD failure — retiring a live page needs a 301
+  and a human.
+- Owner is an unwritten row the orchestrator forgot to retire: not a failure.
+  Run `python3 content-ops/content_db.py retire <owner-slug> --by <slug>`
+  (the only write this pipeline makes to `content.db`), note it in your
+  report, and continue. The `db_sync.py dump` in the publish step records it.
 
 ## 4. Confirm external Sources resolve **and say what the citation claims**
 Fetch every href under `## Sources` with a plain `curl -sL` — **never `-I`
@@ -119,7 +127,7 @@ in order:
 3. Stage the article, the board, **and the two build outputs your step-5
    build just regenerated**:
    ```
-   git add src/content/articles/<slug>.mdx outsource-content/ \
+   git add src/content/articles/<slug>.mdx outsource-content/ content-ops/ \
            src/lib/content-route-ids.ts public/llms.txt
    ```
    `src/lib/content-route-ids.ts` changes as soon as the MDX file exists;

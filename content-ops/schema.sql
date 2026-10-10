@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS articles (
                    -- planned -> briefed -> drafting -> in_review -> changes_requested -> approved -> published
                    -- (changes_requested loops back to drafting; research_pending = stub, not writable yet)
                    -- merged = URL retired with a 301 into another brief (see notes)
+                   -- retired = never written; an outsourced article took the topic (ADR 0029)
   review_score     INTEGER,                    -- latest reviewer score (0-100)
   word_count       INTEGER,
   flagged          INTEGER NOT NULL DEFAULT 0, -- 1 = intent/thin flag from the study; surfaces but don't write blind
