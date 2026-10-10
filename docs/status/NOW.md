@@ -34,8 +34,7 @@ auto-queues new vendor drafts ([[0026-outsource-daily-cloud-routine]];
 **Partner backlinks are never stripped** -- replacing an unreachable Sources
 entry keeps the vendor's inline href ([[0023-outsource-keeps-partner-backlinks]]).
 Rows left `changes_requested`/`blocked` by the routine need a local session.
-**Vendor wins collisions** ([[0029-vendor-articles-win-topic-collisions]]): an unwritten
-plan row on the same keyword is retired (`content_db.py retire`); a live page still blocks.
+**Vendor wins collisions**: unwritten plan rows are retired, not the vendor draft ([[0029-vendor-articles-win-topic-collisions]]).
 
 ## Blocked / waiting
 
