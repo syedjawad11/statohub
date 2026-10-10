@@ -37,6 +37,7 @@
 | [0027](0027-macos-workspace.md) | Workspace moves to macOS (Apple Silicon); pushes go over HTTPS via the `gh` credential helper | process | accepted | 2026-10-01 |
 | [0028](0028-content-plan-daily-routine.md) | Owner's content plan: Claude writes in the babylovegrowth template (both sections, no calculator embed, 1,500 floor), auto-published daily by a cloud routine | content | accepted | 2026-10-04 |
 | [0029](0029-vendor-articles-win-topic-collisions.md) | Vendor articles win topic collisions; the unwritten internal plan row is retired | content | accepted | 2026-10-10 |
+| [0030](0030-template-rewrite-routines.md) | Live internal articles rewritten in place into the content-plan template by two daily cloud routines (calculator embed kept) | content | accepted | 2026-10-10 |
 
 Naming: `NNNN-kebab-title.md`. New decisions get the next number; never renumber or
 delete a file, only change its `status` (e.g. to `superseded-by-NNNN`) and add a new

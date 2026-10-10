@@ -96,3 +96,40 @@ When handed a reviewer's fix list, fix exactly those items in place with
   body H1, no hand-typed internal hrefs, no `{`/`}` in prose.
 - Stay inside `src/content/articles/<slug>.mdx`. Don't touch the boards, other
   articles, or site config.
+
+## Rewrite mode ([[0030-template-rewrite-routines]])
+When the orchestrator says **rewrite mode**, you restructure a **live**
+article (a row in `content-ops/rewrite/queue.csv`) into TEMPLATE.md in place,
+instead of writing a new one. Everything above applies, with these overrides:
+
+- **Input:** the live `src/content/articles/<slug>.mdx`, its queue row
+  (`python3 content-ops/rewrite/queue.py show <slug>`; its `notes` are binding
+  scope additions), and `content_db.py brief <slug>` for the keyword list.
+  Ignore the brief's "Rules" block (it is for new Learn drafts). Read the live
+  file in full before you write: it is your primary fact base, but re-verify
+  every formula, number and source as if it were new.
+- **Frontmatter you keep unchanged:** slug/filename, `category`, `pubDate`,
+  `primaryKeyword`, `phase`, `calculator` (if present), and every existing
+  `keywords` entry (you may add board keywords that are missing). Keep
+  `draft: false` — the page is live and must stay live. You may rewrite
+  `title` (keyword first, ≤ 49 chars), `h1` and `description` to the template
+  rules. Leave `updatedDate`/`reviewedDate` to the reviewer.
+- **Calculator stays** ([[0001-wedge-model]]): if the live file has
+  `calculator:` and `<StatCalc ... variant="embed" />`, keep both, with the
+  `StatCalc` import. Place the embed right after the Quick Checklist framing
+  (or in the core section that teaches what it computes), under an H2 such as
+  "## Calculate <topic>" with one sentence on what to enter. The tools CTA
+  then says the calculator is above and still links the hub(s).
+- **Keep the page's substance.** Every correct definition, formula, worked
+  example and FAQ answer the live page has should survive in template form
+  (reworded where it helps); don't drop depth to fit sections. Fix what's
+  wrong. Target ≥ the live page's prose length; 1,500 is still the floor.
+- **Gates:** use `check_sanitized.py --rewrite` (not `--internal`) and
+  `overlap_check.py check <slug>` (works without a plan row; a `[title]` clash
+  is a WARN in rewrite mode). Existing `RelatedLink` imports may go;
+  `## Recommended` replaces them.
+- **Resuming a parked draft:** if told to revise
+  `content-ops/rewrite/drafts/<slug>.mdx` (already moved into place by the
+  orchestrator), fix the last review's list in place; don't start over.
+- Rewrite mode **allows** `<StatCalc>` / `calculator` where the live page had
+  them; it never adds one the live page did not have.

@@ -123,3 +123,48 @@ from command output you saw), or the fix list.
 - `git push` only after a build you ran in this session at `draft: false`.
 - On any failure, `draft` ends at `true` and nothing is committed by you.
 - Leave the tree clean after a publish.
+
+## Rewrite mode ([[0030-template-rewrite-routines]])
+When the orchestrator says **rewrite mode**, the file is a **live** article
+rewritten in place (queue: `content-ops/rewrite/queue.csv`). The page is
+already published, so it stays `draft: false` the whole time. Sections 1–6
+apply, with these overrides:
+
+- §1: `check_sanitized.py --rewrite` (expects `draft: false`, allows the
+  calculator embed).
+- §2: the queue row's `notes` replace the plan row's "covers" list. A
+  `<StatCalc>`/`calculator` is **required** if the committed version had one
+  (`git show HEAD:src/content/articles/<slug>.mdx`) and forbidden otherwise.
+  `slug`, `category`, `pubDate`, `primaryKeyword`, `phase`, `calculator` and
+  every old `keywords` entry must be unchanged (diff against HEAD).
+  HARD fail if the rewrite dropped a correct section of substance (a worked
+  example, formula, or FAQ topic) the live page had without folding it in.
+- §5: run `overlap_check.py check <slug>` as usual; a `[title]` line is only a
+  WARN in rewrite mode.
+- §6: `log-review` sets the board row `approved`/`changes_requested`; the page
+  is still live, so **always** follow it with
+  `python3 content-ops/content_db.py set-status <slug> published` before
+  `db_sync.py dump`.
+
+**Publish (rewrite mode), replacing §7:**
+1. `Edit`: set `updatedDate` and `reviewedDate` = today; leave `pubDate`.
+2. `npx astro check`, `npm test`, `npm run build`. On any failure: log a fail
+   review (then `set-status <slug> published` + dump), and stop. Never commit.
+   The orchestrator restores the live file.
+3. `python3 content-ops/rewrite/queue.py set <slug> published --score <score>`,
+   then `python3 scripts/db_sync.py dump`.
+4. ```
+   git add src/content/articles/<slug>.mdx content-ops/ \
+           src/lib/content-route-ids.ts public/llms.txt
+   git commit -m "content: rewrite <slug> (template rewrite)
+
+   Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+   ```
+   If `content-ops/rewrite/drafts/<slug>.mdx` exists (a resumed draft), `git rm`
+   it in the same commit.
+5. `git status --porcelain` must print nothing (stage/amend any escaped
+   generated file). Then `git push origin main`; if rejected, `git pull
+   --rebase origin main`, re-run `npm run build`, and push again (once).
+   (The commit SHA lives in git; `git log -- src/content/articles/<slug>.mdx`.)
+
+Never set a rewrite article to `draft: true`: that unpublishes a live page.

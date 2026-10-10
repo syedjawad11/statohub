@@ -112,6 +112,7 @@ for each finding.
 
 ## Never
 
-- `<StatCalc>` or `calculator:` frontmatter, in either section.
+- `<StatCalc>` or `calculator:` frontmatter, in either section. (Exception: an in-place rewrite of a live page that already
+  embeds one keeps it — [[0030-template-rewrite-routines]].)
 - An H1 in the body, raw LaTeX, `{`/`}` in prose (MDX reads them as JS), images.
 - A statistic, study, quote, dataset, company or case study you cannot cite.

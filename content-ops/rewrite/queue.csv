@@ -1,0 +1,26 @@
+order,slug,lane,status,attempts,score,date,notes
+1,binomial-theorem,A,pending,0,,,"enrich: add Pascal's triangle (owed, NOW.md 2026-10-04)"
+2,proportions-in-statistics,B,pending,0,,,
+3,p-value,A,pending,0,,,
+4,binomial-distribution,B,pending,0,,,"enrich: add geometric distribution section (owed, NOW.md 2026-10-04)"
+5,normal-distribution,A,pending,0,,,
+6,how-to-find-the-range,B,pending,0,,,use the 5 unused range keywords from the board in copy (NOW.md parked item)
+7,permutations,A,pending,0,,,
+8,z-table,B,pending,0,,,
+9,exponential-distribution,A,pending,0,,,
+10,median-vs-average,B,pending,0,,,
+11,interquartile-range,A,pending,0,,,
+12,percentiles,B,pending,0,,,
+13,what-is-correlation,A,pending,0,,,
+14,standard-deviation,B,pending,0,,,
+15,probability-formula,A,pending,0,,,
+16,skewed-distribution,B,pending,0,,,
+17,mean-median-mode-range,A,pending,0,,,
+18,fundamental-statistics,B,pending,0,,,
+19,test-statistic,A,pending,0,,,
+20,t-test,B,pending,0,,,
+21,parameter-vs-statistic,A,pending,0,,,
+22,how-to-find-the-mean,B,pending,0,,,
+23,standard-deviation-excel,A,pending,0,,,
+24,what-is-an-average,B,pending,0,,,
+25,r-squared-adjusted-r-squared,A,pending,0,,,

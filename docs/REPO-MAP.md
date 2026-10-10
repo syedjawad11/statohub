@@ -100,6 +100,7 @@ statohub/
 |   |-- new-content-plan/     # owner's plan sheet + plan.csv + TEMPLATE.md
 |   |-- routine/              # content-plan daily routine spec + PAUSED switch
 |   |-- drafts/               # failed plan drafts parked for revision (plan-next resumes them first)
+|   |-- rewrite/              # in-place template rewrites of live articles: queue.csv/.py, 2-lane routine spec, PAUSED (ADR 0030)
 |   |-- schema.sql, seed.json
 |   |-- cloud-routine/        # retired -> docs/legacy/cloud-routine/; only PAUSED + a stub remain
 |   `-- calc-prose/           # QUEUE.md, SESSION-PLAN.md (calculator teaching-block backlog)

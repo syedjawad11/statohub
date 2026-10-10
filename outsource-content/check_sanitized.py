@@ -5,10 +5,15 @@ Usage:
     python outsource-content/check_sanitized.py <path-to-mdx-file>
     python outsource-content/check_sanitized.py --verbose <path-to-mdx-file>
     python outsource-content/check_sanitized.py --internal <path-to-mdx-file>
+    python outsource-content/check_sanitized.py --rewrite <path-to-mdx-file>
 
 `--internal` gates a Claude-written content-plan article (content-ops plan
 routine, [[0028-content-plan-daily-routine]]): same checks, but the category
 may be any of the ten hubs, and a calculator embed is a failure.
+
+`--rewrite` gates an in-place template rewrite of a live internal article
+([[0030-template-rewrite-routines]]): `--internal`, except the article keeps
+its calculator embed ([[0001-wedge-model]]).
 
 The gate checks the Applied article build contract plus the vendor-specific
 cleanup rules. It does not grade prose, fact-check claims, or make network
@@ -284,7 +289,8 @@ def _is_vendor_url(target):
     return bool(parsed.hostname and parsed.hostname.lower().rstrip(".") in VENDOR_HOSTS)
 
 
-def run_checks(path, verbose=False, internal=False):
+def run_checks(path, verbose=False, internal=False, rewrite=False):
+    internal = internal or rewrite
     try:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:
@@ -396,11 +402,13 @@ def run_checks(path, verbose=False, internal=False):
         f"primaryKeyword '{keyword_text}' does not appear in the description",
     )
 
+    # A rewrite replaces a live page in place, so it stays published.
+    want_draft = not rewrite
     record(
         3,
-        frontmatter.get("draft") is True,
-        "draft is true",
-        f"draft must be true (found {frontmatter.get('draft')!r})",
+        frontmatter.get("draft") is want_draft,
+        f"draft is {str(want_draft).lower()}",
+        f"draft must be {str(want_draft).lower()} (found {frontmatter.get('draft')!r})",
     )
 
     markdown_h1 = re.search(r"(?m)^# ", body)
@@ -548,7 +556,7 @@ def run_checks(path, verbose=False, internal=False):
         ),
     )
 
-    if internal:
+    if internal and not rewrite:
         embed = re.search(r"<StatCalc\b", body)
         record(
             15,
@@ -576,8 +584,11 @@ def main():
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--internal", action="store_true",
                         help="content-plan article: any of the ten hubs, no calculator embed")
+    parser.add_argument("--rewrite", action="store_true",
+                        help="template rewrite of a live article: --internal, calculator embed allowed")
     args = parser.parse_args()
-    return run_checks(args.path, verbose=args.verbose, internal=args.internal)
+    return run_checks(args.path, verbose=args.verbose, internal=args.internal,
+                      rewrite=args.rewrite)
 
 
 if __name__ == "__main__":

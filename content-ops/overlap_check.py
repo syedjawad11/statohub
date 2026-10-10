@@ -10,6 +10,10 @@ Usage:
     python3 content-ops/overlap_check.py check <slug>     # writer self-check + reviewer gate
     python3 content-ops/overlap_check.py titles <slug>    # title/H1 conflict only (plan-next uses it)
 
+A slug with no plan row but an `articles` row (a live article being rewritten
+in place) is checked against every other live article, without a parent or
+overlap note.
+
 Checks (`check`):
   [1] title  - the row's primary keyword is the main topic of another live
                page's title or H1. FAIL. Inside a longer, narrower phrase
@@ -91,9 +95,16 @@ def plan_row(slug):
     row = conn.execute(
         "SELECT a.slug,a.primary_keyword,a.category_slug,p.plan_id,p.links_up_to,p.overlap_watch "
         "FROM articles a JOIN plan_rows p ON p.slug=a.slug WHERE a.slug=?", (slug,)).fetchone()
+    if not row:
+        # A live article being rewritten in place has no plan row
+        # ([[0030-template-rewrite-routines]]); check it against its peers.
+        row = conn.execute(
+            "SELECT slug,primary_keyword,category_slug,'rewrite' AS plan_id,"
+            "NULL AS links_up_to,NULL AS overlap_watch FROM articles WHERE slug=?",
+            (slug,)).fetchone()
     conn.close()
     if not row:
-        sys.exit(f"{slug}: no content-plan row on content.db")
+        sys.exit(f"{slug}: no content-plan or article row on content.db")
     return row
 
 
@@ -236,7 +247,12 @@ def cmd_check(slug):
 
     # [1] title / H1
     for other, where, level in title_conflicts(slug, row["primary_keyword"], articles):
-        if level == "FAIL":
+        if level == "FAIL" and row["plan_id"] == "rewrite":
+            # A live article already owns its keyword; the clash is the other page's.
+            report("WARN", "title", f"'{row['primary_keyword']}' is also in {other}'s {where}.",
+                   f"Keep this page's title. Link to {other} once; re-titling {other} "
+                   f"is a separate, human decision.")
+        elif level == "FAIL":
             report("FAIL", "title", f"'{row['primary_keyword']}' is the topic of {other}'s {where}.",
                    f"Not fixable in the draft. Set the row `blocked` with note "
                    f"'keyword is {other}'s {where} topic'; a human either re-angles the "
