@@ -8,8 +8,8 @@ date: 2026-10-10
 
 **Context:** the owner paused the content-plan routine
 ([[0028-content-plan-daily-routine]]) on 2026-10-10 to fix the articles already
-live first, and listed 46 URLs (`URLS-LIST.csv`). 25 are our own articles in the
-older Learn layout; 13 are vendor articles already in the template; 8 are
+live first, and listed 47 URLs (`URLS-LIST.csv`). 25 are our own articles in the
+older Learn layout; 14 are vendor articles already in the template; 8 are
 calculator pages, two hubs and the editorial policy.
 
 **Options considered:**
