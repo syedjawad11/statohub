@@ -1,7 +1,6 @@
 ---
-title: "Proportions in Statistics: Meaning, Formula & How to Solve Them"
-h1: "Proportion in Statistics: Definition, Formula & Examples"
-description: "Learn what a proportion in statistics is, how to use the sample proportion formula, build confidence intervals, and run hypothesis tests with worked examples."
+title: "Proportion in Statistics: Meaning & Formula"
+description: "A proportion in statistics is the share of a group with a trait, from 0 to 1. Learn the proportion formula, confidence intervals, and hypothesis tests."
 category: foundations
 primaryKeyword: proportion in statistics
 keywords:
@@ -20,45 +19,71 @@ keywords:
   - sampling distribution of the sample proportion
 phase: 1
 calculator: proportion
-related: []
+related:
+  - fundamental-statistics
+  - parameter-vs-statistic
+  - types-of-variables
 draft: false
 pubDate: 2026-07-12
-updatedDate: 2026-07-12
-reviewedDate: 2026-07-12
+updatedDate: 2026-10-11
+reviewedDate: 2026-10-11
 ---
-import RelatedLink from '../../components/RelatedLink.astro';
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-A **proportion in statistics** is the fraction of a group that shares a particular characteristic — a number between 0 and 1 that tells you how common something is. If 420 of 1,000 voters in a poll say they support a ballot measure, the proportion who support it is 0.42, or 42%. Proportions appear in every branch of applied statistics: opinion polling, clinical trials, quality control, and market-research surveys all depend on estimating and testing them. Getting comfortable with proportion formula statistics — from the basic ratio form to confidence intervals and hypothesis tests — is a foundational skill for anyone working with categorical data.
+A **proportion in statistics** is the fraction of a group that shares a particular characteristic, expressed as a value between 0 and 1. If 420 of 1,000 surveyed voters support a ballot measure, the proportion in favor is 420/1,000 = 0.42, or 42%. Proportions describe categorical data — yes/no, pass/fail, defective/good — the way a mean describes numeric data, and that single distinction decides which formula statistics gives you next: a ratio for a one-off calculation, or a full sampling-distribution toolkit of confidence intervals and hypothesis tests once you're trying to generalize from a sample to a population.
 
----
+<KeyTakeaways rows={[
+  { point: 'A proportion is a bounded ratio', details: 'It is the count with a trait divided by the group size, always between 0 and 1, whether that group is a full population or a sample drawn from it.' },
+  { point: 'Population and sample proportions use different symbols', details: 'p is the (usually unknown) population proportion; p̂ = x/n is the sample proportion, and it also serves as the point estimate of p.' },
+  { point: 'The sampling distribution of p̂ drives every inference', details: 'For large enough samples, p̂ is approximately normal with mean p and standard error √(p(1−p)/n) — the basis for every z-based proportion formula below.' },
+  { point: 'Confidence intervals and hypothesis tests use different denominators', details: 'A confidence interval plugs in p̂; a one-proportion z-test plugs in the claimed p₀ instead, because the test statistic assumes the null hypothesis is true.' },
+  { point: 'Comparing two groups needs a pooled proportion', details: 'The two-proportion z-test combines both samples into one pooled estimate, p̂ₚ = (x₁ + x₂)/(n₁ + n₂), before computing a shared standard error.' },
+]} />
+
+## Quick Checklist: Which Proportion Formula Do You Need?
+
+Before reaching for a formula, decide what question you're actually asking — describing one group, estimating uncertainty, or comparing two groups all call for a different tool.
+
+<Checklist
+  id="which-proportion-formula"
+  title="Quick checklist: which proportion formula to use"
+  style="check"
+  items={[
+    { text: 'Describing one group right now', detail: 'Use p = X/N for a full population or p̂ = x/n for a sample — a plain ratio, no inference involved.' },
+    { text: 'Want a plausible range for the true proportion', detail: 'Build a confidence interval: p̂ ± z* × √(p̂(1 − p̂)/n).' },
+    { text: 'Testing a specific claimed value', detail: 'Run a one-proportion z-test using the claimed p₀, not p̂, inside the standard error.' },
+    { text: 'Comparing two independent groups', detail: 'Pool both samples into p̂ₚ = (x₁ + x₂)/(n₁ + n₂) before computing the two-proportion z statistic.' },
+    { text: 'Before trusting any z-based method', detail: 'Check random sampling, the success-failure condition, and independence between observations.' },
+    { text: 'Always', detail: 'Keep p (or p₀) and p̂ distinct — swapping them inside a formula changes the answer.' },
+  ]}
+/>
+
+The rest of this guide works through each of those formulas with real numbers, then covers the mistakes that most often trip people up.
 
 ## What Is a Proportion in Statistics?
 
-The **proportion definition in statistics** is straightforward: divide the count of individuals who have the characteristic of interest by the total number of individuals in the group. The result is dimensionless, always between 0 (nobody has it) and 1 (everybody does).
+The **proportion definition in statistics** is simple: divide the count of individuals who have a characteristic of interest by the total number of individuals in the group. The result is dimensionless, always between 0 (nobody has it) and 1 (everybody does), and it describes categorical data the way a mean describes numeric data — see <Link to={routes.article('types-of-variables')}>qualitative vs. quantitative variables</Link> for that broader split.
 
-In its most general form, a proportion is a statement that two ratios are equal:
+A proportion, a percentage, and a rate are close cousins but not interchangeable terms in careful statistical writing. A **proportion** is always a value from 0 to 1 (0.42); multiply it by 100 and label it with a percent sign and you have the equivalent **percentage** (42%) — the same number, a different unit. A **rate** usually adds a time or exposure dimension that a plain proportion doesn't carry, such as "42 per 1,000 patient-years." All three can describe the same underlying count, so the safest habit is to state which one you mean the first time a number appears, rather than switching labels mid-paragraph.
+
+A statistics proportion is also, at its root, a classical mathematical proportion — a statement that two ratios are equal:
 
 ```
 a / b = c / d
 ```
 
-This is the classical mathematical proportion — if 2 parts of ingredient A combine with 5 parts of ingredient B, then 4 parts of A combine with 10 parts of B, because 2/5 = 4/10. Cross-multiplying (a × d = b × c) lets you solve for any unknown fourth term.
-
-In statistics the same structure applies, but the ratios describe population or sample counts:
-
-- **Population proportion (p):** the fraction of the whole population with the characteristic.
-- **Sample proportion (p̂):** the fraction observed in a randomly drawn sample, used to estimate p.
-
-**Why proportions matter.** Almost every question in social science, medicine, and business research comes down to a proportion: How many patients recovered? What fraction of widgets are defective? Which candidate will win? Understanding proportion statistics means understanding how to estimate these fractions, quantify their uncertainty, and test claims about them.
-
----
-
-## Solving a Basic Proportion: Cross-Multiplication
-
-The simplest proportion problem gives you three of the four terms (a, b, c, d) in `a / b = c / d` and asks for the missing one. Cross-multiply and divide:
+If 2 parts of ingredient A combine with 5 parts of ingredient B, then 4 parts of A combine with 10 parts of B, because 2/5 = 4/10. Cross-multiplying (a × d = b × c) lets you solve for any unknown fourth term:
 
 ```
 a / b = c / d
@@ -66,111 +91,101 @@ a / b = c / d
 => d = (b × c) / a
 ```
 
-**Example.** A fertiliser formula calls for 3 kg of nitrogen for every 8 litres of water. How much nitrogen is needed for 20 litres?
+**Example.** A fertilizer formula calls for 3 kg of nitrogen for every 8 liters of water. How much nitrogen is needed for 20 liters?
 
 ```
 3 / 8 = nitrogen / 20
 nitrogen = (3 × 20) / 8 = 60 / 8 = 7.5 kg
 ```
 
-This cross-multiplication approach applies to any scaling problem — mixing solutions, converting units, adjusting recipes, or interpolating values in a table. Use the calculator below to solve any missing-term proportion instantly:
+That cross-multiplication move applies to any scaling problem — mixing solutions, converting units, or interpolating a table value — and it is the one case in this guide that is pure algebra rather than statistical inference.
+
+### Try the Calculator
+
+Enter any three of the four terms below to solve a missing-term proportion instantly.
 
 <StatCalc slug="proportion" variant="embed" />
 
-For more ratio and proportion tools, visit the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+For the full set of ratio and statistics tools, browse the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
 
-<RelatedLink to={routes.article('parameter-vs-statistic')} label="Parameter vs Statistic" intro="Worth reading next" />
+## What Are the Population and Sample Proportion Formulas?
 
----
+Once you move from a one-off ratio to describing a real population or sample, the proportion splits into two related but distinct quantities with their own symbols and formulas.
 
-## Population Proportion Formula
+<DataTable
+  caption="Proportion formulas at a glance"
+  headers={['Quantity', 'Symbol', 'Formula', 'What it answers']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Population proportion', 'p', 'p = X / N', 'The true fraction across the entire population.'],
+    ['Sample proportion', 'p̂', 'p̂ = x / n', 'The fraction observed in one random sample, used to estimate p.'],
+    ['Point estimate of a proportion', 'p̂', 'p̂ = x / n', "The single best guess for p — the sample proportion doing double duty."],
+    ['Confidence interval', 'p̂ ± ME', 'p̂ ± z* × √(p̂(1 − p̂)/n)', 'A range of plausible values for the unknown p.'],
+    ['One-proportion z-test statistic', 'z', 'z = (p̂ − p₀) / √(p₀(1 − p₀)/n)', 'Whether sample evidence contradicts a claimed p₀.'],
+    ['Pooled proportion', 'p̂ₚ', 'p̂ₚ = (x₁ + x₂) / (n₁ + n₂)', 'A shared estimate for comparing two groups under H₀: p₁ = p₂.'],
+  ]}
+/>
 
-When data covers an entire population, the proportion is a **population parameter** — a fixed (but usually unknown) value denoted **p**. The **population proportion formula** is:
+**Population proportion formula.** When data covers an entire population, the proportion is a fixed (if usually unknown) **population parameter**, denoted p:
 
 ```
 p = X / N
 ```
 
-where:
-- **X** = count of population members with the characteristic
-- **N** = total population size
+where X is the count of population members with the characteristic and N is the total population size.
 
-**Example.** A factory produces 6,000 units per day. An end-of-day inspection finds that 180 units have a detectable flaw. The population proportion of defective units is:
+**Example.** A factory produces 6,000 units per day. An end-of-day inspection finds that 180 units have a detectable flaw:
 
 ```
 p = 180 / 6,000 = 0.03
 ```
 
-Three percent of the day's output is defective. In practice you often cannot inspect every unit — especially for destructive testing — so you estimate p from a sample instead.
+Three percent of the day's output is defective. In practice you usually cannot inspect every unit — especially for destructive testing — so you estimate p from a sample instead, the same binomial counting process the [NIST/SEMATECH e-Handbook's chapter on the binomial distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm) describes for any fixed-trial, fixed-probability count.
 
-**Why p is usually unknown.** If you could measure the entire population, you would not need statistics. The whole point of proportion statistics is that you draw a manageable sample, compute p̂, and then reason about how close p̂ is likely to be to the true p.
-
----
-
-## Sample Proportion Formula
-
-The **sample proportion** (p̂, read "p-hat") is the fraction of successes observed in a random sample of size n. The **sample proportion formula** is:
+**Sample proportion formula.** The sample proportion p̂ ("p-hat") is the fraction of successes observed in a random sample of size n:
 
 ```
 p̂ = x / n
 ```
 
-where:
-- **x** = number of individuals in the sample with the characteristic
-- **n** = sample size
+where x is the number of individuals in the sample with the characteristic and n is the sample size.
 
-**Example.** A quality engineer draws a random sample of 250 units from the factory above and finds 20 with flaws.
+**Example.** A quality engineer draws a random sample of 250 units from the factory above and finds 20 with flaws:
 
 ```
 p̂ = 20 / 250 = 0.08
 ```
 
-The sample proportion is 8% — higher than the true 3% in this case, purely because of sampling variability. Different random samples give different values of p̂. That variability is exactly what the sampling distribution captures.
+The sample proportion is 8% — higher than the true 3%, purely because of sampling variability. Different random samples give different values of p̂, and that variability is exactly what the sampling distribution below captures. Because p̂ is the single number you'd report as your best guess for the unknown p, it also carries a second name: the **point estimate of a proportion**. A point estimate is maximally specific — it collapses your uncertainty into one number — but on its own it says nothing about how far off that guess might be; the confidence interval later in this guide supplies that missing piece.
 
-**p vs p̂ in notation.** Greek and Roman letters carry a systematic meaning: Greek (p, μ, σ) for population parameters; Roman (p̂, x̄, s) for sample statistics. You calculate p̂ from data; p is what you are trying to learn about.
+**Population vs. sample notation.** p and p̂ follow the same convention as every other parameter/statistic pair: p, μ, σ for population parameters; p̂, x̄, s for the matching sample statistics. The <Link to={routes.article('parameter-vs-statistic')}>parameter vs. statistic</Link> article covers that convention across every other common measure, and the <Link to={routes.article('statistics-symbols-cheatsheet')}>statistics symbols cheat sheet</Link> lists every matching pair in one table.
 
----
+## What Is the Sampling Distribution of the Sample Proportion?
 
-## Sampling Distribution of the Sample Proportion
-
-The **sampling distribution of the sample proportion** describes how p̂ behaves across infinitely many repeated samples of size n from a population where the true proportion is p.
-
-The Central Limit Theorem guarantees that, for large enough samples, this distribution is approximately normal with:
+The sampling distribution of the sample proportion describes how p̂ behaves across many repeated random samples of size n drawn from a population where the true proportion is p. The Central Limit Theorem guarantees that, for large enough samples, this distribution is approximately normal — the same large-sample result the <Link to={routes.article('central-limit-theorem')}>Central Limit Theorem article</Link> derives for sample means — with:
 
 ```
 Mean of p̂   = p
 SD of p̂     = √( p(1 − p) / n )
 ```
 
-The standard deviation of p̂ is called the **standard error of the proportion**. It shrinks as n grows — doubling the sample size cuts the standard error by a factor of √2, so larger samples give more precise estimates.
+The standard deviation of p̂ is called the **standard error of the proportion**. It shrinks as n grows: doubling the sample size cuts the standard error by a factor of √2, so larger samples give more precise estimates. [OpenStax's Introductory Statistics, Section 8.3](https://openstax.org/books/introductory-statistics-2e/pages/8-3-a-population-proportion) derives this same normal approximation by dividing a binomial count by n, which is why it writes the sampling distribution as P′ ~ N(p, √(pq/n)) with q = 1 − p.
 
-**Conditions for the normal approximation.** Three requirements must hold before using z-based methods:
+Three conditions need to hold before you trust that normal approximation:
 
-1. **Random sampling:** the sample must be drawn by a probability mechanism (simple random, stratified, cluster, etc.).
-2. **Success-failure condition:** both np ≥ 10 and n(1 − p) ≥ 10. This ensures neither the "success" nor "failure" count is too small for the normal curve to be a good fit.
-3. **Independence / 10% condition:** the sample size is no more than 10% of the population, so individual observations are effectively independent.
+1. **Random sampling.** The sample must come from a probability mechanism — simple random, stratified, or cluster sampling — not a convenience sample. See <Link to={routes.article('sampling-distributions')}>sampling distributions</Link> for how this requirement generalizes past proportions.
+2. **Success-failure condition.** The expected counts of successes and failures need to be comfortably above a handful, though exactly which proportion you plug in depends on what you're doing. For a confidence interval, [OpenStax's Section 8.3](https://openstax.org/books/introductory-statistics-2e/pages/8-3-a-population-proportion) requires np′ and nq′ both **greater than five**, using the sample proportion p′ (p̂) since no claimed value exists yet. For a hypothesis test, the [NIST/SEMATECH e-Handbook's chapter on proportion-defective tests](https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm) states the matching condition as: the smaller of Np₀ and N(1 − p₀) must be at least 5, using the claimed p₀ instead, because the test's standard error is evaluated under the null hypothesis. Below either threshold, the normal curve stops being a good stand-in for the binomial.
+3. **Independence.** Observations need to be effectively independent — a simple random sample, or a sample that is a small slice of a much larger population, satisfies this.
 
-When these conditions hold, you can use the standard normal distribution (z-distribution) to build confidence intervals and run hypothesis tests for the proportion.
+<Callout variant="tip" title="Pro tip">
+If np or n(1 − p) comes out close to the success-failure threshold (say, between 5 and 10), run an exact binomial method alongside the normal approximation rather than trusting the z-based result alone — the two can disagree noticeably in that zone.
+</Callout>
 
-<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="On a related note" />
+When these conditions hold, you can use the standard normal distribution — the same <Link to={routes.article('z-score')}>z-score</Link> logic behind the <Link to={routes.article('normal-distribution')}>normal distribution</Link> — to build confidence intervals and run hypothesis tests for the proportion, covered next.
 
----
+## How Do You Build a Confidence Interval for a Proportion?
 
-## Point Estimate of a Proportion
-
-A **point estimate of a proportion** is a single number that serves as the best guess for the unknown population proportion p. The sample proportion p̂ is the point estimate of p:
-
-```
-Point estimate of p  =  p̂  =  x / n
-```
-
-A point estimate is maximally specific — it collapses your uncertainty into one number — but it conveys nothing about how uncertain that number is. The margin of error and the confidence interval around p̂ supply that missing information.
-
----
-
-## Confidence Interval for a Proportion
-
-A **confidence interval for a proportion** wraps a margin of error around p̂ to express a range of plausible values for the true population proportion p. The standard large-sample formula (Wald interval) is:
+A confidence interval for a proportion wraps a margin of error around p̂ to express a range of plausible values for the true population proportion p — the same general construction the [NIST/SEMATECH e-Handbook's introduction to confidence intervals](https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm) describes for any parameter: a point estimate, plus a margin wide enough to be likely to cover the truth at a chosen confidence level. The standard large-sample formula (the Wald interval) is:
 
 ```
 CI  =  p̂  ±  z*  ×  √( p̂(1 − p̂) / n )
@@ -178,162 +193,182 @@ CI  =  p̂  ±  z*  ×  √( p̂(1 − p̂) / n )
 
 where z* is the critical value from the standard normal distribution:
 
-| Confidence level | z* |
-|---|---|
-| 90% | 1.645 |
-| 95% | 1.960 |
-| 99% | 2.576 |
+<DataTable
+  caption="Critical values (z*) by confidence level"
+  headers={['Confidence level', 'z*']}
+  align={['left', 'right']}
+  rows={[
+    ['90%', '1.645'],
+    ['95%', '1.960'],
+    ['99%', '2.576'],
+  ]}
+/>
 
-**Worked example — 95% confidence interval.**
+**Worked example — 95% confidence interval.** A pollster samples 400 registered voters and finds that 220 (55%) plan to vote for Candidate A (p̂ = 0.55, n = 400).
 
-A pollster samples 400 registered voters and finds that 220 (55%) plan to vote for Candidate A (p̂ = 0.55, n = 400).
-
-**Step 1 — verify conditions.** np̂ = 400 × 0.55 = 220 ≥ 10. n(1 − p̂) = 400 × 0.45 = 180 ≥ 10. ✓
-
-**Step 2 — standard error:**
 ```
-SE  =  √( 0.55 × 0.45 / 400 )
-    =  √( 0.2475 / 400 )
-    =  √( 0.000619 )
-    ≈  0.0249
-```
+Check conditions:  np̂ = 400 × 0.55 = 220 ≥ 5.  n(1 − p̂) = 400 × 0.45 = 180 ≥ 5.  OK
 
-**Step 3 — margin of error (z* = 1.96 for 95%):**
-```
-ME  =  1.96 × 0.0249  ≈  0.0488
+SE  =  √( 0.55 × 0.45 / 400 ) = √0.000619 ≈ 0.0249
+
+ME  =  1.96 × 0.0249 ≈ 0.0488
+
+CI  =  0.55 ± 0.0488  =  (0.501, 0.599)
 ```
 
-**Step 4 — confidence interval:**
+Based on this sample, a 95% confidence interval for the population proportion who support Candidate A runs from 50.1% to 59.9%. The procedure that generated this interval covers the true p in 95% of repeated samples — it does not mean there is a 95% probability that p sits inside this specific interval.
+
+<Callout variant="tip" title="Pro tip">
+The Wald formula above is the one taught first, but it performs poorly when p̂ is near 0 or 1 or n is small. The [NIST/SEMATECH e-Handbook's section on confidence intervals for a proportion](https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm) recommends the Wilson score interval instead, citing Agresti and Coull's finding that it works well for virtually all combinations of n and p — and unlike the Wald interval above, its lower limit can never come out negative.
+</Callout>
+
+## How Do You Run a Hypothesis Test for a Proportion?
+
+A hypothesis test for a proportion — a one-proportion z-test — evaluates whether sample evidence is strong enough to reject a claimed value p₀ for the population proportion.
+
 ```
-CI  =  0.55 ± 0.0488  =  (0.501,  0.599)
-```
-
-Interpretation: based on this sample, a 95% confidence interval for the population proportion who support Candidate A is 50.1% to 59.9%. The procedure that generated this interval covers the true p in 95% of repeated samples — it does not mean there is a 95% probability that p is in this specific interval.
-
-The [OpenStax Introductory Statistics, Chapter 8.3](https://openstax.org/books/introductory-statistics/pages/8-3-a-confidence-interval-for-a-population-proportion) provides additional worked examples and discusses when to use exact (Clopper-Pearson) intervals instead of the Wald approximation.
-
-<RelatedLink to={routes.calculator('confidence-interval')} label="confidence interval calculator" intro="For a related calculation" />
-
----
-
-## Hypothesis Test for a Proportion
-
-A **hypothesis test for a proportion** (one-proportion z-test) evaluates whether sample evidence is strong enough to reject a claimed value p₀ for the population proportion.
-
-**Set up the hypotheses:**
-```
-H₀ : p = p₀   (null — the proportion equals the claimed value)
-H₁ : p ≠ p₀   (two-tailed alternative; or p > p₀ / p < p₀ for one-tailed)
+H₀ : p = p₀   (the proportion equals the claimed value)
+H₁ : p ≠ p₀   (two-tailed; or p greater than p₀ / p less than p₀ for a one-tailed test)
 ```
 
-**Compute the test statistic.** Use p₀ — not p̂ — under the square root, because the null hypothesis specifies the population proportion:
+Compute the test statistic using p₀ — not p̂ — under the square root, because the null hypothesis is what's being assumed true while you calculate it:
 
 ```
 z  =  (p̂ − p₀) / √( p₀(1 − p₀) / n )
 ```
 
-**Decision rule.** Compare z to the critical value at the chosen significance level α, or compute the p-value and reject H₀ when the p-value < α.
+Then compare z to the critical value at your chosen significance level α, or compute the p-value and reject H₀ when it falls below α. [OpenStax's Introductory Statistics, Section 9.5](https://openstax.org/books/introductory-statistics-2e/pages/9-5-additional-information-and-full-hypothesis-test-examples) walks through a full worked example of exactly this test (Joon's survey of 100 brides, testing H₀: p = 0.50 against a two-tailed alternative), alongside the one-sample mean test it's modeled on.
 
-**Worked example.** A manufacturer claims fewer than 5% of units are defective (p₀ = 0.05). A quality inspector samples 250 units and finds 18 defective (p̂ = 18/250 = 0.072). Test at α = 0.05.
+**Worked example.** A manufacturer claims fewer than 5% of units are defective (p₀ = 0.05). A quality inspector samples 250 units and finds 18 defective (p̂ = 18/250 = 0.072). Test at α = 0.05, H₁: p > 0.05.
 
-**H₀:** p = 0.05 **H₁:** p > 0.05 (one-tailed, upper)
-
-**Conditions check:** np₀ = 250 × 0.05 = 12.5 ≥ 10. n(1 − p₀) = 237.5 ≥ 10. ✓
-
-**Test statistic:**
 ```
+Check conditions:  np₀ = 250 × 0.05 = 12.5 ≥ 5.  n(1 − p₀) = 237.5 ≥ 5.  OK
+
 z  =  (0.072 − 0.05) / √( 0.05 × 0.95 / 250 )
-   =  0.022 / √( 0.000190 )
-   =  0.022 / 0.01379
+   =  0.022 / 0.01378
    ≈  1.60
 ```
 
-**Decision.** The one-tailed critical value at α = 0.05 is z* = 1.645. Since 1.60 < 1.645, the inspector fails to reject H₀ — there is not sufficient evidence at the 5% level to conclude the defect rate exceeds 5%. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.2.4](https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm) gives the complete decision-table reference for one-proportion and two-proportion z-tests.
+The one-tailed critical value at α = 0.05 is z* = 1.645. Since 1.60 is less than 1.645, the inspector fails to reject H₀ — there isn't sufficient evidence at the 5% level to conclude the defect rate exceeds 5%.
 
----
+<Callout variant="quote" source="NIST/SEMATECH e-Handbook of Statistical Methods, Section 7.2.4" sourceHref="https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm">
+Because the test is approximate, N needs to be large for the test to be valid.
+</Callout>
 
-## Pooled Proportion
+## What Is a Pooled Proportion, and When Do You Need One?
 
-When comparing two independent groups — for example, testing whether defect rates differ between two production lines — the **pooled proportion** combines both samples into a single estimate of the common proportion assumed under H₀ (which states the two population proportions are equal).
+When comparing two independent groups — say, testing whether defect rates differ between two production lines — a **pooled proportion** combines both samples into a single estimate of the common proportion assumed under H₀ (that the two population proportions are equal):
 
-**Pooled proportion formula:**
 ```
 p̂ₚ  =  (x₁ + x₂) / (n₁ + n₂)
 ```
 
-where x₁ and x₂ are the success counts, and n₁ and n₂ are the sample sizes from each group.
+where x₁ and x₂ are the success counts and n₁ and n₂ are the sample sizes from each group. The pooled proportion then feeds the **two-proportion z-test statistic**:
 
-The pooled proportion feeds into the **two-proportion z-test statistic:**
 ```
 z  =  (p̂₁ − p̂₂) / √( p̂ₚ(1 − p̂ₚ) × (1/n₁ + 1/n₂) )
 ```
 
+[OpenStax's Introductory Statistics, Section 10.3](https://openstax.org/books/introductory-statistics-2e/pages/10-3-comparing-two-independent-population-proportions) and the [NIST/SEMATECH e-Handbook's section on comparing two defect rates](https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm) both derive this same pooled standard error, used precisely because under H₀ the two groups share one true proportion, so the best estimate of that shared value uses every observation from both samples rather than either p̂ alone.
+
 **Example.** Line A: 18 defective out of 250 (p̂₁ = 0.072). Line B: 12 defective out of 200 (p̂₂ = 0.060).
 
 ```
-p̂ₚ  =  (18 + 12) / (250 + 200)
-     =  30 / 450
-     ≈  0.0667
+p̂ₚ  =  (18 + 12) / (250 + 200)  =  30 / 450  ≈  0.0667
+
+z  =  (0.072 − 0.060) / √( 0.0667 × 0.9333 × (1/250 + 1/200) )
+   =  0.012 / 0.0237
+   ≈  0.51
 ```
 
-The pooled proportion 6.67% is then used in the denominator of the test statistic rather than either individual p̂, because under the null hypothesis (equal defect rates) the best estimate of the common population proportion combines all available data.
+With |z| ≈ 0.51 well below the two-tailed critical value of 1.96, there isn't enough evidence to say the two lines have different defect rates — the 1.2-percentage-point gap between them is well within what sampling variability alone would produce.
 
-<RelatedLink to={routes.calculator('sample-size')} label="sample size calculator" intro="Another helpful calculator is" />
+## A Worked Example: Building the 95% Confidence Interval Step by Step
 
----
+The voter-poll numbers above are worth walking through visually, since the four-step sequence — check conditions, find the standard error, scale it by z*, then build the interval — is the same sequence every proportion confidence interval follows.
 
-## Common Mistakes When Working with Proportions
+<Figure number={1} caption="Four steps from the raw sample counts to the finished 95% confidence interval for the voter-poll example.">
+  <ProcessFlow
+    title="Building a confidence interval for a proportion"
+    desc="Four connected steps: check the success-failure condition; compute the standard error; scale by the critical value to get the margin of error; build and interpret the interval."
+    steps={[
+      { label: 'Check conditions', detail: 'p̂ = 0.55, n = 400. np̂ = 220, n(1−p̂) = 180 — both well above 5.' },
+      { label: 'Compute the standard error', detail: 'SE = √(0.55 × 0.45 / 400) ≈ 0.0249.' },
+      { label: 'Scale by z* for 95%', detail: 'ME = 1.96 × 0.0249 ≈ 0.0488.' },
+      { label: 'Build and interpret the interval', detail: 'CI = 0.55 ± 0.0488 = (0.501, 0.599).' },
+    ]}
+  />
+</Figure>
 
-**Confusing p with p̂.** The symbol p (no hat) is the unknown population proportion; p̂ (with hat) is the sample estimate. In hypothesis tests, the standard error under the null uses p₀ (the claimed value), not p̂. Swapping them changes the test statistic and can flip the conclusion.
+1. **Check the conditions.** p̂ = 0.55 and n = 400, so np̂ = 220 and n(1 − p̂) = 180 — both comfortably above the success-failure threshold, and the 400 sampled voters are a small slice of all registered voters, so independence holds.
+2. **Compute the standard error.** SE = √(0.55 × 0.45 / 400) ≈ 0.0249.
+3. **Scale by the critical value.** For a 95% confidence level, z* = 1.96, so the margin of error is 1.96 × 0.0249 ≈ 0.0488.
+4. **Build and interpret the interval.** 0.55 ± 0.0488 gives (0.501, 0.599): the data are consistent with anywhere from 50.1% to 59.9% population-wide support, which is why a poll reported as "55%, ±4.9 points" should never be read as "exactly 55%."
 
-**Skipping the success-failure check.** The normal approximation breaks down when the expected count of successes or failures is small. With p = 0.02 and n = 100, you have np = 2 < 10 — the normal distribution is a poor fit, and you should use an exact binomial method instead.
+Notice what changing the inputs would do to that interval. Doubling the sample size to 800 (while keeping p̂ = 0.55) shrinks the standard error to roughly 0.0176 and the margin of error to about 0.0345 — a noticeably tighter interval for the same confidence level, because the standard error formula divides by √n rather than n. That relationship is exactly what the <Link to={routes.calculator('sample-size')}>sample size calculator</Link> inverts: tell it the margin of error you want, and it works backward to the n that gets you there.
 
-**Misinterpreting the confidence interval.** Once you have computed an interval from a specific sample, p is either inside it or it is not — no probability is involved. The 95% confidence level describes the long-run behaviour of the procedure: across many samples, 95% of the resulting intervals contain the true p.
+## Common Mistakes When Working With Proportions
 
-**Using p̂ instead of p₀ in the hypothesis-test denominator.** The one-proportion z-test explicitly assumes H₀ is true, which means you evaluate variability at p₀, not at the observed p̂. Using p̂ in the denominator produces a different standard error and is technically an approximation (closer to a score test), which can matter near the decision boundary.
+- **Confusing p with p̂.** p (no hat) is the unknown population proportion; p̂ (with hat) is the sample estimate. In a hypothesis test, the standard error under the null uses p₀ — the claimed value — not p̂. Swapping them changes the test statistic and can flip the conclusion.
+- **Skipping the success-failure check.** The normal approximation breaks down when the expected count of successes or failures is small. With p = 0.02 and n = 100, np = 2, well under the threshold — the normal curve is a poor fit, and an exact binomial method is the safer choice.
+- **Misinterpreting the confidence interval.** Once an interval is computed from a specific sample, p is either inside it or it isn't — no probability is involved. The 95% confidence level describes the long-run behavior of the procedure across many samples, not the odds for this one interval.
+- **Using p̂ instead of p₀ in the hypothesis-test denominator.** The one-proportion z-test assumes H₀ is true, which means variability is evaluated at p₀, not at the observed p̂. Using p̂ in the denominator produces a different standard error — closer to a score test — which can matter near the decision boundary.
+- **Forgetting the independence assumption.** Drawing a large fraction of a small, finite population without replacement violates the independence that the standard error formula assumes and makes the apparent precision of the estimate look better than it really is.
+- **Reporting a proportion with no sense of its precision.** A sample proportion by itself — "38% of respondents agreed" — hides how much that number could move on a second sample. Pairing it with a margin of error or a full confidence interval turns a single snapshot into something a reader can actually evaluate.
 
-**Forgetting to check the 10% condition.** The independence assumption requires that the sample is not a sizable chunk of the population. Sampling 200 from a population of 500 without replacement violates independence and inflates the apparent precision of your estimate — apply a finite-population correction factor in that case.
+## Statohub's Take on Working With Proportions
 
----
+Statohub's position is that the single habit worth building is writing p, p̂, and p₀ down explicitly before touching a formula — most proportion errors are a mix-up between those three, not a wrong calculation once the right numbers are in the right slots. The cross-multiplication form of a proportion is genuinely simple; everything from the confidence interval onward is really one idea (the standard error of a binomial count) applied to four different questions: what's your best single guess, how sure are you, is a specific claim plausible, and are two groups really different. Once that frame clicks, switching between the formulas above is mostly a matter of which question you're being asked, not which equation you happen to remember.
 
-## Frequently Asked Questions
+## Put Proportions to Work With Statohub's Tools
 
-### What is a proportion in statistics?
+The cross-multiplication calculator above handles the basic a/b = c/d case directly. For the inferential side, Statohub's <Link to={routes.calculator('sample-size')}>sample size calculator</Link> tells you how large a sample you'd need to hit a target margin of error for a proportion before you collect any data, and the <Link to={routes.calculator('z-score')}>z-score calculator</Link> is useful for checking the critical-value arithmetic in any of the formulas above by hand. The <Link to={routes.article('fundamental-statistics')}>Fundamental Statistics</Link> article is the right starting point if any of the underlying vocabulary (population, sample, inference) still feels shaky, and the <Link to={routes.categoryHub('foundations')}>Foundations hub</Link> collects the rest of this site's notation and vocabulary guides. Browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link> for every other tool on the site.
 
-A proportion in statistics is the fraction of a population or sample that possesses a particular characteristic. It equals the count of individuals with the characteristic divided by the total group size, and it always falls between 0 and 1. Proportions are used as both descriptive summaries (this sample had 42% who agreed) and as the basis for inferential procedures (confidence intervals and hypothesis tests).
+## Sources
 
-### What is the difference between a population proportion and a sample proportion?
+<Sources items={[
+  { text: 'OpenStax — "8.3 A Population Proportion," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/8-3-a-population-proportion', org: 'OpenStax' },
+  { text: 'OpenStax — "9.5 Additional Information and Full Hypothesis Test Examples," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/9-5-additional-information-and-full-hypothesis-test-examples', org: 'OpenStax' },
+  { text: 'OpenStax — "10.3 Comparing Two Independent Population Proportions," Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/10-3-comparing-two-independent-population-proportions', org: 'OpenStax' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.4. Does the proportion of defectives meet requirements?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc24.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.4.1. Confidence Intervals', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.3.3. How can we determine whether two processes produce the same proportion of defectives?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.4. What are confidence intervals?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6.6.18. Binomial Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm', org: 'NIST' },
+]} />
 
-The **population proportion** (p) is the true but usually unknown fraction of the entire population with the characteristic. The **sample proportion** (p̂ = x/n) is the fraction observed in a randomly selected subset and is used to estimate p. Because p̂ varies from sample to sample, we use its sampling distribution to quantify how close it is likely to be to p.
+## FAQ
 
-### What is the sample proportion formula?
+<FAQ items={[
+  {
+    question: 'What Is a Proportion in Statistics?',
+    answer: "A proportion in statistics is the fraction of a population or sample that has a particular characteristic, found by dividing the count with that characteristic by the total group size. It always falls between 0 and 1, and it is the standard way to summarize categorical data — 42% of respondents agreeing, 3% of units defective — the way a mean summarizes numeric data.",
+  },
+  {
+    question: 'What Is the Difference Between a Population Proportion and a Sample Proportion?',
+    answer: 'The population proportion (p) is the true but usually unknown fraction of the entire population with the characteristic. The sample proportion (p̂ = x/n) is the fraction observed in a randomly selected subset, used to estimate p. Because p̂ varies from sample to sample, its sampling distribution is what quantifies how close it is likely to land to the true p.',
+  },
+  {
+    question: 'What Is the Sample Proportion Formula?',
+    answer: 'The sample proportion formula is p̂ = x/n, where x is the number of individuals in the sample with the characteristic and n is the total sample size. If 90 of 300 survey respondents prefer a product, p̂ = 90/300 = 0.30. That same number also serves as the point estimate of the unknown population proportion.',
+  },
+  {
+    question: 'How Do You Build a Confidence Interval for a Proportion?',
+    answer: 'Verify the success-failure condition (np̂ and n(1 − p̂) both comfortably above 5), then apply p̂ ± z* × √(p̂(1 − p̂)/n). Choose z* from the confidence level: 1.645 for 90%, 1.96 for 95%, 2.576 for 99%. The result is a range of values that plausibly contains the true population proportion.',
+  },
+  {
+    question: 'What Is a Hypothesis Test for a Proportion?',
+    answer: 'A hypothesis test for a proportion — the one-proportion z-test — asks whether the observed sample proportion p̂ is far enough from a claimed value p₀ to reject the null hypothesis that p = p₀. The test statistic z = (p̂ − p₀)/√(p₀(1 − p₀)/n) measures that distance in standard-error units; if |z| exceeds the critical value for your chosen significance level, the evidence is strong enough to reject H₀.',
+  },
+  {
+    question: 'What Is a Pooled Proportion Used For?',
+    answer: "A pooled proportion combines the success counts from two independent samples into one estimate of the shared population proportion assumed under a null hypothesis of equal proportions. Its formula is p̂ₚ = (x₁ + x₂)/(n₁ + n₂), and it feeds the standard error used in the two-proportion z-test that compares two groups, such as defect rates on two production lines.",
+  },
+]} />
 
-The sample proportion formula is `p̂ = x / n`, where x is the number of individuals in the sample who have the characteristic and n is the total sample size. For instance, if 90 out of 300 survey respondents prefer Product X, then p̂ = 90/300 = 0.30.
+## Recommended
 
-### What is the sampling distribution of the sample proportion?
-
-When you repeatedly draw random samples of size n from a population with proportion p, the resulting values of p̂ form a distribution. This sampling distribution of the sample proportion has mean equal to p and standard error equal to `√(p(1 − p) / n)`. Provided that np ≥ 10 and n(1 − p) ≥ 10, the distribution is approximately normal, which justifies using z-based confidence intervals and tests.
-
-### What is a point estimate of a proportion?
-
-A point estimate of a proportion is a single number that serves as the best available guess for the unknown population proportion p. The sample proportion p̂ is the standard point estimate. It answers "what is our best single guess?" but gives no information about uncertainty — a confidence interval adds that.
-
-### How do you build a confidence interval for a proportion?
-
-Verify the success-failure conditions (np̂ ≥ 10 and n(1 − p̂) ≥ 10), then apply the formula `p̂ ± z* × √(p̂(1 − p̂) / n)`. Choose z* based on your confidence level: 1.96 for 95%, 2.576 for 99%. The result is a range of values that plausibly contains the true p.
-
-### What is a pooled proportion?
-
-A pooled proportion combines the success counts from two independent samples into a single estimate of the assumed common population proportion. Its formula is `p̂ₚ = (x₁ + x₂) / (n₁ + n₂)`. It is used in the denominator of the two-proportion z-test statistic when the null hypothesis is that the two population proportions are equal.
-
-### What is a hypothesis test for a proportion?
-
-A hypothesis test for a proportion (one-proportion z-test) asks: is the observed sample proportion p̂ far enough from the claimed value p₀ to reject the null hypothesis? The test statistic `z = (p̂ − p₀) / √(p₀(1 − p₀) / n)` measures that distance in standard error units. If |z| exceeds the critical value, the evidence is strong enough to reject H₀ at the chosen significance level.
-
----
-
-## Summary
-
-A **proportion in statistics** is the fraction of a group with a characteristic, expressed as a value from 0 to 1. The **population proportion p** is the true but usually unknown quantity; the **sample proportion p̂ = x/n** estimates it from data and is the standard **point estimate of a proportion**. The **sampling distribution of p̂** is approximately normal for large samples, with mean p and standard error `√(p(1 − p) / n)` — the foundation for all z-based inference. From there, two core procedures follow: the **confidence interval for a proportion** (`p̂ ± z* × SE`) captures plausible values of p, while the **hypothesis test for a proportion** (the one-proportion z-test) evaluates whether the evidence supports a specific claim. When two groups are compared, the **pooled proportion** combines both samples under the null assumption of equal population proportions.
-
-Keeping the symbols straight — p vs p̂, p₀ vs p̂ in the test statistic, p vs p̂ in the standard error — makes every proportion formula work correctly and every conclusion defensible.
+- <Link to={routes.article('statistics-symbols-cheatsheet')}>Statistics Symbols Cheat Sheet</Link>
+- <Link to={routes.article('reliability-cronbachs-alpha-cohens-kappa')}>Reliability in Statistics: Cronbach's Alpha & Cohen's Kappa</Link>
+- <Link to={routes.article('sampling-distributions')}>Sampling Distributions: Definition & Examples</Link>
+- <Link to={routes.calculator('p-value')}>P-Value Calculator</Link>
