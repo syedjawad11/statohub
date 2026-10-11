@@ -67,6 +67,7 @@ INSERT INTO "outsource_articles" VALUES('choose-correlation-test','Choose a Corr
 INSERT INTO "outsource_articles" VALUES('time-series-stationarity','Time Series Stationarity','time-series-forecasting',48,'2026-10-04','932756','published','outsource-content/raw/time-series-stationarity.json','src/content/articles/time-series-stationarity.mdx',2,0,0,6,'','2026-10-09 09:14:57','2026-10-10 18:32:58');
 INSERT INTO "outsource_articles" VALUES('regression-discontinuity-design','Regression Discontinuity Design','experiments-causality',49,'2026-09-28','908794','published','outsource-content/raw/regression-discontinuity-design.json','src/content/articles/regression-discontinuity-design.mdx',1,2,0,8,'','2026-10-10 18:38:56','2026-10-10 18:52:38');
 INSERT INTO "outsource_articles" VALUES('class-imbalance-handling','Class Imbalance Handling','machine-learning-statistics',50,'2026-09-30','917072','published','outsource-content/raw/class-imbalance-handling.json','src/content/articles/class-imbalance-handling.mdx',3,2,0,8,'','2026-10-10 18:58:11','2026-10-10 19:12:05');
+INSERT INTO "outsource_articles" VALUES('instrumental-variables-explained','Instrumental Variables Explained','experiments-causality',51,'2026-10-01','921235','fetched','outsource-content/raw/instrumental-variables-explained.json',NULL,0,0,0,NULL,'','2026-10-11 09:14:38','2026-10-11 09:14:55');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

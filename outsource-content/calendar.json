@@ -349,6 +349,13 @@
       "title": "Class Imbalance Handling",
       "slug": "class-imbalance-handling",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 51,
+      "day_label": "2026-10-01",
+      "title": "Instrumental Variables Explained",
+      "slug": "instrumental-variables-explained",
+      "category_slug": "experiments-causality"
     }
   ]
 }
