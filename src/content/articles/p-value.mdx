@@ -1,6 +1,6 @@
 ---
 title: "P-Value: What It Is & How to Calculate It"
-description: "Learn what a p-value is in statistics, how to calculate it with a z-test or t-test, and how to interpret it against a significance level."
+description: "A p value is the probability of a result as extreme as yours if the null hypothesis is true. Learn the p-value formula and how to calculate p value."
 category: inferential-statistics
 primaryKeyword: p value
 keywords:
@@ -12,269 +12,294 @@ keywords:
   - what is p value in statistics
 phase: 2
 calculator: p-value
-related: []
+related:
+  - null-hypothesis
+  - t-test
+  - z-score
 draft: false
 pubDate: 2026-07-04
-updatedDate: 2026-09-20
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-11
+reviewedDate: 2026-10-11
 ---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
-import RelatedLink from '../../components/RelatedLink.astro';
 import { routes } from '../../lib/links';
 
-A **p-value** is the probability of obtaining a test result at least as extreme as the one you observed, assuming the null hypothesis is true. A small p value means the observed data would be unlikely if nothing unusual were going on — which is evidence against the null hypothesis. A large p value means the data are consistent with the null hypothesis, giving you no reason to reject it.
+A **p value** is the probability of getting a test result at least as extreme as the one you observed, calculated under the assumption that the null hypothesis is true. A small p value means your data would be unusual if the null hypothesis held, which counts as evidence against it; a large p value means your data are perfectly ordinary under that assumption and gives you no reason to doubt it. So what is p value in statistics? It is not the probability your hypothesis is true, and it is not the probability you made an error — it is a single conditional probability, computed from a test statistic and a sampling distribution, that tells you how surprising your result is.
 
-The p-value is one of the most widely reported numbers in scientific research, but also one of the most misunderstood. What is p value in statistics, exactly? It is not the probability that your hypothesis is true, nor the probability you made a mistake. It is a conditional probability that measures how surprising your result is under a specific assumption. This article explains the concept precisely, works through a complete numeric example, and covers the most common misinterpretations.
+<KeyTakeaways rows={[
+  { point: 'A p value is a conditional probability', details: 'It answers "how likely is data this extreme, assuming the null hypothesis is true?" — nothing more and nothing less.' },
+  { point: 'The p-value formula is a tail area', details: 'For a z or t statistic, the p value is the area under the sampling distribution beyond your observed statistic, doubled for a two-tailed test.' },
+  { point: 'You compare it to a pre-set threshold', details: 'The decision rule is p < α → reject the null hypothesis; the threshold α (commonly 0.05) must be chosen before you look at the data.' },
+  { point: 'A small p value is not proof of a large effect', details: 'Statistical significance and practical significance are different claims; always read the p value alongside an effect size.' },
+  { point: "It is not the probability the null hypothesis is true", details: 'That common misreading requires a prior probability and Bayes’ theorem, which the standard p-value calculation never supplies.' },
+]} />
 
----
+## Quick Checklist: How to Calculate a P-Value
+
+Before you compute anything, lock down four choices — the hypotheses, the test, the tail, and the threshold. Getting any one of them backwards produces a p value that is arithmetically correct but answers the wrong question.
+
+<Checklist
+  id="how-to-calculate-p-value"
+  title="Quick checklist: how to calculate p value"
+  style="check"
+  items={[
+    { text: 'State H₀ and H₁ first', detail: 'Write the null and alternative hypotheses before touching the data, so the test direction is not chosen after seeing the result.' },
+    { text: 'Pick the right test statistic', detail: 'Use z when the population standard deviation is known; use t, with n − 1 degrees of freedom, when it is estimated from the sample.' },
+    { text: 'Match the tail to the alternative', detail: 'A two-sided H₁ needs both tails; a directional H₁ ("greater than" or "less than") needs exactly one.' },
+    { text: 'Set α before you compute p', detail: 'Choose the significance level — usually 0.05 — ahead of time so the threshold cannot be moved to fit the result.' },
+    { text: 'Compare p to α and report both', detail: 'State the exact p value and the decision, not just "significant" or "not significant."' },
+  ]}
+/>
+
+The rest of this guide walks through each of those steps with real numbers, then covers the formulas, the software shortcuts, and the mistakes that trip up even careful analysts.
 
 ## What Is a P-Value in Statistics?
 
-To understand what is p value in statistics, start with a thought experiment. You flip a coin 20 times and get 15 heads. Is the coin fair? If the coin were fair, getting 15 or more heads out of 20 would happen about 2% of the time by pure chance. That 2% is the p-value for this test. Because it is small, you have some evidence the coin may not be fair.
-
-Formally, the p-value is:
+A p value measures how compatible your observed data are with a specific null hypothesis, expressed as a probability between 0 and 1. Formally:
 
 ```
-p = P( test statistic as extreme or more extreme | H₀ is true )
+p = P( test statistic as extreme or more extreme than observed | H₀ is true )
 ```
 
-"At least as extreme" means in the direction your alternative hypothesis predicts. For a two-tailed test (you only care that there is a difference, not which direction), "more extreme" means farther from the null value in either direction.
+"As extreme" means in the direction your alternative hypothesis predicts. For a two-tailed test — where you only care that there is a difference, not its direction — "more extreme" covers both tails of the sampling distribution; for a one-tailed test it covers only the tail your alternative points toward.
 
-The p-value lives between 0 and 1. A p-value near zero means results like yours would be very rare if the null hypothesis were true. A p-value near one means results like yours would be common under the null hypothesis.
+[NIST/SEMATECH's handbook chapter on statistical tests](https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm) frames a statistical test as a decision mechanism built on two competing claims: a null hypothesis H₀ and an alternative H₁, with a significance level α set in advance as the acceptable risk of rejecting a true H₀. [OpenStax's Introductory Statistics](https://openstax.org/books/introductory-statistics-2e/pages/9-1-null-and-alternative-hypotheses) defines H₀ as the claim assumed true unless the data say otherwise, and H₁ as the claim you are testing for — the <Link to={routes.article('null-hypothesis')}>null hypothesis article</Link> covers how to state each one correctly. The p value is the number that connects your sample to that decision: it is computed from the test statistic, and a p value near 0 says results like yours would be rare under H₀, while a p value near 1 says they would be common.
 
----
+For a quick mental anchor: flip a coin 20 times and get 15 heads. If the coin were fair, 15 or more heads out of 20 would occur by chance alone about 2% of the time. That 2% is the p value for "is this coin fair?" — small enough that most analysts would start doubting the coin.
 
-## The Null and Alternative Hypotheses
+## What Is the P-Value Formula?
 
-Every p-value is computed within the framework of a hypothesis test. The **null hypothesis (H₀)** is the default claim — typically "no effect", "no difference", or "the parameter equals a specific value". The **alternative hypothesis (H₁)** is the claim you are testing for.
+The p-value formula depends on which test statistic you compute, but the logic is identical in every case: convert your sample result into a standardized statistic, then find the tail area of that statistic's sampling distribution.
 
-For example:
-- H₀: The population mean weight of a cereal box equals 500 g.
-- H₁: The population mean weight is not 500 g (two-tailed).
+<DataTable
+  caption="The p-value formula by test statistic"
+  headers={['Test statistic', 'Formula', 'Two-tailed p-value']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['z (σ known)', 'z = (x̄ − μ₀) / (σ / √n)', 'p = 2 × P(Z > |z|)'],
+    ['t (σ unknown, df = n − 1)', 't = (x̄ − μ₀) / (s / √n)', 'p = 2 × P(T > |t|), df = n − 1'],
+    ['One-tailed (right)', 'same statistic as above', 'p = P(Z > z) or P(T > t)'],
+    ['One-tailed (left)', 'same statistic as above', 'p = P(Z < z) or P(T < t)'],
+  ]}
+/>
 
-You collect data, compute a test statistic that measures how far your sample result is from H₀, and then calculate how likely that test statistic (or anything more extreme) would be if H₀ were true. That probability is the p-value.
+Use the **z formula** only when the population standard deviation σ is known from long-run process data; otherwise use the **t formula**, substituting the sample standard deviation s and looking up the tail area in the Student's t-distribution instead of the standard normal. [NIST/SEMATECH's table of the standard normal CDF](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm) and its [table of Student's t critical values](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm) are the reference tables behind each row above. The same tail-area logic extends to proportions, chi-square statistics, and F statistics — only the sampling distribution changes; see <Link to={routes.article('chi-square-test')}>the chi-square test</Link> and its underlying <Link to={routes.article('chi-square-distribution')}>chi-square distribution</Link> for a worked case that uses the same p-value mechanics on a different statistic.
 
-<RelatedLink to={routes.article('test-statistic')} label="test statistic" intro="Worth reading next" />
+<Callout variant="tip" title="Pro tip">
+The larger the test statistic's absolute value, the farther it sits from zero, and the smaller the tail area beyond it — so a bigger |z| or |t| always produces a smaller p value, never the reverse.
+</Callout>
 
----
+## How Do You Calculate a P-Value From a Z-Score or T-Statistic?
 
-## The P-Value Formula
+How to calculate p value comes down to three mechanical moves: compute the statistic, find the one-tail area, then adjust for the number of tails your test needs.
 
-The p-value formula depends on the test statistic and its sampling distribution. For the two most common cases:
+**From a z-score.** Compute z = (x̄ − μ₀) / (σ / √n), then look up the cumulative probability at that z in a standard normal table — the <Link to={routes.article('z-score')}>z-score article</Link> covers that standardization in more depth, and the <Link to={routes.calculator('z-table')}>z-table calculator</Link> returns the cumulative probability directly. Subtract the result from 1 to get the right-tail area, and double it for a two-tailed test.
 
-### Z-Test P-Value Formula
+**From a t-statistic.** Compute t = (x̄ − μ₀) / (s / √n) with df = n − 1, the same ratio the <Link to={routes.article('t-test')}>t-test article</Link> derives in full, including why the t-distribution's heavier tails produce a larger p value than a z-test would give the same numeric statistic in a small sample. Look up the tail area for that t and df in a t-table, or let software do it (see below).
 
-When the population standard deviation is known, use the standard normal (z) distribution. For a two-tailed test:
+**From other statistics.** A chi-square statistic, an F statistic from ANOVA, or a rank-sum statistic from a nonparametric test all produce a p value the same way — the <Link to={routes.article('test-statistic')}>test statistic guide</Link> covers how degrees of freedom and table lookups generalize across these families.
 
-```
-z = ( x-bar - μ₀ ) / ( σ / √n )
+## A Worked Example: Two-Tailed Z-Test for a Filling Machine
 
-p = 2 × P( Z > |z| )   [two-tailed]
-p = P( Z > z )          [right-tailed]
-p = P( Z < z )          [left-tailed]
-```
+A quality-control team wants to know whether the mean weight of cereal boxes leaving a filling machine differs from the target of **500 g** — the same "is the process mean still on target" question [NIST/SEMATECH's handbook on comparisons to an assumed process mean](https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm) walks through for one-sample tests. Historical process data give a known standard deviation of **σ = 9 g**. The team samples **n = 36** boxes and measures a sample mean of **x̄ = 503 g**.
 
-Where `x-bar` is the sample mean, `μ₀` is the hypothesized population mean, `σ` is the known population standard deviation, and `n` is the sample size.
+<Figure number={1} caption="Four steps from the sample data to the reject/fail-to-reject decision for the filling-machine example.">
+  <ProcessFlow
+    title="P-value decision process"
+    desc="Four connected steps: state the hypotheses and set alpha; compute the standard error and z statistic; find the tail area and double it for the two-tailed p-value; compare p to alpha and decide."
+    steps={[
+      { label: 'State H₀, H₁, α', detail: 'H₀: μ = 500; H₁: μ ≠ 500; α = 0.05.' },
+      { label: 'Compute SE and z', detail: 'SE = 9/√36 = 1.5; z = (503−500)/1.5 = 2.0.' },
+      { label: 'Find the tail area', detail: 'P(Z>2.0) = 0.0228; two-tailed p = 0.0456.' },
+      { label: 'Compare and decide', detail: 'p = 0.046 < α = 0.05 → reject H₀.' },
+    ]}
+  />
+</Figure>
 
-### T-Test P-Value Formula
-
-When the population standard deviation is unknown (the usual case), replace `σ` with the sample standard deviation `s` and use the Student-t distribution with `n − 1` degrees of freedom:
-
-```
-t = ( x-bar - μ₀ ) / ( s / √n )
-
-p = 2 × P( T > |t| )   [two-tailed, df = n - 1]
-```
-
-In both cases the p-value is the area in the tail(s) of the sampling distribution beyond your test statistic. The larger the test statistic, the farther it sits from zero, and the smaller the tail area — giving a smaller p-value.
-
-For tests of proportions or comparing two groups, the same logic applies with different formulas for the test statistic; the p-value is always the tail area under the appropriate null distribution.
-
-<RelatedLink to={routes.calculator('z-table')} label="z-table calculator" intro="For a related calculation" />
-
----
-
-## Significance Levels: When Is a P-Value Small Enough?
-
-A p-value alone does not tell you whether to act — you need a decision threshold. The **significance level (α)** is the maximum p-value you are willing to accept as evidence against H₀. The most common choice is **α = 0.05**.
-
-The decision rule is:
-- If p < α, **reject H₀**. The result is statistically significant at level α.
-- If p ≥ α, **fail to reject H₀**. The data do not provide sufficient evidence against H₀.
-
-Note that "fail to reject H₀" is not the same as "H₀ is true" — it only means the data are not inconsistent with H₀. The choice of α should be made before collecting data, not after looking at the p-value.
-
-Common significance levels and their typical uses:
-
-| Significance level (α) | Typical use |
-|------------------------|-------------|
-| 0.10 | Exploratory research; social sciences |
-| 0.05 | Default in most disciplines |
-| 0.01 | Clinical trials; high-stakes decisions |
-| 0.001 | Particle physics; genome-wide studies |
-
-The stringency of the threshold reflects the cost of a false positive. A pharmaceutical trial that could harm patients uses α = 0.01 or smaller. An A/B test on a website might accept α = 0.10 because the cost of a false positive is low.
-
----
-
-## Fully Worked Example: Two-Tailed Z-Test
-
-A quality-control team wants to know whether the mean weight of cereal boxes leaving a filling machine differs from the target of **500 g**. From years of process data, the standard deviation is known to be **σ = 9 g**. The team draws a random sample of **n = 36** boxes and finds a sample mean of **x-bar = 503 g**.
-
-**Step 1: State the hypotheses**
+1. **State the hypotheses and significance level.**
 
 ```
 H₀: μ = 500 g
 H₁: μ ≠ 500 g   (two-tailed)
+α = 0.05, chosen before collecting data
 ```
 
-The team uses a two-tailed test because they care about deviations in either direction — boxes that are too light or too heavy both signal a problem.
+The team uses a two-tailed test because boxes that are too light or too heavy are both a problem.
 
-**Step 2: Choose the significance level**
-
-They set α = 0.05 before collecting data.
-
-**Step 3: Compute the standard error and test statistic**
+2. **Compute the standard error and the test statistic.**
 
 ```
 SE = σ / √n = 9 / √36 = 9 / 6 = 1.5 g
 
-z = ( x-bar - μ₀ ) / SE = ( 503 - 500 ) / 1.5 = 3 / 1.5 = 2.0
+z = (x̄ − μ₀) / SE = (503 − 500) / 1.5 = 3 / 1.5 = 2.0
 ```
 
-**Step 4: Find the p-value**
-
-For a two-tailed z-test, the p-value is twice the right-tail area beyond |z| = 2.0:
+3. **Find the p-value.** The area to the right of z = 2.0 under the standard normal curve is 0.0228. Because the test is two-tailed, both tails count:
 
 ```
-P( Z > 2.0 ) = 1 - 0.9772 = 0.0228
+P(Z > 2.0) = 1 − 0.9772 = 0.0228
 
 p = 2 × 0.0228 = 0.0456
 ```
 
-The area to the right of z = 2.0 under the standard normal curve is 0.0228. Because the test is two-tailed, both tails contribute, giving a p-value of approximately **0.046**.
-
-**Step 5: Compare to α and decide**
+4. **Compare p to α and decide.**
 
 ```
-p = 0.046 < α = 0.05  →  Reject H₀
+p = 0.0456 < α = 0.05  →  reject H₀
 ```
 
-The team concludes that the mean weight is statistically significantly different from 500 g at the 5% significance level. They investigate the filling machine.
+The team concludes the mean fill weight is statistically significantly different from 500 g at the 5% level and flags the machine for inspection.
+
+If the team only cared about boxes running *heavy* — a directional alternative, H₁: μ > 500 g — the test would be one-tailed instead, and only the right tail would count:
+
+```
+p = P(Z > 2.0) = 0.0228  ≈  0.023   (one-tailed, right)
+```
+
+That one-tailed p value is about half the two-tailed one, because it spends the whole α budget on a single direction instead of splitting it across both. Picking one tail after looking at the data would invalidate the test; the <Link to={routes.article('one-tailed-vs-two-tailed')}>one-tailed vs. two-tailed guide</Link> covers how to commit to a tail in advance and when a directional H₁ is actually justified.
 
 ### Try the Calculator
 
-Enter **z = 2.0**, select **Standard normal (z)**, and **Two-sided** in the p-value calculator below to reproduce this result:
+Enter **z = 2.0**, select **Standard normal (z)**, and **Two-sided** below to reproduce this result. The same tool accepts a t-statistic and degrees of freedom if you are working a t-test instead.
 
 <StatCalc slug="p-value" variant="embed" />
 
-For a standalone version with more options, open the full <Link to={routes.calculator('p-value')}>p-value calculator</Link>, or explore related tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
-
-<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="Another helpful calculator is" />
-
----
-
-## One-Tailed and Two-Tailed P-Values
-
-The choice between a one-tailed and a two-tailed test changes the p-value formula and the decision rule. You must make this choice based on your research question before collecting data.
-
-**Two-tailed test:** Use when you want to detect any difference from the null value, in either direction. The p-value covers both tails of the distribution. This is the default for most research.
+For a one-sample t-test with a smaller sample, the mechanics are identical with a different distribution. Take n = 15 matched-pair differences with a sample mean difference of x̄ = 2.3 and sample standard deviation s = 4.1, testing against μ₀ = 0:
 
 ```
-p = 2 × P( Z > |z| )
+SE = s / √n = 4.1 / √15 = 1.059
+
+t = (x̄ − μ₀) / SE = 2.3 / 1.059 = 2.173,  df = 14
+
+two-tailed p ≈ 0.047
 ```
 
-**Right-tailed test:** Use when you predict the parameter is larger than the null value. The p-value covers only the right tail.
+Because 0.047 is still below 0.05, this result also clears the conventional threshold. The t-distribution's heavier tails do make a real difference, though: holding the statistic fixed at exactly 2.0 instead, a z-test gives a two-tailed p of 0.0455, while a t-test with df = 14 gives a two-tailed p of about 0.065 — noticeably larger for the identical numeric statistic, because the t-distribution puts more probability into its tails at low degrees of freedom.
+
+## How Do You Find a P-Value in Excel, Python, or R?
+
+Software removes the table-lookup step, but you still need to compute the right statistic first.
 
 ```
-p = P( Z > z )
+Excel:   For a two-sample or paired comparison, =T.TEST(array1, array2, tails, type)
+         returns the p-value directly. For a z-based one-sample test, compute z by
+         hand, then use =NORM.S.DIST(z, TRUE) to get the cumulative probability and
+         derive the tail area from it.
+
+Python:  from scipy import stats
+         stats.ttest_1samp(sample, popmean=mu0)   # returns (statistic, pvalue)
+         stats.norm.sf(z)                         # one-tailed p from a z-statistic
+
+R:       t.test(sample, mu = mu0)        # one-sample t-test, reports the p-value
+         2 * pnorm(-abs(z))              # two-tailed p from a z-statistic
 ```
 
-**Left-tailed test:** Use when you predict the parameter is smaller than the null value. The p-value covers only the left tail.
+[SciPy's `ttest_1samp` reference](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html) documents the one-sample t-test function used above, and [SciPy's `scipy.stats.norm` reference](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html) documents the normal-distribution methods, including the survival function used for a one-tailed z p-value. Microsoft's documentation for [`T.TEST`](https://support.microsoft.com/en-us/office/t-test-function-d4e08ec3-c545-485f-962e-276f7cbed055) and [`NORM.S.DIST`](https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88) covers the Excel syntax above, including the `tails` and `type` arguments that select one- vs. two-tailed and paired vs. independent designs.
+
+## How Do You Choose a Significance Level to Compare Against?
+
+A p value only becomes a decision once you compare it to a pre-chosen significance level α — the maximum p value you are willing to treat as evidence against H₀. NIST/SEMATECH describes α as the risk you accept of rejecting a true null hypothesis, and that risk should be set before you see the data, not adjusted afterward to fit a result you want.
 
 ```
-p = P( Z < z )
+If p < α  →  reject H₀ (statistically significant at level α)
+If p ≥ α  →  fail to reject H₀ (not enough evidence against H₀)
 ```
 
-For the worked example above (z = 2.0), the two-tailed p was 0.046. The right-tailed p would be 0.023 — half as large — because it uses only one tail. One-tailed tests are more powerful when you have a clear directional prediction, but they cannot detect surprises in the opposite direction. In practice, two-tailed tests are safer and are expected by most journals unless a directional hypothesis is justified in advance.
+"Fail to reject" is not "prove true." It only means the sample did not produce enough evidence to overturn the null hypothesis — the <Link to={routes.article('null-hypothesis')}>null hypothesis article</Link> covers why that asymmetry exists and why H₀ can never be "proven" by a test, only rejected or not rejected.
 
----
+<DataTable
+  caption="Common significance levels and where they are typically used"
+  headers={['Significance level (α)', 'Typical use']}
+  align={['left', 'left']}
+  rows={[
+    ['0.10', 'Early-stage or exploratory analysis, where a false positive is relatively cheap to follow up on and correct'],
+    ['0.05', 'The conventional default across most scientific and regulatory settings'],
+    ['0.01', 'A stricter threshold adopted when a false positive would be unusually costly to act on'],
+    ['≈3 × 10⁻⁷ (a "5σ" result)', 'The discovery convention in particle physics, far beyond conventional significance'],
+  ]}
+/>
 
-## How to Find a P-Value from Different Test Statistics
+The international [ICH E9 guideline on statistical principles for clinical trials](https://database.ich.org/sites/default/files/E9_Guideline.pdf) — the standard regulators use to evaluate drug trials — states that "conventionally the probability of type I error is set at 5% or less," which is the source of the 0.05 row above. At the opposite extreme, particle physicists require evidence equivalent to a five-standard-deviation ("5σ") result before claiming a discovery, a convention [discussed in Louis Lyons' review of open statistical issues in particle physics](https://arxiv.org/abs/0811.1663); a one-tailed 5σ result corresponds to a p value of about 3 × 10⁻⁷, several orders of magnitude stricter than the 0.05 most fields use. The stricter the threshold, the more a field is weighting the cost of a false positive against the cost of missing a real effect — a trade-off the <Link to={routes.article('type-i-and-type-ii-errors')}>Type I and Type II errors guide</Link> and the <Link to={routes.article('statistical-power')}>statistical power article</Link> cover from the other side.
 
-How to find p value depends on which test you ran and how you want to look it up.
+## Common Mistakes When Interpreting a P-Value
 
-### From a Z-Score
+- **Treating the p-value as the probability H₀ is true.** The p value is computed *assuming* H₀, so it cannot also tell you the probability that assumption is correct. The [American Statistical Association's statement on statistical significance and p-values](https://www.amstat.org/asa/files/pdfs/P-ValueStatement.pdf) states this directly: "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone." Getting that probability requires a prior and Bayes' theorem, which the standard calculation never supplies.
+- **Equating statistical significance with practical importance.** A large enough sample can push p below 0.001 for an effect too small to matter in practice. Report an effect size — Cohen's d, a correlation, an odds ratio — alongside the p value; the <Link to={routes.article('effect-size')}>effect size guide</Link> covers how to compute and interpret the common ones.
+- **Reading a non-significant result as proof of no effect.** Failing to reject H₀ can mean the effect doesn't exist, or it can mean your sample lacked the power to detect a real but smaller effect — a distinction the <Link to={routes.article('statistical-power')}>statistical power article</Link> walks through.
+- **Letting a bigger sample size stand in for a bigger effect.** Collecting more data shrinks the standard error and therefore the p value for almost any non-zero effect, which is exactly why sample sizes should be planned in advance rather than inflated until p drops below α.
+- **Treating p = 0.05 as a hard pass/fail line.** By the strict rule p < α, a p value of exactly 0.05 with α = 0.05 does not clear the threshold. The ASA statement's principle on full reporting holds that "proper inference requires full reporting and transparency" — reporting the exact p value alongside the decision is more informative than collapsing it to "significant" or "not significant."
 
-Convert your test statistic to a z-score using the formula above, then read the cumulative probability from a standard normal table (the z-table). Subtract from 1 for a right-tail area, and multiply by 2 for a two-tailed test. The <Link to={routes.article('z-table')}>z-table guide</Link> walks through how to read the table.
+<Callout variant="quote" source="American Statistical Association, Statement on Statistical Significance and P-Values (2016)" sourceHref="https://www.amstat.org/asa/files/pdfs/P-ValueStatement.pdf">
+Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.
+</Callout>
 
-### From a T-Statistic
+## Statohub's Take on P-Values
 
-Compute t = (x-bar − μ₀) / (s / √n) with degrees of freedom df = n − 1. Look up the t-statistic in a t-distribution table for the correct df. Because the t-distribution has heavier tails than the normal distribution, the same test statistic gives a larger p-value than a z-test would, especially in small samples.
+Statohub's position is that a p value is a useful filter, not a verdict. Treat it as one input into a decision that should also include the effect size, the sample size, and whether the result replicates — never as a single number that settles the question on its own. The 0.05 convention is a shared language for comparing studies, not a law of nature, and the honest move is always to report the exact p value rather than just which side of α it landed on.
 
-### Using Statistical Software
+## Put P-Values to Work With Statohub's Tools
 
-In practice, software computes p-values directly. In Excel, use `=T.TEST()` or `=NORM.S.DIST()`. In Python (scipy), use `scipy.stats.ttest_1samp()`. The output includes both the test statistic and the exact two-tailed p-value.
+Computing a p value by hand is good practice; checking it quickly against a known case is what makes the number trustworthy day to day. Enter your z or t statistic above, open the full <Link to={routes.calculator('p-value')}>p-value calculator</Link> for a standalone version with the same options, or browse <Link to={routes.calculatorsHub()}>Statohub's calculators</Link> for the related tools — the <Link to={routes.calculator('t-test')}>t-test calculator</Link> and the <Link to={routes.calculator('z-table')}>z-table calculator</Link> both feed directly into the formulas above. For the surrounding concepts, the <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics hub</Link> covers hypothesis testing end to end, and <Link to={routes.article('which-statistical-test-should-i-use')}>which statistical test should I use</Link> helps you pick the right test before you ever compute a p value.
 
-<RelatedLink to={routes.article('z-score')} label="z-score" intro="On a related note" />
+## Sources
 
----
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.3. What are statistical tests?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc13.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.2. Are the data consistent with the assumed process mean?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6.7.1. Cumulative Distribution Function of the Standard Normal Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6.7.2. Critical Values of the Student’s t-Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm', org: 'NIST' },
+  { text: 'American Statistical Association — Statement on Statistical Significance and P-Values (press release, 2016)', href: 'https://www.amstat.org/asa/files/pdfs/P-ValueStatement.pdf', org: 'American Statistical Association' },
+  { text: 'SciPy — scipy.stats.ttest_1samp reference', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html', org: 'SciPy' },
+  { text: 'SciPy — scipy.stats.norm reference', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html', org: 'SciPy' },
+  { text: 'Microsoft Support — T.TEST function', href: 'https://support.microsoft.com/en-us/office/t-test-function-d4e08ec3-c545-485f-962e-276f7cbed055', org: 'Microsoft' },
+  { text: 'Microsoft Support — NORM.S.DIST function', href: 'https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88', org: 'Microsoft' },
+  { text: 'OpenStax — 9.1 Null and Alternative Hypotheses, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/9-1-null-and-alternative-hypotheses', org: 'OpenStax' },
+  { text: 'ICH E9 — Statistical Principles for Clinical Trials', href: 'https://database.ich.org/sites/default/files/E9_Guideline.pdf', org: 'International Council for Harmonisation' },
+  { text: 'Lyons, L. — "Open Statistical Issues in Particle Physics," arXiv:0811.1663', href: 'https://arxiv.org/abs/0811.1663', org: 'arXiv' },
+]} />
 
-## What a P-Value Does Not Mean
+## FAQ
 
-Several common misinterpretations of p-values have led to replication problems in published science. Knowing what the p-value is *not* is as important as knowing what it is.
+<FAQ items={[
+  {
+    question: 'What Is P Value in Statistics?',
+    answer: 'A p value is the probability of observing a test result at least as extreme as yours, calculated under the assumption that the null hypothesis is true. It is not the probability that the null hypothesis is true, nor the probability of a mistake — it is a single conditional probability that measures how surprising your sample result is if nothing unusual is happening.',
+  },
+  {
+    question: 'How Do You Calculate a P-Value by Hand?',
+    answer: 'Compute a standardized test statistic — z = (x̄ − μ₀)/(σ/√n) when σ is known, or t = (x̄ − μ₀)/(s/√n) with df = n − 1 when it is estimated — then look up the tail area beyond that statistic in a standard normal or Student’s t table. Double the one-tail area for a two-tailed test, or use it directly for a one-tailed test.',
+  },
+  {
+    question: 'How Do You Find a P-Value From a Z-Score?',
+    answer: 'Look up the cumulative probability at your z-score in a standard normal table; for z = 2.0 that value is 0.9772. Subtract from 1 to get the right-tail area (0.0228), then multiply by 2 for a two-tailed test (0.0456), or use the one-tail value directly for a one-tailed test.',
+  },
+  {
+    question: 'What Does a P-Value Less Than 0.05 Mean?',
+    answer: 'It means that if the null hypothesis were true, there would be less than a 5% chance of seeing data this extreme or more so by chance alone. Under the conventional α = 0.05 threshold, that is treated as sufficient evidence to reject the null hypothesis and call the result statistically significant — though the exact p value is more informative than the pass/fail label alone.',
+  },
+  {
+    question: 'Can a P-Value Be Greater Than 1 or Negative?',
+    answer: 'No. A p value is a probability, so it must fall between 0 and 1 inclusive. A computed value outside that range always indicates an arithmetic or software error, never a valid result. The most common causes are doubling a value that a function already returned as two-tailed, swapping a cumulative distribution function for its complement by mistake, or feeding a negative variance into the formula. If your calculation ever produces a number outside 0 to 1, check those steps before trusting any other part of the result.',
+  },
+  {
+    question: 'What Is the Difference Between a P-Value and a Confidence Interval?',
+    answer: 'A p value gives a single probability tied to one null hypothesis; a confidence interval gives a full range of plausible parameter values. The two agree in one useful way: if a 95% confidence interval excludes the null value, the corresponding two-tailed p value is below 0.05, and vice versa. Confidence intervals show direction and magnitude in a way a single p value cannot.',
+  },
+]} />
 
-**Misconception 1: The p-value is the probability that H₀ is true.**
+## Recommended
 
-False. The p-value is computed *assuming* H₀ is true. It does not tell you the probability that your null hypothesis is correct. To get that probability you would need a prior probability and Bayes' theorem — the p-value approach is frequentist and does not supply one.
-
-**Misconception 2: p < 0.05 means the result is practically important.**
-
-Statistical significance and practical significance are different. A very large sample can yield p < 0.001 for an effect so small it has no real-world importance. Always report an effect size (Cohen's d, odds ratio, correlation coefficient) alongside the p-value. The American Statistical Association's [statement on p-values and statistical significance](https://www.amstat.org/asa/files/pdfs/P-ValueStatement.pdf) emphasises this point: statistical significance alone should not be the only basis for scientific conclusions.
-
-**Misconception 3: A non-significant result proves H₀.**
-
-Failing to reject H₀ does not prove the null hypothesis. It means your sample did not provide enough evidence to overturn it. The effect you are looking for might exist but be too small to detect with your sample size, which is a question of statistical power.
-
-**Misconception 4: You can lower the p-value by collecting more data.**
-
-Technically true — with a large enough sample, almost any non-zero effect will become significant. This is why p-values should be interpreted alongside practical significance and pre-registered sample sizes, not treated as a finish line to cross.
-
----
-
-## Frequently Asked Questions
-
-### What is a good p-value?
-
-There is no universally "good" p-value; the threshold depends on your field and the cost of a false positive. In most sciences α = 0.05 is the default, so p < 0.05 is considered statistically significant. Clinical trials routinely require p < 0.01. A p-value is meaningful only in relation to the pre-specified significance level α.
-
-### How do I find a p-value from a z-score?
-
-Find the cumulative area at your z-score in a standard normal table (the value for z = 2.0 is 0.9772). Subtract from 1 to get the right-tail area (0.0228). For a two-tailed test, multiply by 2 (0.0456). For a right-tailed test, 0.0228 is the p-value directly.
-
-### What does p-value less than 0.05 mean?
-
-It means that if the null hypothesis were true, there would be less than a 5% chance of observing data as extreme as yours. By convention (α = 0.05), this is treated as sufficient evidence to reject H₀ and call the result statistically significant.
-
-### Can a p-value be greater than 1?
-
-No. A p-value is a probability and must lie between 0 and 1 (inclusive). A computed value outside this range indicates a programming or calculation error.
-
-### What is the difference between a p-value and a confidence interval?
-
-A confidence interval gives a range of plausible values for the parameter; the p-value gives a binary signal (reject or fail to reject). The two are mathematically equivalent for many tests: if the 95% confidence interval excludes the null value, then p < 0.05, and vice versa. Confidence intervals are generally more informative because they show the direction and magnitude of the effect.
-
-### What if the p-value equals exactly 0.05?
-
-By the strict convention p < α, a p-value of exactly 0.05 with α = 0.05 does not reach the threshold for rejection (0.05 is not less than 0.05). In practice, p = 0.05 sits at the boundary and should be interpreted cautiously. The [NIST/SEMATECH e-Handbook, Hypothesis Testing](https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm) recommends reporting the exact p-value alongside the decision, rather than reporting only "p < 0.05" or "p ≥ 0.05".
-
----
-
-## Summary
-
-The p-value answers one specific question: how surprising is your observed data if the null hypothesis is true? It does not answer whether H₀ is true, whether the effect is large, or whether the study is well-designed. A complete analysis reports the p-value alongside the effect size, confidence interval, and sample size.
-
-The p-value calculation follows a consistent pattern regardless of the test: compute a test statistic, identify the correct sampling distribution, and measure the tail area beyond your observed statistic. For a two-tailed z-test, that formula is `p = 2 × P(Z > |z|)`. For a t-test, replace z with t and use the t-distribution with the appropriate degrees of freedom.
-
-In the worked example above, a sample of 36 boxes with mean 503 g produced z = 2.0 and p ≈ 0.046, which falls below α = 0.05 — enough evidence to conclude the filling machine is off-target. The same logic applies whether you are testing a drug, a website feature, or a manufacturing process: gather data, compute the test statistic, find the p-value, and compare it to your pre-specified threshold.
+- <Link to={routes.article('type-i-and-type-ii-errors')}>Type I and Type II Errors: Definitions & Examples</Link>
+- <Link to={routes.article('confidence-interval')}>Confidence Interval: Formula & Worked Example</Link>
+- <Link to={routes.calculator('t-test')}>T-Test Calculator</Link>
+- <Link to={routes.article('which-statistical-test-should-i-use')}>Which Statistical Test Should I Use?</Link>
