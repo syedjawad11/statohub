@@ -1,0 +1,217 @@
+---
+title: "Instrumental Variables Explained"
+h1: "F Greater Than 10 Isn't Enough: Instrumental Variables"
+description: "Instrumental variables explained: diagnostics, falsification checks, weak-instrument fixes, and a quarter-of-birth worked example for causal inference."
+category: experiments-causality
+primaryKeyword: instrumental variables explained
+keywords:
+  - instrumental variables explained
+  - instrumental variables
+  - iv regression
+  - two stage least squares
+  - weak instruments
+  - local average treatment effect
+phase: 1
+related:
+  - regression-discontinuity-design
+  - spillover-effects
+  - control-confounders
+draft: false
+pubDate: 2026-10-11
+updatedDate: 2026-10-11
+reviewedDate: 2026-10-11
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+An instrumental variable is a variable that provides quasi-random variation in the treatment so you can estimate a causal effect when the treatment is endogenous. Instrumental variables (IV) regression is the standard remedy when a regressor correlates with the error term, whether through omitted variables, reverse causation, or measurement error. Analysts in economics, epidemiology, and the social sciences reach for IV precisely when a randomized experiment is not feasible but a plausible source of exogenous variation exists.
+
+<KeyTakeaways rows={[
+  { point: 'Relevance and exclusion', details: 'A strong instrument must be correlated with the treatment and have no direct effect on the outcome — the relevance and exclusion assumptions.' },
+  { point: 'LATE, not an average effect', details: 'The IV estimate typically applies only to compliers — those whose treatment changes because of the instrument — limiting its generalizability.' },
+  { point: 'F > 10 is not enough', details: 'When the first-stage F-statistic falls below 10, or the effective F-statistic is weak, IV estimates may be biased, and alternative weak-instrument diagnostics are necessary.' },
+  { point: 'Validity is argued, not proven', details: 'Overidentification tests, negative control outcomes, and balance tests help validate an instrument, but passing them does not prove validity beyond reasoned judgment.' },
+  { point: 'Strong instruments are rare', details: 'Finding a genuinely strong and well-justified instrument remains rare, which makes careful validation and transparent reporting essential for credible causal inference.' },
+]} />
+
+## Why endogeneity breaks OLS and how an instrument helps
+
+Ordinary least squares assume the regressor is uncorrelated with the error term. That assumption fails in three familiar ways: an omitted variable drives both the treatment and the outcome, the outcome feeds back into the treatment, or the treatment is measured with error. Each case leaves OLS attributing someone else's influence to the variable you care about, producing a biased coefficient that no amount of additional data will correct.
+
+An instrument, typically labeled Z, offers a way around this. Z needs to move the treatment X, but it must do so without having any direct line to the outcome Y except through X. Picture the causal chain as Z pointing to X, and X pointing to Y, while Z stays unrelated to the unobserved factors U that also drive Y.
+
+- Z is correlated with X, giving it something to work with.
+- Z has no direct effect on Y once X is accounted for.
+- Z does not share common causes with the unobserved determinants of Y.
+
+When those conditions hold, the variation in X that comes from Z behaves like a small, naturally occurring experiment.
+
+## Formal definition and the IV assumptions you must check
+
+The [Columbia Population Health Methods](https://www.publichealth.columbia.edu/research/population-health-methods/instrumental-variables) summary frames IV as a method for estimating causal relationships in observational data when a trial is not feasible, built on three core conditions:
+
+1. **Relevance (IV1):** Z must be statistically associated with X. This is the one assumption you can test directly, usually with a first-stage regression and its F-statistic.
+2. **Independence or exchangeability (IV2):** Z must be as good as randomly assigned with respect to the outcome, meaning it shares no common cause with the unobserved determinants of Y.
+3. **Exclusion restriction (IV3):** Z can influence Y only through X, with no direct or back-door pathway.
+
+Relevance is empirical. Independence and exclusion are not, and no data pattern can confirm them on its own: they rest on subject-matter reasoning about how the instrument came to vary. A fourth condition, monotonicity, is usually added so the instrument moves everyone's treatment status in the same direction. Under monotonicity, the [Angrist, Imbens, and Rubin framework](https://math.mcgill.ca/dstephens/AngristIV1996-JASA-Combined.pdf) shows that the IV estimate identifies a Local Average Treatment Effect, not the effect for the whole population. Knowing which assumptions you can check and which you can only argue for shapes how a methods section should be written.
+
+<DataTable
+  caption="The three core IV assumptions and how each one is checked"
+  headers={['Assumption', 'What it requires', 'How you check it']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Relevance (IV1)', 'Z must be statistically associated with X.', 'Directly testable with a first-stage regression and its F-statistic.'],
+    ['Independence / exchangeability (IV2)', 'Z must be as good as randomly assigned with respect to Y, sharing no common cause with the unobserved determinants of Y.', 'Not testable from data alone — argued from subject-matter reasoning about how the instrument came to vary.'],
+    ['Exclusion restriction (IV3)', 'Z can influence Y only through X, with no direct or back-door pathway.', 'Not testable directly — supported with falsification checks, never proven outright.'],
+  ]}
+/>
+
+## How two-stage least squares estimates the effect
+
+Two-stage least squares (2SLS) is the workhorse estimator for linear IV models, and it proceeds in two clearly defined steps.
+
+- **Stage one:** regress X on Z and any covariates, then save the predicted values of X. The strength of this stage is judged by the first-stage F-statistic, with values well above the old rule-of-thumb of 10 generally preferred.
+- **Stage two:** regress Y on the predicted X (and the same covariates), reading the coefficient on predicted X as the IV estimate of the causal effect.
+
+Because the second stage uses a generated regressor, standard errors need adjustment: most software computes 2SLS standard errors directly rather than running the two regressions by hand, and clustered or heteroskedasticity-robust options should match whatever structure the data has. Common implementations include Stata's `ivreg2`, R's `AER` package, and the `ivreg` command family. When a model has more instruments than endogenous regressors, it is overidentified, and researchers often turn to generalized method of moments (GMM), which can be more efficient and supports the overidentification tests covered later.
+
+## Interpreting IV estimates: LATE, not an average effect
+
+An IV estimate rarely describes everyone in your sample. Under monotonicity, it describes compliers: the people whose treatment status actually shifts because of the instrument, as distinct from always-takers and never-takers whose behavior does not respond to Z. The Columbia summary ties this LATE interpretation directly to the three core IV conditions.
+
+<Figure number={1} caption="How the population exposed to an instrument splits into compliers, always-takers, and never-takers, and which group the IV estimate actually describes.">
+  <TaxonomyTree
+    title="Population split by response to the instrument"
+    desc="A taxonomy tree splits the population exposed to instrument Z into three groups: compliers, always-takers, and never-takers, showing how each group's treatment responds to Z and whether IV identifies their causal effect."
+    root="Population exposed to instrument Z"
+    branches={[
+      { label: 'Compliers', children: ['Respond to instrument Z', 'Treatment changes with Z', 'IV identifies their causal effect', 'LATE = complier average effect'] },
+      { label: 'Always-takers', children: ['Do treatment regardless of Z', 'Treatment unchanged when Z shifts', 'Not identified by IV', 'Do not inform LATE'] },
+      { label: 'Never-takers', children: ['Never take treatment regardless of Z', 'Treatment unchanged when Z shifts', 'Not identified by IV', 'Do not inform LATE'] },
+    ]}
+  />
+</Figure>
+
+That subgroup restriction limits how far the result travels. An estimate built on people near a policy threshold may say little about those far from it, so claims of broad effectiveness need to be scaled back to match the population the instrument actually moved.
+
+<Callout variant="tip" title="Pro tip">
+State explicitly who your compliers are likely to be before you generalize an IV estimate to a broader population.
+</Callout>
+
+## Weak instruments: diagnosis and practical fixes
+
+A weak instrument barely moves the treatment, and that weakness has consequences beyond a wide confidence interval. The [Harvard survey on weak instruments](https://scholar.harvard.edu/files/stock/files/wirev_080218-_posted.pdf) explains that weak instruments pull the 2SLS estimate toward the OLS estimate and distort the standard inference you would normally trust.
+
+**Weak instruments remain a recurring problem in applied IV work**, and the weak-instrument literature notes that first-stage F-statistics in published papers often fall into a range that should prompt caution rather than confidence.
+
+- Check the conventional first-stage F-statistic, then move to the effective F-statistic from Montiel Olea and Pflueger when the data are heteroskedastic or clustered.
+- Consider the Kleibergen-Paap statistic in panel or clustered settings as a robustness check on instrument strength.
+- When instruments look weak, report an Anderson-Rubin or conditional likelihood ratio confidence set, since these remain valid even when the first stage is shaky.
+- If possible, find a stronger instrument or trim a weak one from an overidentified model rather than keeping it for the sake of identification.
+- LIML, Fuller's modified estimator, and jackknife 2SLS can reduce bias relative to standard 2SLS in some weak-instrument settings, as the [Annual Reviews guide](https://www.annualreviews.org/content/journals/10.1146/annurev-economics-092123-111021) discusses.
+
+## Validating instruments: falsification and sensitivity checks
+
+Because independence and exclusion cannot be proven outright, a credible IV paper leans on falsification strategies instead of claims alone. The guidance in the [PMC review of IV assumptions](https://pmc.ncbi.nlm.nih.gov/articles/PMC6368955/) recommends pairing subject-matter arguments with empirical checks that could, in principle, reveal a violation.
+
+<Checklist
+  id="iv-validation-checks"
+  title="Falsification checks for instrument validity"
+  style="numbered"
+  items={[
+    { text: 'Run an overidentification test (Sargan or Hansen J)', detail: 'Only when you have more instruments than endogenous regressors; passing it does not prove validity, since it only checks consistency among the instruments you have.' },
+    { text: 'Test the instrument against negative control outcomes', detail: 'Variables the instrument should have no effect on if the exclusion restriction holds.' },
+    { text: 'Apply the instrument to a reference population', detail: 'Check whether the IV estimate matches expectations where the treatment effect is known or absent.' },
+    { text: 'Run balance checks across levels of the instrument', detail: 'Compare observed covariates, similar to the checks used after random assignment.' },
+  ]}
+/>
+
+Report these checks together in a methods appendix so a reader can see the full falsification picture, not a single favorable statistic.
+
+## A worked example: education, earnings, and quarter of birth
+
+A classic sketch makes the mechanics concrete. Suppose the outcome Y is adult earnings, the treatment X is years of education, and the instrument Z is quarter of birth, which affects how much schooling a person completes before compulsory attendance laws allow them to leave, without plausibly affecting earnings on its own.
+
+- The first stage regresses years of education on quarter-of-birth indicators; a healthy F-statistic here signals that birth timing meaningfully predicts schooling.
+- The second stage regresses earnings on the predicted education values from stage one.
+- The resulting coefficient is read as the LATE for the compliers whose schooling was actually extended by compulsory attendance rules tied to their birth quarter, not as the return to education for everyone.
+- The exclusion restriction deserves its own paragraph in any write-up: does quarter of birth plausibly affect earnings through any channel other than schooling, such as school-starting age effects or relative maturity among classmates?
+
+## Where this fits in the Learn, Calculate, Apply path
+
+Statohub's content moves from Learn to Calculate to Apply, and instrumental variables sit at the intersection of all three. Start with the regression fundamentals in the <Link to={routes.article('linear-regression')}>regression and correlation guide</Link>, then explore the causal-design concepts in the <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality hub</Link>, and see IV alongside other applied methods in the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link>.
+
+## What the IV literature gets right, and what gets oversold
+
+The honest judgment here is that IV is a narrow tool, and most of its reputation for solving endogeneity rests on cases where a genuinely strong, well-argued instrument exists. The conventional advice to "just find an instrument" undersells how rare a clean one actually is: a weak or poorly justified instrument can produce an estimate that looks precise and is still wrong, which is arguably worse than an honest OLS regression with disclosed limitations.
+
+The first-stage F-statistic also gets more faith than it deserves. A single number above an old rule-of-thumb does not settle the question, particularly with clustered or heteroskedastic data, where effective F-statistics and identification-robust confidence sets tell a more honest story. If there is one habit worth adopting before any other, it is treating the exclusion restriction as the hypothesis that needs the most scrutiny and the most falsification evidence, not a line to assert and move past. Readers who internalize that compliers, not the full population, are what the estimate describes will write far more defensible methods sections than readers chasing a single clean coefficient.
+
+<DataTable
+  caption="IV practice: what to do and what to avoid"
+  headers={['Do', 'Avoid']}
+  align={['left', 'left']}
+  rows={[
+    ['Test the exclusion restriction rigorously', "Don't trust a single F > 10 rule"],
+    ['Use identification-robust methods', 'Avoid weak or unjustified instruments'],
+    ["Report the compliers' interpretation", "Don't prefer IV over honest OLS"],
+    ['Disclose OLS limitations honestly', "Don't assume instrument validity"],
+  ]}
+/>
+
+## Put these checks into practice with Statohub
+
+Running an IV model well means tracking a first-stage F-statistic, a set of robustness checks, and a clear statement of who the LATE applies to, and Statohub's <Link to={routes.learnLanding()}>Learn</Link> section walks through the regression groundwork those checks depend on. Pair a guide with the <Link to={routes.calculatorsHub()}>calculators</Link> to compute the summary statistics behind your diagnostics before you commit an estimate to a draft.
+
+## Sources
+
+<Sources items={[
+  { text: 'Instrumental Variables — Columbia Population Health Methods', href: 'https://www.publichealth.columbia.edu/research/population-health-methods/instrumental-variables', org: 'Columbia University Mailman School of Public Health' },
+  { text: 'Falsification Tests for Instrumental Variable Designs With an Application to Tendency to Operate — PMC', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6368955/', org: 'PubMed Central / National Institutes of Health' },
+  { text: 'Angrist, Imbens, and Rubin — "Identification of Causal Effects Using Instrumental Variables," JASA (1996)', href: 'https://math.mcgill.ca/dstephens/AngristIV1996-JASA-Combined.pdf', org: 'Journal of the American Statistical Association' },
+  { text: 'Staiger and Stock — "Instrumental Variables Regression with Weak Instruments," NBER Technical Working Paper No. 151', href: 'https://www.nber.org/papers/t0151', org: 'National Bureau of Economic Research' },
+  { text: 'Angrist and Krueger — "Does Compulsory School Attendance Affect Schooling and Earnings?," NBER Working Paper No. 3572', href: 'https://www.nber.org/papers/w3572', org: 'National Bureau of Economic Research' },
+  { text: 'Angrist, Imbens, and Krueger — "Jackknife Instrumental Variables Estimation," NBER Technical Working Paper No. 172', href: 'https://www.nber.org/papers/t0172', org: 'National Bureau of Economic Research' },
+  { text: 'Baum, Schaffer, and Stillman — "Instrumental Variables and GMM: Estimation and Testing," The Stata Journal (2003)', href: 'https://www.stata-journal.com/sjpdf.html?articlenum=st0030', org: 'The Stata Journal' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What are instrumental variables in simple terms?',
+    answer: 'An instrumental variable is a variable that shifts your treatment without having any separate effect on your outcome, letting you isolate causal variation the way a small natural experiment would. Researchers use this setup when the treatment is tangled up with omitted factors or reverse causation.',
+  },
+  {
+    question: 'How do you interpret instrumental variable results?',
+    answer: 'An IV coefficient from 2SLS should be read as the effect for compliers, the subgroup whose treatment status actually responds to the instrument, rather than as an average effect across everyone in the sample. This Local Average Treatment Effect framing comes from Angrist, Imbens, and Rubin’s foundational work on monotonicity and compliance.',
+  },
+  {
+    question: 'Can you explain endogeneity in simple terms?',
+    answer: 'Endogeneity means your treatment variable is correlated with the error term, usually because an omitted variable affects both treatment and outcome, the outcome influences the treatment, or the treatment is measured with error. Any of these breaks the assumption OLS needs to produce an unbiased estimate, which is exactly the gap IV is designed to close.',
+  },
+  {
+    question: 'What counts as a weak instrument and why does it matter?',
+    answer: 'A weak instrument barely predicts the treatment in the first stage, and the weak-instrument literature shows this pulls 2SLS estimates toward the biased OLS result while distorting standard errors. Diagnostics like the effective F-statistic and robust tests such as Anderson-Rubin help detect and correct for this problem.',
+  },
+  {
+    question: 'What are the four types of variables in IV analysis?',
+    answer: 'In a typical instrumental variables setup, the relevant variables are the outcome, the endogenous treatment, the instrument, and any exogenous control covariates included in both stages. Some researchers also distinguish compliers, always-takers, and never-takers as behavioral types rather than variables, a distinction tied to the LATE framework from Angrist, Imbens, and Rubin.',
+  },
+]} />
+
+## Related reading
+
+- <Link to={routes.article('effect-size')}>Effect Size: What It Means & How to Interpret It</Link>
+- <Link to={routes.article('multicollinearity-vif')}>Multicollinearity & Variance Inflation Factor (VIF) Explained</Link>
+- <Link to={routes.article('descriptive-vs-inferential-statistics')}>Inferential Statistics</Link>
