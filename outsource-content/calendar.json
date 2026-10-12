@@ -356,6 +356,13 @@
       "title": "Instrumental Variables Explained",
       "slug": "instrumental-variables-explained",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 52,
+      "day_label": "2026-10-03",
+      "title": "ARIMA Model Basics",
+      "slug": "arima-model-basics",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }
