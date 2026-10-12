@@ -3,7 +3,7 @@ order,slug,lane,status,attempts,score,date,notes
 2,proportions-in-statistics,B,published,0,92,2026-10-11,
 3,p-value,A,published,0,90,2026-10-11,
 4,binomial-distribution,B,pending,0,,,"enrich: add geometric distribution section (owed, NOW.md 2026-10-04)"
-5,normal-distribution,A,pending,0,,,
+5,normal-distribution,A,published,0,88,2026-10-12,
 6,how-to-find-the-range,B,pending,0,,,use the 5 unused range keywords from the board in copy (NOW.md parked item)
 7,permutations,A,pending,0,,,
 8,z-table,B,pending,0,,,
