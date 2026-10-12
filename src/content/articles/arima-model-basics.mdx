@@ -1,0 +1,197 @@
+---
+title: "ARIMA Model Basics: An 8-Step Checklist"
+h1: "ARIMA: 8-Step Checklist to Fit Your First Model"
+description: "Learn ARIMA model basics with an 8-step checklist covering stationarity tests, ACF/PACF order selection, residual checks, and forecast evaluation."
+category: time-series-forecasting
+primaryKeyword: arima model basics
+keywords:
+  - arima model basics
+  - ARIMA checklist
+  - stationarity tests
+  - ACF PACF order selection
+  - residual checks
+  - forecast evaluation
+phase: 1
+related:
+  - time-series-stationarity
+  - cross-validation-time-series
+  - holt-winters
+draft: false
+pubDate: 2026-10-12
+updatedDate: 2026-10-12
+reviewedDate: 2026-10-12
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+An ARIMA(p,d,q) model is a linear forecasting model that predicts a univariate time series by combining autoregressive lags, differencing to remove trends, and a moving average of past errors. It suits series that can be made stationary through transformation, and we walk through a practical checklist and diagnostic routine below so you can build and check one with confidence. Building one well means confirming stationarity before fitting, reading ACF and PACF plots as a starting point rather than a final answer, splitting data chronologically for training and testing, checking residuals for leftover autocorrelation with a Ljung-Box test, and comparing candidate models with a criterion like AICc before settling on the most parsimonious one that passes diagnostics.
+
+<KeyTakeaways rows={[
+  { point: 'Get stationarity right first', details: 'Ensuring stationarity through appropriate differencing is essential; overdifferencing increases variance and introduces artificial moving-average effects.' },
+  { point: 'ACF/PACF are a starting point, not a verdict', details: 'Reading ACF and PACF plots helps identify initial AR and MA orders, but they should be confirmed with information criteria and diagnostics.' },
+  { point: 'Split chronologically', details: 'Always split data chronologically for training and testing to avoid disrupting the time series structure and to keep forecasting evaluation realistic.' },
+  { point: 'Residuals should look like noise', details: 'Residuals should resemble white noise with no autocorrelation, checked via plots and Ljung-Box tests, to confirm a good model fit.' },
+  { point: 'Favor the simplest model that passes', details: 'Use model selection criteria like AICc in small samples and compare multiple candidate models to choose the most parsimonious and reliable ARIMA.' },
+]} />
+
+## What AR, I, and MA each contribute to the model
+
+Each letter in ARIMA(p,d,q) names a distinct mechanism, and understanding what each one does helps you read a model's output instead of treating it as a black box.
+
+- **AR (p)**: the autoregressive term predicts the current value from a weighted combination of its own past values, where p sets how many lags enter the equation.
+- **I (d)**: the integration term applies differencing, subtracting each observation from the one before it, to strip out trends and bring the mean back to a stable level; d=1 removes a linear trend, while d=2 (differencing the differences) handles a trend that is itself changing.
+- **MA (q)**: the moving-average term predicts the current value using the errors from past forecasts, letting the model correct for recent surprises rather than just recent levels.
+
+Combined, these pieces let a single equation capture momentum, drift, and short-lived shocks in one pass, which is why [stationarity and identification steps](https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc446.htm) treat the three components as building blocks to assemble in sequence rather than as competing choices.
+
+## How to tell if your series is stationary and fix it if not
+
+Stationarity means the mean, variance, and autocorrelation structure of a series stay roughly constant over time rather than drifting or swinging with the calendar. A series with a rising trend or a seasonal wobble violates this, and ARIMA's AR and MA terms assume the pattern they are modeling will not shift under them.
+
+1. Plot the raw series first: a visible upward or downward trend, or a variance that widens over time, is a strong sign of nonstationarity.
+2. Check the autocorrelation function: when the ACF decays very slowly across many lags instead of dropping off quickly, the series is likely nonstationary.
+3. Run a unit-root test such as the Augmented Dickey-Fuller (ADF) alongside the KPSS test, since the two check opposite null hypotheses and using them together catches cases either test alone would miss.
+4. Difference the series once, recheck the plot and ACF, and stop as soon as the pattern looks stable rather than differencing repeatedly out of caution.
+
+**Overdifferencing is a real risk**: differencing a series that is already stationary introduces artificial moving-average structure and inflates the variance. A simple check is to compare the variance before and after an additional difference. If it increases, you have gone a step too far, a caution that the [Box-Jenkins methodology](https://www.publichealth.columbia.edu/research/population-health-methods/box-jenkins-methodology) states directly.
+
+## Reading ACF and PACF to pick starting values for p and q
+
+The autocorrelation function (ACF) shows how a value correlates with its own past values across increasing lags, including indirect effects carried through intermediate lags. The partial autocorrelation function (PACF) strips out those indirect effects, showing only the direct relationship at each lag. Because they isolate different kinds of dependence, reading them together narrows down reasonable starting orders before you fit anything.
+
+<DataTable
+  caption="ACF/PACF shape patterns and the order they suggest"
+  headers={['PACF pattern', 'ACF pattern', 'Suggests']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Cuts off sharply after lag p', 'Tapers off gradually', 'AR(p) process'],
+    ['Tapers off gradually', 'Cuts off sharply after lag q', 'MA(q) process'],
+    ['Tapers off gradually', 'Tapers off gradually', 'Mixed ARMA — both AR and MA terms'],
+  ]}
+/>
+
+These [heuristics for matching ACF and PACF shapes to candidate orders](https://people.duke.edu/~rnau/Decision411%5F2007/411arim.htm) work best as a shortlist, not a final answer: keep candidate orders low, usually under 3 for a first pass, and let diagnostics and information criteria settle ties.
+
+**Pro Tip:** *Treat automated order-selection output as a second opinion, not a verdict: always look at the ACF and PACF plots yourself before accepting what a search routine recommends.*
+
+## The Box-Jenkins workflow for building an ARIMA model
+
+The Box-Jenkins approach organizes ARIMA modeling into four stages, and following them in order avoids the common mistake of jumping straight to a model fit before the data is ready.
+
+1. **Identify**: settle on the differencing order d using the stationarity checks above, then use ACF and PACF on the differenced series to propose candidate values for p and q.
+2. **Estimate**: fit the candidate model using maximum likelihood estimation, then examine the coefficient signs, sizes, and standard errors for anything implausible.
+3. **Check**: compare competing models with information criteria. **AICc is generally preferred over AIC in small samples** because it corrects for the extra bias that creeps in with fewer observations, while BIC penalizes complexity more heavily. Models must share the same value of d before you compare their [AIC or AICc scores](https://otexts.com/fpppy/09-arima.html), since differencing changes the likelihood calculation itself.
+4. **Forecast**: once residual diagnostics pass, generate forecasts and prediction intervals, returning to step one if the diagnostics flag structure the model missed.
+
+This identify-estimate-check-forecast cycle is iterative by design. A failed diagnostic check is a normal part of the process, not a sign you picked the wrong method.
+
+## What a fitted model gives you and how to read a forecast
+
+Fitting an ARIMA model returns the estimated coefficients for each AR and MA term, an estimate of residual variance (often labeled sigma2), and a log-likelihood value used to compute the information criteria from the previous section. Checking the coefficients against your ACF and PACF expectations is a quick sanity check before moving on.
+
+- **predict()** typically covers both in-sample and out-of-sample points, useful for checking fit against historical data.
+- **forecast()** is built specifically for out-of-sample projection beyond the end of the series.
+- **get_forecast()** in [common software implementations](https://www.statsmodels.org/stable/examples/notebooks/generated/autoregressive_integrated_moving_average.html) returns a richer object that includes prediction intervals, which is usually what you want for communicating uncertainty.
+
+Prediction intervals widen as the forecast horizon extends, reflecting the compounding uncertainty of projecting further into the future on a model that only has information up to the present. A narrow interval ten periods out is often a red flag rather than good news. Once you have forecasts in hand, our <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics guide</Link> walks through MAE, RMSE, and MAPE so you can judge whether the model's errors are acceptable for your purpose.
+
+## Residual checks and the mistakes that trip up beginners
+
+A well-fit ARIMA model leaves residuals that look like white noise: no remaining pattern, no significant autocorrelation, and no trend against the fitted values. Two checks confirm this directly: plotting the residual ACF to look for leftover structure, and running a Ljung-Box test on the residuals, which formally tests whether the autocorrelations as a group are statistically indistinguishable from noise.
+
+- **Overdifferencing**: applying one more difference than needed, which adds spurious MA structure and inflates variance.
+- **Random train/test splits**: shuffling time-ordered data breaks the sequence a forecasting model depends on; always split chronologically.
+- **Overfitting p and q**: adding lags until the residuals look clean on the training data, which usually hurts out-of-sample accuracy.
+
+These are among the most frequent beginner errors in ARIMA work, and each has a cheap fix: check stationarity before fitting, split by date, and favor the simplest model that passes diagnostics. **When residuals still show autocorrelation after reasonable tuning**, or the series clearly carries seasonal or <Link to={routes.article('data-drift-detection')}>production-level drift</Link> that keeps reappearing, it is worth considering SARIMA, a vector autoregression, or a machine-learning approach instead of forcing a plain ARIMA to fit.
+
+## A step-by-step checklist to fit your first ARIMA model
+
+Follow these steps on any software platform, from a spreadsheet-adjacent tool to R or Python, since the logic does not depend on the implementation.
+
+<Checklist
+  id="arima-fitting-checklist"
+  title="ARIMA fitting checklist"
+  style="numbered"
+  items={[
+    { text: 'Prepare the data', detail: 'Handle missing values, confirm a consistent time interval, and set aside a time-based test set rather than a random sample.' },
+    { text: 'Plot the series', detail: 'Check for a trend or a variance that changes over time; apply a log or Box-Cox transform if the spread grows with the level.' },
+    { text: 'Determine d', detail: 'Use the plot alongside ADF and KPSS tests, differencing until both tests agree the series is stationary.' },
+    { text: 'Inspect the ACF and PACF', detail: 'Work from the differenced series and shortlist candidate p and q values.' },
+    { text: 'Fit a simple starting model', detail: 'Try ARIMA(1,1,1) as a baseline before exploring more complex alternatives.' },
+    { text: 'Compare candidates', detail: 'Use AICc for small samples or BIC for a stronger complexity penalty, keeping d fixed across comparisons.' },
+    { text: 'Run residual diagnostics', detail: 'Inspect the residual ACF and apply the Ljung-Box test before trusting any forecast the model produces.' },
+    { text: 'Generate the forecast', detail: 'Produce prediction intervals and evaluate the forecast against the held-out test set.' },
+  ]}
+/>
+
+**Pro Tip:** *Keep a simple seasonal naive or moving-average forecast as a benchmark: if your ARIMA model cannot beat it on the test set, the extra complexity is not earning its keep.*
+
+## Where ARIMA fits among forecasting tools
+
+ARIMA works well for interpretable, linear, single-series problems once stationarity is handled. Seasonal data calls for [SARIMA rather than inflating p or q artificially](https://en.wikipedia.org/wiki/ARIMA), while nonlinear patterns or multiple interacting series point toward machine learning or vector autoregression. A simple, validated model usually beats a complex one that overfits the training window. The breakdown below maps each data pattern to the method built for it, so you can match the shape of your series to a defensible starting point instead of reaching for whichever tool is most familiar.
+
+<Figure number={1} caption="Where ARIMA fits among forecasting methods, by the data pattern you're modeling.">
+  <TaxonomyTree
+    title="Choosing a forecasting method by data pattern"
+    desc="Four data patterns map to a recommended forecasting method: single-series stationary data to ARIMA, seasonal data to SARIMA, nonlinear data to machine learning models, and multiple interacting series to vector autoregression."
+    root="Choose a forecasting method"
+    branches={[
+      { label: 'Single-series, stationary', children: ['ARIMA — linear, stationary'] },
+      { label: 'Seasonal pattern', children: ['SARIMA — handles seasonal patterns'] },
+      { label: 'Nonlinear pattern', children: ['Machine learning models'] },
+      { label: 'Multiple interacting series', children: ['Vector autoregression (VAR)'] },
+    ]}
+  />
+</Figure>
+
+## Statohub resources to practice ARIMA concepts
+
+We built our <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> to connect ideas like these to hands-on practice, and our <Link to={routes.learnLanding()}>Learn section</Link> covers the foundational statistics behind time-series work, from autocorrelation to hypothesis testing. Once you have a forecast to evaluate, our forecast accuracy metrics guide and our <Link to={routes.calculatorsHub()}>calculators</Link> give you a direct way to check your numbers against a benchmark before you trust them. For a structured next step, start with Learn Statistics and work through the applied examples as your series grows more complex.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Autocorrelation', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35c.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Box-Jenkins Model Identification — NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc446.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Introduction to ARIMA Models — R. Nau (Duke)', href: 'https://people.duke.edu/~rnau/Decision411%5F2007/411arim.htm', org: 'Duke University' },
+  { text: 'Box-Jenkins Methodology', href: 'https://www.publichealth.columbia.edu/research/population-health-methods/box-jenkins-methodology', org: 'Columbia University Mailman School of Public Health' },
+  { text: 'ARIMA Models — Forecasting: Principles and Practice (the Pythonic Way)', href: 'https://otexts.com/fpppy/09-arima.html', org: 'OTexts' },
+  { text: 'Autoregressive Integrated Moving Average (ARIMA) Tutorial', href: 'https://www.statsmodels.org/stable/examples/notebooks/generated/autoregressive_integrated_moving_average.html', org: 'statsmodels' },
+  { text: 'Hyndman & Khandakar, "Automatic Time Series Forecasting: The forecast Package for R," Journal of Statistical Software (2008)', href: 'https://www.jstatsoft.org/article/view/v027i03', org: 'Journal of Statistical Software' },
+  { text: 'TimeSeriesSplit — model_selection documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html', org: 'scikit-learn' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What do the p, d, and q parameters in ARIMA mean?',
+    answer: 'The p parameter sets how many past values (lags) feed into the autoregressive part, d sets how many times the series is differenced to remove trend, and q sets how many past forecast errors feed into the moving-average part. Together they define how much history and how much past error-correction the model uses to predict the next value.',
+  },
+  {
+    question: 'How do I choose the right ARIMA order without guessing?',
+    answer: 'Fix the differencing order d first using a time plot alongside ADF and KPSS tests, since models with different d values cannot be compared fairly. From there, read the ACF and PACF patterns for candidate p and q values, then confirm with AICc or BIC and residual diagnostics.',
+  },
+  {
+    question: 'What is the difference between ARIMA and SARIMA?',
+    answer: 'ARIMA models non-seasonal patterns using autoregressive, differencing, and moving-average terms, while SARIMA adds a seasonal set of the same terms tied to a repeating seasonal cycle. Seasonal data modeled with plain ARIMA usually leaves a repeating pattern in the residuals that SARIMA is built to capture.',
+  },
+  {
+    question: 'How do I know if my ARIMA model is a good fit?',
+    answer: 'Check that the residuals resemble white noise using a residual ACF plot and a Ljung-Box test, since remaining autocorrelation signals the model left structure on the table. A model that also beats a simple benchmark, like a naive forecast, on a held-out time-based test set gives practical confirmation alongside the statistical checks.',
+  },
+  {
+    question: 'Why do forecast prediction intervals get wider further out?',
+    answer: 'Each step further into the future compounds the uncertainty from every prior step the model has to estimate rather than observe directly. This is a normal feature of forecasting software output and a sign the model is being honest about declining confidence, not a flaw to fix.',
+  },
+]} />
