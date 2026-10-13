@@ -7,79 +7,111 @@ keywords:
   - permutation
   - permutation formula
 phase: 2
-pubDate: 2026-07-19
-updatedDate: 2026-09-09
-reviewedDate: 2026-09-09
 related:
   - combinations
   - permutations-and-combinations
   - fundamental-counting-principle
 draft: false
+pubDate: 2026-07-19
+updatedDate: 2026-10-13
+reviewedDate: 2026-10-13
 ---
-import RelatedLink from '../../components/RelatedLink.astro';
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-Swap the gold and bronze medalists in a three-runner podium and you get a completely different result — same three people, different outcome. That sensitivity to order is what a permutation counts: the number of distinct ordered arrangements you can build from a set of items. Whenever the position an item lands in changes the meaning of the outcome, this is the tool that tells you exactly how many outcomes exist, without listing every one by hand.
+A **permutation** is an ordered arrangement of some or all of the items in a set, where swapping two items into different positions produces a different, distinct outcome. The permutation formula, P(n, r) = n! / (n − r)!, counts exactly how many such arrangements exist when you select r items from a pool of n distinct items and place each one into its own position, with no item reused. It shows up anywhere a sequence, a rank, or a slot assignment carries meaning — a podium finish, a lockout code, a leaderboard — and it gets the wrong answer fast if you apply it to a repeated item or a circular seat without adjusting first.
 
-Below is the formula derived from first principles, four fully worked examples across different domains, the special cases that trip people up, and two edge cases — repeated items and circular seating — that the plain formula gets wrong if you apply it blindly.
+<KeyTakeaways rows={[
+  { point: 'What a permutation counts', details: 'An ordered arrangement of r items chosen from n distinct items, where swapping any two positions changes the outcome.' },
+  { point: 'The formula falls out of the counting principle', details: 'P(n, r) = n! / (n − r)! comes from filling r positions one at a time with n, then n − 1, then n − 2 choices, down to n − r + 1.' },
+  { point: '0! = 1 keeps the formula consistent', details: 'When r = n, the denominator (n − n)! = 0! = 1, so P(n, n) = n!, matching a direct factorial count of every item.' },
+  { point: 'Repetition changes the formula entirely', details: 'If an item can fill more than one position, the count becomes n^r instead of n! / (n − r)!, and the two grow very differently as n and r increase.' },
+  { point: 'Repeated items and circular seating both overcount the plain formula', details: 'Dividing by n₁!n₂!…nₖ! for repeated items, or using (n − 1)! instead of n! for a circular arrangement, removes duplicates the plain formula does not know about.' },
+]} />
 
----
+## Quick Checklist: Setting Up a Permutation Problem
 
-## What Is a Permutation?
+Most wrong answers trace back to skipping one of these checks before touching the formula, not to a slip in the arithmetic itself.
 
-A permutation is a specific ordering of a collection of distinct objects. Formally, an arrangement of *r* objects taken from a pool of *n* is a sequence of *r* of those objects placed into distinguishable, ordered positions, with no object occupying two positions at once.
+<Checklist
+  id="permutation-setup-checklist"
+  title="Quick checklist: setting up a permutation problem"
+  style="check"
+  items={[
+    { text: 'Identify n and r', detail: 'Write down the pool size n and how many positions r need to be filled, before writing a single factorial.' },
+    { text: 'Confirm order actually matters', detail: 'Ask whether swapping two chosen items changes the outcome. If it does not, you want a combination instead.' },
+    { text: 'Check whether repetition is allowed', detail: 'Decide if an item can fill more than one position — that switches the count from n! / (n − r)! to n^r.' },
+    { text: 'Check for repeated items in the full set', detail: "If you're arranging every item in a set that has duplicates (like the letters in LEVEL), divide by n₁!n₂!…nₖ! for each repeated item." },
+    { text: 'Check for a circular arrangement', detail: 'If the positions wrap around, like seats at a round table, use (n − 1)! instead of n!, since rotating everyone does not create a new arrangement.' },
+    { text: 'Use the cancellation shortcut', detail: 'Compute P(n, r) as the product of the top r descending integers starting at n, rather than dividing two large factorials.' },
+  ]}
+/>
 
-Take three books labeled A, B, and C, and arrange any two of them side by side on a shelf. Position matters here: A on the left and B on the right differs from B on the left and A on the right. Working through every possibility gives:
+For the order-matters question specifically, <Link to={routes.article('permutations-and-combinations')}>permutations vs. combinations</Link> builds out the full decision framework with side-by-side formulas.
 
+## What Does the Permutation Formula Count?
+
+The permutation formula counts ordered arrangements: the number of distinct ways to place r items, selected from a pool of n distinct items, into r positions where the position each item lands in is part of the answer.
+
+Take three books labeled A, B, and C, and arrange any two of them side by side on a shelf. Position matters here, so A on the left and B on the right is a different outcome from B on the left and A on the right. Listing every possibility gives:
+
+```
 AB, AC, BA, BC, CA, CB
+```
 
-Six distinct arrangements — from 3 objects taken 2 at a time. Ask a different question — "which two books did you pick?" without caring which side each sits on — and there are only three answers: the pairs (A, B), (A, C), and (B, C). That unordered count is a <Link to={routes.article('combinations')}>combination</Link> instead, and the two ideas are worth keeping separate in your head from the start.
+Six distinct arrangements from 3 objects taken 2 at a time. Ask a different question instead — "which two books did you pick?", without caring which side each sits on — and only three answers remain: the pairs (A, B), (A, C), and (B, C). That unordered count is a <Link to={routes.article('combinations')}>combination</Link> rather than a permutation, and the distinction is worth fixing early: the fastest way to tell the two apart is to ask whether swapping two chosen elements changes the answer to the actual question being asked.
 
-The Latin root *permutare* means "to change thoroughly," which fits: reassigning objects to positions and shuffling those assignments produces a genuinely new outcome each time.
+The same order-matters jump shows up with roles instead of shelf positions. Suppose four people — Ana, Bo, Cam, and Dee — need to fill three distinct roles: president, treasurer, and secretary. Selecting three of the four while ignoring which role each person gets leaves four possible groups: (Ana, Bo, Cam), (Ana, Bo, Dee), (Ana, Cam, Dee), and (Bo, Cam, Dee). Assign each trio to the three distinct roles, though, and every group splits into 3! = 6 distinct role assignments, since three people can fill three roles in six different orders — so the ordered total climbs to 4 × 6 = 24, matching P(4, 3) = 4 × 3 × 2 = 24 directly, which is exactly the r! relationship behind C(n, r) = P(n, r) / r!.
 
-### The Core Test: Does Order Add Information?
+[Wolfram MathWorld's definition of a permutation](https://mathworld.wolfram.com/Permutation.html) — a rearrangement of the elements of an ordered list into a one-to-one correspondence with itself — states the same idea formally, and [Math Is Fun's walkthrough of combinations and permutations](https://www.mathsisfun.com/combinatorics/combinations-permutations.html) works through the identical order-matters test in plainer language.
 
-The fastest way to classify a counting problem is to ask: **would swapping two elements produce a meaningfully different result?**
+<Callout variant="quote" source="NIST Digital Library of Mathematical Functions — §26.2 Basic Definitions" sourceHref="https://dlmf.nist.gov/26.2">
+A permutation is a one-to-one and onto function from a non-empty set to itself.
+</Callout>
 
-- A podium finish (gold, silver, bronze) — yes, swapping first and third is a different outcome entirely. Order-sensitive.
-- A five-person team pulled from a larger squad — no, the team is identical regardless of which name got written down first. Order-free.
-- A 4-digit PIN — yes, 4-7-2-1 and 1-2-7-4 are different codes. Order-sensitive.
-- Numbers drawn in a lottery — no, the same winning set results no matter what order the balls emerge. Order-free.
+That formal definition is the same idea in different language: a permutation reassigns every item in a set to a position, one item per position, with none left over and none repeated. The everyday combinatorics meaning used throughout this guide — an ordered selection of r items from a larger pool of n — is the applied version of that same reassignment idea, restricted to r of the n positions instead of all of them. The Latin root *permutare*, "to change thoroughly," fits either reading.
 
-When rank, position, or sequence carries meaning, you're counting arrangements of this kind. When only membership counts, you want a combination instead.
+## How Do You Derive P(n, r) = n! / (n − r)!?
 
----
+The permutation formula comes directly from filling positions one at a time and multiplying the choices available at each step, which is the <Link to={routes.article('fundamental-counting-principle')}>fundamental counting principle</Link> applied to a shrinking pool.
 
-<RelatedLink to={routes.calculator('combination')} label="combination calculator" intro="On a related note" />
+To fill r positions from a pool of n distinct items, the first position has n choices, the second has n − 1 choices (one item is already placed), the third has n − 2, and so on down to the r-th position, which has n − r + 1 choices left:
 
----
+<DataTable
+  caption="Choices remaining at each position, general case and a concrete example"
+  headers={['Position filled', 'Choices available (general)', 'Example: n = 8, r = 3']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['1st', 'n', '8'],
+    ['2nd', 'n − 1', '7'],
+    ['3rd', 'n − 2 … down to n − r + 1', '6'],
+  ]}
+/>
 
-## Why Order Matters: An Intuitive Argument
+Multiplying the choices gives the product form of the formula:
 
-Picture a three-digit combination lock — though, strictly, it should be called a permutation lock, since the working sequence is 4-7-2 and entering 2-7-4 won't open it. The three digits are identical; only their order differs, and the order is the entire content of the information.
-
-Suppose four people — Ana, Bo, Cam, and Dee — need to fill three distinct roles: president, treasurer, secretary. Simply selecting three of the four (ignoring roles) leaves four possible groups: (Ana, Bo, Cam), (Ana, Bo, Dee), (Ana, Cam, Dee), and (Bo, Cam, Dee).
-
-Assign each trio to specific roles, though, and every group splits into 3! = 6 distinct role assignments, since three people can fill three roles in six different orders. The total climbs to 4 × 6 = 24 — six times the unordered count.
-
-That ratio, r! for a selection size of r, holds generally: any unordered group of r items can be arranged in r! different orders. It's the bridge between this formula and the combination formula, covered in full in <Link to={routes.article('permutations-and-combinations')}>permutations and combinations</Link>.
-
----
-
-## The Permutation Formula
-
-Rather than listing every ordered arrangement by hand, the counting process compresses into a closed-form expression built from factorials.
+```
+P(n, r) = n × (n − 1) × (n − 2) × … × (n − r + 1)
+```
 
 ### The Factorial Function
 
-The factorial of a non-negative integer n, written n!, is the product of every positive integer from 1 up to n:
+The factorial of a non-negative integer n, written n!, is the product of every positive integer from 1 up through n:
 
 ```
 n! = n × (n − 1) × (n − 2) × … × 2 × 1
 ```
 
-Values worth memorizing:
+Values worth keeping in mind:
 
 ```
 5! = 120
@@ -87,144 +119,82 @@ Values worth memorizing:
 3! = 6
 2! = 2
 1! = 1
-0! = 1   (the empty product; not zero)
+0! = 1   (the empty product, not zero)
 ```
 
-0! = 1 isn't an arbitrary convention — it's the standard definition of the empty product (multiplying together zero numbers yields the multiplicative identity, 1), and it's what keeps the formula below consistent when every item in the set gets placed.
+0! = 1 by definition, not a rounding convention. [Wolfram MathWorld's entry on the factorial](https://mathworld.wolfram.com/Factorial.html) notes that this special case is defined to have value 1, consistent with there being exactly one way to arrange zero objects — the single, empty permutation of an empty set. That convention is what keeps the permutation formula below well-defined once every item in a set gets placed.
 
-### Deriving P(n, r)
-
-To count ordered arrangements of r items drawn from n distinct items, fill each position one at a time:
-
-- First position: n choices available.
-- Second position: n − 1 choices (one item is already placed).
-- Third position: n − 2 choices.
-- … continuing until …
-- r-th position: n − r + 1 choices.
-
-The fundamental counting principle says to multiply these independent choices together:
-
-```
-P(n, r) = n × (n − 1) × (n − 2) × … × (n − r + 1)
-```
-
-That's a product of exactly r descending terms. n! extends the same product all the way down to 1, and (n − r)! is precisely the tail left over — the terms from (n − r) down to 1. Dividing removes that tail:
+That product has exactly r descending terms. NIST's Digital Library of Mathematical Functions calls this kind of descending product a **falling factorial** and defines it generally as a variable x times (x − 1), (x − 2), and so on for a fixed number of descending terms, in its chapter on combinatorial analysis — substituting x = n (the pool size) and stopping after r terms reproduces the permutation product exactly (see the [NIST DLMF, §26.1 Special Notation](https://dlmf.nist.gov/26.1)). The full factorial n! extends the same product all the way down to 1, and (n − r)! is precisely the leftover tail from (n − r) down to 1. Dividing the full factorial by that tail cancels it out and leaves the same r-term product:
 
 ```
 P(n, r) = n! / (n − r)!
 ```
 
-This is the standard formula. Different textbooks write it as P(n, r), nPr, or ₙPᵣ — all the same calculation under different notation.
+This is the standard closed-form version of the formula. Different textbooks write it as P(n, r), nPr, or ₙPᵣ — all the same calculation under different notation, and [OpenStax's Precalculus 2e](https://openstax.org/books/precalculus-2e/pages/11-5-counting-principles) derives it the same position-by-position way in its chapter on counting principles.
 
----
+<Callout variant="tip" title="Pro tip">
+Skip the two-factorial division for anything but a quick symbolic check. For P(20, 3), computing 20! = 2,432,902,008,176,640,000 and then dividing by 17! is far more work than multiplying the top three descending terms directly: 20 × 19 × 18 = 6,840. Expand only the top r terms from n; the denominator factorial would have cancelled everything else anyway.
+</Callout>
 
-<RelatedLink to={routes.calculator('factorial')} label="factorial calculator" intro="For a related calculation" />
+The same logic scales to a security example. A distribution center that assigns each forklift a 4-digit lockout code drawn from the digits 1 through 9, with no digit repeated, is filling 4 positions from a pool of 9: P(9, 4) = 9 × 8 × 7 × 6 = 3,024 possible codes.
 
----
+## What Happens at the Special Cases r = n, r = 0, and r = 1?
 
-## Step-by-Step Worked Examples
+Three edge cases of P(n, r) are worth knowing on sight, because each one tests whether the 0! = 1 convention is being applied correctly.
 
-### Example 1: Assigning Rush Slots at a Water-Testing Lab
-
-**Problem:** A municipal lab receives 8 water samples flagged for elevated turbidity after a storm. Only 3 rush-analysis slots are open this week — Monday 8 a.m., Monday 1 p.m., and Wednesday 8 a.m. — each staffed by a different technician on a different instrument, so which sample lands in which slot matters for the chain-of-custody log. How many ways can 3 of the 8 samples be assigned to fill those slots?
-
-**Step 1 — Identify n and r.** Samples available: n = 8. Slots to fill: r = 3. Slot identity matters (Monday-8am ≠ Wednesday-8am), so this is order-sensitive.
-
-**Step 2 — Write the formula.**
-
-```
-P(8, 3) = 8! / (8 − 3)! = 8! / 5!
-```
-
-**Step 3 — Cancel the factorial tail.** The 5! in the denominator cancels the lower portion of 8!, leaving only the top three factors:
-
-```
-P(8, 3) = 8 × 7 × 6 = 336
-```
-
-There are **336** ways to fill the three slots.
-
-**Verify with full factorials:** 8! = 40,320; 5! = 120; 40,320 ÷ 120 = 336. Confirmed.
-
----
-
-### Example 2: A Warehouse Forklift Lockout Code
-
-**Problem:** A distribution center assigns each forklift a 4-digit lockout code drawn from the digits 1 through 9, with no digit repeated, so a code can't be shortcut by frequency-guessing. How many distinct codes can the security team generate?
-
-n = 9, r = 4.
-
-```
-P(9, 4) = 9 × 8 × 7 × 6 = 3,024
-```
-
-There are **3,024** possible codes.
-
----
-
-### Example 3: Arranging the Letters in STAR
-
-**Problem:** In how many ways can the letters in the word STAR be arranged?
-
-STAR has 4 distinct letters, and all 4 get used. n = 4, r = 4.
-
-```
-P(4, 4) = 4! / (4 − 4)! = 4! / 0! = 24 / 1 = 24
-```
-
-There are **24** distinct letter arrangements — but hold that thought; the section below on repeated letters changes this answer for a word like LEVEL.
-
----
-
-### Example 4: Publishing a Top-3 Depot Leaderboard
-
-**Problem:** A logistics company tracked delivery-time improvement across 12 regional depots this quarter and wants to publish an ordered leaderboard — most improved, second, third — in its investor update. How many distinct leaderboards are possible?
-
-n = 12, r = 3.
-
-```
-P(12, 3) = 12 × 11 × 10 = 1,320
-```
-
-There are **1,320** possible leaderboards.
-
----
-
-## Special Cases: r = n, r = 0, r = 1
-
-### r = n: Using Every Item
-
-When every item in the set gets placed (r = n), the denominator becomes (n − n)! = 0! = 1:
+**r = n: using every item.** When every item in the set gets placed, the denominator becomes (n − n)! = 0! = 1:
 
 ```
 P(n, n) = n! / 0! = n! / 1 = n!
 ```
 
-Arranging 5 distinct books on a shelf gives 5! = 120 orderings — the formula and a direct factorial agree, which is the consistency check that makes 0! = 1 non-negotiable.
+Arranging 5 distinct books on a shelf gives 5! = 120 orderings — the formula and a direct factorial count agree, which is exactly the consistency check that makes 0! = 1 non-negotiable rather than an arbitrary convention. Factorial-based formulas elsewhere in statistics need that same convention to stay defined at their boundary: the [NIST/SEMATECH e-Handbook's binomial distribution formula](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm) requires 0! = 1 to stay well-defined when the number of successes is 0 or equals the number of trials.
 
-### r = 0: Selecting Nothing
+**r = 0: selecting nothing.**
 
 ```
 P(n, 0) = n! / n! = 1
 ```
 
-There's exactly one way to select and arrange zero items: the empty selection. It looks trivial, but it's load-bearing in proofs involving the binomial theorem and generating functions.
+There is exactly one way to select and arrange zero items: the empty selection. It looks trivial, but it is load-bearing in proofs involving the binomial theorem and generating functions — see <Link to={routes.article('binomial-theorem')}>binomial theorem and Pascal's triangle</Link> for where that same C(n, 0) = 1 boundary case reappears.
 
-### r = 1: Selecting One Item
+**r = 1: selecting one item.**
 
 ```
 P(n, 1) = n! / (n − 1)! = n
 ```
 
-There are exactly n ways to choose one item and place it — a result direct counting confirms immediately.
+There are exactly n ways to choose and place one item, a result direct counting confirms immediately: with n candidates for a single open slot, each candidate is one possible outcome.
 
----
+<Callout variant="tip" title="Pro tip">
+If a computed P(n, r) comes out larger than n! itself, or P(n, n) does not equal n! exactly, re-check whether a stray 0! got treated as 0. Dividing by zero instead of one is the single most common way this special case goes wrong.
+</Callout>
 
-## Where the Formula Breaks Down: Repeated Items and Circular Seating
+## How Do You Count Permutations When Items Can Repeat?
 
-P(n, r) = n!/(n − r)! assumes every object is distinguishable and every position sits on a line. Two common real situations violate that, and both cause practitioners to overcount if they reach for the plain formula anyway.
+Everything above assumes **no repetition** — once an item fills a position, it is unavailable for the rest. When repetition is allowed instead, so each position can hold any of the n items regardless of what came before, the count becomes a power rather than a falling factorial:
 
-**Repeated (indistinguishable) items.** Go back to Example 3, but arrange the letters of LEVEL instead of STAR. LEVEL has 5 letters, but the two L's are identical to each other, and so are the two E's — swapping the two L's produces a sequence that looks exactly the same on paper. Treating all 5 letters as distinct would count each real arrangement multiple times over. The fix divides out the redundancy:
+```
+Arrangements with repetition = n^r
+```
+
+A 4-digit PIN drawn from digits 0 through 9, with repetition allowed, can place any of 10 digits in each of 4 positions:
+
+```
+10^4 = 10,000
+```
+
+Compare that to the same 4 positions **without** repetition: P(10, 4) = 10 × 9 × 8 × 7 = 5,040. Allowing repetition nearly doubles the count here, because every position keeps the full pool of 10 options instead of a shrinking one.
+
+The gap widens further with longer strings. A 6-character password built from the 26 lowercase letters, with no letter repeated, gives P(26, 6) = 26 × 25 × 24 × 23 × 22 × 21 = 165,765,600 possible passwords. Allow repeated letters instead and the count is 26⁶ = 308,915,776 — nearly double, because a repeated-letter password keeps drawing from the full 26-letter alphabet at every position instead of a pool that shrinks by one each time.
+
+The question to ask is simple: can the same item fill more than one position? A lock digit can repeat; a race finisher cannot occupy two places on the same podium. When a problem is ambiguous, phrases like "without replacement," "no digit may repeat," or "once chosen, an item can't be selected again" all signal the standard n! / (n − r)! formula rather than n^r.
+
+## How Do You Handle Repeated Items or a Circular Arrangement?
+
+P(n, r) = n! / (n − r)! assumes every object is distinguishable and every position sits on a line. Two common situations violate that assumption, and both cause overcounting if the plain formula gets applied without adjustment.
+
+**Repeated (indistinguishable) items.** Arranging the 4 distinct letters of STAR gives P(4, 4) = 4! = 24 orderings, since all 4 letters differ. Arrange the 5 letters of LEVEL instead, and the two L's are identical to each other, as are the two E's — swapping the two L's produces a sequence that looks exactly the same on paper. Treating all 5 letters as distinct would count every real arrangement multiple times over. The fix divides out that redundancy:
 
 ```
 Arrangements of a multiset = n! / (n₁! × n₂! × … × nₖ!)
@@ -236,157 +206,136 @@ where n₁, n₂, … are the counts of each repeated item. For LEVEL: n = 5, wi
 5! / (2! × 2!) = 120 / 4 = 30
 ```
 
-Only 30 distinguishable arrangements exist, not 120. Miss this adjustment and a word-arrangement or password-entropy calculation that involves any repeated character comes out four, six, or more times too high.
+Only 30 distinguishable arrangements exist, not 120. This is the same formula combinatorics calls a **multinomial coefficient** — NIST's handbook defines it as the number of ways to place n distinct objects into k labeled groups of fixed sizes n₁, n₂, …, nₖ, which is numerically identical to the number of distinguishable orderings of a multiset with those same group sizes (see the [NIST DLMF, §26.4 Lattice Paths: Multinomial Coefficients](https://dlmf.nist.gov/26.4)). Miss this adjustment and a word-arrangement or password-entropy calculation that involves any repeated character comes out several times too high.
 
-**Circular arrangements.** Seat 6 dinner guests around a round table, and a straight application of P(6, 6) = 720 overcounts, because a round table has no fixed starting position — rotating everyone one seat to the right produces the same relative seating, not a new one. Fixing one person's seat as a reference point removes the rotational duplicates, leaving (n − 1)! arrangements of the rest:
+**Circular arrangements.** Seat 6 dinner guests around a round table, and a straight application of P(6, 6) = 720 overcounts, because a round table has no fixed starting position — rotating everyone one seat to the right produces the same relative seating, not a new one. [Wolfram MathWorld's entry on circular permutations](https://mathworld.wolfram.com/CircularPermutation.html) notes that all n of the cyclic rotations of a given seating are equivalent for exactly this reason, which is why fixing one person's seat as a reference point and arranging the rest linearly gives the right count:
 
 ```
 Circular permutations of n items = (n − 1)!
 ```
 
-For 6 guests: 5! = 120, not 720 — six times fewer than the naive linear count, because each circular seating corresponds to exactly 6 equivalent linear ones (one per rotation).
+For 6 guests: 5! = 120, not 720 — six times fewer than the naive linear count, because each circular seating corresponds to exactly 6 equivalent linear ones, one per rotation.
 
-| Situation | Formula | Worked result |
-|---|---|---|
-| Distinct items, no repeats, linear order | n! / (n − r)! | P(8,3) = 336 |
-| Repetition allowed in each position | n^r | 10⁴ = 10,000 |
-| Repeated items in the full set | n! / (n₁!n₂!…) | LEVEL: 5!/(2!2!) = 30 |
-| Circular arrangement, all items used | (n − 1)! | 6 guests: 5! = 120 |
+<DataTable
+  caption="Which formula applies to which counting situation"
+  headers={['Situation', 'Formula', 'Worked result']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Distinct items, no repeats, linear order', 'n! / (n − r)!', 'P(8,3) = 336'],
+    ['Repetition allowed in each position', 'n^r', '10⁴ = 10,000'],
+    ['Repeated items in the full set', 'n! / (n₁!n₂!…)', 'LEVEL: 5!/(2!2!) = 30'],
+    ['Circular arrangement, all items used', '(n − 1)!', '6 guests: 5! = 120'],
+  ]}
+/>
 
-The takeaway: before reaching for P(n, r), check whether any items repeat and whether the arrangement is linear or circular. Skipping that check is the single most common source of a wrong count once problems move past textbook examples.
+Before reaching for P(n, r), check whether any items repeat and whether the arrangement is linear or circular — skipping that check is the single most common source of a wrong count once problems move past textbook examples.
 
----
+## Where Does the Permutation Formula Show Up in Practice?
 
-## When Items Can Repeat
+This kind of ordered counting turns up anywhere the position an item lands in changes the outcome.
 
-Everything above assumes **no repetition**: once an item fills a position, it's unavailable for the rest. That's the default reading of the term in most statistics and probability courses.
+- **Cryptography and passwords.** The size of the password space sets a floor on how long a brute-force attack takes, which is why the no-repeats-versus-repeats comparison above matters for real security estimates.
+- **Sports and ranking.** A quarterly leaderboard that ranks the top 3 of 12 regional offices by improvement is P(12, 3) = 12 × 11 × 10 = 1,320 distinct leaderboards — batting orders, tournament seeding, and medal ceremonies are all order-sensitive the same way.
+- **Scheduling.** Deciding the order to run several tasks across time slots, where an earlier task's finish time affects a later one, means counting orderings to search for the best sequence.
+- **Genetics.** The order of nucleotides along a strand determines which protein it encodes, so counting the possible orderings of a given set of nucleotides bounds how many distinct proteins that set could theoretically produce.
+- **Logistics.** Routing problems that visit r stops out of a network of n enumerate orderings of candidate routes to evaluate which is shortest.
 
-When repetition is allowed instead — each position can hold any of the n items regardless of what came before — the count grows:
+## A Worked Example: Assigning Rush Slots at a Water-Testing Lab
 
-```
-Arrangements with repetition = n^r
-```
+A municipal lab receives 8 water samples flagged for elevated turbidity after a storm. Only 3 rush-analysis slots are open this week — Monday 8 a.m., Monday 1 p.m., and Wednesday 8 a.m. — each staffed by a different technician on a different instrument, so which sample lands in which slot matters for the chain-of-custody log. How many ways can 3 of the 8 samples be assigned to fill those slots?
 
-**Example: a 4-digit PIN from digits 0–9, repetition allowed.** Any of 10 digits can go in each of the 4 positions:
+<Figure number={1} caption="The four-step method applied to P(8, 3): identify n and r, write the formula, cancel the factorial tail, then verify.">
+  <ProcessFlow
+    title="Solving P(8, 3) for the water-testing lab"
+    desc="Four connected steps: identify n as 8 samples and r as 3 slots; write the formula as 8 factorial over 5 factorial; cancel the factorial tail to get 8 times 7 times 6; verify the result equals 336 by dividing the full factorials."
+    steps={[
+      { label: 'Identify n and r', detail: 'n = 8 samples, r = 3 slots.' },
+      { label: 'Write the formula', detail: 'P(8, 3) = 8! / (8 − 3)! = 8! / 5!.' },
+      { label: 'Cancel the factorial tail', detail: '8 × 7 × 6 = 336.' },
+      { label: 'Verify', detail: '40,320 ÷ 120 = 336. Confirmed.' },
+    ]}
+  />
+</Figure>
 
-```
-10^4 = 10,000
-```
-
-**Compare without repetition:**
-
-```
-P(10, 4) = 10 × 9 × 8 × 7 = 5,040
-```
-
-Allowing repetition roughly doubles the count here, because every position keeps a full pool of 10 options instead of a shrinking one.
-
-The question to ask: can the same item fill more than one position? A lock digit can repeat; a race finisher cannot occupy two places on the same podium. When a problem is ambiguous, look for phrases like "without replacement," "no digit may repeat," or "once chosen, an item can't be selected again" — all of them signal the standard n!/(n−r)! formula rather than n^r.
-
----
-
-## Where Ordered Counting Shows Up in Practice
-
-This kind of counting turns up anywhere the order items get assigned to positions changes the outcome:
-
-**Cryptography and passwords.** The number of possible passwords sets a floor on how long a brute-force attack takes. A 6-character password from 26 lowercase letters, no repeats, gives 26 × 25 × 24 × 23 × 22 × 21 = 165,765,600 possibilities; allowing repeats (26⁶ = 308,915,776) roughly doubles that space.
-
-**Sports and ranking.** Batting-order assignments in baseball, tournament-bracket seeding, medal ceremonies — all order-sensitive, because each position carries distinct meaning.
-
-**Scheduling.** Deciding the order to run five tasks across five time slots, where an earlier task's finish time affects a later one, means counting orderings to search for the best sequence.
-
-**Genetics.** The order of nucleotides along a strand determines which protein it encodes. Counting the possible orderings of a given nucleotide set tells you how many distinct proteins that set could theoretically produce.
-
-**Logistics.** Routing problems — visiting r stops out of a network of n in the fewest kilometers — enumerate orderings of candidate routes to evaluate them.
-
----
-
-<RelatedLink to={routes.categoryHub('combinatorics')} label="Combinatorics hub" intro="See also" />
-
----
-
-## Common Mistakes and How to Avoid Them
-
-### Mixing Up Order and Selection
-
-The most common error: applying P(n, r) when order doesn't actually matter. If a problem asks how many teams of 3 can be formed from 10 people, with no roles assigned, that's a combination, not this. Check first: does swapping two elements change the answer to the actual question being asked? If not, use C(n, r) = n! / (r! × (n−r)!) instead.
-
-### Treating 0! as 0
-
-A frequent slip is writing 0! = 0, then dividing by zero and getting a nonsensical result or an outright error. 0! = 1, always. When r = n, the denominator (n−n)! = 0! = 1, not 0.
-
-### Swapping n and r
-
-n is the total pool size, r is the number of positions to fill, and r ≤ n is required. With 10 candidates for 3 roles, n = 10 and r = 3 — not the reverse. Writing P(3, 10) would require (3−10)! = (−7)!, which is undefined. If you catch yourself with r > n, re-read the problem: either repetition is allowed (switch to n^r) or n and r got assigned backward.
-
-### Computing Huge Factorials Directly
-
-For P(20, 3), computing the full 20! = 2,432,902,008,176,640,000 and dividing by 17! is unnecessary work. The cancellation shortcut lands on the same answer immediately:
+1. **Identify n and r.** Samples available: n = 8. Slots to fill: r = 3. Slot identity matters (Monday 8 a.m. is not the same as Wednesday 8 a.m.), so this is order-sensitive and calls for a permutation, not a combination.
+2. **Write the formula.**
 
 ```
-P(20, 3) = 20 × 19 × 18 = 6,840
+P(8, 3) = 8! / (8 − 3)! = 8! / 5!
 ```
 
-Expand only the top r descending factors from n; the denominator factorial cancels everything else.
-
-### Reaching for n^r When Repetition Is Forbidden
-
-n^r counts arrangements only when repetition is allowed. Drawing cards from a deck, seating race finishers, or filling roles from a candidate pool all forbid repeats, so use n!/(n−r)! instead. Using n^r overcounts badly: P(5, 3) = 60, while 5³ = 125.
-
----
-
-## Frequently Asked Questions
-
-### What is a permutation?
-
-An ordered arrangement of items selected from a set. Two arrangements count as distinct if they differ in even one position, regardless of which elements they share. (A, B, C) and (C, B, A) are two different orderings of the same three letters.
-
-### What is the permutation formula?
-
-For arranging r items chosen from n distinct items:
+3. **Cancel the factorial tail.** The 5! in the denominator cancels the lower portion of 8!, leaving only the top three descending factors:
 
 ```
-P(n, r) = n! / (n − r)!
+P(8, 3) = 8 × 7 × 6 = 336
 ```
 
-Equivalently, P(n, r) = n × (n−1) × … × (n−r+1) — the product of the top r descending integers starting at n.
+4. **Verify with full factorials.** 8! = 40,320; 5! = 120; 40,320 ÷ 120 = 336. The two methods agree.
 
-### What is the difference between a permutation and a combination?
+**Decision:** there are **336** distinct ways to assign 3 of the 8 flagged samples to the three rush slots, confirming the lab's chain-of-custody log needs to track which specific slot each sample was routed to — not just which 3 samples were chosen.
 
-This counts ordered arrangements, where sequence matters; a combination counts unordered groups, where only membership matters. The combination formula is C(n, r) = n! / (r! × (n−r)!), and the two are related by C(n, r) = P(n, r) / r!, since any unordered group of r items corresponds to exactly r! ordered versions of itself. See <Link to={routes.article('permutations-and-combinations')}>permutations and combinations</Link> for the full comparison, or <Link to={routes.article('combinations')}>combinations</Link> for the unordered case on its own.
+## Common Mistakes With the Permutation Formula
 
-### How do you handle repeated items or a circular arrangement?
+- **Mixing up order and selection.** The most common error is applying P(n, r) when order does not actually matter. If a problem asks how many teams of 3 can be formed from 10 people with no roles assigned, that is a combination, not a permutation. Fix: ask whether swapping two chosen elements changes the answer; if not, use C(n, r) = n! / (r! × (n − r)!) instead.
+- **Treating 0! as 0.** Writing 0! = 0 and then dividing by zero produces a nonsensical result. Fix: 0! = 1, always, so when r = n the denominator (n − n)! = 0! = 1, not 0.
+- **Swapping n and r.** n is the total pool size, r is the number of positions to fill, and r ≤ n is required. Fix: with 10 candidates for 3 roles, n = 10 and r = 3, not the reverse — writing P(3, 10) would require (3 − 10)! = (−7)!, which is undefined.
+- **Computing huge factorials directly.** For P(20, 3), computing the full 20! and dividing by 17! is unnecessary work. Fix: expand only the top r descending terms from n — 20 × 19 × 18 = 6,840 — since the denominator factorial would cancel everything else anyway.
+- **Reaching for n^r when repetition is forbidden.** n^r counts arrangements only when repetition is allowed. Fix: drawing cards from a deck, seating race finishers, or filling roles from a candidate pool all forbid repeats, so use n! / (n − r)! instead — using n^r overcounts badly: P(5, 3) = 60, while 5³ = 125.
 
-Divide out the redundancy. For a set with repeated items, use n!/(n₁!n₂!…nₖ!), where each nᵢ is the count of one repeated item — arranging LEVEL gives 5!/(2!2!) = 30, not 120. For a circular seating of n distinct people, use (n−1)! rather than n!, since rotating everyone one seat produces the same relative arrangement.
+## Statohub's Take on Permutations
 
-### How do you calculate arrangements with repetition allowed?
+Statohub's position is that the single most valuable habit for this topic is running the checklist above before writing a single factorial — specifically the repetition check and the repeated-items check, since both are easy to forget under time pressure and both silently produce a plausible-looking but wrong number. Reach for the product form, n × (n − 1) × … × (n − r + 1), for quick hand calculations, and save the full factorial notation for symbolic work or proofs. Keep the order-matters test as the very first question on any new counting problem; it is the fastest way to avoid reaching for this formula when a combination was the right tool all along.
 
-Use n^r. With 10 possible digits and 4 positions, repetition allowed, the count is 10⁴ = 10,000. Without repetition it's P(10, 4) = 10 × 9 × 8 × 7 = 5,040.
+## Put the Permutation Formula to Work With Statohub's Tools
 
-### What does P(n, r) mean?
+Reading the formula is the easy part; catching a repetition or repeated-item case before it skews the count is where most of the real risk sits. Statohub's <Link to={routes.categoryHub('combinatorics')}>Combinatorics hub</Link> builds on the same counting ideas, starting with the <Link to={routes.article('fundamental-counting-principle')}>fundamental counting principle</Link> and the full <Link to={routes.article('combinations')}>combination formula</Link> walkthrough for the unordered case. For the decision framework that separates the two concepts outright, see <Link to={routes.article('permutations-and-combinations')}>permutations vs. combinations</Link>. When you are ready to compute, the <Link to={routes.calculator('combination')}>combination calculator</Link> runs the C(n, r) side of the comparison, and the <Link to={routes.calculator('factorial')}>factorial calculator</Link> handles the n! arithmetic behind any P(n, r) by hand. The full <Link to={routes.calculatorsHub()}>calculators hub</Link> lists every tool on the site.
 
-"The number of ordered arrangements of r items chosen from n distinct items." n is the pool size; r is the selection size. P(8, 3) = 336 means there are 336 ordered ways to pick and place 3 items out of a set of 8.
+## Sources
 
-### Can r be greater than n?
+<Sources items={[
+  { text: 'NIST Digital Library of Mathematical Functions — §26.1 Special Notation (falling and rising factorials), Chapter 26 Combinatorial Analysis', href: 'https://dlmf.nist.gov/26.1', org: 'NIST' },
+  { text: 'NIST Digital Library of Mathematical Functions — §26.2 Basic Definitions (formal definition of a permutation), Chapter 26 Combinatorial Analysis', href: 'https://dlmf.nist.gov/26.2', org: 'NIST' },
+  { text: 'NIST Digital Library of Mathematical Functions — §26.4 Lattice Paths: Multinomial Coefficients and Set Partitions', href: 'https://dlmf.nist.gov/26.4', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6.6.18. Binomial Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm', org: 'NIST' },
+  { text: 'OpenStax — "11.5 Counting Principles" (permutations and combinations formulas), Precalculus 2e', href: 'https://openstax.org/books/precalculus-2e/pages/11-5-counting-principles', org: 'OpenStax' },
+  { text: 'Permutation — Wolfram MathWorld', href: 'https://mathworld.wolfram.com/Permutation.html', org: 'Wolfram MathWorld' },
+  { text: 'Circular Permutation — Wolfram MathWorld', href: 'https://mathworld.wolfram.com/CircularPermutation.html', org: 'Wolfram MathWorld' },
+  { text: 'Factorial — Wolfram MathWorld', href: 'https://mathworld.wolfram.com/Factorial.html', org: 'Wolfram MathWorld' },
+  { text: 'Combinations and Permutations — Math Is Fun', href: 'https://www.mathsisfun.com/combinatorics/combinations-permutations.html', org: 'Math Is Fun' },
+]} />
 
-Not in the standard no-repetition formula — choosing more items than the pool contains is impossible, and (n−r)! is undefined for negative integers. If a problem implies r > n, either repetition is allowed (switch to n^r) or n and r are assigned backward.
+## FAQ
 
-### When should I multiply the descending terms instead of using the factorial formula?
+<FAQ items={[
+  {
+    question: 'What Is a Permutation in Math?',
+    answer: 'A permutation is an ordered arrangement of some or all of the items in a set, where the position each item occupies is part of what makes one arrangement different from another. Two permutations count as distinct if they differ in even a single position, regardless of which elements they otherwise share — (A, B, C) and (C, B, A) are two different orderings of the same three letters.',
+  },
+  {
+    question: 'What Is the Permutation Formula?',
+    answer: 'For arranging r items chosen from a pool of n distinct items, the permutation formula is P(n, r) = n! / (n − r)!. Equivalently, P(n, r) equals the product n × (n − 1) × … × (n − r + 1), the top r descending integers starting at n, which is the faster way to compute it by hand without expanding two full factorials.',
+  },
+  {
+    question: 'What Is the Difference Between a Permutation and a Combination?',
+    answer: 'A permutation counts ordered arrangements, where the sequence of items matters; a combination counts unordered groups, where only membership matters. They are related by C(n, r) = P(n, r) / r!, since any unordered group of r items corresponds to exactly r! ordered versions of itself. See permutations vs. combinations for the full side-by-side comparison and decision framework.',
+  },
+  {
+    question: 'How Do You Calculate Permutations With Repeated Items?',
+    answer: 'Divide out the redundancy with n! / (n₁!n₂!…nₖ!), where each nᵢ is the count of one repeated item in the full set. Arranging the letters of LEVEL, which has two L\'s and two E\'s among its 5 letters, gives 5! / (2!2!) = 30 distinguishable arrangements, not the 120 you would get by treating every letter as unique.',
+  },
+  {
+    question: 'How Do You Count Permutations With Repetition Allowed?',
+    answer: 'Use n^r instead of n! / (n − r)!, since each of the r positions can independently hold any of the n items. With 10 possible digits and 4 positions, repetition allowed, the count is 10⁴ = 10,000. Without repetition over the same pool and positions, it drops to P(10, 4) = 10 × 9 × 8 × 7 = 5,040.',
+  },
+  {
+    question: 'Can r Be Greater Than n in the Permutation Formula?',
+    answer: 'Not in the standard no-repetition formula — selecting more items than the pool contains is impossible, and (n − r)! is undefined for a negative integer. If a problem implies r is greater than n, either repetition is actually allowed, which calls for n^r instead, or n and r have been assigned backward and need re-checking.',
+  },
+]} />
 
-They're the same calculation written two ways. n × (n−1) × … × (n−r+1) is the product form; n!/(n−r)! is the compact algebraic form. Use the product form for a quick hand calculation with moderate n; use the factorial form when working symbolically or writing a proof.
+## Recommended
 
----
-
-## Summary
-
-This kind of count measures ordered selections from a larger set, where each distinct sequence is its own outcome:
-
-```
-P(n, r) = n! / (n − r)!
-```
-
-The formula follows directly from the fundamental counting principle: fill the first position with any of n items, the second with any of the remaining n − 1, and so on down to n − r + 1, then multiply.
-
-Four rules to carry forward: order matters (swapping two elements yields a different outcome); 0! = 1, so P(n, n) = n!; repetition allowed changes the formula to n^r; and repeated items or a circular arrangement both require dividing out redundancy the plain formula ignores. With those in hand, most ordered-counting problems reduce to identifying n and r correctly and picking the right variant of the formula.
-
-For a rigorous probability-theory treatment of counting techniques, see [Penn State STAT 414 — Counting Techniques, Lesson 1.3](https://online.stat.psu.edu/stat414/lesson/1/1.3), which covers this material alongside combinations as the foundational tools for classical probability. [Math is Fun — Permutations and Combinations](https://www.mathsisfun.com/combinatorics/combinations-permutations.html) is a useful companion for building intuition across worked examples.
+- <Link to={routes.article('binomial-theorem')}>Binomial Theorem and Pascal's Triangle Explained</Link>
+- <Link to={routes.article('binomial-distribution')}>Binomial Distribution: Formula & Examples</Link>
+- <Link to={routes.calculator('combination')}>Combination Calculator</Link>
+- <Link to={routes.calculator('factorial')}>Factorial Calculator</Link>
