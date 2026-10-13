@@ -363,6 +363,13 @@
       "title": "ARIMA Model Basics",
       "slug": "arima-model-basics",
       "category_slug": "time-series-forecasting"
+    },
+    {
+      "queue_position": 53,
+      "day_label": "2026-10-05",
+      "title": "Seasonal Decomposition",
+      "slug": "seasonal-decomposition",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }

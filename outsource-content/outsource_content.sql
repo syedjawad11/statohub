@@ -69,6 +69,7 @@ INSERT INTO "outsource_articles" VALUES('regression-discontinuity-design','Regre
 INSERT INTO "outsource_articles" VALUES('class-imbalance-handling','Class Imbalance Handling','machine-learning-statistics',50,'2026-09-30','917072','published','outsource-content/raw/class-imbalance-handling.json','src/content/articles/class-imbalance-handling.mdx',3,2,0,8,'','2026-10-10 18:58:11','2026-10-10 19:12:05');
 INSERT INTO "outsource_articles" VALUES('instrumental-variables-explained','Instrumental Variables Explained','experiments-causality',51,'2026-10-01','921235','published','outsource-content/raw/instrumental-variables-explained.json','src/content/articles/instrumental-variables-explained.mdx',1,2,0,7,'','2026-10-11 09:14:38','2026-10-11 09:34:01');
 INSERT INTO "outsource_articles" VALUES('arima-model-basics','ARIMA Model Basics','time-series-forecasting',52,'2026-10-03','928705','published','outsource-content/raw/arima-model-basics.json','src/content/articles/arima-model-basics.mdx',2,1,0,8,'','2026-10-12 09:15:15','2026-10-12 09:37:03');
+INSERT INTO "outsource_articles" VALUES('seasonal-decomposition','Seasonal Decomposition','time-series-forecasting',53,'2026-10-05','937430','fetched','outsource-content/raw/seasonal-decomposition.json',NULL,0,0,0,NULL,'','2026-10-13 09:15:17','2026-10-13 09:15:34');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
