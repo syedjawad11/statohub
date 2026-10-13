@@ -1,0 +1,192 @@
+---
+title: "Seasonal Decomposition: A Practical Guide"
+h1: "Seasonal Decomposition Without Heavy Math"
+description: "Practical seasonal decomposition without heavy math for students and analysts. When to use STL, MSTL/TBATS, or X-13, plus a 6 step recipe."
+category: time-series-forecasting
+primaryKeyword: seasonal decomposition
+keywords:
+  - seasonal decomposition
+  - STL decomposition
+  - MSTL
+  - TBATS
+  - X-13
+phase: 1
+related:
+  - arima-model-basics
+  - time-series-stationarity
+  - cross-validation-time-series
+draft: false
+pubDate: 2026-10-13
+updatedDate: 2026-10-13
+reviewedDate: 2026-10-13
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Seasonal decomposition splits a time series into three parts: a trend, a seasonal pattern, and whatever is left over, called the remainder. For stable, single-season data, classical moving-average decomposition or [STL](https://www.statsmodels.org/stable/examples/notebooks/generated/stl_decomposition.html) are the usual starting points; for official statistics requiring calendar adjustments, analysts turn to X-13ARIMA-SEATS; for series with overlapping seasonal cycles, such as hourly data with daily and weekly patterns, MSTL or TBATS handle the job better.
+
+<KeyTakeaways rows={[
+  { point: 'Single vs. multiple seasons', details: 'Classical decomposition and STL handle single-season series well, but MSTL and TBATS are better suited for multiple seasonal cycles.' },
+  { point: 'Additive vs. multiplicative', details: 'Should seasonal patterns widen as the trend rises, a multiplicative model or a log transform is more appropriate.' },
+  { point: 'Calendar effects need X-13', details: 'For series with calendar irregularities, X-13ARIMA-SEATS explicitly models and adjusts for trading-day and holiday effects, though it is more complex.' },
+  { point: 'Short series mislead', details: 'Short series with incomplete cycles or abrupt level shifts tend to produce unstable and misleading seasonal estimates.' },
+  { point: 'Exploration, not forecasting', details: 'Relying solely on decomposition for forecasting ignores uncertainty, so it is best used for exploration rather than final predictions.' },
+]} />
+
+## Core Concepts: Trend, Season, and the Additive-vs-Multiplicative Choice
+
+Every decomposition rests on a model of how the three components combine. In an additive model, we assume the series equals trend plus season plus remainder, which fits when seasonal swings stay roughly the same size regardless of the level of the series. In a multiplicative model, the series equals trend times season times remainder, which fits better when seasonal swings grow as the series grows, a pattern common in retail sales or web traffic.
+
+- **Visual check:** if seasonal peaks widen as the trend rises, the pattern is likely multiplicative.
+- **Transform option:** applying a log or Box-Cox transform to a multiplicative series often lets us decompose it additively afterward.
+- **Cycle vs season:** a cycle (like a business cycle) has no fixed length, while a season (like December retail spikes) repeats on a known calendar interval, and conflating the two leads to misreading long-term swings as seasonality.
+
+We cover these transforms in more depth, with worked examples, in our <Link to={routes.article('exploratory-data-analysis')}>exploratory data analysis workflow</Link>.
+
+## Classical Decomposition: Moving Averages and Seasonal Figures
+
+Classical decomposition, still available in R's `decompose()` function, estimates the [trend using a centered moving average](https://rweb.stat.umn.edu/R/library/stats/html/decompose.html), then averages the detrended values for each seasonal period to produce seasonal figures, which are centered so they sum to zero (additive) or average to one (multiplicative). Whatever remains after removing trend and season becomes the remainder.
+
+- A moving average smooths monthly data before the seasonal step; similarly, another moving average configuration smooths quarterly data.
+- The method assumes a fixed seasonal shape that repeats identically every period, so it needs several complete cycles to work reliably.
+- It handles additive and multiplicative models, but it is sensitive to outliers and tends to over-smooth the trend near the start and end of the series.
+
+<Callout variant="tip" title="Pro tip">
+Run classical decomposition first as a quick diagnostic, then consider STL for a flexible approach to seasonal patterns.
+</Callout>
+
+## STL: Mechanism, Parameters, and When It Shines
+
+STL, short for Seasonal-Trend decomposition using LOESS, replaces fixed moving averages with LOESS smoothing, a local regression technique that fits flexible curves to small windows of data. STL alternates between estimating the seasonal and trend components in a loop, refining each pass, allowing the seasonal shape to change gradually across the series rather than remain frozen.
+
+- **Seasonal window (s.window):** controls how much the seasonal shape can drift between cycles; a larger window yields a smoother, more stable seasonal pattern.
+- **Trend window:** governs how responsive the trend is to short-term swings; too narrow a window pulls noise into the trend line.
+- **Low-pass filter and robust option:** the low-pass filter smooths the combined trend-cycle signal, and robust fitting down-weights outliers so a single bad data point does not distort the whole decomposition.
+
+**STL's additive model, with a Box-Cox transform applied beforehand, is one of the most practical ways to handle multiplicative seasonality without switching methods entirely.** STL requires a specified frequency or period and works best as a default choice for a single, well-defined seasonal cycle, especially when outliers or gradually shifting seasonality rule out the classical approach.
+
+## X-13ARIMA-SEATS: Formal Adjustment for Official Statistics
+
+Statistical agencies rarely stop at a basic decomposition because official series carry calendar noise that classical methods and STL do not address directly. [X-13ARIMA-SEATS integrates regARIMA modeling](https://www.census.gov/content/dam/Census/library/working-papers/2017/adrm/docx13ashtml.pdf), a regression-based ARIMA framework that estimates and removes trading-day effects, moving holidays, and other calendar irregularities before the seasonal adjustment itself runs.
+
+- Trading-day regressors account for months having different numbers of weekdays, which can shift monthly totals independent of any real seasonal effect.
+- Holiday regressors handle moving observances, such as Easter, that fall in different months from year to year.
+- Automatic outlier detection and extensive diagnostics, including revision histories, make the output suitable for publication by national statistical offices.
+
+The trade-off is complexity: X-13 demands more setup and modeling judgment than STL, and its regARIMA step carries its own set of assumptions about the series. For most analytical and exploratory work, this added machinery is unnecessary.
+
+<Figure number={1} caption="A decision path for choosing a seasonal decomposition method based on the number of seasonal cycles and whether calendar adjustment is needed.">
+  <DecisionTree
+    title="Choosing a decomposition method"
+    desc="A decision tree that routes to MSTL or TBATS when a series has multiple seasonal cycles, to X-13ARIMA-SEATS when calendar adjustment is needed, and to STL or classical decomposition otherwise."
+    root={{
+      label: 'Does the series have more than one seasonal cycle (e.g., daily + weekly + annual)?',
+      yes: { label: 'Use MSTL or TBATS to handle the multiple seasonal periods' },
+      no: {
+        label: 'Does the series need adjustment for trading days or moving holidays?',
+        yes: { label: 'Use X-13ARIMA-SEATS for calendar-adjusted official statistics' },
+        no: { label: 'Use STL as the flexible default, or classical decomposition for a quick stable-seasonality check' },
+      },
+    }}
+  />
+</Figure>
+
+In short, the method choice comes down to two questions: does the series carry more than one seasonal cycle, and does it need adjustment for trading-day or holiday effects? A series with layered cycles — daily, weekly, and annual rhythms stacked on top of each other, the kind seen in hourly electricity demand — calls for MSTL or TBATS, since classical decomposition and standard STL only resolve a single period. A series that needs trading-day or holiday adjustment, the kind official statistical agencies publish, calls for X-13ARIMA-SEATS despite its added setup cost. Everything else is a good fit for STL as the flexible default, with classical decomposition still useful as a quick first diagnostic pass.
+
+## Multiple Seasonalities: MSTL, TBATS, and STR
+
+Some series carry more than one seasonal cycle at once, such as hourly electricity demand with daily, weekly, and annual rhythms layered together, a concept often seen in real estate where multiple seasonal patterns affect investment returns [investment property forecasting methods](https://wealthstacker.com.au/blog/investment-property-forecasting-methods-2026-guide). Classical decomposition and standard STL only handle one seasonal period, so they miss the shorter or longer cycles entirely.
+
+- **MSTL** extends STL by [identifying each seasonal frequency and applying STL to it iteratively](https://research.monash.edu/en/publications/mstl-a-seasonal-trend-decomposition-algorithm-for-time-series-wit/), sorting frequencies and looping until the components stabilize; it is implemented in R's `forecast` package as `mstl` and runs efficiently even on long, high-frequency series.
+- MSTL is generally faster than TBATS on complex-frequency data while producing comparable component separation, which makes it a sensible default for exploratory work.
+- **TBATS, STR, and Prophet** suit cases where the goal is forecasting rather than decomposition alone, since they build the seasonal structure directly into a predictive model instead of just describing it.
+
+<DataTable
+  caption="Decomposition and seasonal-adjustment methods compared on seasonality handling and typical use"
+  headers={['Method', 'Handles multiple seasons', 'Calendar/holiday adjustment', 'Best for']}
+  align={['left', 'center', 'center', 'left']}
+  rows={[
+    ['Classical decomposition', 'No', 'No', 'Quick diagnostic check on stable, single-season data'],
+    ['STL', 'No', 'No', 'Flexible default for one well-defined seasonal cycle'],
+    ['X-13ARIMA-SEATS', 'No', 'Yes', 'Official statistics needing trading-day and holiday adjustment'],
+    ['MSTL', 'Yes', 'No', 'Multiple seasonal cycles, a fast exploratory default'],
+    ['TBATS / STR / Prophet', 'Yes', 'No', 'Forecasting with multiple seasonalities, not just description'],
+  ]}
+/>
+
+The pattern across all four rows is consistent with what each method was built for: classical decomposition and STL describe a single seasonal cycle, X-13ARIMA-SEATS adds the calendar machinery official statistics need, and MSTL, together with TBATS, STR, and Prophet, extend the same idea to series carrying more than one seasonal rhythm at once.
+
+## A Step-by-Step Recipe for Decomposing a Time Series
+
+Before fitting any model, confirm the series has correct frequency metadata, a sensible way of handling missing values, and enough history to cover several full seasonal cycles. Short series with incomplete cycles produce unstable seasonal estimates regardless of which method we choose.
+
+<Checklist
+  id="decomposition-recipe"
+  title="Decomposition recipe"
+  style="numbered"
+  items={[
+    { text: 'Check the data', detail: 'Verify timestamps, frequency, and fill or flag missing values before decomposing.' },
+    { text: 'Detect seasonality', detail: 'Inspect seasonal plots, the autocorrelation function (ACF), and a periodogram to confirm a repeating cycle exists and at what period.' },
+    { text: 'Choose a method', detail: 'Pick classical for a quick, stable-seasonality check, STL for a flexible single season, MSTL for multiple seasons, or X-13 when calendar effects matter.' },
+    { text: 'Fit and inspect', detail: 'Plot the trend, seasonal, and remainder components separately, and look for leftover structure in the remainder that suggests a poor fit.' },
+    { text: 'Test stability', detail: 'Rerun the decomposition on sliding windows of the series to confirm the seasonal pattern holds across different time spans.' },
+    { text: 'Produce the adjusted series', detail: 'Subtract (additive) or divide out (multiplicative) the seasonal component to get a seasonally adjusted series, and remember that simply repeating the seasonal pattern into the future [ignores uncertainty in how that pattern may shift](https://math.unm.edu/~lil/Stat581/6-decomposition.pdf).' },
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Always plot the remainder on its own axis scale; a visible pattern in the remainder may indicate the trend or seasonal window needs adjusting.
+</Callout>
+
+Testing stability deserves particular attention: rerunning the decomposition on sliding windows of the series, and labeling outliers along the way, catches instability before it reaches a report, since a seasonal pattern that looks stable over the full series can still drift within any given slice of it. The recomposition check matters just as much — adding the trend, seasonal, and remainder components back together should reproduce the original series exactly, and a mismatch there is a sign that a step in the recipe was skipped or misconfigured.
+
+## Limitations, Diagnostics, and Common Pitfalls
+
+Short series, level shifts, and sudden outliers all distort decomposition results, and a seasonal pattern that gradually changes shape will not fit a method built around a fixed template. Holiday and calendar effects, in particular, get misread as random noise unless a method like X-13 accounts for them explicitly.
+
+- Check the residual ACF for leftover autocorrelation, which signals the trend or seasonal component absorbed too little (or too much) structure.
+- Run a recomposition check: adding the components back together should reproduce the original series exactly.
+- Use sliding-window spans and simple outlier labeling to catch instability before trusting the output.
+- When calendar effects are suspected, a log or Box-Cox transform plus robust fitting often resolves distortions that a plain moving average cannot.
+
+Together, these checks turn decomposition from a one-shot calculation into a repeatable diagnostic: a residual that still correlates with itself, a recomposition that doesn't reproduce the original series, or a seasonal shape that only holds on some windows are all signs to revisit the chosen method rather than trust the output as-is.
+
+## Why This Guide Reflects Sound Statistical Practice
+
+This guide is built around the same primary sources practitioners rely on: the [R decomposition manual](https://rweb.stat.umn.edu/R/library/stats/html/decompose.html), the [statsmodels STL documentation](https://www.statsmodels.org/stable/examples/notebooks/generated/stl_decomposition.html), and the Census Bureau's own [X-13ARIMA-SEATS reference manual](https://www.census.gov/content/dam/Census/library/working-papers/2017/adrm/docx13ashtml.pdf).
+
+- Explore the <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub for more worked examples that connect theory to practice.
+- Visit the <Link to={routes.learnLanding()}>Learn</Link> section for foundational guides on related concepts like <Link to={routes.article('time-series-stationarity')}>stationarity</Link>.
+
+## Decomposition Is a Starting Point, Not a Final Answer
+
+Decomposition earns its keep when we are exploring a series or explaining a pattern to a stakeholder who needs to see the seasonal shape plainly. Once the goal shifts to prediction accuracy, calendar-aware adjustments, or quantified uncertainty, a model-based forecasting approach does more work than decomposition alone. Students and analysts build intuition fastest by decomposing a few real datasets before layering forecasting methods on top.
+
+## Sources
+
+<Sources items={[
+  { text: 'R: Classical Seasonal Decomposition by Moving Averages', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/decompose.html', org: 'ETH Zurich (CRAN R manual mirror)' },
+  { text: 'Seasonal-Trend decomposition using LOESS (STL) — statsmodels', href: 'https://www.statsmodels.org/stable/examples/notebooks/generated/stl_decomposition.html', org: 'statsmodels' },
+  { text: 'Reference manual for X-13ARIMA-SEATS', href: 'https://www.census.gov/content/dam/Census/library/working-papers/2017/adrm/docx13ashtml.pdf', org: 'U.S. Census Bureau' },
+  { text: 'MSTL: A seasonal-trend decomposition algorithm for time series with multiple seasonal patterns', href: 'https://research.monash.edu/en/publications/mstl-a-seasonal-trend-decomposition-algorithm-for-time-series-wit/', org: 'Monash University' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — Seasonality', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc443.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'Time Series Decomposition, Stat 581 course notes', href: 'https://math.unm.edu/~lil/Stat581/6-decomposition.pdf', org: 'University of New Mexico, Department of Mathematics and Statistics' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  { question: 'What does time series decomposition mean?', answer: 'Time series decomposition means splitting an observed series into a trend component, a seasonal component, and a remainder (sometimes called noise or residual) so each pattern can be studied on its own. Analysts use this to understand what drives the ups and downs in the data before building a forecast or reporting results.' },
+  { question: 'How do I calculate seasonal variation in a time series?', answer: 'In classical decomposition, seasonal variation is calculated by detrending the series with a centered moving average, then averaging the detrended values for each seasonal period, and centering those averages so they sum to zero or average to one. STL calculates seasonal variation differently, using LOESS smoothing to let the seasonal shape adapt gradually across the series.' },
+  { question: 'What is the difference between a cyclical trend and a seasonal trend?', answer: 'A seasonal pattern repeats at a fixed, known interval, such as every twelve months or every seven days, while a cyclical pattern rises and falls over a longer, irregular span with no fixed length, such as a multi-year business cycle. Treating a cycle as if it were seasonal, or vice versa, leads to a decomposition that misrepresents the underlying structure.' },
+  { question: 'How does STL work?', answer: 'STL works by alternating between LOESS-based estimates of the seasonal and trend components in a loop, refining each one until the fit stabilizes. Its main tuning parameters, the seasonal window, trend window, and low-pass filter, control how smooth or responsive each component is, and a robust fitting option limits the influence of outliers.' },
+]} />
