@@ -2,7 +2,7 @@ order,slug,lane,status,attempts,score,date,notes
 1,binomial-theorem,A,published,0,91,2026-10-10,"enrich: add Pascal's triangle (owed, NOW.md 2026-10-04)"
 2,proportions-in-statistics,B,published,0,92,2026-10-11,
 3,p-value,A,published,0,90,2026-10-11,
-4,binomial-distribution,B,changes_requested,1,,2026-10-12,"enrich: add geometric distribution section (owed, NOW.md 2026-10-04) | round2 CHANGES_REQUESTED: mis-citation at OpenStax 4.3 cite ('four requirements' vs source's 'three characteristics'); score 68/100; parked draft in drafts/"
+4,binomial-distribution,B,published,1,90,2026-10-13,"enrich: add geometric distribution section (owed, NOW.md 2026-10-04) | round2 CHANGES_REQUESTED: mis-citation at OpenStax 4.3 cite ('four requirements' vs source's 'three characteristics'); score 68/100; parked draft in drafts/"
 5,normal-distribution,A,published,0,88,2026-10-12,
 6,how-to-find-the-range,B,pending,0,,,use the 5 unused range keywords from the board in copy (NOW.md parked item)
 7,permutations,A,published,0,92,2026-10-13,
