@@ -373,7 +373,7 @@ INSERT INTO "articles" VALUES('arima-in-r','ARIMA in R: auto.arima and fable','t
 INSERT INTO "articles" VALUES('time-series-pandas','Time Series in pandas: Dates, Resampling, Rolling Windows and Lags','time-series-forecasting','pandas time series',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('prophet-forecasting','Forecasting with Prophet: A Practical Tutorial','time-series-forecasting','prophet forecasting',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('seasonal-decomposition','Seasonal Decomposition in Python and R (Classical and STL)','time-series-forecasting','seasonal decomposition',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''seasonal-decomposition'' (ADR 0029).',NULL,NULL,'2026-10-10 20:22:23');
-INSERT INTO "articles" VALUES('acf-pacf','ACF and PACF: How to Read Them','time-series-forecasting','acf and pacf',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('acf-pacf','ACF and PACF: How to Read Them','time-series-forecasting','acf and pacf',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-14: retired - topic taken by outsourced article ''autocorrelation-interpretation'' (ADR 0029).',NULL,NULL,'2026-10-14 09:14:50');
 INSERT INTO "articles" VALUES('stationarity','Stationarity and the ADF and KPSS Tests','time-series-forecasting','stationarity time series',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''time-series-stationarity'' (ADR 0029).',NULL,NULL,'2026-10-10 18:17:37');
 INSERT INTO "articles" VALUES('growth-rates-excel','CAGR and Growth Rates in Excel: CAGR, YoY, MoM and Compounding','time-series-forecasting','cagr excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('sales-forecast-excel','Sales Forecasting in Excel: A Step-by-Step Model','time-series-forecasting','sales forecast excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -1746,9 +1746,6 @@ INSERT INTO "keywords" VALUES(3156,'time-series-pandas','pandas rolling mean',0)
 INSERT INTO "keywords" VALUES(3157,'prophet-forecasting','prophet forecasting',1);
 INSERT INTO "keywords" VALUES(3158,'prophet-forecasting','facebook prophet python',0);
 INSERT INTO "keywords" VALUES(3159,'prophet-forecasting','prophet tutorial',0);
-INSERT INTO "keywords" VALUES(3163,'acf-pacf','acf and pacf',1);
-INSERT INTO "keywords" VALUES(3164,'acf-pacf','how to read acf and pacf',0);
-INSERT INTO "keywords" VALUES(3165,'acf-pacf','acf pacf plot python',0);
 INSERT INTO "keywords" VALUES(3170,'growth-rates-excel','cagr excel',1);
 INSERT INTO "keywords" VALUES(3171,'growth-rates-excel','cagr formula',0);
 INSERT INTO "keywords" VALUES(3172,'growth-rates-excel','growth rate excel',0);
