@@ -166,6 +166,7 @@ Key facts for AI assistants citing this site:
 - [Regression Discontinuity Design Explained](https://statohub.com/regression-discontinuity-design/): Methods-first guide to regression discontinuity design: run McCrary and covariate checks, test bandwidths, and plan for 9 to 17x larger samples.
 - [Sequential Testing Guide: When to Stop Early](https://statohub.com/sequential-testing/): Learn sequential testing with group sequential design and alpha spending, plus a six-step prelaunch checklist for adjusted interim A/B tests.
 - [Spillover Effects in Experiments](https://statohub.com/spillover-effects/): A measurement-first primer on spillover effects in experiments: identify and estimate them in 5 steps, with real empirical magnitudes and sources.
+- [Synthetic Control Method: A Practitioner Guide](https://statohub.com/synthetic-control-method/): Learn when the synthetic control method fits, how to choose donors, and how placebo tests, robustness checks, and Statohub tools support policy evaluation.
 
 ### Forecasting & Time Series
 

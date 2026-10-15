@@ -1,0 +1,238 @@
+---
+title: "Synthetic Control Method: A Practitioner Guide"
+h1: "Synthetic Control Method: Can Researchers Trust the Donor Pool?"
+description: "Learn when the synthetic control method fits, how to choose donors, and how placebo tests, robustness checks, and Statohub tools support policy evaluation."
+category: experiments-causality
+primaryKeyword: "synthetic control method"
+keywords:
+  - synthetic control method
+  - donor pool
+  - placebo tests
+  - robustness checks
+  - policy evaluation
+phase: 1
+related:
+  - instrumental-variables-explained
+  - regression-discontinuity-design
+  - spillover-effects
+draft: false
+pubDate: 2026-10-15
+updatedDate: 2026-10-15
+reviewedDate: 2026-10-15
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The synthetic control method constructs a weighted combination of untreated units to form a transparent counterfactual for a treated aggregate unit. We recommend it when a single large unit, a country, region, or city, receives a policy intervention and a long pre-intervention time series exists for that unit and its potential comparators. Its main strength is interpretability: the counterfactual is built from observable data rather than a model's hidden assumptions, and inference typically relies on placebo tests rather than conventional standard errors.
+
+<KeyTakeaways variant="bullets" bullets={[
+  'Use roughly 8 to 10 years of reliable pre intervention data, with comparable untreated donors and consistently measured predictors across every unit.',
+  "Check whether the treated unit falls within the donors' convex hull; outside it, standard weights cannot represent the unit without extrapolation, so consider augmented SCM.",
+  'Use in space and in time placebos, since conventional p values fit poorly; compare post intervention gaps with placebo results and pre intervention RMSPE.',
+  'Test robustness by varying the pre intervention window, removing influential donors one at a time, and checking negative control outcomes for placebo gaps.',
+  'Publish pre intervention fit plots, the full donor weight table, predictor choices, and replication code so readers can assess the comparison and reproduce it.',
+]} />
+
+## Overview: What SCM Is and the Assumptions Behind It
+
+We think of synthetic control as building an artificial twin for the unit that received an intervention. Instead of picking one comparison region or country, we assign weights to several untreated "donor" units so their weighted average reproduces the treated unit's pre-intervention trajectory as closely as possible.
+
+In the standard panel-data setup, we observe one treated unit and a donor pool of untreated units over several pre-intervention periods and at least one post-intervention period. The method assumes the treated unit's predictor values can be approximated as a combination of donor values, often described through a convex-hull condition, and that the relationship between predictors and outcomes stays stable across the pre- and post-intervention periods according to the [EU CAP Network's training materials](https://eu-cap-network.ec.europa.eu/training/evaluation-learning-portal/synthetic-control-method_en).
+
+<DataTable
+  caption="SCM setup and assumptions at a glance"
+  headers={['Element', 'What it means']}
+  align={['left', 'left']}
+  rows={[
+    ['Treated unit', 'One treated unit'],
+    ['Donor pool', 'Untreated donor units'],
+    ['Periods', 'Several pre; at least one post'],
+    ['Convex hull', 'Predictors approximated by donor values'],
+    ['Stability', 'Relationship stable before and after'],
+  ]}
+/>
+
+## When SCM Fits and What Data You Need
+
+SCM works best for comparative case studies: a single region adopting a new tax, one country implementing a trade policy, or a handful of large aggregate units exposed to the same shock. It is a poor fit for settings with many treated units or micro-level individual treatment, where other quasi-experimental designs serve better.
+
+Before committing to SCM, we check feasibility against a short list of requirements, since the EU CAP Network stresses that credible synthetic controls depend on long, reliable pre-policy series and genuinely comparable donor units.
+
+- Confirm a pre-intervention series spanning roughly 8 to 10 years or more for aggregate indicators.
+- Identify donor units untouched by the intervention and structurally similar to the treated unit.
+- Verify predictors are available, consistently measured, and free of major gaps across all units.
+
+## Choosing the Donor Pool and Predictors
+
+The donor pool deserves as much care as the estimation itself. We exclude any unit exposed to the intervention or a closely related policy, since contamination there biases the synthetic control toward the treatment effect it is supposed to measure. We also favor donors sharing structural features with the treated unit, similar industry mix, demographic trends, or institutional context, rather than including every available unit indiscriminately.
+
+Predictors should have real explanatory power over the outcome and must be measured strictly before treatment. We also check whether the treated unit's predictor values fall inside the convex hull formed by the donor pool; when they fall outside it, the fit relies on extrapolation rather than interpolation, which weakens credibility.
+
+- Drop donors affected by the same or a related intervention.
+- Select predictors with demonstrated pre-treatment explanatory relevance.
+- Test convex-hull membership before finalizing the donor list.
+- Address missing data transparently rather than silently dropping periods.
+
+<Callout variant="tip" title="Pro Tip">
+Build your donor pool from theory first, then let the optimization choose weights; never reverse-engineer the pool to produce a flattering pre-treatment fit.
+</Callout>
+
+## How SCM Estimates the Weights
+
+The core algorithm chooses a vector of weights, one per donor, that are constrained to be non-negative and to sum to one, so the synthetic control is a convex combination of donor units rather than an unrestricted linear projection. The [AEA's methodological guidance](https://www.aeaweb.org/content/file?id=12409) describes this restriction as the standard safeguard against extrapolation: by forcing weights into a convex combination, the method avoids assigning implausible negative influence to any donor.
+
+<Figure number={1} caption="The four-step sequence that turns donor predictor and outcome paths into a matched synthetic control.">
+  <ProcessFlow
+    title="SCM weight estimation"
+    desc="A four-step horizontal pipeline moves from donor predictor and outcome paths, to computing non-negative weights that sum to one, to combining the weighted donor paths, to matching the treated unit's pre-intervention path."
+    steps={[
+      { label: 'Donors', detail: 'Donor predictor and outcome paths.' },
+      { label: 'Weights', detail: 'Non-negative; sum to one.' },
+      { label: 'Combine', detail: 'Weighted donor paths.' },
+      { label: 'Match', detail: 'Treated pre-intervention path.' },
+    ]}
+  />
+</Figure>
+
+The objective function minimizes the distance between the treated unit's pre-intervention predictor and outcome path and the weighted donor path, typically using a generalized distance metric that can weight predictors by their importance. Regression-style analogues relax the non-negativity or sum-to-one constraints, which permits extrapolation but introduces its own bias risks, a trade-off augmented SCM addresses directly. In practice, numerical solvers can struggle when donor predictors are highly collinear, so we recommend checking the optimization's convergence and sensitivity to the chosen predictor set before trusting the resulting weights.
+
+## Testing Significance: Placebo and Permutation Methods
+
+Conventional standard errors and p-values do not transfer well to SCM, because we are usually working with one treated unit and a small, constrained set of weights rather than a large random sample. Research published in the [American Journal of Epidemiology](https://academic.oup.com/aje/article/190/12/2700/6336907) confirms that permutation-based inference has become the standard approach precisely because parametric methods perform poorly in these small-N settings.
+
+In practice, we run two placebo exercises: an in-space placebo that reassigns the "treatment" to each donor unit in turn and compares the resulting gaps to the real treated unit's gap, and an in-time placebo that pretends the intervention happened earlier, during a period with no real policy change, and checks whether a false effect appears.
+
+- Report the pre-treatment root mean squared prediction error (RMSPE) for the actual fit.
+- Plot the post-treatment gap for the treated unit against the distribution of placebo gaps.
+- Present the full donor weight table so readers can judge plausibility.
+
+**A ratio of post-treatment to pre-treatment RMSPE that is large relative to the placebo distribution** is the standard signal that the treated unit's gap is unlikely to have occurred by chance.
+
+## Newer Approaches: Synthetic DiD and Augmented SCM
+
+Synthetic difference-in-differences, introduced by [Arkhangelsky and coauthors](https://www.aeaweb.org/articles?id=10.1257/aer.20190159), adds time weights and two-way fixed effects to the classic SCM framework, which tends to improve robustness across a wider range of panel structures. Augmented SCM extends the original method by permitting limited negative weights, which reduces bias when the treated unit sits outside the donor convex hull.
+
+We suggest reaching for these extensions when a straightforward SCM fit fails convex-hull checks or when researchers need inferential tools that approach conventional asymptotic guarantees rather than relying solely on permutation tests.
+
+## Software and a Reproducible Workflow
+
+Several maintained packages support SCM estimation: [`Synth`](https://cran.r-project.org/package=Synth) for R and Stata, `augsynth` and [`scpi`](https://cran.r-project.org/package=scpi) for R, [`gsynth`](https://cran.r-project.org/package=gsynth) for generalized synthetic control, and various Python notebooks replicating the core algorithm. Many published SCM papers also release replication code, which is worth consulting before building an estimator from scratch.
+
+A dependable workflow follows a consistent sequence regardless of the software chosen.
+
+<Checklist
+  id="scm-workflow"
+  title="Reproducible SCM workflow"
+  style="numbered"
+  items={[
+    { text: 'Prepare the panel data set', detail: 'Confirm the pre-intervention window and donor comparability.' },
+    { text: 'Fit the synthetic control', detail: 'Inspect pre-treatment RMSPE before drawing conclusions.' },
+    { text: 'Run placebo tests', detail: 'In-space and in-time placebo tests, plus the full weight table.' },
+    { text: 'Document everything', detail: 'Data sources, predictor choices, and code so the analysis can be reproduced.' },
+  ]}
+/>
+
+## A Compact Worked Example
+
+Consider a single region that adopts a new regulation in a given year. We would work through the analysis in a fixed order.
+
+1. Define the treated unit and the exact intervention date, then split the panel into pre- and post-periods.
+2. Assemble a donor pool of comparable regions unaffected by the regulation and gather predictors measured only before the intervention.
+3. Fit the synthetic control, inspect the pre-treatment RMSPE, and review which donors receive positive weight.
+4. Compute the post-treatment gap between the treated unit and its synthetic counterpart for each post-intervention period.
+5. Run in-space and in-time placebo tests to see whether the observed gap is unusual relative to the placebo distribution.
+6. Vary the pre-treatment window and exclude influential donors one at a time to check whether conclusions hold under these sensitivity checks.
+
+Before generalizing, we always weigh the convex-hull position of the treated unit's predictors, since extrapolation beyond the donor pool's range weakens any conclusion drawn from the gap.
+
+## Robustness and a Reporting Checklist
+
+A credible SCM write-up shows its work rather than asserting a clean result. The International Journal of Epidemiology warns that convex-hull violations and "history bias," where an unrelated shock hits treated and donor units simultaneously, are common failure points that silently undermine otherwise careful analyses. We address history bias by testing negative-control outcomes: variables that share the same confounders as the outcome of interest but should be unaffected by the intervention. If placebo gaps appear there too, time-varying confounding is a live concern rather than a remote possibility.
+
+<Checklist
+  id="scm-reporting"
+  title="Reporting checklist"
+  style="check"
+  items={[
+    { text: 'Report pre-treatment fit plots, RMSPE, and the complete placebo distribution.' },
+    { text: 'State explicitly whether the treated unit falls inside the donor convex hull.' },
+    { text: 'Share predictor lists, weight tables, and code so reviewers can verify the result.' },
+  ]}
+/>
+
+<DataTable
+  caption="Reporting elements a credible SCM write-up includes"
+  headers={['Reporting element', 'What it shows', 'Why it matters']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Pre-treatment RMSPE', 'How closely the synthetic matches the treated unit before intervention', 'Poor pre-fit undermines any post-treatment gap'],
+    ['Placebo distribution', "Whether the treated unit's gap is unusual among donors", 'Substitutes for conventional p-values'],
+    ['Convex-hull check', 'Whether weights represent interpolation or extrapolation', 'Extrapolated fits are less credible'],
+    ['Weight table', 'Which donors drive the synthetic control', 'Lets readers judge plausibility of the comparison'],
+  ]}
+/>
+
+## How Statohub Supports Researchers Learning SCM
+
+Our <Link to={routes.categoryHub('experiments-causality')}>Applied Statistics hub</Link> gathers causality-focused guides alongside calculators built for diagnostics like RMSPE and pre-treatment fit checks. We pair these resources with worked examples so readers can move from the formal setup described here to a data set of their own, with replication steps laid out the same way at every stage.
+
+## When SCM Earns Its Keep
+
+We find SCM most convincing when researchers treat it as a transparent case study rather than a universal causal engine: its value comes from showing the data and weights openly, not from mechanically producing a single, definitive number. Subject-matter context, pre-registration where feasible, and shared replication files matter as much as the estimation itself, and sound practice means reporting diagnostics plainly instead of overstating what one donor-weighted comparison can prove. Analysts preparing panel data should also watch for lookahead bias, a pitfall [covered in detail by a partner resource on avoiding lookahead bias in trading data](https://bigmovealgo.com/post/lookahead-bias-trading), since using information unavailable at the time of the intervention can quietly distort pre-treatment fit in the same way it distorts backtested trading signals.
+
+## Put SCM to Work With Statohub's Guides and Calculators
+
+Once you have a feasible SCM setup in mind, our <Link to={routes.appliedLanding()}>Applied Statistics</Link> section walks through causal-inference methods with the same plain-English approach used throughout this guide, and our <Link to={routes.calculatorsHub()}>calculators</Link> handle the diagnostic computations, including RMSPE and related fit statistics, that placebo testing requires. Readers wanting the broader statistical groundwork first can start at <Link to={routes.learnLanding()}>Learn Statistics</Link> before returning to apply these ideas to their own panel data.
+
+## Sources
+
+<Sources items={[
+  { text: 'Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects', href: 'https://www.aeaweb.org/content/file?id=12409', org: 'American Economic Association' },
+  { text: 'Synthetic control method', href: 'https://eu-cap-network.ec.europa.eu/training/evaluation-learning-portal/synthetic-control-method_en', org: 'EU CAP Network' },
+  { text: 'Synthetic Controls for Experimental Design — Abadie & Zhao', href: 'https://economics.mit.edu/sites/default/files/2023-12/Synthetic%20Controls%20for%20Experimental%20Design.pdf', org: 'MIT Economics' },
+  { text: 'Synthetic Difference-in-Differences — Arkhangelsky et al.', href: 'https://www.aeaweb.org/articles?id=10.1257/aer.20190159', org: 'American Economic Review' },
+  { text: 'Synth package documentation', href: 'https://cran.r-project.org/package=Synth', org: 'CRAN' },
+  { text: 'gsynth package documentation', href: 'https://cran.r-project.org/package=gsynth', org: 'CRAN' },
+  { text: 'scpi package documentation', href: 'https://cran.r-project.org/package=scpi', org: 'CRAN' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between SCM and Synthetic DiD?',
+    answer: "The original synthetic control method builds a weighted donor combination matching only pre-treatment levels, while Synthetic DiD adds time weights and two-way fixed effects on top of that weighting scheme, which the AER paper by Arkhangelsky and coauthors documents as improving robustness across a broader set of panel structures. SDID is generally preferred when a researcher wants estimates closer to conventional difference-in-differences assumptions alongside SCM's weighting logic.",
+  },
+  {
+    question: 'What is a control variable in econometrics?',
+    answer: 'A control variable is a factor included in a model specifically to account for its influence on the outcome, so the variable of real interest can be isolated from confounding effects. In SCM, predictors used to construct donor weights serve a similar purpose: they help ensure the synthetic unit resembles the treated unit on dimensions that matter for the outcome. Our guide on controlling confounders with DAGs explains this logic in more general terms.',
+  },
+  {
+    question: 'What is a synthetic experiment?',
+    answer: 'A synthetic experiment typically refers to using synthetic control techniques to approximate a randomized design when randomization is not feasible, often for large aggregate units like regions or countries. Recent work on synthetic controls for experimental design shows these designs can reduce estimation bias compared to naive randomization in settings with large, heterogeneous units.',
+  },
+  {
+    question: 'What is the formula for calculating the difference in difference?',
+    answer: "The basic difference-in-differences estimate subtracts the pre-post change in the control group from the pre-post change in the treatment group, isolating the effect attributable to treatment under a parallel-trends assumption. Our difference-in-differences guide walks through this calculation step by step and contrasts it with SCM's weighting approach for settings with only one or a few treated units.",
+  },
+  {
+    question: 'How do I know if my donor pool is large enough for SCM?',
+    answer: "There is no fixed minimum count; what matters is whether the pool contains donors structurally similar to the treated unit and whether the treated unit's predictors fall within the donors' convex hull. The EU CAP Network's training materials emphasize comparability and a sufficiently long pre-intervention series over sheer donor count.",
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('control-confounders')}>Control Confounders with DAGs</Link>
+- <Link to={routes.article('propensity-score-matching')}>Propensity Score Matching: A Step-by-Step Guide</Link>
+- <Link to={routes.article('randomized-controlled-trial')}>Randomized Controlled Trial (RCT) Explained</Link>
+- <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link>
