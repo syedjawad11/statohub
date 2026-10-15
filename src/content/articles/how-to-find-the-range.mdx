@@ -1,6 +1,6 @@
 ---
 title: "How to Find the Range in Statistics"
-description: "The range measures spread in one subtraction: largest value minus smallest. Formula, worked examples with real data, and a free range calculator."
+description: "How to find the range in statistics: subtract the minimum from the maximum, with worked examples and a free range calculator."
 category: descriptive-statistics
 primaryKeyword: how to find the range
 keywords:
@@ -16,115 +16,119 @@ keywords:
   - how to calculate the range
   - how to find range
   - how to find the range of a data set
+  - range formula
+  - range in statistics
+  - range in statistics formula
+  - range of data
+  - what is range in statistics
 phase: 1
 calculator: range
 related:
   - interquartile-range
   - standard-deviation
-  - mean-absolute-deviation
+  - how-to-find-the-mean
 draft: false
 pubDate: 2026-06-15
-updatedDate: 2026-09-09
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-15
+reviewedDate: 2026-10-15
 ---
-import RelatedLink from '../../components/RelatedLink.astro';
 
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-The range of a dataset is its largest value minus its smallest value — one subtraction, and you know how far the data stretches end to end. If you're trying to figure out how to find the range for a set of numbers right in front of you, that subtraction is the entire calculation.
+The range in statistics is the simplest way to describe how far a data set stretches, and learning how to find the range takes exactly one subtraction: the largest value minus the smallest. That single operation — Maximum − Minimum — is the entire range formula: no averaging, no squaring, and no sorting required beyond spotting the two extremes. This guide covers how to calculate a range step by step, what the range formula in statistics looks like applied to negative numbers, decimals, and grouped frequency tables, and exactly where the range of data stops being trustworthy as a measure of spread.
 
-What's worth understanding beyond that one line is when the range tells you something real and when it quietly misleads you. A single unusual reading can make a tightly clustered dataset look wildly spread out, and that failure mode catches people who lean on the range without checking it. This guide walks through the calculation on a real dataset, covers the cases that trip people up — negative numbers, decimals, grouped data — and shows exactly where the range stops being trustworthy and what to check instead.
+<KeyTakeaways rows={[
+  { point: 'Range is one subtraction', details: 'Range = Maximum − Minimum. Nothing else about a data set — not the mean, not the count — factors into the calculation.' },
+  { point: 'Only two values matter', details: 'The range ignores every value except the largest and smallest, which makes it fast but blind to what happens in the middle.' },
+  { point: 'Negative numbers add, they don’t subtract', details: 'Subtracting a negative minimum adds its absolute value — Range = 5 − (−18) = 23, not 5 − 18.' },
+  { point: 'Grouped data gives an estimate', details: 'When you only have class intervals, the range comes from the boundaries of the end classes and is an upper bound, not an exact figure.' },
+  { point: 'One outlier can multiply the range', details: 'A single unusual value can inflate the range several times over, and standard deviation moves almost as sharply behind it — variance swings far harder still, since squaring the deviations also squares the outlier’s effect. Only the IQR stays about where it was.' },
+]} />
 
----
+## Quick Checklist: How to Calculate the Range of a Data Set
 
-## What the Range Measures
+Before you touch a calculator, run through these checks — most wrong answers to "how do you calculate range" trace back to skipping one of them.
 
-The range is the simplest of the variability statistics because it only looks at two numbers in the whole dataset: the maximum and the minimum. Every other value — everything in between — is ignored.
+<Checklist
+  id="how-to-calculate-range-checklist"
+  title="Quick checklist: finding the range"
+  style="check"
+  items={[
+    { text: 'List every value', detail: 'You don’t need to sort the whole data set — scanning once for the two extremes is faster than a full sort.' },
+    { text: 'Identify the maximum and minimum', detail: 'Record x_max and x_min; for a long list, sorting first makes them impossible to miss.' },
+    { text: 'Subtract: Range = x_max − x_min', detail: 'The result should always be zero or positive. A negative answer means the subtraction happened backwards.' },
+    { text: 'Watch the sign with negative numbers', detail: 'Subtracting a negative value adds its absolute value — write the subtraction out in full rather than doing it in your head.' },
+    { text: 'Use class boundaries for grouped data', detail: 'Without the raw values, the range from a frequency table is an estimate, not an exact number.' },
+    { text: 'Check for outliers before reporting', detail: 'If one value sits far from the rest, the range alone will overstate how spread out the data really is.' },
+  ]}
+/>
 
-That's also its biggest limitation. The mean, variance, and standard deviation are built from every data point; the range is built from two. It sits alongside the mean, median, mode, variance, and standard deviation in the standard descriptive-statistics toolkit, but it earns its place there by being the fastest of them to compute by hand — whether the data is raw, negative, decimal, or already grouped into a frequency table, the underlying operation never changes.
+## What Is Range in Statistics?
 
-The formula:
+Range in statistics is a measure of spread built from exactly two numbers in a data set: its maximum and its minimum. Every other value in between is ignored entirely, which is both the range's main advantage — it's the fastest spread statistic to compute by hand — and its main limitation, since it tells you nothing about how the values are distributed between those two extremes.
+
+It sits alongside the mean, median, mode, variance, and standard deviation in the standard descriptive-statistics toolkit. The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) lists the range alongside variance, standard deviation, and the interquartile range as the common numerical measures of spread, and defines it exactly this way: the largest value minus the smallest value in a data set, based only on the extremes, with the spread near the center of the data not captured at all. That trade-off — speed for blindness to the middle — is the one fact worth carrying through everything else in this guide.
+
+## What Is the Range Formula?
+
+The range in statistics formula is the simplest one in the entire descriptive-statistics toolkit:
 
 ```
 Range = Maximum value − Minimum value
 Range = x_max − x_min
 ```
 
-Where `x_max` is the largest value in the dataset and `x_min` is the smallest. You don't need the mean, the median, or a running total — just the two extremes.
+Where `x_max` is the largest value in the data set and `x_min` is the smallest. You don't need the mean, the median, or a running total — just the two extremes, subtracted in that order.
 
-<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
+<DataTable
+  caption="Range, IQR, variance, and standard deviation compared"
+  headers={['Measure', 'Uses all values?', 'Resistant to outliers?', 'Units', 'Effort']}
+  align={['left', 'left', 'left', 'left', 'left']}
+  rows={[
+    ['Range', 'No — only 2', 'No', 'Same as data', 'Lowest'],
+    ['Interquartile range (IQR)', 'No — middle 50%', 'Yes', 'Same as data', 'Low'],
+    ['Variance', 'Yes', 'No', 'Squared', 'Moderate'],
+    ['Standard deviation', 'Yes', 'No', 'Same as data', 'Moderate'],
+  ]}
+/>
 
----
+## How Do You Calculate the Range of a Data Set?
 
-## Finding the Range: A Three-Step Process
+Find the largest and smallest values in the data set and subtract: Range = x_max − x_min. That's how to calculate range — or how to find the range of a data set, however the question happens to be phrased — for any list of numbers, and it breaks down into three steps.
 
-Calculating the range never takes more than three moves.
+1. **Gather every value.** List out the data set. If it's already sorted, you're a step ahead; if not, don't bother sorting the whole thing just to find the range.
+2. **Identify the maximum and minimum.** Scan the list and record the largest value (x_max) and the smallest value (x_min). For a short list you can usually spot both by eye.
+3. **Subtract the minimum from the maximum.** Range = x_max − x_min. The result should always come out zero or positive.
 
-### Step 1 — Gather every value
+<Callout variant="tip" title="Pro tip">
+You never need to sort an entire data set just to find the range. Track a running maximum and minimum as you scan the list once — that's faster than a full sort for anything beyond a handful of values, and it's exactly how spreadsheet and programming functions like MAX and MIN work under the hood.
+</Callout>
 
-List out the dataset. If it's already sorted, you're a step ahead. If not, don't bother sorting the whole thing just to find the range — scanning once for the two extremes is faster than a full sort.
+### Try the range calculator
 
-### Step 2 — Identify the maximum and minimum
-
-Scan the list and record the largest value (`x_max`) and the smallest value (`x_min`). For a short list you can usually spot both by eye. For a long one, sorting first makes them impossible to miss.
-
-### Step 3 — Subtract the minimum from the maximum
-
-```
-Range = x_max − x_min
-```
-
-The result should always come out zero or positive. If you land on a negative number, the subtraction happened backwards.
-
----
-
-## Worked Example: Patient Wait Times at an Urgent Care Clinic
-
-A clinic manager wants to know how consistent patient wait times were on a Tuesday shift, before deciding whether the clinic needs a second triage nurse. Over one 12-patient shift, wait times from check-in to being seen (in minutes) were:
-
-8, 15, 22, 9, 12, 6, 18, 17, 14, 13, 11, 19
-
-**Step 1 — List the values:** all 12 are recorded above.
-
-**Step 2 — Find the max and min.** Sorted ascending, the extremes are easy to spot:
-
-6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 22
-
-Minimum: 6 minutes. Maximum: 22 minutes.
-
-**Step 3 — Subtract:**
-
-```
-Range = 22 − 6 = 16 minutes
-```
-
-That's how to find the range of this shift's data: it's **16 minutes**. On its own, that number tells the manager patients weren't waiting wildly different lengths of time — but it says nothing about whether most people waited close to 6 minutes or close to 22. Keep this dataset in mind; it's coming back later, because the gap between "spread" and "typical" is exactly where the range can mislead you.
-
----
-
-## Try the Range Calculator
-
-Enter your own set of numbers and the calculator finds the range, minimum, and maximum instantly.
+Enter your own list of numbers below and the calculator returns the range, minimum, and maximum instantly — useful for checking how to find range by hand against a quick automated result.
 
 <StatCalc slug="range" variant="embed" />
 
-For a full-page version, open the dedicated <Link to={routes.calculator('range')}>range calculator</Link>, or browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+## How Do You Find the Range in a Data Set With Negative Numbers or Decimals?
 
----
+The three-step process doesn't change for messier data, but two situations trip people up often enough to walk through on their own.
 
-## Special Cases: Negative Numbers, Decimals, and Grouped Data
+### Negative numbers
 
-The three-step process doesn't change for messier data, but three situations trip people up often enough to walk through on their own.
+**Data set:** overnight low temperatures (°C) recorded at a weather station over one week: −12, 3, −7, 0, −18, 5, −4.
 
-### Negative Numbers
-
-**Dataset:** overnight low temperatures (°C) recorded at a weather station over one week: −12, 3, −7, 0, −18, 5, −4.
-
-Sorted: −18, −12, −7, −4, 0, 3, 5.
-
-Maximum: 5. Minimum: −18.
+Sorted: −18, −12, −7, −4, 0, 3, 5. Maximum: 5. Minimum: −18.
 
 ```
 Range = 5 − (−18) = 5 + 18 = 23
@@ -132,11 +136,11 @@ Range = 5 − (−18) = 5 + 18 = 23
 
 The range is **23°C**. Subtracting a negative number is the same as adding its absolute value — the mistake to watch for is treating −18 itself as "the range," or forgetting to flip the sign. Write the subtraction out in full rather than doing it in your head.
 
-### Decimal Values
+### Decimal values
 
 Nothing changes except lining up the decimal point correctly.
 
-**Dataset:** body-mass index (BMI) readings from six patients at a routine screening: 22.4, 27.1, 19.8, 31.5, 24.6, 18.3.
+**Data set:** body-mass index (BMI) readings from six patients at a routine screening: 22.4, 27.1, 19.8, 31.5, 24.6, 18.3.
 
 Maximum: 31.5. Minimum: 18.3.
 
@@ -146,18 +150,18 @@ Range = 31.5 − 18.3 = 13.2
 
 The BMI range across this group is **13.2**.
 
-### Grouped Data (Frequency Tables)
+## How Do You Calculate the Range for Grouped Data?
 
-When data arrives already binned into class intervals, you don't have the individual values anymore — so the range becomes an estimate built from the boundaries of the two end classes, not an exact figure.
+Knowing how to calculate for range when data arrives already binned into class intervals is a different problem: you don't have the individual values anymore, so the range of data becomes an estimate built from the boundaries of the two end classes, not an exact figure.
 
-**Example:** a regional courier logs weekly delivery times (minutes) in bins for an operations report:
+**Example:** a regional courier logs weekly delivery times (minutes) in bins for an operations report.
 
 | Class interval (minutes) | Deliveries |
 |---------------------------|------------|
-| 20–30                     | 6          |
-| 30–40                     | 14         |
-| 40–50                     | 9          |
-| 50–60                     | 3          |
+| 20–30                      | 6          |
+| 30–40                      | 14         |
+| 40–50                      | 9          |
+| 50–60                      | 3          |
 
 The lower boundary of the lowest class is 20; the upper boundary of the highest class is 60.
 
@@ -165,99 +169,152 @@ The lower boundary of the lowest class is 20; the upper boundary of the highest 
 Range ≈ 60 − 20 = 40 minutes
 ```
 
-This is an upper-bound estimate, not a measured value — the actual fastest and slowest deliveries inside those two end classes are unknown, so the true range could be smaller. Report it as "at most 40 minutes," not as an exact figure.
+<Callout variant="note" title="Read this as an upper bound">
+This is an estimate, not a measured value — the actual fastest and slowest deliveries inside those two end classes are unknown, so the true range could be smaller. Report it as "at most 40 minutes," not as an exact figure.
+</Callout>
 
-<RelatedLink to={routes.article('mean-absolute-deviation')} label="Mean Absolute Deviation Explained" intro="On a related note" />
+## A Worked Example: Patient Wait Times at an Urgent Care Clinic
 
----
+A clinic manager wants to know how consistent patient wait times were on a Tuesday shift, before deciding whether the clinic needs a second triage nurse. Over one 12-patient shift, wait times from check-in to being seen (in minutes) were:
 
-## Range vs. IQR and Standard Deviation: When Each One Misleads You
+8, 15, 22, 9, 12, 6, 18, 17, 14, 13, 11, 19
 
-Go back to the urgent-care example: 12 patients, wait times from 6 to 22 minutes, a range of 16. Now suppose a 13th patient on that same shift needed a complex work-up and waited 95 minutes for a specialist consult. None of the other 12 patients' wait times changed — but recompute the range and it jumps to 89 minutes (95 − 6), more than five times larger, because of a single additional value.
+**Step 1 — List the values.** All 12 are recorded above.
 
-That's the range's core weakness: it's built from exactly two numbers, so one unusual reading anywhere in the dataset can dominate the result. The open-access textbook [OpenStax, *Introductory Statistics* — 2.7 Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) covers the range alongside the other spread measures, which is useful for seeing how they're meant to complement each other rather than substitute for one another.
+**Step 2 — Find the max and min.** Sorted ascending, the extremes are easy to spot:
 
-### Range vs. Interquartile Range (IQR)
+6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 22
 
-The interquartile range trims the extremes away before measuring anything — it's the distance between the 75th percentile (Q3) and the 25th percentile (Q1), so the top and bottom quarters of the data can't influence it.
+Minimum: 6 minutes. Maximum: 22 minutes.
+
+**Step 3 — Subtract.**
+
+```
+Range = 22 − 6 = 16 minutes
+```
+
+That's the range for this shift: **16 minutes**. On its own, that number tells the manager patients weren't waiting wildly different lengths of time — but it says nothing about whether most people waited close to 6 minutes or close to 22.
+
+**What happens if one patient is different.** Suppose a 13th patient needed a complex work-up and waited 95 minutes for a specialist consult. None of the other 12 patients' wait times changed, but the range jumps to:
+
+```
+Range = 95 − 6 = 89 minutes
+```
+
+<Figure number={1} caption="Adding a single 95-minute outlier to the 12-patient clinic data set more than quintuples the range, from 16 minutes to 89 minutes.">
+  <AnnotatedChart
+    title="Range before and after one outlier"
+    desc="Bar chart comparing the clinic wait-time range before and after adding a 95-minute outlier: 16 minutes for the original 12 patients, rising to 89 minutes once the 13th patient is included."
+    type="bar"
+    points={[
+      { label: 'Range, 12 patients', value: 16 },
+      { label: 'Range, 13th patient added', value: 89, annotation: '95-minute wait added' },
+    ]}
+  />
+</Figure>
+
+**Decision.** A 16-minute range across 12 patients is tight enough that the manager can reasonably conclude the shift ran smoothly without a second triage nurse. An 89-minute range driven by one outlier is a different story — before concluding wait times turned erratic, the manager should check whether that 95-minute wait was a genuine complex case (keep it in the data, and lean on the IQR rather than the range for the headline number) or a logging error (fix it). The range alone can't tell the difference between those two explanations; it only flags that something is worth investigating.
+
+## Range vs. IQR and Standard Deviation: When Does the Range Mislead You?
+
+The range misleads whenever one extreme value sits far from the rest of the data: because it only uses the maximum and minimum, a single outlier can set the result almost by itself, as the worked example above just showed (16 minutes to 89 minutes from one added patient). That's exactly why the [NIST/SEMATECH e-Handbook](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) lists the range alongside the IQR and standard deviation as separate measures of spread rather than treating any one of them as sufficient on its own — each answers a different question about spread, and the range's answer is the easiest for one bad data point to distort.
+
+### Range vs. interquartile range (IQR)
+
+The <Link to={routes.article('interquartile-range')}>interquartile range</Link> trims the extremes away before measuring anything — it's the distance between the 75th percentile (Q3) and the 25th percentile (Q1), so the top and bottom quarters of the data can't influence it.
 
 ```
 IQR = Q3 − Q1
 ```
 
-Run both measures on the clinic data: before the 95-minute outlier, IQR = 7.5 minutes; after adding it, IQR = 8.5 minutes — it barely moved, because the outlier landed outside the middle 50% the IQR actually measures. The range, over that same comparison, moved from 16 to 89. Whenever a dataset might contain a data-entry error or a genuine one-off event, the IQR is the more trustworthy spread statistic to report.
+Run both measures on the clinic data: before the 95-minute outlier, Q1 = 10 and Q3 = 17.5, so IQR = 7.5 minutes. After adding it, Q1 stays at 10 but Q3 moves to 18.5, so IQR = 8.5 minutes — it barely moved, because the outlier landed outside the middle 50% the IQR actually measures. The range, over that same comparison, moved from 16 to 89. Whenever a data set might contain a data-entry error or a genuine one-off event, the IQR is the more trustworthy spread statistic to report. The same NIST/SEMATECH page on [box plots and outlier fences](https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm) uses the IQR to build the 1.5×IQR fences that flag exactly this kind of unusual value — one more reason an implausibly large range is often worth checking against the IQR before you trust it.
 
-### Range vs. Standard Deviation
+### Range vs. standard deviation
 
-Standard deviation measures the average distance of every point from the mean, not just the two extremes, so it reflects the whole shape of the data at the cost of a heavier calculation. A rough rule of thumb: in a large, roughly normal dataset, the range tends to run about four to six standard deviations wide (4σ to 6σ). If your computed range sits far outside that band, treat it as a signal to check for an outlier or a skewed distribution before trusting either number.
+<Link to={routes.article('standard-deviation')}>Standard deviation</Link> is the square root of the average squared distance from the mean (roughly, a typical distance from the mean), not just the two extremes, so it reflects the whole shape of the data at the cost of a heavier calculation — and unlike the IQR, it doesn't resist outliers either. [OpenStax's Introductory Statistics, 2.7 Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) defines it the same way: a number that measures how far data values are from their mean, calculated by first finding the variance (the average of the squared deviations) and then taking its square root. On the clinic data, adding the 95-minute outlier moves the sample standard deviation from about 4.79 minutes to about 23.02 minutes — a roughly 4.8-fold increase, close to the range's own 5.6-fold jump from 16 to 89. The variance swings much harder, from about 23.0 to about 529.9 — a roughly 23-fold increase — because squaring each deviation from the mean also squares the outlier's effect on the result. Only the IQR, which ignores the top and bottom quarters entirely, stayed close to where it started.
 
-### A Quick Comparison
+A 2005 study in *BMC Medical Research Methodology* that tested ways to estimate standard deviation from summary statistics found that for moderately sized samples (roughly 15 to 70 observations), Range ÷ 4 was the best estimator of the standard deviation in their simulations, while for larger samples (above 70 observations), Range ÷ 6 fit better — in other words, the range tends to run about four to six standard deviations wide once a sample passes about 15 observations.
 
-| Measure | Uses all values? | Resistant to outliers? | Units | Effort |
-|---|---|---|---|---|
-| Range | No — only 2 | No | Same as data | Lowest |
-| IQR | No — middle 50% | Yes | Same as data | Low |
-| Variance | Yes | No | Squared | Moderate |
-| Standard deviation | Yes | No | Same as data | Moderate |
+<Callout variant="quote" source="Hozo, Djulbegovic & Hozo, BMC Medical Research Methodology (2005)" sourceHref="https://pmc.ncbi.nlm.nih.gov/articles/PMC1097734/">
+For moderately sized samples (15 &lt; n ≤ 70), our simulations show that the formula range/4 is the best estimator for the standard deviation (variance). For large samples (n &gt; 70), the formula range/6 gives the best estimator for the standard deviation (variance).
+</Callout>
 
-Reach for the range when you want a fast, easy-to-explain first pass, when you're scanning for data-entry errors (an implausibly large range is often a typo), or when you're picking histogram bin widths. Reach for the IQR or standard deviation the moment you suspect outliers, or when "spread" needs to describe what's typical rather than what's extreme.
+If your computed range sits far outside that band, treat it as a signal to check for an outlier or a skewed distribution before trusting either number. Reach for the range when you want a fast, easy-to-explain first pass, when you're scanning for data-entry errors, or when you're picking histogram bin widths — a histogram is built by splitting the range of the data into equal-sized bins, as the [NIST/SEMATECH e-Handbook's histogram guidance](https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm) defines it, so the range sets the span those bins have to cover. Reach for the IQR or standard deviation the moment you suspect outliers, or when "spread" needs to describe what's typical rather than what's extreme.
 
-<RelatedLink to={routes.article('interquartile-range')} label="interquartile range guide" intro="Worth reading next" />
+## Calculating the Range in Excel and Python
 
----
+For raw lists rather than grouped data, the range is just a call to each tool's built-in maximum and minimum functions.
+
+```
+Excel:   =MAX(A1:A12) - MIN(A1:A12)
+
+Python:  values = [8, 15, 22, 9, 12, 6, 18, 17, 14, 13, 11, 19]
+         data_range = max(values) - min(values)   # 16
+```
+
+[Microsoft's documentation for the `MAX`](https://support.microsoft.com/en-us/office/max-function-e0012414-9ac8-4b34-9a47-73e662c08098) and [`MIN`](https://support.microsoft.com/en-us/office/min-function-61635d12-920f-4ce2-a70f-96f202dcc152) functions covers the Excel syntax above, including how both functions ignore empty cells and text automatically. [Python's built-in functions reference](https://docs.python.org/3/library/functions.html#max) documents `max()` and `min()` the same way — both accept any iterable of numbers, so the subtraction works identically to the hand calculation.
 
 ## Common Mistakes When Calculating the Range
 
-### Subtracting in the wrong order
+- **Subtracting in the wrong order.** The range is always maximum minus minimum. Reverse the order and you get a negative number that means nothing as a measure of spread — if your result comes out negative, you subtracted backwards.
+- **Confusing the range statistic with the range interval.** "The data ranges from 6 to 22" describes an interval; the range itself is a single number — in that example, 16. Keep the two uses of the word separate when you're reporting results.
+- **Forgetting the sign rule with negative numbers.** Subtracting a negative adds its absolute value: 5 − (−18) equals 23, not 5 − 18 = −13. Write the subtraction out in full rather than doing the arithmetic in your head.
+- **Treating "the range" and "the spread" as interchangeable.** It's common to hear "the range was high" when the speaker actually means variance or standard deviation was high. They aren't the same number — the range can spike from a single outlier (the clinic example above went from 16 to 89 minutes), standard deviation moves almost as sharply, and variance swings harder still since it's a squared measure, while the IQR is the one measure that tends to hold steady.
+- **Reporting a grouped-data range as exact.** A range calculated from class boundaries is an upper-bound estimate. State it as "at most" the boundary difference, not as a measured figure.
 
-The range is always maximum minus minimum. Reverse the order and you get a negative number that means nothing as a measure of spread — if your result comes out negative, you subtracted backwards.
+## Statohub's Take on the Range as a Measure of Spread
 
-### Confusing the range statistic with the range interval
+Statohub's position is that the range earns its place as a first-pass check, not a final answer. It's the fastest way to catch an obvious data-entry error or get a rough sense of spread, but reporting it alone — especially for a data set that might contain outliers — overstates how confident you should be in what it's telling you. Pair it with the IQR or standard deviation whenever the stakes are higher than a quick sanity check.
 
-"The data ranges from 6 to 22" describes an interval; the range itself is a single number — in that example, 16. Keep the two uses of the word separate when you're reporting results, especially in writing.
+## Put the Range to Work With Statohub's Tools
 
-### Forgetting the sign rule with negative numbers
+The calculator above handles the range, minimum, and maximum for any list you enter — for a full-page version, open the dedicated <Link to={routes.calculator('range')}>range calculator</Link>. To build out the rest of the spread picture, try the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> or read the <Link to={routes.article('how-to-find-the-mean')}>mean guide</Link> for the center the spread is measured around. The <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link> covers mean, median, mode, variance, and standard deviation together, and the full <Link to={routes.calculatorsHub()}>calculators hub</Link> has every tool on the site in one place.
 
-Subtracting a negative adds its absolute value: 5 − (−18) equals 23, not 5 − 18 = −13. Write the subtraction out in full rather than doing the arithmetic in your head.
+## Sources
 
-### Treating "the range" and "the spread" as interchangeable
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.6. Measures of Scale', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.6. What are Outliers in the Data?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.3.14. Histogram', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.7 Measures of the Spread of the Data, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data', org: 'OpenStax' },
+  { text: 'Hozo, S.P., Djulbegovic, B., Hozo, I. — "Estimating the mean and variance from the median, range, and the size of a sample," BMC Medical Research Methodology (2005)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC1097734/', org: 'BMC / PMC' },
+  { text: 'Microsoft Support — MAX function', href: 'https://support.microsoft.com/en-us/office/max-function-e0012414-9ac8-4b34-9a47-73e662c08098', org: 'Microsoft' },
+  { text: 'Microsoft Support — MIN function', href: 'https://support.microsoft.com/en-us/office/min-function-61635d12-920f-4ce2-a70f-96f202dcc152', org: 'Microsoft' },
+  { text: 'Python Software Foundation — Built-in Functions (max, min)', href: 'https://docs.python.org/3/library/functions.html#max', org: 'Python Software Foundation' },
+]} />
 
-After a shift, an exam, or a batch of measurements, it's common to hear "the range was high" when the speaker actually means variance or standard deviation was high. They aren't the same number — and, as the clinic example above shows, the range can spike from a single outlier while every other measure of spread stays exactly where it was.
+## FAQ
 
-<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="Another helpful calculator is" />
+<FAQ items={[
+  {
+    question: 'How Do I Calculate Range When a Data Set Has Negative Numbers?',
+    answer: 'Exactly as for positive numbers: find the maximum and minimum as usual, then subtract. Because you’ll typically be subtracting a negative minimum, remember that subtracting a negative number adds its absolute value — for example, if x_max = 5 and x_min = −18, Range = 5 − (−18) = 23, not 5 − 18.',
+  },
+  {
+    question: 'How Do You Calculate for Range in a Grouped Frequency Table?',
+    answer: 'Use the upper boundary of the highest class interval minus the lower boundary of the lowest class interval. This produces an approximation, since the individual values inside each class aren’t available — the true range could be somewhat smaller than this estimate, so report it as an upper bound rather than an exact figure.',
+  },
+  {
+    question: 'How Do You Find Range in a Data Set Where Every Value Is the Same?',
+    answer: 'The range is 0. If the maximum and minimum are identical, Range = x_max − x_min = 0, which correctly signals a data set with no spread at all. This is a useful sanity check: a range of exactly zero on real-world data is rare enough to be worth double-checking for a data-entry error.',
+  },
+  {
+    question: 'Can the Range of Data Ever Be Negative?',
+    answer: 'No. The range is always zero or positive, because it’s defined as the maximum minus the minimum, and the maximum of a data set is never smaller than its minimum. A negative result always means the two values were subtracted in the wrong order.',
+  },
+  {
+    question: 'When Should You Use the Range Instead of the Standard Deviation?',
+    answer: 'Use the range for a quick, easy-to-explain snapshot of spread, especially in a small data set without outliers. Use the standard deviation when you need a fuller picture — one that reflects how every data point varies from the mean, not just the two extremes. When outliers are a real possibility, the IQR is usually the better choice over both.',
+  },
+  {
+    question: 'What Counts as a Good Range for a Data Set?',
+    answer: 'There’s no universal "good" range — it depends entirely on context. A range of 5 points is tight for exam scores out of 100 and enormous for precision manufacturing tolerances measured in micrometres. Judge the range relative to the scale of the measurement and the purpose of the analysis, not against a fixed number.',
+  },
+]} />
 
----
+## Recommended
 
-## Frequently Asked Questions
-
-### How do I calculate range when the dataset has negative numbers?
-
-Exactly as for positive numbers: find the maximum and minimum as usual, then subtract. Because you'll typically be subtracting a negative minimum, remember that subtracting a negative number adds its absolute value — for example, if x_max = 5 and x_min = −18, Range = 5 − (−18) = 23.
-
-### How do you calculate for range in a grouped frequency table?
-
-Use the upper boundary of the highest class interval minus the lower boundary of the lowest class interval. This produces an approximation, since the individual values inside each class aren't available — the true range could be somewhat smaller than this estimate.
-
-### When should I use the range instead of the standard deviation?
-
-Use the range for a quick, easy-to-explain snapshot of spread, especially in a small dataset without outliers. Use the standard deviation when you need a fuller picture — one that reflects how every data point varies from the mean, not just the two extremes. When outliers are a real possibility, the IQR is usually the better choice over both.
-
-### What counts as a "good" range for a dataset?
-
-There's no universal "good" range — it depends entirely on context. A range of 5 points is tight for exam scores out of 100 and enormous for precision manufacturing tolerances measured in micrometres. Judge the range relative to the scale of the measurement and the purpose of the analysis, not against some fixed number.
-
----
-
-## Summary
-
-The range is one subtraction: find the maximum, find the minimum, subtract.
-
-```
-Range = Maximum − Minimum
-```
-
-It's the fastest variability statistic to compute and the easiest to explain to a general audience, and it works identically for positive numbers, negative numbers, decimals, and grouped-data estimates. Its one real weakness is sensitivity to outliers — as the urgent-care example showed, a single unusual value can multiply the range several times over while the rest of the data doesn't move at all. When that risk is live, pair the range with the IQR or the standard deviation rather than reporting it alone.
-
-Use the range for a quick first-pass check, for setting histogram bin widths, or for reporting spread to someone who doesn't need the full statistical picture. For a closer look at how spread is calculated and notated more rigorously, see the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link>, or browse the full <Link to={routes.calculatorsHub()}>calculators hub</Link>.
-
-For a standards-body reference on measures of scale, see the [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3.5 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm).
+- <Link to={routes.article('mean-absolute-deviation')}>Mean Absolute Deviation Explained</Link>
+- <Link to={routes.article('variance')}>Variance: Definition, Formula & vs Standard Deviation</Link>
+- <Link to={routes.article('standard-deviation-symbol')}>The Standard Deviation Symbol (Sigma): Signs & Notation</Link>
+- <Link to={routes.article('what-is-an-average')}>What Is an Average? Mean Definition, Types & Meaning</Link>

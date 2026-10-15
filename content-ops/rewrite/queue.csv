@@ -4,7 +4,7 @@ order,slug,lane,status,attempts,score,date,notes
 3,p-value,A,published,0,90,2026-10-11,
 4,binomial-distribution,B,published,1,90,2026-10-13,"enrich: add geometric distribution section (owed, NOW.md 2026-10-04) | round2 CHANGES_REQUESTED: mis-citation at OpenStax 4.3 cite ('four requirements' vs source's 'three characteristics'); score 68/100; parked draft in drafts/"
 5,normal-distribution,A,published,0,88,2026-10-12,
-6,how-to-find-the-range,B,changes_requested,1,,2026-10-14,use the 5 unused range keywords from the board in copy (NOW.md parked item) | round2: OpenStax 2.7 cited for a range claim it never discusses (page is SD-only); fix the citation/claim mismatch
+6,how-to-find-the-range,B,published,1,90,2026-10-15,use the 5 unused range keywords from the board in copy (NOW.md parked item) | round2: OpenStax 2.7 cited for a range claim it never discusses (page is SD-only); fix the citation/claim mismatch
 7,permutations,A,published,0,92,2026-10-13,
 8,z-table,B,pending,0,,,
 9,exponential-distribution,A,published,0,92,2026-10-14,
