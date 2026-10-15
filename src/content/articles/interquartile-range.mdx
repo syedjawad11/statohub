@@ -1,6 +1,6 @@
 ---
-title: "Interquartile Range (IQR): Formula & How to Find It"
-description: "Learn what the interquartile range is, the IQR formula, and how to find it step by step. Includes a worked example, outlier detection, and IQR vs range."
+title: "Interquartile Range: IQR Formula & How to Find It"
+description: "Learn what the interquartile range is, the IQR formula (Q3 minus Q1), and how to find it step by step with a worked example and a free calculator."
 category: descriptive-statistics
 primaryKeyword: interquartile range
 keywords:
@@ -12,90 +12,108 @@ keywords:
   - what is the interquartile range
 phase: 1
 calculator: range-iqr
-related: []
+related:
+  - how-to-find-the-range
+  - standard-deviation
+  - variance
 draft: false
 pubDate: 2026-06-29
-updatedDate: 2026-09-20
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-15
+reviewedDate: 2026-10-15
 ---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
-import RelatedLink from '../../components/RelatedLink.astro';
 import { routes } from '../../lib/links';
 
-The **interquartile range** (IQR) is the difference between the third quartile (Q3) and the first quartile (Q1) of a data set. It measures how spread out the middle 50 percent of values are, making it one of the most useful ways to describe variability when a data set contains outliers. Whether you are reading a research report, interpreting a boxplot, or analysing your own numbers, knowing how to find the interquartile range tells you where most of your data actually lives — not just how far apart the most extreme points are.
+The **interquartile range** (IQR) is the difference between the third quartile (Q3) and the first quartile (Q1) of a sorted data set, and it measures how spread out the middle 50 percent of your values are. What is the interquartile range useful for that other spread measures aren't? It ignores the extreme high and low values entirely, which makes it the spread statistic of choice whenever a data set might contain outliers or a skewed tail. This guide covers the IQR formula, shows you how to find the interquartile range by hand with a worked example, and pinpoints exactly where it beats — and where it loses to — the range and the standard deviation.
 
-Unlike the overall range, the IQR ignores the extreme high and low values. That one design choice makes it far more informative for skewed distributions and far harder for a single unusual measurement to distort. A single outlier can double or triple the range of a data set while leaving the IQR completely unchanged.
+<KeyTakeaways rows={[
+  { point: 'IQR = Q3 − Q1', details: 'Subtract the first quartile from the third quartile; the result is the width of the middle 50 percent of a sorted data set.' },
+  { point: 'It ignores the top and bottom quarters entirely', details: 'Q1 and Q3 are computed from the inner portion of the data, so a single extreme value cannot move the IQR at all.' },
+  { point: 'Finding it is a two-step median split', details: 'Find the overall median, split the data into a lower and upper half around it, then find the median of each half — those are Q1 and Q3.' },
+  { point: 'It is the backbone of the boxplot', details: 'The box in a box-and-whisker plot runs from Q1 to Q3, so its width is literally the IQR.' },
+  { point: 'Software can disagree by a little', details: 'Excel, R, and Python use different quartile algorithms, so the same data set can return slightly different Q1/Q3 values depending on the tool.' },
+]} />
 
-This article explains what the interquartile range is, covers the IQR formula, walks through a step-by-step calculation with real numbers, explains how to use the IQR to detect outliers, and compares it with the ordinary range.
+## Quick Checklist: How to Find the Interquartile Range
 
----
+Most wrong answers trace back to one of these steps being skipped or done out of order. Run through this before you trust a result.
+
+<Checklist
+  id="how-to-find-the-interquartile-range-checklist"
+  title="Quick checklist: finding the interquartile range"
+  style="check"
+  items={[
+    { text: 'Sort the data first', detail: 'Quartiles only make sense on values arranged from smallest to largest.' },
+    { text: 'Find the median (Q2)', detail: 'The middle value for an odd count, or the average of the two middle values for an even count.' },
+    { text: 'Split into a lower and upper half', detail: 'Exclude the median itself from both halves when the count is odd.' },
+    { text: 'Find the median of each half', detail: 'The lower half’s median is Q1; the upper half’s median is Q3.' },
+    { text: 'Subtract: IQR = Q3 − Q1', detail: 'The result should always be zero or positive — a negative answer means Q1 and Q3 were swapped.' },
+  ]}
+/>
+
+## Calculate the Interquartile Range
+
+Enter your own list of numbers and the calculator below returns the minimum, maximum, Q1, median, Q3, and the IQR instantly.
+
+<StatCalc slug="range-iqr" variant="embed" />
 
 ## What Is the Interquartile Range?
 
-Statistics divides a sorted data set into four equal quarters called **quartiles**. Each quartile boundary is a specific value in the distribution:
+The interquartile range is a measure of statistical dispersion built from two specific values in a sorted data set: the first quartile (Q1) and the third quartile (Q3). Quartiles divide sorted data into four equal quarters, and the [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) defines the interquartile range plainly as "the value of the 75th percentile minus the value of the 25th percentile," adding that this measure of scale "attempts to measure the variability of points near the center."
 
-- **Q1 (first quartile):** the value below which 25 percent of the data falls — also called the lower quartile
-- **Q2 (second quartile):** the median; exactly half the values lie below it
-- **Q3 (third quartile):** the value below which 75 percent of the data falls — also called the upper quartile
-
-The interquartile range is the distance from Q1 to Q3:
+- **Q1 (first quartile):** the value below which 25 percent of the data falls.
+- **Q2 (second quartile):** the median — half the values lie below it.
+- **Q3 (third quartile):** the value below which 75 percent of the data falls.
 
 ```
 IQR = Q3 − Q1
 ```
 
-Because Q1 marks the bottom of the middle half and Q3 marks the top, the IQR captures the full span of the central 50 percent of your data. Statisticians call this a **measure of statistical dispersion** — it tells you how tightly or loosely the middle portion of your data points cluster together.
+Because Q1 marks the bottom of the middle half and Q3 marks the top, the IQR spans the central 50 percent of the data and says nothing at all about the outer quarters on either end. Quartiles are a specific case of percentiles — Q1 is the 25th percentile and Q3 is the 75th — so the <Link to={routes.article('percentiles')}>percentiles guide</Link> is the place to go for how percentile ranks work more generally; this page focuses on what happens once you land on exactly those two.
 
-Think of it this way: if you lined up 100 students by exam score from lowest to highest, split off the bottom 25 and top 25, and then measured how far apart the remaining 50 scores span, that distance is the IQR.
+## What Is the IQR Formula?
 
-Quartiles are a specific case of percentiles: Q1 is the 25th percentile, Q2 is the 50th percentile, and Q3 is the 75th percentile. Any technique that finds percentiles can therefore find quartiles, and vice versa.
-
-<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
-
----
-
-## The IQR Formula
-
-The formula for the interquartile range is:
+So what is interquartile range, arithmetically speaking? One subtraction:
 
 ```
 IQR = Q3 − Q1
 ```
 
-where:
+The result carries the same units as the original data: an IQR of 8 minutes means the middle half of your measurements spans 8 minutes. The arithmetic is trivial — the real work is locating Q1 and Q3 correctly, and that's where methods diverge. [R's `quantile()` documentation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html) lists nine distinct sample-quantile algorithms (selected with its `type` argument, defaulting to type 7), and [NumPy's `percentile()` function](https://numpy.org/doc/stable/reference/generated/numpy.percentile.html) offers a matching set of interpolation methods, with `linear` as the default. The step-by-step median-split method below is the version most commonly taught in introductory statistics courses, and it's what this guide uses throughout; expect small differences if you check a result against a spreadsheet or statistical package, especially on a small sample.
 
-- **Q1** is the first quartile — the median of the lower half of the sorted data set
-- **Q3** is the third quartile — the median of the upper half of the sorted data set
+<Callout variant="tip" title="Pro tip">
+If a classmate, a colleague, or a piece of software gets a slightly different Q1 or Q3 than you did by hand, check which quartile algorithm it used before assuming either one is wrong — the Excel/R/Python comparison further down this page shows two common methods landing 3.5 apart on the very same nine numbers. That gap shrinks as the sample grows, but there's no fixed sample size where it disappears entirely, so it's still worth checking on a larger data set too.
+</Callout>
 
-The result is always in the same units as the original data. An IQR of 8 degrees means the middle half of measurements spans 8 degrees. An IQR of 12 minutes means the middle half of response times spans 12 minutes.
+## How Do You Find the Interquartile Range?
 
-The formula itself is simple; the effort lies in correctly locating Q1 and Q3. Different textbooks and software programs use slightly different algorithms to calculate quartiles, which can produce small differences in the final IQR. The step-by-step method below — splitting the sorted data at the median and taking the median of each half — is the approach most commonly taught in introductory statistics courses and is reliable for hand calculations.
-
----
-
-## How to Find the Interquartile Range: Step-by-Step Method
-
-To find the interquartile range by hand, follow these five steps.
+Here's how to find interquartile range by hand, in five steps: sort the data, find the median, split the data at the median, find the median of each half, then subtract.
 
 ### Step 1: Sort the data from smallest to largest
 
-Arrange every value in ascending order. Quartiles require sorted data; skipping this step guarantees a wrong answer.
+Arrange every value in ascending order. Skipping this step guarantees a wrong Q1 and Q3.
 
 ### Step 2: Find the median (Q2)
 
-Count how many values you have. If the count is **odd**, Q2 is the single middle value. If it is **even**, Q2 is the average of the two middle values.
+Count the values. If the count is **odd**, Q2 is the single middle value. If it is **even**, Q2 is the average of the two middle values.
 
 ### Step 3: Split the data at the median
 
-Divide the sorted values into a lower half and an upper half. When the total count is **odd**, exclude the median itself from both halves. When the count is **even**, the two middle values each belong to their own half.
+Divide the sorted values into a lower half and an upper half. When the total count is **odd**, exclude the median itself from both halves. When the count is **even**, the two middle values each belong to their own half, with no exclusion needed.
 
 ### Step 4: Find Q1 and Q3
 
-- **Q1** is the median of the lower half.
-- **Q3** is the median of the upper half.
-
-Apply the same median rule from Step 2 to each half: single middle value for an odd-length half, average of two middle values for an even-length half.
+Q1 is the median of the lower half; Q3 is the median of the upper half. Apply the same rule from Step 2 to each half.
 
 ### Step 5: Subtract Q1 from Q3
 
@@ -103,220 +121,159 @@ Apply the same median rule from Step 2 to each half: single middle value for an 
 IQR = Q3 − Q1
 ```
 
-The result is a non-negative number representing the spread of the central 50 percent.
+## A Worked Example: Spread in Weekly Sales Calls
 
----
-
-## Worked Example: Calculating the Interquartile Range
-
-**Data set (unordered):** 14, 5, 8, 12, 6, 10, 15
-
-**Step 1 — Sort in ascending order:**
+A sales manager wants to know how consistent call volume was across the team last week, before deciding whether to flag the spread as a problem. Nine reps logged these call counts: 14, 19, 22, 25, 27, 29, 31, 35, 42 (already sorted, n = 9).
 
 ```
-5, 6, 8, 10, 12, 14, 15
+Step 1 — Data is already sorted: 14, 19, 22, 25, 27, 29, 31, 35, 42
+Step 2 — Median (Q2): position 5 of 9 → Q2 = 27
+Step 3 — Lower half (exclude 27): 14, 19, 22, 25
+          Upper half (exclude 27): 29, 31, 35, 42
+Step 4 — Q1 = median(14, 19, 22, 25) = (19 + 22) / 2 = 20.5
+          Q3 = median(29, 31, 35, 42) = (31 + 35) / 2 = 33
+Step 5 — IQR = 33 − 20.5 = 12.5
 ```
 
-There are 7 values (n = 7).
+The interquartile range is **12.5 calls**. The middle half of the reps' weekly call counts spans 12.5 calls, while the overall range is 42 − 14 = 28 — more than twice as wide, because the range also counts the two most extreme reps that the IQR deliberately excludes.
 
-**Step 2 — Find Q2 (the median):**
+**Decision.** The manager should report the median (27 calls) and the IQR (12.5 calls) as the headline spread figures for this team, not the range — a 28-call range sounds like a wide spread, but the IQR shows the middle 50 percent of reps cluster within 12.5 calls of each other, which is a much more defensible read of "typical" performance. The next section shows exactly why that choice holds up even if one rep's count turns out to be unusual.
 
-The middle position in a 7-value data set is position 4. The fourth value is:
+Paste these nine values into the calculator above to confirm Q1, Q3, and the IQR without redoing the median splits by hand.
 
-```
-Q2 = 10
-```
+## Why Does the IQR Resist Outliers?
 
-**Step 3 — Split at the median:**
-
-Because n is odd, exclude 10 from both halves.
-
-- Lower half: 5, 6, 8
-- Upper half: 12, 14, 15
-
-**Step 4 — Find Q1 and Q3:**
-
-Lower half has 3 values — the middle one is the second:
+The IQR is a **resistant statistic**: extreme values at either end of a sorted data set cannot move it, because Q1 and Q3 are computed from the inner portion of the data, not the extremes. Replace the largest value in the worked example — 42 — with an outlier of 95:
 
 ```
-Q1 = 6
+Modified data: 14, 19, 22, 25, 27, 29, 31, 35, 95
+Median: still 27 (position 5 of 9, unchanged)
+Lower half: 14, 19, 22, 25 → Q1 = 20.5 (unchanged)
+Upper half: 29, 31, 35, 95 → Q3 = median(29, 31, 35, 95) = 33 (unchanged)
+IQR = 33 − 20.5 = 12.5  (identical to the original)
 ```
 
-Upper half has 3 values — the middle one is the second:
+The range, by contrast, leaps from 28 to 81 (95 − 14) — nearly triple. The IQR holds steady at 12.5 because 95 sits outside the middle 50 percent entirely, so it plays no role in determining either quartile.
+
+<Figure number={1} caption="Replacing the largest value (42) with an outlier (95) nearly triples the range, from 28 to 81, while the IQR stays fixed at 12.5.">
+  <AnnotatedChart
+    title="Range vs. IQR before and after an outlier"
+    desc="Bar chart comparing the range before and after an outlier is introduced, against the unchanged IQR: range of 28 for the original nine reps, range of 81 after one value is replaced with 95, and an IQR of 12.5 in both cases."
+    type="bar"
+    points={[
+      { label: 'Range, original data', value: 28 },
+      { label: 'Range, with outlier', value: 81, annotation: '42 replaced with 95' },
+      { label: 'IQR, both data sets', value: 12.5, annotation: 'Unchanged' },
+    ]}
+  />
+</Figure>
+
+This resistance is exactly why the IQR anchors the **box** in a box-and-whisker plot. [NIST/SEMATECH's box plot reference](https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm) describes the construction directly: plot the median, then "draw a box between the lower and upper quartiles" — so the box's width is the IQR by definition — and it is why the IQR also powers the standard rule for flagging outliers in the first place. The [NIST/SEMATECH e-Handbook's guidance on outlier detection](https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm) builds exactly this kind of fence from the IQR: a lower inner fence at Q1 − 1.5×IQR and an upper inner fence at Q3 + 1.5×IQR, with points beyond an outer fence at 3×IQR flagged as extreme outliers. [OpenStax's *Introductory Statistics 2e*, Section 2.3](https://openstax.org/books/introductory-statistics-2e/pages/2-3-measures-of-the-location-of-the-data) sets the same rule in plainer terms: "A value is suspected to be a potential outlier if it is less than (1.5)(IQR) below the first quartile or more than (1.5)(IQR) above the third quartile." For the full mechanics of applying that rule — including how to compute the fences and decide what to do with a flagged point — see the <Link to={routes.article('how-to-find-outliers')}>outlier detection guide</Link>; for how the box and whiskers are drawn from these same numbers, see the <Link to={routes.article('histogram-vs-boxplot')}>histogram vs. boxplot guide</Link>.
+
+## When Should You Use the IQR Instead of the Range or Standard Deviation?
+
+Reach for the IQR whenever a data set might contain outliers or a skewed tail and you want a spread measure that describes what's typical rather than what's extreme. Reach for the range only for a fast, disposable first pass, and reach for the standard deviation when you need a measure built from every value and your data don't have extreme outliers distorting it.
+
+<DataTable
+  caption="Choosing a spread measure by what you need"
+  headers={['Measure', 'What it uses', 'Resistant to outliers?', 'Best for']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['Range', 'Only the max and min', 'No', 'A quick, disposable first pass'],
+    ['Interquartile range (IQR)', 'The middle 50% of values', 'Yes', 'Skewed data or data with outliers'],
+    ['Standard deviation', 'Every value, via distance from the mean', 'No', 'Symmetric data without extreme outliers'],
+  ]}
+/>
+
+For the full worked comparison on a single data set — including how a single outlier moves the range and standard deviation while barely touching the IQR — see the <Link to={routes.article('how-to-find-the-range')}>range guide</Link>, which runs the same kind of before-and-after test with its own numbers. The short version: on the worked example above, the standard deviation of the original nine values is about 8.4 calls, but it jumps to about 24.1 once the 95-call outlier replaces 42 — a swing almost as sharp as the range's, while the IQR didn't move at all.
+
+<Callout variant="quote" source="NIST/SEMATECH e-Handbook of Statistical Methods" sourceHref="https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm">
+The range is the largest value minus the smallest value in a data set. Note that this measure is based only on the lowest and highest extreme values in the sample. The spread near the center of the data is not captured at all.
+</Callout>
+
+## How Do You Calculate the IQR in Excel, R, or Python?
+
+All three tools can return a different Q1 and Q3 than the median-split method above, because each one defaults to a different quartile algorithm. Running the nine call counts (14, 19, 22, 25, 27, 29, 31, 35, 42) through each tool's default makes the gap concrete.
 
 ```
-Q3 = 14
+Excel:  =QUARTILE.INC(A1:A9, 3) - QUARTILE.INC(A1:A9, 1)
+        → Q1 = 22, Q3 = 31, IQR = 9
+
+R:      calls = c(14, 19, 22, 25, 27, 29, 31, 35, 42)
+        IQR(calls)                       # uses quantile(type = 7) by default → 9
+
+Python: import statistics
+        calls = [14, 19, 22, 25, 27, 29, 31, 35, 42]
+        statistics.quantiles(calls, n=4)                  # exclusive (default) → [20.5, 27, 33], IQR = 12.5
+        statistics.quantiles(calls, n=4, method='inclusive')  # → [22, 27, 31], IQR = 9
 ```
 
-**Step 5 — Calculate the IQR:**
-
-```
-IQR = Q3 − Q1 = 14 − 6 = 8
-```
-
-The interquartile range is **8**. The middle half of the data spans 8 units, while the overall range is 15 − 5 = 10. The IQR is narrower than the range because it focuses only on the inner spread, discarding the gap added by the extreme values.
-
-<RelatedLink to={routes.article('how-to-find-the-range')} label="how to find the range" intro="On a related note" />
-
----
-
-## Why the Interquartile Range Matters
-
-Several properties make the IQR especially valuable in descriptive statistics.
-
-### Resistance to outliers
-
-The IQR is a **resistant statistic** — extreme values do not affect it. To see this clearly, replace the largest value in the worked example (15) with an outlier of 95:
-
-**Modified data set:** 5, 6, 8, 10, 12, 14, 95
-
-The sorted order is now: 5, 6, 8, 10, 12, 14, 95
-
-- Median: still 10 (position 4 of 7)
-- Lower half: 5, 6, 8 → Q1 = 6 (unchanged)
-- Upper half: 12, 14, 95 → Q3 = 14 (the middle of three values, still 14)
-
-```
-IQR = 14 − 6 = 8   (identical to the original)
-```
-
-Meanwhile, the range leaps from 10 to 90. The IQR stays at 8 because the outlier sits outside the middle 50 percent and plays no role in determining Q1 or Q3. This resistance is precisely why the IQR is preferred over the range when you suspect extreme values may be present.
-
-### Boxplot construction
-
-The IQR is the backbone of the **boxplot** (also called a box-and-whisker plot). The box in the chart extends from Q1 to Q3 — its width equals the IQR. The line inside the box marks Q2 (the median). Whiskers reach from the box outward to the most extreme values that are not considered outliers. Understanding what is interquartile range is therefore a prerequisite for reading boxplots correctly.
-
-### Comparison across groups
-
-Because the IQR strips away the influence of extremes, comparing IQRs across two groups tells you how consistent the middle portions are, independent of any freak high or low scores. A wide IQR signals high variability in typical performance; a narrow IQR signals tight clustering near the median.
-
-According to the [NIST/SEMATECH e-Handbook of Statistical Methods, Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm), the IQR is among the standard robust measures of variability recommended when data distributions are non-normal or subject to outliers.
-
-<RelatedLink to={routes.calculator('standard-deviation')} label="standard deviation calculator" intro="You may also find this useful" />
-
----
-
-## Using the IQR to Detect Outliers
-
-The most widespread application of the IQR is **Tukey's 1.5 × IQR rule**, which constructs two fences beyond which any value is flagged as a potential outlier:
-
-```
-Lower fence = Q1 − 1.5 × IQR
-Upper fence = Q3 + 1.5 × IQR
-```
-
-Any data point that falls below the lower fence or above the upper fence is treated as an outlier.
-
-### Applying the rule to the worked example
-
-Using the values from the earlier example: Q1 = 6, Q3 = 14, IQR = 8
-
-```
-Lower fence = 6 − 1.5 × 8 = 6 − 12 = −6
-Upper fence = 14 + 1.5 × 8 = 14 + 12 = 26
-```
-
-Every value in the original data set (5 through 15) lies between −6 and 26. **No outliers.**
-
-Now apply the rule to the modified data set containing 95:
-
-```
-Lower fence = −6  (Q1 and IQR unchanged)
-Upper fence = 26
-```
-
-The value 95 is greater than 26, so it is flagged as an outlier. The IQR rule detected it automatically because 95 sits above the upper fence.
-
-A stricter version sometimes used in research is the **3 × IQR rule**:
-
-```
-Far lower fence = Q1 − 3 × IQR
-Far upper fence = Q3 + 3 × IQR
-```
-
-This places the fences further out, flagging only the most extreme outliers (often called "far-out" points). The 1.5 × version, introduced by the statistician John Tukey in his 1977 textbook *Exploratory Data Analysis*, remains the default for boxplot outlier marking in most statistical software.
-
-The [OpenStax Introductory Statistics 2e, Section 2.3 — Measures of the Location of the Data](https://openstax.org/books/introductory-statistics-2e/pages/2-3-measures-of-the-location-of-the-data) provides a clear treatment of how quartiles and the IQR connect to boxplots and outlier identification in an accessible, open-access format.
-
----
-
-## IQR vs Range: Key Differences
-
-Both the range and the interquartile range measure spread, but they answer different questions about a data set.
-
-The **range** is the gap between the largest and smallest values:
-
-```
-Range = Maximum − Minimum
-```
-
-The **IQR** is the gap between Q3 and Q1:
-
-```
-IQR = Q3 − Q1
-```
-
-Here is how they compare in practice:
-
-| Property | Range | IQR |
-|---|---|---|
-| What it measures | Total spread (all data) | Middle-50% spread |
-| Sensitivity to outliers | High — one outlier can inflate it dramatically | None — extremes do not affect Q1 or Q3 |
-| Best for | Symmetric data without outliers | Skewed data or any data with outliers |
-| Used in boxplots? | Whisker endpoints may reference it | Yes — the box width IS the IQR |
-
-**When to prefer the range:** When you genuinely care about the full extent of values and outliers are either rare or meaningful (for example, recording the highest wind speed ever measured at a weather station).
-
-**When to prefer the IQR:** When you want to summarise typical variability, especially if the data is skewed or if extreme values are known to exist. Paired with the median — which is equally resistant — the IQR gives a coherent picture of a distribution's centre and spread without distortion from a handful of unusual measurements.
-
-The IQR also complements the standard deviation. The standard deviation measures average distance from the mean and is sensitive to outliers; the IQR measures central spread and ignores them. Reporting both together is common in applied research when outliers are present.
-
-<RelatedLink to={routes.article('percentiles')} label="percentiles in statistics" intro="Worth reading next" />
-
----
-
-## Common Mistakes When Finding the Interquartile Range
-
-### 1. Forgetting to sort the data
-
-Quartile calculations require values in ascending order. Applying the steps to unsorted data produces Q1 and Q3 values that are completely meaningless.
-
-### 2. Including the median in both halves
-
-When n is odd, the median is a single data point and must be excluded from both the lower half and the upper half before finding Q1 and Q3. Including it inflates one quartile and deflates the other.
-
-### 3. Reversing Q1 and Q3
-
-Q1 is always the **smaller** quartile (lower quartile); Q3 is always the **larger** one (upper quartile). The IQR = Q3 − Q1 is therefore always zero or positive. If you get a negative IQR, Q1 and Q3 have been swapped.
-
-### 4. Not accounting for different quartile methods
-
-There are at least nine recognised algorithms for computing quartiles. A hand calculation using the median-split method will sometimes produce a different result than spreadsheet software, R, or Python — particularly for small samples. Excel's `QUARTILE.INC` function and R's default `quantile()` both use a form of linear interpolation that can give non-integer results even when all the data values are whole numbers. For small data sets, the difference can be noticeable; for large samples (n > 50), the methods converge.
-
-### 5. Treating the IQR as a percentage
-
-The IQR is an **absolute** measure in the same units as the data. An IQR of 8 points is a spread of 8 points — not 8 percent. To express spread as a percentage of the median, statisticians use the coefficient of quartile variation instead.
-
----
-
-## Frequently Asked Questions
-
-### What is the interquartile range?
-
-Subtract the first quartile from the third: **IQR = Q3 − Q1**. It measures the spread of the middle 50 percent of a sorted data set and is not influenced by extreme values at either end.
-
-### What is interquartile range used for?
-
-It describes the spread of the central portion of a distribution, anchors the box in a boxplot, and powers Tukey's 1.5 × IQR outlier-detection rule. It is also used to compare variability between groups when outliers make the standard deviation unreliable.
-
-### How to find the interquartile range for an even number of values?
-
-The process is the same, but finding the median (Step 2) works differently. For an even count, Q2 is the average of the two middle values. Divide the full sorted list in half — the lower n/2 values form the lower half and the upper n/2 values form the upper half (no exclusion needed since the median is an average, not a specific data point). Then find the median of each half to get Q1 and Q3.
-
-### Why does the IQR not change when an outlier is added?
-
-Because Q1 and Q3 are calculated from values in the **inner portion** of the sorted data. Adding a value to the far end of a distribution shifts only the maximum (or minimum), leaving the positions of the 25th and 75th percentile values unchanged. The IQR therefore stays the same regardless of how extreme the new outlier is.
-
-### How does the IQR differ from the range?
-
-The range (maximum minus minimum) measures the total spread of all values and is highly sensitive to outliers. The IQR (Q3 minus Q1) measures only the middle 50 percent and is resistant to outliers. Both summarise spread in the same units as the data, but the IQR is preferred when extreme values are present or the distribution is skewed.
+Excel's [`QUARTILE.INC` function](https://support.microsoft.com/en-us/office/quartile-inc-function-1bbacc80-5075-42f1-aed6-47d735c4819d), [NumPy's `percentile()`](https://numpy.org/doc/stable/reference/generated/numpy.percentile.html) with its default `linear` method, and [R's `IQR()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/IQR.html), which computes quartiles via `quantile()` with `type = 7` by default, all agree with each other on this data set: Q1 = 22, Q3 = 31, IQR = **9** — not the 12.5 the median-split method produced above. R's own documentation is explicit about the mismatch, noting that `IQR()` "computes the quartiles using the `quantile` function rather than following Tukey's recommendations." Python breaks the pattern: [the standard library's `statistics.quantiles()`](https://docs.python.org/3/library/statistics.html#statistics.quantiles) defaults to `method='exclusive'`, which reproduces the median-split answer of 12.5 exactly — switch it to `method='inclusive'` and it matches Excel and R instead. [SciPy's `scipy.stats.iqr()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.iqr.html) exposes the same `interpolation` parameter if you need to match a specific convention there too.
+
+<Callout variant="note" title="Neither answer is wrong">
+A hand-calculated IQR of 12.5 and a spreadsheet's IQR of 9 on the same nine numbers are both correct for the method each one uses. The gap matters most on small samples; state which method you used whenever the exact Q1/Q3 values matter, not just the final IQR.
+</Callout>
+
+## What Mistakes Do People Make When Calculating the IQR?
+
+- **Forgetting to sort the data.** Quartile calculations require ascending order; applying the steps to unsorted data produces a Q1 and Q3 that mean nothing.
+- **Including the median in both halves.** When n is odd, the median is a single data point and must be excluded from both the lower and upper halves before finding Q1 and Q3. Including it inflates one quartile and deflates the other.
+- **Reversing Q1 and Q3.** Q1 is always the smaller quartile and Q3 the larger one, so IQR = Q3 − Q1 is always zero or positive. A negative result means the two were swapped.
+- **Assuming every tool agrees.** As the comparison above shows, the median-split method and the default linear-interpolation method built into Excel, R, and Python can return noticeably different Q1 and Q3 values on the same small data set, even though every calculation is implemented correctly.
+- **Treating the IQR as a percentage.** The IQR is an absolute measure in the same units as the data. An IQR of 8 points is a spread of 8 points, not 8 percent.
+- **Reporting a single IQR without stating the method.** State which quartile method produced your Q1 and Q3, especially on a small data set where — as the comparison above shows — the choice of method visibly changes the answer, so a reader or grader can reproduce your number exactly.
+
+## Statohub's Take on the Interquartile Range
+
+Statohub's position is that the IQR deserves to be the default spread statistic the moment a data set might contain outliers, a skewed tail, or values you haven't fully audited yet — which, in practice, describes most real-world data. The range is faster and the standard deviation is more familiar, but neither one tells you what "typical" looks like once a handful of extreme values are in the mix. Report the median and IQR together, and reach for the mean and standard deviation only once you've checked that the extremes aren't quietly running the show.
+
+## Put the Interquartile Range to Work With Statohub's Tools
+
+The calculator above handles Q1, Q3, and the IQR for any list you paste in — for a standalone version with percentile rank included, try the <Link to={routes.calculator('percentile')}>percentile calculator</Link>. To round out the rest of the spread picture, the <Link to={routes.article('standard-deviation')}>standard deviation guide</Link> and the <Link to={routes.article('variance')}>variance guide</Link> cover the measures that use every value instead of just the middle half, and the <Link to={routes.article('how-to-find-the-range')}>range guide</Link> walks through the simplest spread statistic of all. The <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link> ties mean, median, mode, range, variance, and the IQR together in one place, and the full <Link to={routes.calculatorsHub()}>calculators hub</Link> has every tool on the site.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.6. Measures of Scale', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.6. What Are Outliers in the Data?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.3.7. Box Plot', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.3 Measures of the Location of the Data, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/2-3-measures-of-the-location-of-the-data', org: 'OpenStax' },
+  { text: 'Microsoft Support — QUARTILE.INC function', href: 'https://support.microsoft.com/en-us/office/quartile-inc-function-1bbacc80-5075-42f1-aed6-47d735c4819d', org: 'Microsoft' },
+  { text: 'NumPy — numpy.percentile', href: 'https://numpy.org/doc/stable/reference/generated/numpy.percentile.html', org: 'NumPy' },
+  { text: 'R Documentation — quantile (Sample Quantiles)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html', org: 'The R Project' },
+  { text: 'R Documentation — IQR (The Interquartile Range)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/IQR.html', org: 'The R Project' },
+  { text: 'SciPy — scipy.stats.iqr', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.iqr.html', org: 'SciPy' },
+  { text: 'Python Software Foundation — statistics.quantiles, Python documentation', href: 'https://docs.python.org/3/library/statistics.html#statistics.quantiles', org: 'Python Software Foundation' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is the Interquartile Range?',
+    answer: 'The interquartile range is the difference between the third quartile (Q3) and the first quartile (Q1) of a sorted data set: IQR = Q3 − Q1. It measures the spread of the middle 50 percent of the data and is not influenced by extreme values at either end, which is what makes it more reliable than the range when outliers are a possibility.',
+  },
+  {
+    question: 'How Do You Find Interquartile Range for an Even Number of Values?',
+    answer: 'The process is the same, but finding the median (Q2) works differently: for an even count, Q2 is the average of the two middle values, and the full sorted list splits exactly in half with no value excluded from either side (since the median isn’t one specific data point). Then find the median of the lower half for Q1 and the median of the upper half for Q3, and subtract as usual.',
+  },
+  {
+    question: 'Why Does the IQR Not Change When an Outlier Is Added?',
+    answer: 'Q1 and Q3 are calculated from the inner portion of a sorted data set, not the extremes. Adding or changing a value at the far end of the distribution shifts only the maximum or minimum, leaving the positions of the 25th and 75th percentile values — and therefore the IQR — unchanged, regardless of how extreme the new value is.',
+  },
+  {
+    question: 'What Is the IQR Formula Used For?',
+    answer: 'Beyond describing spread, the IQR formula anchors the box in a box-and-whisker plot (the box spans Q1 to Q3) and sets the fences for the standard 1.5×IQR outlier rule. It is also used to compare variability between groups when a standard deviation comparison would be thrown off by outliers in one of the groups.',
+  },
+  {
+    question: 'How Does the IQR Differ From the Range?',
+    answer: 'The range (maximum minus minimum) uses only two values and is highly sensitive to outliers. The IQR (Q3 minus Q1) uses the middle 50 percent of the data and is resistant to outliers. Both report spread in the same units as the data, but the IQR is the more trustworthy choice whenever extreme values or skew are a real possibility.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('how-to-find-outliers')}>How to Find Outliers: The 1.5×IQR Rule & Formula</Link>
+- <Link to={routes.article('percentiles')}>Percentiles: Meaning, Definition & How to Calculate</Link>
+- <Link to={routes.article('histogram-vs-boxplot')}>Histogram vs Boxplot: When to Use Each</Link>
+- <Link to={routes.article('how-to-find-the-mean')}>How to Find the Mean (Average): Formula & Steps</Link>

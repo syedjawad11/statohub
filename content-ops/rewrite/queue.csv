@@ -9,7 +9,7 @@ order,slug,lane,status,attempts,score,date,notes
 8,z-table,B,pending,0,,,
 9,exponential-distribution,A,published,0,92,2026-10-14,
 10,median-vs-average,B,pending,0,,,
-11,interquartile-range,A,pending,0,,,
+11,interquartile-range,A,published,0,90,2026-10-15,
 12,percentiles,B,pending,0,,,
 13,what-is-correlation,A,pending,0,,,
 14,standard-deviation,B,pending,0,,,
