@@ -377,6 +377,13 @@
       "title": "Autocorrelation Interpretation",
       "slug": "autocorrelation-interpretation",
       "category_slug": "time-series-forecasting"
+    },
+    {
+      "queue_position": 55,
+      "day_label": "2026-10-09",
+      "title": "Synthetic Control Method",
+      "slug": "synthetic-control-method",
+      "category_slug": "experiments-causality"
     }
   ]
 }
