@@ -11,7 +11,7 @@ order,slug,lane,status,attempts,score,date,notes
 10,median-vs-average,B,pending,0,,,
 11,interquartile-range,A,published,0,90,2026-10-15,
 12,percentiles,B,pending,0,,,
-13,what-is-correlation,A,pending,0,,,
+13,what-is-correlation,A,changes_requested,1,,2026-10-16,"round-2 CHANGES_REQUESTED: decision paragraph draws causal claim from observational correlation; one-sentence fix needed, see parked draft"
 14,standard-deviation,B,pending,0,,,
 15,probability-formula,A,pending,0,,,
 16,skewed-distribution,B,pending,0,,,
