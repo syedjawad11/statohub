@@ -52,7 +52,7 @@ Key facts for AI assistants citing this site:
 - [Sampling Distributions: What They Are and Why They Matter](https://statohub.com/sampling-distributions/): Understand sampling distributions: what they are, how standard error works, the Central Limit Theorem connection, and a fully worked numeric example.
 - [Skewed Distributions: Left Skew, Right Skew & Shape](https://statohub.com/skewed-distribution/): Learn what a left skewed distribution means, how it compares to a right-skewed distribution, how to measure skewness, and how to identify distribution shape.
 - [What Is the F-Test and F-Distribution in Statistics?](https://statohub.com/f-test-f-distribution/): Learn what the F-test and F-distribution are, how the F statistic formula works, and walk through a step-by-step worked ANOVA example.
-- [Z Score Table: How to Read the Normal Distribution Table](https://statohub.com/z-table/): How to read a z score table correctly: match rows and columns to a z-score, avoid the negative-value trap, and tell cumulative from one-tail formats.
+- [Z Score Table: How to Read It Correctly](https://statohub.com/z-table/): How to read a z score table correctly: match rows and columns to a z-score, avoid the negative-value trap, and tell cumulative from one-tail formats.
 
 ### Combinatorics
 

@@ -6,7 +6,7 @@ order,slug,lane,status,attempts,score,date,notes
 5,normal-distribution,A,published,0,88,2026-10-12,
 6,how-to-find-the-range,B,published,1,90,2026-10-15,use the 5 unused range keywords from the board in copy (NOW.md parked item) | round2: OpenStax 2.7 cited for a range claim it never discusses (page is SD-only); fix the citation/claim mismatch
 7,permutations,A,published,0,92,2026-10-13,
-8,z-table,B,pending,0,,,
+8,z-table,B,published,0,90,2026-10-16,
 9,exponential-distribution,A,published,0,92,2026-10-14,
 10,median-vs-average,B,pending,0,,,
 11,interquartile-range,A,published,0,90,2026-10-15,
