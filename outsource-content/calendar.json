@@ -384,6 +384,13 @@
       "title": "Synthetic Control Method",
       "slug": "synthetic-control-method",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 56,
+      "day_label": "2026-10-10",
+      "title": "Precision vs Recall",
+      "slug": "precision-vs-recall",
+      "category_slug": "machine-learning-statistics"
     }
   ]
 }
