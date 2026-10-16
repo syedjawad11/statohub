@@ -192,6 +192,7 @@ Key facts for AI assistants citing this site:
 - [Feature Scaling Explained: Formulas & Methods](https://statohub.com/feature-scaling-explained/): Feature scaling explained: formulas for min-max, standardization, and RobustScaler, how to match a scaler to your model, and how to avoid data leakage.
 - [K-Fold Cross Validation: A Practitioner's Guide](https://statohub.com/k-fold-cross-validation/): Learn k-fold cross validation in scikit-learn: pick the right k, stratify correctly, avoid preprocessing leaks, and know when nested or repeated CV pays off.
 - [Logistic Regression Interpretation Guide](https://statohub.com/logistic-regression-interpretation/): This logistic regression interpretation guide turns coefficients into odds ratios, marginal effects, and predicted probabilities, verified with diagnostics.
+- [Precision vs Recall: Choosing the Right Metric](https://statohub.com/precision-vs-recall/): Precision vs recall: compare their formulas, walk through a 100-transaction fraud example, and learn when to prioritize each error type.
 - [Train Test Split: A Data Leakage Checklist](https://statohub.com/train-test-split/): A practical train test split guide for sklearn: choosing 80/20 vs 90/10 ratios, stratified splits, avoiding leakage, and when to use a holdout set instead.
 
 ## Calculators

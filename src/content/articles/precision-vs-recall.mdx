@@ -1,0 +1,194 @@
+---
+title: "Precision vs Recall: Choosing the Right Metric"
+h1: "Precision vs. Recall: 100 Transactions, Two Error Costs"
+description: "Precision vs recall: compare their formulas, walk through a 100-transaction fraud example, and learn when to prioritize each error type."
+category: machine-learning-statistics
+phase: 1
+primaryKeyword: "precision vs recall"
+keywords:
+  - precision vs recall
+  - precision and recall
+related:
+  - confusion-matrix-explained
+  - f1-score-explained
+  - class-imbalance-handling
+draft: false
+pubDate: 2026-10-16
+updatedDate: 2026-10-16
+reviewedDate: 2026-10-16
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Precision measures how many of a model's positive predictions are actually correct; recall measures how many of the true positives the model actually catches. The rule of thumb is straightforward: prioritize precision when false positives carry the higher cost, and prioritize recall when false negatives are the more expensive mistake. The sections that follow walk through the formulas, a worked confusion-matrix example, and a decision checklist to help pick the right metric for a given problem.
+
+<KeyTakeaways rows={[
+  { point: '60% precision, 75% recall', details: 'In the fraud example, 60% precision means four of every ten alerts waste review time, while 75% recall still misses one quarter of actual fraud.' },
+  { point: 'PR curves beat ROC AUC for rare events', details: 'Rare positives can make even a low false positive rate generate many alerts, so precision-recall curves are more informative than ROC AUC.' },
+  { point: 'Set the threshold on cost and capacity', details: 'Set the threshold on a validation set around error costs and review capacity; when people inspect every alert, favor recall while accepting lower precision.' },
+  { point: 'F1 assumes equal error costs', details: 'F1 assumes equal error costs, so choose F-beta or expected utility on held-out data when false positives and false negatives carry different consequences.' },
+]} />
+
+## Formal Definitions and Formulas for Precision and Recall
+
+Precision and recall both start from the same four counts in a <Link to={routes.article('confusion-matrix-explained')}>confusion matrix</Link>: true positives (TP), false positives (FP), true negatives (TN), and false negatives (FN). From there, the formulas diverge in what they measure.
+
+- **Precision** equals TP divided by (TP plus FP), the share of predicted positives that are [actually correct](https://en.wikipedia.org/wiki/Precision_and_recall).
+- **Recall**, also called sensitivity or the true positive rate, equals TP divided by (TP plus FN), the share of actual positives the model successfully found.
+- **Accuracy** equals (TP plus TN) divided by all cases, and it can look flattering even when a model misses most of the positive class.
+- **Specificity** equals TN divided by (TN plus FP), the mirror of recall for the negative class, and we come back to it later as a companion metric.
+
+Precision answers "when we flag something, how often are we right?" Recall answers "of everything we should have flagged, how much did we actually catch?"
+
+## A Confusion Matrix Worked Through With Real Numbers
+
+Picture a model screening 100 transactions for fraud, where 20 are genuinely fraudulent and 80 are legitimate. The model flags 25 transactions as fraudulent.
+
+1. Of those 25 flagged transactions, 15 are truly fraudulent (TP = 15) and 10 are legitimate (FP = 10).
+2. Of the 20 truly fraudulent transactions, 5 were missed and labeled legitimate (FN = 5).
+3. The remaining 70 legitimate transactions were correctly left unflagged (TN = 70).
+
+<DataTable
+  caption="Confusion matrix for the 100-transaction fraud screening example"
+  headers={['Outcome', 'Count', 'What it means']}
+  align={['left', 'right', 'left']}
+  rows={[
+    ['True positives (TP)', '15', 'Correctly flagged fraud'],
+    ['False positives (FP)', '10', 'Legitimate transactions wrongly flagged'],
+    ['False negatives (FN)', '5', 'Fraud missed by the model'],
+    ['True negatives (TN)', '70', 'Legitimate transactions correctly left unflagged'],
+  ]}
+/>
+
+From these counts: precision = 15 / (15 + 10) = [60%](https://www.coursera.org/articles/precision-vs-recall-machine-learning), and recall = 15 / (15 + 5) = 75%.
+
+- The 60% precision means four in ten flagged transactions are false alarms, which translates into wasted review time.
+- The 75% recall means a quarter of actual fraud slips through undetected, a gap worth weighing against the cost of each missed case.
+
+This single example already shows why one number rarely tells the whole story. For a confusion matrix deep dive, our full guide walks through larger matrices and multi-class cases.
+
+## The Precision-Recall Tradeoff and How PR Curves Work
+
+A classifier does not output a flat yes or no. It outputs a score, and we choose a threshold above which a case counts as positive. Lower that threshold and the model flags more cases, which tends to raise recall while dragging precision down, because more of the newly flagged cases turn out to be wrong. Raise the threshold and the opposite happens: precision climbs as the model becomes choosier, while recall falls because genuine positives that score just below the cutoff get missed.
+
+A precision-recall curve plots this relationship across every possible threshold, with recall on the horizontal axis and precision on the vertical axis.
+
+- A curve that stays high across most of the recall range signals a model that keeps its precision even as it tries to catch more positives.
+- The area under this curve (AUC-PR) summarizes that performance in a single figure, and higher values indicate a better overall tradeoff.
+
+**[A USGS study on rare binary events](https://pubs.usgs.gov/publication/70202493) found that AUC-PR is not distorted by a large pool of true negatives, which makes it more informative than AUC-ROC for rare-event and imbalanced classification problems.** When positives are scarce, a high ROC-AUC can hide a model that is still generating a flood of false positives relative to the few true positives it catches, which is exactly the failure mode precision-recall curves expose.
+
+## When to Prioritize Precision or Recall
+
+Choosing which metric to optimize comes down to weighing the cost of a false positive against the cost of a false negative, then checking that choice against how much review capacity exists downstream and how rare the positive class actually is.
+
+- **List the cost of each error type**: a false positive that wastes five minutes of review is cheap, while a false negative that lets a rare disease go undiagnosed is not.
+- **Check downstream handling**: if every flagged case gets a human second look, a lower-precision, higher-recall model can be fine because the humans filter the noise.
+- **Account for prevalence**: when positives are rare, even a small false-positive rate on the much larger negative pool produces a lot of false alarms in absolute terms.
+
+<Figure number={1} caption="A decision path for choosing whether to prioritize precision or recall based on which error costs more.">
+  <DecisionTree
+    title="Choosing precision or recall"
+    desc="A decision tree asks which error type costs more, routing to precision when false positives are costlier, to recall when false negatives are costlier, and to a balanced metric like F-beta when the costs are roughly equal."
+    root={{
+      label: 'Which error type costs more for this decision?',
+      yes: { label: 'False positives are costlier — prioritize precision (e.g., spam filtering)' },
+      no: {
+        label: 'Are false negatives the costlier error?',
+        yes: { label: 'Prioritize recall (e.g., cancer screening)' },
+        no: { label: 'Costs are roughly equal — tune F-beta or expected utility to the real tradeoff' },
+      },
+    }}
+  />
+</Figure>
+
+[Britannica notes](https://www.britannica.com/science/precision-and-recall) that precision should be prioritized when false positives are costly and recall should be prioritized when false negatives are costly, citing spam filtering against medical diagnosis as the classic contrast. A spam filter that blocks a legitimate email (a false positive) causes real frustration, so spam systems often favor precision. A cancer-screening test that misses a real case (a false negative) can cost a life, so screening tools typically favor recall even at the price of more follow-up tests. Fraud detection and search retrieval sit somewhere in between, and the right balance depends on how expensive a missed fraud case or an irrelevant [search result](https://forgeprivate.ai/blog/retrieval-evaluation) actually is for the business running the system.
+
+*When review capacity is the binding constraint, set your threshold to the recall level the team can actually handle, then read off the precision the curve gives at that point.*
+
+## Combining Precision and Recall With F1 and F-Beta
+
+F1 is the harmonic mean of precision and recall, calculated as 2 times (precision times recall) divided by (precision plus recall). It penalizes models that score well on one metric while badly neglecting the other, which a simple average would not catch.
+
+- **F-beta** generalizes F1 by adding a weight: a beta above 1.0 gives recall more influence, while a beta below 1.0 favors precision, letting us tune the score to match the real cost tradeoff rather than treating both errors as equal. Our <Link to={routes.article('f1-score-explained')}>F1 score guide</Link> walks through the full formula with additional worked examples.
+- **Precision at a fixed recall** (precision@recall) reports the precision a model achieves once it is forced to hit a target recall, which makes two models easier to compare on equal footing than a single blended score does.
+
+**[Google's machine learning guidance](https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall) frames threshold selection as optimizing expected utility, a cost-weighted combination of errors measured on a validation set, rather than chasing the highest F1 score by default.** In practice that means setting the threshold using a held-out validation set or cross-validation, then checking that the resulting precision and recall match what the business can actually tolerate before deploying the model.
+
+## Common Mistakes and Quick Sanity Checks
+
+A few mix-ups come up often enough to call out directly.
+
+- **Confusing recall with specificity**: recall covers the positive class, specificity covers the negative class, and the two are not interchangeable.
+- **Trusting accuracy on imbalanced data**: a model that always predicts "not fraud" can score 95% accuracy while catching zero actual fraud cases.
+- **Ignoring prevalence**: the same precision score means something different when positives make up 1% of the data versus 50%.
+
+A simple memory aid: precision is the purity of what we flagged, recall is the coverage of what we should have flagged. As a sanity check, confirm precision and recall were calculated from the same confusion matrix and the same threshold before comparing them across models.
+
+## Statohub Resources for Practicing Precision and Recall
+
+We built our confusion matrix guide and F1 score explainer to walk through exactly the calculations covered here, with additional worked examples. Our <Link to={routes.categoryHub('machine-learning-statistics')}>machine learning statistics hub</Link> rounds out the broader context for model evaluation, including related metrics like ROC-AUC and calibration.
+
+## An Editorial Take on Learning Precision and Recall
+
+The formulas for precision and recall take five minutes to memorize. What takes longer, and what most explainers skip, is building the judgment to pick the right one before a model ever ships. Too much advice on this topic treats the choice as a math problem, as though computing F1 settles the question. It does not. F1 assumes false positives and false negatives cost the same, and that assumption is false in almost every real deployment we have described above, from fraud review queues to cancer screening.
+
+The more useful skill is translating a business or clinical cost into a number before touching a threshold slider. A team that cannot say whether a false positive costs more than a false negative has not finished the problem, no matter how clean the precision-recall curve looks. We would rather see a junior analyst spend an afternoon interviewing stakeholders about error costs than spend that same afternoon tuning a model to squeeze out another point of F1. Start with the cost model. The metric follows from it, not the other way around.
+
+<Checklist
+  id="choosing-a-metric"
+  title="Choosing a metric: do and avoid"
+  style="check"
+  items={[
+    { text: 'Start with the cost model', detail: 'Translate the cost of a false positive and a false negative into numbers before touching a threshold slider.' },
+    { text: 'Ask stakeholders about error costs', detail: 'A team that cannot say whether a false positive costs more than a false negative has not finished the problem.' },
+    { text: 'Choose the metric from the costs', detail: 'Let the cost model determine whether precision, recall, F-beta, or expected utility is the right target.' },
+    { text: 'Avoid treating metric choice as math alone', detail: 'Computing F1 does not settle which metric matters for a given deployment.' },
+    { text: 'Avoid assuming both errors cost the same', detail: 'F1 assumes equal error costs, which is false in almost every real deployment.' },
+    { text: 'Avoid tuning F1 before pricing the errors', detail: 'Start with the cost model — the metric follows from it, not the other way around.' },
+  ]}
+/>
+
+## Practice Precision and Recall With Statohub
+
+We built our <Link to={routes.learnLanding()}>Learn hub</Link> and <Link to={routes.calculatorsHub()}>calculators</Link> so you can move from formula to intuition without switching tools or tabs. Open the confusion-matrix guide to see the mechanics step by step, then plug your own counts into our calculators to see how shifting a threshold moves precision and recall in real time.
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the difference between recall and accuracy?',
+    answer: 'Recall measures how many of the actual positive cases a model correctly identifies, while accuracy measures the share of all predictions, positive and negative combined, that are correct. On an imbalanced dataset, accuracy can stay high even when recall is poor, because a model that predicts the majority class most of the time still gets most predictions right overall.',
+  },
+  {
+    question: 'How can I remember the difference between accuracy and precision?',
+    answer: 'Accuracy looks at every prediction, correct and incorrect, across both classes. Precision narrows the focus to only the predictions a model labeled positive, asking what share of those flagged cases were actually correct.',
+  },
+  {
+    question: 'What are precision and accuracy in simple words?',
+    answer: 'Precision asks: when the model says yes, how often is it actually right? Accuracy asks: across everything the model predicted, how often was it right overall, regardless of which class a prediction belonged to.',
+  },
+  {
+    question: 'What is the tradeoff between precision and recall in machine learning?',
+    answer: 'Adjusting a classifier’s decision threshold typically raises one metric while lowering the other, since a looser threshold catches more true positives but also lets in more false positives, and a stricter threshold does the reverse. That said, [the relationship is not always strictly inverse](https://datascience.stackexchange.com/questions/97376/how-is-there-an-inverse-relation-between-precision-and-recall), since it depends on how well the model’s scores separate the two classes.',
+  },
+]} />
+
+## Sources
+
+<Sources items={[
+  { text: 'Precision and recall', href: 'https://en.wikipedia.org/wiki/Precision_and_recall', org: 'Wikipedia' },
+  { text: 'Classification: Accuracy, recall, precision, and related metrics', href: 'https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall', org: 'Google for Developers' },
+  { text: 'Precision vs. Recall in Machine Learning', href: 'https://www.coursera.org/articles/precision-vs-recall-machine-learning', org: 'Coursera' },
+  { text: 'The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets', href: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432', org: 'PLOS ONE' },
+  { text: 'Precision, recall and F-measures', href: 'https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics', org: 'scikit-learn' },
+  { text: 'Classification: ROC and AUC', href: 'https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc', org: 'Google for Developers' },
+]} />
