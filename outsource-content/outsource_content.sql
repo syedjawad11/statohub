@@ -73,6 +73,7 @@ INSERT INTO "outsource_articles" VALUES('seasonal-decomposition','Seasonal Decom
 INSERT INTO "outsource_articles" VALUES('autocorrelation-interpretation','Autocorrelation Interpretation','time-series-forecasting',54,'2026-10-07','944837','published','outsource-content/raw/autocorrelation-interpretation.json','src/content/articles/autocorrelation-interpretation.mdx',1,1,0,6,'','2026-10-14 09:15:16','2026-10-14 09:37:26');
 INSERT INTO "outsource_articles" VALUES('synthetic-control-method','Synthetic Control Method','experiments-causality',55,'2026-10-09','951145','published','outsource-content/raw/synthetic-control-method.json','src/content/articles/synthetic-control-method.mdx',1,2,0,7,'','2026-10-15 09:14:06','2026-10-15 09:26:10');
 INSERT INTO "outsource_articles" VALUES('precision-vs-recall','Precision vs Recall','machine-learning-statistics',56,'2026-10-10','956826','published','outsource-content/raw/precision-vs-recall.json','src/content/articles/precision-vs-recall.mdx',1,1,0,6,'','2026-10-16 09:14:14','2026-10-16 09:33:52');
+INSERT INTO "outsource_articles" VALUES('transform-skewed-data','Transform Skewed Data','data-analysis',57,'2026-10-13','968755','fetched','outsource-content/raw/transform-skewed-data.json',NULL,0,0,0,NULL,'','2026-10-17 09:14:30','2026-10-17 09:14:46');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

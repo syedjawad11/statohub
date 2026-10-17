@@ -391,6 +391,13 @@
       "title": "Precision vs Recall",
       "slug": "precision-vs-recall",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 57,
+      "day_label": "2026-10-13",
+      "title": "Transform Skewed Data",
+      "slug": "transform-skewed-data",
+      "category_slug": "data-analysis"
     }
   ]
 }
