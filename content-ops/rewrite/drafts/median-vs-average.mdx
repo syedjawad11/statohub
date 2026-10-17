@@ -1,0 +1,260 @@
+---
+title: "Median vs Average: What Median Means"
+description: "Median vs average: the mean sums and divides by count, while the median finds the sorted middle value. Compare both with formulas and worked examples."
+category: descriptive-statistics
+primaryKeyword: median vs average
+keywords:
+  - median vs average
+  - is median an average
+  - is median average
+  - is median the average
+  - is the median the average
+  - what does median mean in math
+  - what is median in math
+phase: 1
+calculator: median
+related:
+  - how-to-find-the-median
+  - what-is-an-average
+  - skewed-distribution
+updatedDate: 2026-09-20
+pubDate: 2026-06-24
+reviewedDate: 2026-09-20
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Median vs average is a comparison that trips people up because the two words don't actually describe the same kind of center. The average — almost always shorthand for the arithmetic mean — adds up every value in a data set and divides by how many values there are. The median instead sorts the data from smallest to largest and reports the value sitting in the exact middle, so it only cares about position, not size. On symmetric data the two numbers land close together; on skewed data or data with outliers, they can tell very different stories about what's "typical."
+
+<KeyTakeaways rows={[
+  { point: 'Average usually means the mean', details: 'In everyday language, "average" is shorthand for the arithmetic mean (sum divided by count). The median is a separate, specific measure of center.' },
+  { point: 'Median is a type of average, formally', details: 'In statistics, "average" covers any measure of central tendency, so the median technically qualifies — it just isn’t the arithmetic mean people usually mean by the word.' },
+  { point: 'They agree on symmetric, outlier-free data', details: 'With no skew and no outliers, the median and the mean land close together and either one is a fair summary of the center.' },
+  { point: 'They diverge on skewed data', details: 'A few very large or very small values pull the mean toward them, while the median barely moves, because it only counts position in the sorted list.' },
+  { point: 'The gap between them signals shape', details: 'Mean above median usually points to a right-skewed, long upper tail; mean below median usually points to a left-skewed, long lower tail.' },
+]} />
+
+## Quick Checklist: Median or Average, Which Do You Need?
+
+Before you report either number, run through these checks — most confusion between the two traces back to skipping one of them.
+
+<Checklist
+  id="median-vs-average-checklist"
+  title="Quick checklist: median or average"
+  style="check"
+  items={[
+    { text: 'Sort the data first', detail: 'The median only means something once the values are arranged smallest to largest; an unsorted "middle" value is meaningless.' },
+    { text: 'Check for outliers', detail: 'A single extreme value barely moves the median, but it can drag the mean far from where most of the data actually sits.' },
+    { text: 'Look at the shape of the distribution', detail: 'Strongly skewed data — income, home prices, wait times — usually calls for the median as the headline number.' },
+    { text: 'Decide whether you need totals', detail: 'Only the mean lets you recover a total from a sample size: Total = mean × n. The median cannot do this.' },
+    { text: 'Confirm what "average" means in your source', detail: 'A reported "average" almost always means the mean. Confirm that before comparing it directly to a median figure.' },
+  ]}
+/>
+
+## Median vs Average: What's the Real Difference?
+
+The average (mean) is the balance point of a data set; the median is its count midpoint. They measure "center" in genuinely different ways, which is why the same data set can hand you two different numbers depending on which one you report.
+
+Think of each value as a weight sitting on a number line. The mean is the fulcrum that keeps the line level — because every weight contributes to the balance, one very heavy weight on either end shifts the fulcrum noticeably in that direction. The median, by contrast, only answers a counting question: what value splits the sorted list so that exactly half the observations fall on each side? A very large value can push the median one position over at most — it can never pull it past every value in the middle.
+
+<DataTable
+  caption="Average (mean) vs median, side by side"
+  headers={['Question', 'Average (mean)', 'Median']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['What it measures', 'The balance point of every value', 'The middle position in the sorted data'],
+    ['Formula', 'x̄ = Σx / n', 'Middle value (odd n) or average of the two middle values (even n)'],
+    ['Uses every value?', 'Yes', 'No — only position matters'],
+    ['Resistant to outliers?', 'No', 'Yes'],
+    ['Best for', 'Symmetric data; feeds standard deviation, variance, t-tests', 'Skewed data; data with outliers; ordinal data'],
+  ]}
+/>
+
+The [NIST/SEMATECH e-Handbook of Statistical Methods' section on measures of location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines both this way, and is explicit about the everyday habit of treating "average" and "mean" as the same word.
+
+<Callout variant="quote" source="NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.1 Measures of Location" sourceHref="https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm">
+The mean is that value that is most commonly referred to as the average.
+</Callout>
+
+## What Does Median Mean in Math?
+
+In math, the median is the value sitting at the exact midpoint of a sorted data set — half the values fall at or below it, half fall at or above it. That single property makes it a resistant measure of center: an extreme value at either end of the data cannot pull it far from where the bulk of the data sits. [OpenStax's Introductory Statistics](https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data) puts it plainly: "the median is generally a better measure of the center when there are extreme values or outliers because it is not affected by the precise numerical values of the outliers." That resistance is also why a box plot anchors its center line on the median rather than the mean — the [NIST/SEMATECH e-Handbook's box plot entry](https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm) describes plotting a symbol at the median before drawing the box out to the surrounding quartiles.
+
+The word comes from the Latin *medianus*, meaning "middle." Finding it is mechanical once the data is sorted: pick the single middle value for an odd count, or average the two middle values for an even count. Sorting first is the step people skip — picking the middle entry of an unsorted list produces a meaningless number.
+
+An even count is worth seeing worked through once, because the result can surprise people new to it. Take the data set 3, 7, 12, 20 (n = 4, already sorted). The two middle values are 7 and 12, so the median is (7 + 12) / 2 = 9.5 — a number that never actually appears in the data. The mean of the same four values is (3 + 7 + 12 + 20) / 4 = 42 / 4 = 10.5. Because this small data set has no real outlier, the median (9.5) and the mean (10.5) sit close together, which is itself a useful check: when the two measures agree this closely, neither one is being distorted by an extreme value. The full step-by-step procedure for both the odd and even cases, including grouped data, lives in <Link to={routes.article('how-to-find-the-median')}>how to find the median</Link>; this page is about when the median is the number worth reporting in the first place.
+
+## Is the Median an Average, or Just the Mean?
+
+Technically and mathematically, yes — the median is one type of average. In formal statistics, "average" is any measure of central tendency: a single value meant to represent the typical value in a data set. The mean, median, and mode are all averages under that definition.
+
+People search this question in several nearly identical forms — is median average, is median an average, is median the average, is the median the average — and the honest answer depends on which definition of "average" you mean. In everyday speech, "the average" almost always refers specifically to the arithmetic mean, the sum divided by the count. When a news report says "the average home price rose to $420,000," it means the mean, not the median. So:
+
+- **In formal statistics:** the median is classified as a type of average, alongside the mean and mode. This usage is correct and standard in textbooks.
+- **In everyday language:** "the average" usually means the arithmetic mean specifically. The median is a different number, calculated a different way, and it often reports a different value.
+
+The confusion has real stakes. When a company reports "average employee pay," the choice between mean and median can produce very different figures, as the worked example later in this guide shows. Always check which measure a source actually used before comparing it to anything else. For the arithmetic mean's own definition, formula, and the handful of other things "average" can mean, see <Link to={routes.article('what-is-an-average')}>What Is an Average?</Link>; for computing it by hand, see <Link to={routes.article('how-to-find-the-mean')}>how to find the mean</Link>.
+
+## What Does the Gap Between Median and Average Reveal About Skew?
+
+Comparing the mean and median on the same data set is a fast way to read the shape of a distribution, without needing to look at a histogram.
+
+- **Mean ≈ median:** the distribution is roughly symmetric, with data spread evenly on both sides of the center.
+- **Mean above median:** the distribution is right-skewed — a few unusually high values are pulling the mean upward. Income and house-price data almost always look this way.
+- **Mean below median:** the distribution is left-skewed — a few unusually low values are dragging the mean down. Scores on an unusually easy exam can look this way.
+
+<Callout variant="quote" source="OpenStax, Introductory Statistics, 2.6 Skewness and the Mean, Median, and Mode" sourceHref="https://openstax.org/books/introductory-statistics/pages/2-6-skewness-and-the-mean-median-and-mode">
+Therefore, when the distribution of data is skewed to the left, the mean is often less than the median. When the distribution is skewed to the right, the mean is often greater than the median.
+</Callout>
+
+A quick check with real numbers: the data set 2, 5, 7, 9, 12 is already sorted and roughly symmetric. The median is the middle (3rd) value, 7. The mean is the sum (2 + 5 + 7 + 9 + 12 = 35) divided by 5 values, which is also 7. Mean and median matching exactly is a strong signal of symmetry; the further apart they land, the more skewed the data likely is. For a deeper look at identifying and handling skew specifically, see <Link to={routes.article('skewed-distribution')}>skewed distributions explained</Link>.
+
+## When Should You Use the Median Instead of the Average?
+
+Reach for the median as your primary measure of center whenever one of these applies:
+
+- **The data is skewed.** Income, house prices, wealth, and hospital lengths of stay typically follow right-skewed distributions, where the median describes the typical case far better than the mean.
+- **Outliers are present.** The [NIST/SEMATECH e-Handbook defines an outlier](https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm) as an observation that lies an abnormal distance from the rest of the data — a single very expensive house in a neighborhood, or one patient with an unusually long recovery, fits that definition and can make the mean misleading. The median barely moves in response.
+- **The scale is ordinal.** When data is ranked (satisfaction scores from 1 to 5, for example) rather than measured on a true numeric scale, the median category is meaningful, but arithmetic on ranks is questionable.
+- **You want to describe a "typical" person or case.** Wherever most values cluster in a range but a few extremes exist, the median is the more honest summary to lead with.
+
+<Callout variant="tip" title="Pro tip">
+When you suspect a data set has outliers but you still need a mean for further calculations, report both numbers side by side. A mean and median that are far apart is itself useful information for the reader, not just a footnote.
+</Callout>
+
+## When Should You Use the Average Instead of the Median?
+
+The arithmetic mean is the better choice whenever:
+
+- **The data is roughly symmetric and outlier-free.** Here the mean and median are close, and the mean is usually preferred because it uses every data point.
+- **You need to recover a total.** If you know the mean and the sample size, Total = mean × n. The median cannot reconstruct a total this way.
+- **Further statistics require it.** Standard deviation, variance, z-scores, t-tests, and regression are all built from the mean, not the median. Once you compute the mean, you can build out the rest of the spread picture with <Link to={routes.article('standard-deviation')}>standard deviation</Link>, written with the <Link to={routes.article('standard-deviation-symbol')}>sigma notation</Link> covered elsewhere, and with <Link to={routes.article('variance')}>variance</Link>, which squares those same deviations.
+
+## How Do You Calculate the Median in Python, R, or Excel?
+
+Every major tool returns the same number the hand calculation does — sort the values, then take the middle one or average the two middle ones — but each exposes it through its own function.
+
+```
+Python:  from statistics import median
+         median([3, 7, 12, 20])      # 9.5
+
+R:       median(c(3, 7, 12, 20))      # 9.5
+
+Excel:   =MEDIAN(A1:A4)               # 9.5
+```
+
+[Python's `statistics` module](https://docs.python.org/3/library/statistics.html) implements `median()` to average the two middle values automatically when the input has an even length, matching the by-hand result above. [R's `median()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/median.html) behaves the same way and accepts an `na.rm` argument for stripping missing values before the calculation runs. [Microsoft's MEDIAN function documentation](https://support.microsoft.com/en-us/office/median-function-d0916313-4753-414c-8537-ce85bdd967d2) describes the same spreadsheet formula, which ignores empty cells and text automatically. None of the three tools will warn you if you feed them an unsorted or mixed-type list, so it is still worth sanity-checking a surprising result by hand.
+
+## A Worked Example: Median vs Average at a Nine-Person Startup
+
+A nine-person startup wants to describe typical pay to a prospective hire. Annual salaries, in thousands of dollars, are:
+
+42, 45, 47, 48, 50, 52, 55, 58, 210
+
+The last figure is the founder's salary.
+
+**Step 1 — Sort the values.** Already sorted: 42, 45, 47, 48, 50, 52, 55, 58, 210.
+
+**Step 2 — Find the median.** There are n = 9 values (odd). Middle position = (9 + 1) / 2 = 5. The 5th value is 50 — that is, $50,000.
+
+**Step 3 — Find the mean.**
+
+```
+Sum = 42 + 45 + 47 + 48 + 50 + 52 + 55 + 58 + 210 = 607
+Mean = 607 / 9 ≈ 67.44
+```
+
+That's about $67,444.
+
+**Step 4 — Interpret.** The median of $50,000 reflects the pay of the employee sitting exactly in the middle of the sorted list: four people earn less, four earn more. The mean of roughly $67,444 is higher than eight of the nine salaries — it only looks that large because the founder's $210,000 salary pulls it upward. A candidate told "the average salary here is about $67,000" would form a misleading expectation about typical pay at the company.
+
+<Figure number={1} caption="Median ($50,000) vs mean (≈$67,444) for the same nine salaries. The founder's $210,000 salary pulls the mean well above what eight of the nine employees actually earn.">
+  <AnnotatedChart
+    title="Median vs mean for nine startup salaries"
+    desc="Bar chart comparing the median salary of $50,000 against the mean salary of approximately $67,444 for the same nine-person data set, where one $210,000 outlier inflates the mean."
+    type="bar"
+    points={[
+      { label: 'Median', value: 50, annotation: 'Middle of 9 salaries' },
+      { label: 'Mean', value: 67.44, annotation: 'Pulled up by $210k outlier' },
+    ]}
+  />
+</Figure>
+
+This is the same skew mechanism described above, just with dollars instead of a histogram: one high outlier stretches the upper tail, the mean follows it upward, and the median stays anchored to what a typical person in the data set actually experiences.
+
+## Common Mistakes People Make With Median vs Average
+
+- **Treating "average" and "median" as interchangeable.** For symmetric, outlier-free data they're close and either works; for skewed real-world data — most income, healthcare, and pricing data — they differ meaningfully, and picking the wrong one can mislead a reader badly.
+- **Forgetting to sort before finding the median.** Picking the middle position of an unsorted list gives a meaningless value. Sort first, always.
+- **Using the mean on ordinal data.** Averaging survey responses coded 1–5 produces a number like 3.4 that corresponds to no real category. The median category, or the mode, is more defensible.
+- **Confusing a measure of center with a measure of spread.** The median and mean describe where the data sits; they say nothing about how spread out it is. That's a separate question answered by tools like <Link to={routes.article('how-to-find-the-range')}>the range</Link> or standard deviation.
+- **Ignoring sample size.** For very small samples (n = 3 or 4), both the median and mean can shift substantially with a single new observation. Report the sample size alongside either number so a reader can judge how reliable it is.
+- **Confusing the median with the mode.** The median is the middle value; the mode is the most frequently occurring one. They can coincide — in 1, 2, 3, 3, 5 the mode and the median are both 3 — or they can differ completely. See <Link to={routes.article('mean-median-mode-range')}>mean, median, mode, and range explained together</Link> for how all three relate.
+
+## Statohub's Take on Median vs Average
+
+Statohub's position is that "average" is too useful a word to retire, but too ambiguous to use without a second thought. When the data might be skewed or might contain outliers, the median deserves to be the headline number, with the mean reported alongside it rather than instead of it. Readers deserve to know which measure of center they're looking at, not just a single unlabeled number called "the average."
+
+## Put Median vs Average to Work With Statohub's Tools
+
+Run your own list of numbers through the <Link to={routes.calculator('mean')}>mean (average) calculator</Link> to see the arithmetic mean instantly, and once you've settled on a center, the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> and <Link to={routes.calculator('variance')}>variance calculator</Link> measure how far the rest of the values stray from it. For every statistic that describes a typical dataset's center or shape in one place, browse <Link to={routes.categoryHub('descriptive-statistics')}>Statohub's Descriptive Statistics hub</Link>, or jump straight into <Link to={routes.calculatorsHub()}>the complete calculators directory</Link> to find a tool for a different kind of data entirely.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.1. Measures of Location', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.3.7. Box Plot', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.6. What Are Outliers in the Data?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.5 Measures of the Center of the Data, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-5-measures-of-the-center-of-the-data', org: 'OpenStax' },
+  { text: 'OpenStax — 2.6 Skewness and the Mean, Median, and Mode, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-6-skewness-and-the-mean-median-and-mode', org: 'OpenStax' },
+  { text: 'Python Software Foundation — statistics module: median()', href: 'https://docs.python.org/3/library/statistics.html', org: 'Python Software Foundation' },
+  { text: 'The R Project for Statistical Computing — median: Median Value', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/median.html', org: 'R Project' },
+  { text: 'Microsoft Support — MEDIAN function', href: 'https://support.microsoft.com/en-us/office/median-function-d0916313-4753-414c-8537-ce85bdd967d2', org: 'Microsoft' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is Median in Math?',
+    answer: 'In math, the median is the middle value of a data set once every value is arranged from smallest to largest. If the data set has an odd number of values, the median is the single value sitting exactly in the middle; if it has an even number of values, the median is the average of the two middle values. Because it depends only on position, not magnitude, extreme values at either end of a sorted list cannot pull the median very far.',
+  },
+  {
+    question: 'Is the Median the Average?',
+    answer: 'Formally, yes — statisticians classify the median as one type of average, since "average" technically means any measure of central tendency, including the mean, median, and mode. In everyday speech, though, "the average" almost always refers specifically to the arithmetic mean. So the median is an average in the formal statistical sense, but it is not the same number as "the average" most people mean when they use the word casually.',
+  },
+  {
+    question: 'When Should I Use the Median Instead of the Average?',
+    answer: 'Reach for the median when the data is skewed, when outliers are present, or when you are describing a "typical" value for a general audience and one extreme case would distort the picture. Household income, home prices, and hospital wait times are classic examples: a handful of very large values would pull the mean well above what most people actually experience, while the median stays anchored to the middle of the distribution.',
+  },
+  {
+    question: 'Can the Median and the Average Ever Be Equal?',
+    answer: 'Yes. In a perfectly symmetric data set, the mean and median are identical, and in any roughly symmetric data set without outliers, they land very close together. The data set 2, 5, 7, 9, 12 is a simple example: sorted, the middle value (the median) is 7, and the sum (35) divided by 5 values (the mean) is also 7. The further a distribution departs from symmetry, the more the two numbers tend to diverge.',
+  },
+  {
+    question: 'Why Is the Median Often Preferred for Describing Income?',
+    answer: 'Income distributions are typically right-skewed: most people earn moderate amounts, while a relatively small number of very high earners stretch the upper tail far out. Because the mean weighs every dollar equally, those high earners pull the arithmetic mean upward, often well above what a typical household actually takes home. The median is not affected the same way, since it only counts how many observations fall above and below the midpoint, which is why it is generally considered the more representative figure on skewed data like income.',
+  },
+  {
+    question: 'What Is the Difference Between the Median and the Mean?',
+    answer: 'The mean — what most people call "the average" — adds every value together and divides by the count, so it factors in the size of every number in the data set. The median instead sorts the values and picks out the one in the middle, so it only cares about where a value sits in the order, not how large it is. That difference is why one extreme number can swing the mean dramatically while barely moving the median at all.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('mean-median-mode-range')}>Mean, Median, Mode & Range, Explained Together</Link>
+- <Link to={routes.calculator('range')}>Range Calculator</Link>
+- <Link to={routes.article('how-to-find-the-range')}>How to Find the Range in Statistics</Link>
+- <Link to={routes.article('standard-deviation-symbol')}>The Standard Deviation Symbol (Sigma): Signs & Notation</Link>
