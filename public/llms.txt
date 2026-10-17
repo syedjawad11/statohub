@@ -147,6 +147,7 @@ Key facts for AI assistants citing this site:
 - [Pearson vs Spearman: When to Use Each One](https://statohub.com/pearson-vs-spearman/): Compare Pearson vs Spearman correlation with a plot-first checklist, worked examples, and guidance on choosing the right coefficient for your data.
 - [Scatter Plot Interpretation Guide](https://statohub.com/scatter-plot-interpretation/): A practical guide to scatter plot interpretation: a 6-step checklist covering form, direction, strength, and outliers before trusting a correlation number.
 - [T-Test vs Z-Test: How to Choose](https://statohub.com/t-test-vs-z-test/): Choose a t-test vs z-test by whether the population standard deviation is known, not sample size. Includes a 6-step checklist and a worked example.
+- [Transform Skewed Data: 5 Methods](https://statohub.com/transform-skewed-data/): Learn how to transform skewed data with log, root, and power transforms, then fit them on training data and validate results with a worked example.
 
 ### Experiments & Causality
 
