@@ -411,7 +411,7 @@ INSERT INTO "articles" VALUES('bootstrap-confidence-intervals','Bootstrap Confid
 INSERT INTO "articles" VALUES('pca-python','PCA in Python: Step by Step with scikit-learn','machine-learning-statistics','pca python',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('k-means-clustering','K-Means Clustering: How It Works and How to Run It in Python','machine-learning-statistics','k means clustering',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('precision-vs-recall','Precision vs Recall: Which Metric Matters for Your Problem','machine-learning-statistics','precision vs recall',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''precision-vs-recall'' (ADR 0029).',NULL,NULL,'2026-10-10 20:22:23');
-INSERT INTO "articles" VALUES('roc-auc-explained','ROC Curve and AUC Explained','machine-learning-statistics','roc curve',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('roc-auc-explained','ROC Curve and AUC Explained','machine-learning-statistics','roc curve',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-18: retired - topic taken by outsourced article ''roc-auc-interpretation'' (ADR 0029).',NULL,NULL,'2026-10-18 09:16:01');
 INSERT INTO "articles" VALUES('pr-curve-vs-roc','Precision-Recall Curves vs ROC Curves','machine-learning-statistics','precision recall curve',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('sensitivity-specificity','Sensitivity, Specificity, PPV and NPV','machine-learning-statistics','sensitivity vs specificity',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('class-imbalance','Class Imbalance: Why Accuracy Lies','machine-learning-statistics','imbalanced dataset',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-10: retired - topic taken by outsourced article ''class-imbalance-handling'' (ADR 0029).',NULL,NULL,'2026-10-10 18:57:37');
@@ -1845,10 +1845,6 @@ INSERT INTO "keywords" VALUES(3274,'pca-python','principal component analysis py
 INSERT INTO "keywords" VALUES(3275,'k-means-clustering','k means clustering',1);
 INSERT INTO "keywords" VALUES(3276,'k-means-clustering','elbow method',0);
 INSERT INTO "keywords" VALUES(3277,'k-means-clustering','k means python',0);
-INSERT INTO "keywords" VALUES(3281,'roc-auc-explained','roc curve',1);
-INSERT INTO "keywords" VALUES(3282,'roc-auc-explained','auc',0);
-INSERT INTO "keywords" VALUES(3283,'roc-auc-explained','roc auc explained',0);
-INSERT INTO "keywords" VALUES(3284,'roc-auc-explained','what is auc',0);
 INSERT INTO "keywords" VALUES(3285,'pr-curve-vs-roc','precision recall curve',1);
 INSERT INTO "keywords" VALUES(3286,'pr-curve-vs-roc','pr curve vs roc curve',0);
 INSERT INTO "keywords" VALUES(3287,'pr-curve-vs-roc','average precision',0);
@@ -2230,7 +2226,7 @@ INSERT INTO "plan_rows" VALUES('forecast-accuracy-excel','S303','applied','Softw
 INSERT INTO "plan_rows" VALUES('forecast-backtesting-python','S304','applied','Software walkthrough','Python','Expanding vs sliding windows; TimeSeriesSplit and manual loops; refitting vs fixed models; horizon-wise error tables; comparing to a naive benchmark; plotting backtest results',1500,'P2','forecast-accuracy-metrics','forecast-accuracy-metrics (live) covers rolling-origin evaluation conceptually — this is the code walkthrough');
 INSERT INTO "plan_rows" VALUES('confusion-matrix-python','S305','applied','Software walkthrough','Python','confusion_matrix and ConfusionMatrixDisplay; classification_report; averaging for multiclass; threshold effects',1500,'P1','confusion-matrix-explained','');
 INSERT INTO "plan_rows" VALUES('confusion-matrix-excel','S306','applied','Software walkthrough','Excel','COUNTIFS build; accuracy, precision, recall, F1, specificity formulas; threshold slider; template',1200,'P2','confusion-matrix-explained','');
-INSERT INTO "plan_rows" VALUES('roc-curve-python','S307','applied','Software walkthrough','Python','roc_curve and roc_auc_score; plotting; comparing models; multiclass; PR curves alongside',1300,'P1','roc-auc-explained','');
+INSERT INTO "plan_rows" VALUES('roc-curve-python','S307','applied','Software walkthrough','Python','roc_curve and roc_auc_score; plotting; comparing models; multiclass; PR curves alongside',1300,'P1','roc-auc-interpretation','');
 INSERT INTO "plan_rows" VALUES('feature-scaling-sklearn','S308','applied','Software walkthrough','Python','Which models need scaling; each scaler; pipelines to avoid leakage; inverse transforms',1300,'P2','standardization-vs-normalization','');
 INSERT INTO "plan_rows" VALUES('class-imbalance-python','S309','applied','Software walkthrough','Python','Undersampling, oversampling, SMOTE; class_weight; threshold tuning; evaluating correctly; pitfalls',1600,'P2','class-imbalance-handling','');
 INSERT INTO "plan_rows" VALUES('hyperparameter-tuning','S310','applied','Software walkthrough','Python','GridSearchCV and RandomizedSearchCV; nested CV; Optuna; overfitting the validation set',1600,'P2','k-fold-cross-validation','');
@@ -2239,7 +2235,7 @@ INSERT INTO "plan_rows" VALUES('pca-python','S312','applied','Software walkthrou
 INSERT INTO "plan_rows" VALUES('k-means-clustering','S313','applied','Concept guide','Python','Algorithm; choosing k (elbow, silhouette); scaling; limitations; sklearn walkthrough; interpreting clusters',1800,'P2','pca-explained','');
 INSERT INTO "plan_rows" VALUES('precision-vs-recall','S314','applied','Comparison','','Definitions from the confusion matrix; trade-off; fraud, spam and medical examples; choosing a target',1400,'P1','f1-score-explained','');
 INSERT INTO "plan_rows" VALUES('roc-auc-explained','S315','applied','Concept guide','','TPR vs FPR; building the curve by hand; AUC meaning; comparing models; limits on imbalanced data',1600,'P1','confusion-matrix-explained','');
-INSERT INTO "plan_rows" VALUES('pr-curve-vs-roc','S316','applied','Comparison','','Why PR curves suit imbalance; average precision; side-by-side examples; which to report',1200,'P2','roc-auc-explained','');
+INSERT INTO "plan_rows" VALUES('pr-curve-vs-roc','S316','applied','Comparison','','Why PR curves suit imbalance; average precision; side-by-side examples; which to report',1200,'P2','roc-auc-interpretation','');
 INSERT INTO "plan_rows" VALUES('sensitivity-specificity','S317','applied','Concept guide','','Diagnostic-test framing; formulas; prevalence effect on PPV; screening examples; likelihood ratios',1500,'P1','confusion-matrix-explained','');
 INSERT INTO "plan_rows" VALUES('class-imbalance','S318','applied','Concept guide','','Accuracy paradox; better metrics; resampling vs weighting vs thresholds; evaluation design',1500,'P1','confusion-matrix-explained','');
 INSERT INTO "plan_rows" VALUES('overfitting-vs-underfitting','S319','applied','Comparison','','Train vs validation curves; causes; fixes; link to bias-variance; worked examples',1400,'P1','bias-variance-tradeoff','');
