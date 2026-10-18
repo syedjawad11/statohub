@@ -1,0 +1,401 @@
+---
+title: "Probability Formula: Rules & Expected Value"
+h1: "Probability Formula: From Basics to Expected Value"
+description: "The probability formula divides favorable outcomes by total outcomes. Covers the conditional, binomial, and expected value formulas with worked examples."
+category: probability-distributions
+primaryKeyword: probability formula
+keywords:
+  - probability formula
+  - binomial probability formula
+  - conditional probability formula
+  - expectation probability formula
+  - formula for expected value
+  - how to calculate probability
+  - how to find probability
+  - probability and statistics
+phase: 1
+calculator: probability
+related:
+  - probability-distribution
+  - binomial-distribution
+  - bayes-theorem
+draft: false
+pubDate: 2026-06-26
+updatedDate: 2026-06-26
+reviewedDate: 2026-06-26
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+The **probability formula** calculates how likely an event is to happen, and in its simplest form it equals the number of favorable outcomes divided by the total number of equally likely outcomes. That basic ratio is the starting point for a family of related formulas: the conditional probability formula adjusts for information you already know, the binomial probability formula counts successes across repeated trials, and the formula for expected value — also called the expectation probability formula — gives the long-run average of a random variable. Every probability value falls between 0 (impossible) and 1 (certain), whether you express it as a fraction, decimal, or percentage. This guide shows how to find probability with each formula, computing every number by hand so you can check your own work the same way.
+
+<KeyTakeaways rows={[
+  { point: 'The probability formula starts with favorable over total', details: 'P(A) = favorable outcomes / total outcomes, valid only when every outcome is equally likely; the result always lands between 0 and 1.' },
+  { point: 'Addition and multiplication rules combine events', details: 'Add probabilities only when events cannot overlap, and multiply them only when events are independent — otherwise subtract the overlap or condition on the first event.' },
+  { point: 'The conditional probability formula restricts the sample space', details: 'P(B | A) = P(A and B) / P(A) narrows attention to outcomes where A already happened, then re-normalizes what remains.' },
+  { point: 'The binomial probability formula needs four conditions', details: 'P(X = k) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ only applies with a fixed number of trials, two outcomes per trial, constant p, and independence.' },
+  { point: 'Expected value is a long-run average, not a single-trial prediction', details: 'E(X) = Σ xᵢ · pᵢ (and E(X) = n × p for a binomial variable) describes what happens on average over many repetitions, never on any one trial.' },
+]} />
+
+## Quick Checklist: Which Probability Formula Do You Need?
+
+Before you calculate anything, match your question to the right formula. Picking the wrong one is the fastest way to a wrong answer, even when the arithmetic that follows is flawless.
+
+<Checklist
+  id="which-probability-formula"
+  title="Quick checklist: which probability formula applies?"
+  style="check"
+  items={[
+    { text: 'Counting simple, equally likely outcomes', detail: 'Use the basic probability formula: favorable outcomes divided by total outcomes.' },
+    { text: "Combining two events with \"or\" or \"and\"", detail: 'Use the addition rule for "or" and the multiplication rule for "and" — check overlap and independence first.' },
+    { text: 'One event is already known to have happened', detail: 'Use the conditional probability formula: P(B | A) = P(A and B) / P(A).' },
+    { text: 'Counting successes across a fixed number of repeated trials', detail: 'Use the binomial probability formula, but only once all four binomial conditions hold.' },
+    { text: 'You need a long-run average, not one outcome', detail: 'Use the formula for expected value: E(X) = Σ xᵢ · pᵢ.' },
+    { text: 'Always', detail: 'Check that your final probability sits between 0 and 1, and that probabilities across the full sample space sum to 1.' },
+  ]}
+/>
+
+## What Is the Probability Formula?
+
+The basic probability formula applies whenever every outcome in an experiment is equally likely. For an event A:
+
+```
+P(A) = (number of favorable outcomes) / (total number of possible outcomes)
+```
+
+Three pieces make up this probability formula: **P(A)** is the probability of event A, a number between 0 and 1; **favorable outcomes** are the outcomes that count as A happening; and **total outcomes** is every possible result of the experiment. [OpenStax's *Introductory Statistics 2e*, section 3.1 on terminology](https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology), defines the sample space as the full list of these possible outcomes — the denominator of every classical probability calculation.
+
+**Example — rolling an even number.** Roll a standard six-sided die. The favorable outcomes are 2, 4, and 6 (three outcomes), out of six total faces:
+
+```
+P(even) = 3 / 6 = 0.5
+```
+
+**Example — drawing a king.** From a standard 52-card deck, the favorable outcomes are the four kings, out of 52 total cards:
+
+```
+P(king) = 4 / 52 = 1 / 13 ≈ 0.0769
+```
+
+About a 7.7% chance. Every event also has a complement — the probability that it does *not* occur, written P(A'):
+
+```
+P(A') = 1 − P(A)
+```
+
+From the card example: P(not a king) = 1 − 4/52 = 48/52 = 12/13 ≈ 0.923. The complement rule holds because every probability in a sample space sums to 1, so it's often faster to count what you *don't* want than what you do.
+
+### Try the Probability Calculator
+
+Enter any number of favorable outcomes and total outcomes to compute the probability and its complement at once.
+
+<StatCalc slug="probability" variant="embed" />
+
+For a full-page version, open the <Link to={routes.calculator('probability')}>probability calculator</Link>, or browse every tool on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+
+## How Do You Find Probability When Two Events Combine?
+
+Most real questions involve more than one event. Two rules — addition and multiplication — extend the basic probability formula to handle "or" and "and" questions, and [OpenStax's *Introductory Statistics 2e*, section 3.3 on the two basic rules of probability](https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability), is the standard reference for both.
+
+**Addition rule, mutually exclusive events.** When A and B cannot both happen on the same trial:
+
+```
+P(A or B) = P(A) + P(B)
+```
+
+Rolling a 1 or a 6 on one die: P(1 or 6) = 1/6 + 1/6 = 1/3 ≈ 0.333.
+
+**Addition rule, overlapping events.** When A and B can both happen, subtract the overlap so it isn't counted twice:
+
+```
+P(A or B) = P(A) + P(B) − P(A and B)
+```
+
+Drawing a card that's a spade *or* a face card (jack, queen, king): P(spade) = 13/52, P(face card) = 12/52, and P(spade face card) = 3/52 (the jack, queen, and king of spades). So P(spade or face card) = 13/52 + 12/52 − 3/52 = 22/52 = 11/26 ≈ 0.4231.
+
+**Multiplication rule, independent events.** When one outcome doesn't change the other:
+
+```
+P(A and B) = P(A) × P(B)
+```
+
+Two coin flips, both tails: P(TT) = 1/2 × 1/2 = 1/4 = 0.25.
+
+**Multiplication rule, dependent events.** When the first outcome changes the odds on the second, the conditional probability of B given A — covered next — replaces the plain P(B):
+
+```
+P(A and B) = P(A) × P(B | A)
+```
+
+A bag holds 4 red marbles and 6 blue marbles (10 total). Draw two without replacement. P(first red) = 4/10; given a red came out first, P(second red | first red) = 3/9. So P(both red) = 4/10 × 3/9 = 12/90 ≈ 0.1333.
+
+<DataTable
+  caption="Addition and multiplication rules at a glance"
+  headers={['Rule', 'Formula', 'Worked example']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Addition (mutually exclusive)', 'P(A or B) = P(A) + P(B)', '1/6 + 1/6 = 1/3'],
+    ['Addition (overlapping)', 'P(A or B) = P(A) + P(B) − P(A and B)', '13/52 + 12/52 − 3/52 ≈ 0.4231'],
+    ['Multiplication (independent)', 'P(A and B) = P(A) × P(B)', '1/2 × 1/2 = 0.25'],
+    ['Multiplication (dependent)', 'P(A and B) = P(A) × P(B | A)', '4/10 × 3/9 ≈ 0.1333'],
+  ]}
+/>
+
+<Callout variant="tip" title="Pro tip">
+Before adding two probabilities, ask whether A and B can happen together. Before multiplying them, ask whether knowing A changes the odds on B. Both questions take seconds and prevent the two most common combination errors.
+</Callout>
+
+Events can be mutually exclusive without being independent, and independent without being mutually exclusive — they are genuinely different properties. The <Link to={routes.article('independent-dependent-mutually-exclusive-events')}>independent, dependent, and mutually exclusive events guide</Link> works through that distinction with its own set of examples.
+
+## What Is the Conditional Probability Formula?
+
+The **conditional probability formula** gives the probability that event B occurs given that event A has already occurred, written P(B | A) and read "the probability of B given A":
+
+```
+P(B | A) = P(A and B) / P(A)
+```
+
+This restricts the sample space to outcomes where A is true, then divides by P(A) to re-normalize the remaining probabilities back to a scale that sums to 1.
+
+**Worked example.** A survey of 200 students finds that 120 study math, 80 study physics, and 50 study both subjects. What's the probability a student studies physics, given that they study math?
+
+```
+P(math) = 120 / 200 = 0.60
+P(math and physics) = 50 / 200 = 0.25
+
+P(physics | math) = 0.25 / 0.60 ≈ 0.4167
+```
+
+About 41.7% of math students also study physics — notice this is different from the overall 40% of all 200 students who study physics (80/200), because conditioning on "studies math" changes the relevant population.
+
+Two events are **independent** exactly when P(B | A) = P(B); if that equality fails, the events are dependent. [OpenStax's *Introductory Statistics 2e*, section 3.2](https://openstax.org/books/introductory-statistics-2e/pages/3-2-independent-and-mutually-exclusive-events), covers that independence test in full, alongside how it differs from mutual exclusivity.
+
+Bayes' theorem reverses the direction of this formula — given that B occurred, it tells you how to update your probability estimate for A. The <Link to={routes.article('bayes-theorem')}>Bayes' theorem guide</Link> walks through that formula, with worked examples from medical testing and spam filtering.
+
+## What Is the Binomial Probability Formula?
+
+The **binomial probability formula** gives the probability of exactly k successes across n independent trials, each with the same success probability p:
+
+```
+P(X = k) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ
+```
+
+`C(n, k) = n! / (k! × (n − k)!)` is the binomial coefficient, counting how many ways k successes can be arranged among n trials. [NIST/SEMATECH's e-Handbook entry on the binomial distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm) calls it "probably the most commonly used discrete distribution," and [OpenStax's *Introductory Statistics 2e*, section 4.3](https://openstax.org/books/introductory-statistics-2e/pages/4-3-binomial-distribution), gives the same formula and the four conditions it requires: a fixed n, two outcomes per trial, constant p, and independent trials.
+
+**Worked example.** A 5-question multiple-choice quiz has 4 options per question, and a student guesses every answer randomly (p = 0.25 per question). What's the probability of exactly 2 correct guesses?
+
+```
+C(5, 2) = 5! / (2! × 3!) = 10
+P(X = 2) = 10 × (0.25)² × (0.75)³
+         = 10 × 0.0625 × 0.421875
+         ≈ 0.2637
+```
+
+About a 26.4% chance of landing exactly 2 correct answers by pure guessing.
+
+<Callout variant="tip" title="Pro tip">
+"Exactly 2" and "at least 2" are different questions with different formulas — the second needs a sum of several exact-k terms, not a single one. The <Link to={routes.article('binomial-distribution')}>binomial distribution guide</Link> covers the cumulative versions of this formula, the four setup conditions in detail, and how the geometric distribution answers a related but different question.
+</Callout>
+
+## What Is the Formula for Expected Value?
+
+The **formula for expected value** — also called the expectation probability formula — gives the long-run average of a random variable. For a discrete random variable X with values x₁, x₂, …, xₙ and probabilities p₁, p₂, …, pₙ:
+
+```
+E(X) = x₁ · p₁ + x₂ · p₂ + … + xₙ · pₙ = Σ xᵢ · pᵢ
+```
+
+[OpenStax's *Introductory Statistics 2e*, section 4.2](https://openstax.org/books/introductory-statistics-2e/pages/4-2-mean-or-expected-value-and-standard-deviation), defines expected value exactly this way: each outcome weighted by its own probability, then summed.
+
+**Worked example — a raffle ticket.** A raffle sells 1,000 tickets at $5 each, with one $2,000 prize. Buying one ticket gives a 1-in-1,000 chance of winning $2,000 and a 999-in-1,000 chance of winning nothing, minus the $5 cost either way:
+
+```
+E(net gain) = (1/1,000) × $2,000 + (999/1,000) × $0 − $5
+            = $2 − $5
+            = −$3
+```
+
+The expected value of one ticket is **−$3**. That doesn't mean you lose exactly $3 — you either win $1,995 net or lose $5 — but across many tickets, the average result converges to a $3 loss per ticket.
+
+When X follows a binomial distribution with n trials and success probability p, expected value simplifies to a closed form:
+
+```
+E(X) = n × p
+```
+
+For the 5-question guessing quiz above: E(correct guesses) = 5 × 0.25 = **1.25** — on average, a student who guesses randomly on every question gets just over one question right.
+
+<Callout variant="note" title="Watch the interpretation">
+Expected value describes an average over many repetitions, not a forecast for one trial. You will never actually score "1.25 correct answers" on a single 5-question quiz — you'll score 0, 1, 2, 3, 4, or 5.
+</Callout>
+
+For a continuous random variable, the same idea replaces the sum with an integral over a probability density function (PDF); a single exact value has probability 0, so you instead compute the area under the PDF over an interval. The normal distribution and its <Link to={routes.article('z-table')}>z-table</Link> are the most common tool for that lookup, and the <Link to={routes.article('probability-distribution')}>probability distribution guide</Link> covers the continuous case in full alongside the discrete one above.
+
+## How Do You Calculate Probability Step by Step?
+
+Regardless of which formula applies, the same process gets you to a correct answer:
+
+1. **Define the experiment.** What's the random process — rolling dice, drawing cards, running a trial?
+2. **Identify the sample space.** List or count every possible outcome, and confirm whether outcomes are equally likely.
+3. **Define the event.** Which outcomes count as "success" for what you're measuring?
+4. **Choose the formula.** Basic for equally likely outcomes; conditional when something is already known; binomial for fixed, independent, two-outcome trials; expected value for a long-run average.
+5. **Calculate and interpret.** Express the result as a fraction, decimal, or percentage, and confirm the full sample space still sums to 1.
+6. **Sanity-check.** A result above 1 or below 0 signals an arithmetic error; a result extremely close to 0 or 1 deserves a second look against the problem description.
+
+<DataTable
+  caption="Probability formulas quick reference"
+  headers={['Question', 'Formula']}
+  align={['left', 'left']}
+  rows={[
+    ['Equally likely outcomes', 'P(A) = favorable outcomes / total outcomes'],
+    ['Complement', "P(A') = 1 − P(A)"],
+    ['One event already known', 'P(B | A) = P(A and B) / P(A)'],
+    ['Exactly k successes in n trials', 'P(X = k) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ'],
+    ['Long-run average of a random variable', 'E(X) = Σ xᵢ · pᵢ   (E(X) = n × p for a binomial variable)'],
+  ]}
+/>
+
+<Callout variant="quote" source="NIST/SEMATECH e-Handbook of Statistical Methods" sourceHref="https://www.itl.nist.gov/div898/handbook/eda/section3/eda36.htm">
+Probability distributions are a fundamental concept in statistics. They are used both on a theoretical level and a practical level.
+</Callout>
+
+That's the real link between probability and statistics: probability formulas describe how likely outcomes are under a known model, while statistics works in the other direction, using observed data to infer which model and which parameters are actually plausible.
+
+## A Worked Example: Will at Least 2 of 6 Recipients Open the Email?
+
+**Setup.** A marketing email has a historical open rate of 20% (p = 0.2), and it's sent to 6 recipients independently (n = 6). What's the probability that at least 2 of them open it?
+
+<Figure number={1} caption="Four steps from the complement of 0 or 1 opens to the final probability of at least 2 opens.">
+  <ProcessFlow
+    title="At-least-2 binomial calculation process"
+    desc="Four connected steps: identify n equals 6 and p equals 0.2; compute P of 0 opens equals approximately 0.2621; compute P of 1 open equals approximately 0.3932; subtract their sum from 1 to get approximately 0.3446."
+    steps={[
+      { label: 'Identify n, p, and the question', detail: 'n = 6 recipients, p = 0.2 open rate, asking for P(X ≥ 2).' },
+      { label: 'Compute P(X = 0)', detail: '(0.8)⁶ ≈ 0.2621.' },
+      { label: 'Compute P(X = 1)', detail: 'C(6,1) × 0.2 × (0.8)⁵ ≈ 0.3932.' },
+      { label: 'Subtract from 1', detail: 'P(X ≥ 2) = 1 − (0.2621 + 0.3932) ≈ 0.3446.' },
+    ]}
+  />
+</Figure>
+
+Directly summing P(X = 2) through P(X = 6) works, but it's faster to use the complement: P(X ≥ 2) = 1 − P(X ≤ 1) = 1 − [P(X = 0) + P(X = 1)].
+
+1. **Compute P(X = 0):** every recipient fails to open.
+
+```
+P(X = 0) = C(6, 0) × (0.2)⁰ × (0.8)⁶ = (0.8)⁶ ≈ 0.2621
+```
+
+2. **Compute P(X = 1):** exactly one recipient opens.
+
+```
+P(X = 1) = C(6, 1) × (0.2)¹ × (0.8)⁵ = 6 × 0.2 × 0.32768 ≈ 0.3932
+```
+
+3. **Sum and subtract from 1.**
+
+```
+P(X ≤ 1) = 0.2621 + 0.3932 = 0.6554
+P(X ≥ 2) = 1 − 0.6554 = 0.3446
+```
+
+**Decision.** There's roughly a **34.5% probability** that at least 2 of the 6 recipients open this email. The mean number of opens is μ = 6 × 0.2 = 1.2, with σ = √(6 × 0.2 × 0.8) ≈ 0.98, so getting 2 or more opens means landing at least slightly above the typical outcome — useful context before judging whether a campaign under- or over-performed its historical rate.
+
+## How Do You Calculate Probability in Excel, Python, and R?
+
+```
+Excel:   =COMBIN(n, k)                   counts the arrangements, C(n, k)
+         =BINOM.DIST(k, n, p, FALSE)     probability of exactly k successes
+         =BINOM.DIST(k, n, p, TRUE)      probability of k or fewer successes
+
+Python:  from math import comb
+         comb(n, k)                       counts the arrangements, C(n, k)
+         from scipy.stats import binom
+         binom.pmf(k, n, p)                probability of exactly k successes
+         binom.cdf(k, n, p)                 probability of k or fewer successes
+
+R:       choose(n, k)                     counts the arrangements, C(n, k)
+         dbinom(k, size = n, prob = p)     probability of exactly k successes
+         pbinom(k, size = n, prob = p)     probability of k or fewer successes
+```
+
+[Microsoft's documentation for `BINOM.DIST`](https://support.microsoft.com/en-us/office/binom-dist-function-c5ae37b6-f39c-4be2-94c2-509a1480770c) confirms the fourth argument switches between the exact and cumulative forms. [Python's `math.comb` documentation](https://docs.python.org/3/library/math.html#math.comb) and [SciPy's `scipy.stats.binom` reference](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html) cover the combinatorics function and the `pmf`/`cdf` methods respectively, and [R's documentation for the binomial distribution functions](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Binomial.html) covers `dbinom`/`pbinom`/`qbinom`.
+
+## Common Mistakes When Using Probability Formulas
+
+- **Adding probabilities without checking for overlap.** P(A or B) = P(A) + P(B) only holds for mutually exclusive events; overlapping events need the subtraction term, or the total can exceed 1.
+- **Multiplying probabilities without checking independence.** P(A and B) = P(A) × P(B) only holds for independent events; dependent events need the conditional probability formula instead.
+- **Confusing P(A | B) with P(B | A).** The probability a test is positive given disease is not the same as the probability of disease given a positive test — reversing conditioning direction needs Bayes' theorem, not a simple swap.
+- **Applying the binomial formula to non-independent trials.** Drawing without replacement changes p after each draw, which breaks the binomial model; that scenario calls for the hypergeometric distribution instead.
+- **Treating expected value as a single-trial prediction.** E(X) describes a long-run average across many repetitions. On any one trial, the actual outcome is almost never equal to E(X) itself.
+- **Mixing up "exactly," "at most," and "at least."** Each phrasing points to a different formula — one exact term versus a sum of several — and conflating them is one of the most common probability errors overall.
+
+## Statohub's Take on the Probability Formula
+
+Statohub's position is that nearly every probability mistake traces back to skipping a verification step, not to faulty arithmetic: checking whether two events can overlap before adding, checking independence before multiplying, and rereading the question's exact wording before picking "exactly," "at most," or "at least." Learn those few checks once, and the five formulas in this guide cover the overwhelming majority of probability questions you'll ever need to answer by hand.
+
+## Put the Probability Formula to Work With Statohub's Tools
+
+The calculator above handles basic probability and its complement instantly — enter favorable and total outcomes and it does the rest. For the formulas this guide builds toward, the <Link to={routes.article('binomial-distribution')}>binomial distribution guide</Link> and its <Link to={routes.calculator('binomial-distribution')}>binomial distribution calculator</Link> cover exact and cumulative binomial probabilities in depth, the <Link to={routes.article('bayes-theorem')}>Bayes' theorem guide</Link> extends the conditional probability formula to reverse conditioning, and the <Link to={routes.article('probability-distribution')}>probability distribution guide</Link> covers expected value for continuous variables. <Link to={routes.categoryHub('probability-distributions')}>The Probability & Distributions hub</Link> rounds out the neighboring models, and <Link to={routes.calculatorsHub()}>Statohub's full calculators hub</Link> covers every other tool on the site.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6. Probability Distributions', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda36.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.6.6.18. Binomial Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm', org: 'NIST' },
+  { text: 'OpenStax — 3.1 Terminology, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology', org: 'OpenStax' },
+  { text: 'OpenStax — 3.2 Independent and Mutually Exclusive Events, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/3-2-independent-and-mutually-exclusive-events', org: 'OpenStax' },
+  { text: 'OpenStax — 3.3 Two Basic Rules of Probability, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability', org: 'OpenStax' },
+  { text: 'OpenStax — 4.2 Mean or Expected Value and Standard Deviation, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/4-2-mean-or-expected-value-and-standard-deviation', org: 'OpenStax' },
+  { text: 'OpenStax — 4.3 Binomial Distribution, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/4-3-binomial-distribution', org: 'OpenStax' },
+  { text: 'Microsoft Support — BINOM.DIST function', href: 'https://support.microsoft.com/en-us/office/binom-dist-function-c5ae37b6-f39c-4be2-94c2-509a1480770c', org: 'Microsoft' },
+  { text: 'SciPy — scipy.stats.binom reference', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html', org: 'SciPy' },
+  { text: 'Python documentation — math.comb', href: 'https://docs.python.org/3/library/math.html#math.comb', org: 'Python Software Foundation' },
+  { text: 'The R Project — stats::Binomial documentation', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Binomial.html', org: 'The R Project' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the probability formula?',
+    answer: 'The basic probability formula is P(A) = favorable outcomes / total outcomes, and it applies when every outcome is equally likely. Beyond that basic case, related formulas cover combined events (addition and multiplication rules), the conditional probability formula for known information, the binomial probability formula for repeated trials, and the formula for expected value for long-run averages.',
+  },
+  {
+    question: 'How do I find probability for continuous variables?',
+    answer: "For a continuous random variable, such as height or reaction time, any single exact value has probability 0 — P(X = x) = 0, because infinitely many values are packed into any interval. Instead, probability for a continuous variable is the area under its probability density function (PDF) over a range, found by integrating the PDF across that range rather than counting outcomes. The normal distribution and its z-table are the most commonly used tools for this: convert a value to a z-score and read the area directly instead of integrating by hand.",
+  },
+  {
+    question: 'What is the conditional probability formula?',
+    answer: "The conditional probability formula is P(B | A) = P(A and B) / P(A). It gives the probability that event B occurs given that event A is already known to have happened, by restricting the sample space to outcomes where A is true and re-normalizing what's left.",
+  },
+  {
+    question: 'When should I use the binomial probability formula?',
+    answer: 'Use the binomial probability formula, P(X = k) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ, when you have a fixed number of independent trials n, each with exactly two outcomes, and a success probability p that stays constant across every trial. If trials are not independent — sampling without replacement from a small group, for example — the hypergeometric distribution applies instead.',
+  },
+  {
+    question: 'What is the formula for expected value?',
+    answer: 'The formula for expected value, also called the expectation probability formula, is E(X) = Σ xᵢ · pᵢ: multiply each possible outcome by its probability and sum the results. For a binomial random variable specifically, that simplifies to E(X) = n × p.',
+  },
+  {
+    question: "What's the difference between probability and statistics?",
+    answer: 'Probability starts from a known model and predicts what data you should expect to see; statistics starts from observed data and works backward to infer the model that likely produced it. Both fields share the same formulas — probability describes how likely outcomes are, and statistical methods apply those formulas to draw conclusions from real measurements.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('independent-dependent-mutually-exclusive-events')}>Independent, Dependent & Mutually Exclusive Events</Link>
+- <Link to={routes.article('z-table')}>Z-Table: The Standard Normal Distribution Table</Link>
+- <Link to={routes.article('exponential-distribution')}>Continuous Distributions: Exponential, Uniform, Gamma & Lognormal</Link>
+- <Link to={routes.calculator('combination')}>Combination Calculator</Link>
