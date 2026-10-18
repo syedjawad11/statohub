@@ -141,21 +141,6 @@ The arithmetic mean is the better choice whenever:
 - **You need to recover a total.** If you know the mean and the sample size, Total = mean × n. The median cannot reconstruct a total this way.
 - **Further statistics require it.** Standard deviation, variance, z-scores, t-tests, and regression are all built from the mean, not the median. Once you compute the mean, you can build out the rest of the spread picture with <Link to={routes.article('standard-deviation')}>standard deviation</Link>, written with the <Link to={routes.article('standard-deviation-symbol')}>sigma notation</Link> covered elsewhere, and with <Link to={routes.article('variance')}>variance</Link>, which squares those same deviations.
 
-## How Do You Calculate the Median in Python, R, or Excel?
-
-Every major tool returns the same number the hand calculation does — sort the values, then take the middle one or average the two middle ones — but each exposes it through its own function.
-
-```
-Python:  from statistics import median
-         median([3, 7, 12, 20])      # 9.5
-
-R:       median(c(3, 7, 12, 20))      # 9.5
-
-Excel:   =MEDIAN(A1:A4)               # 9.5
-```
-
-[Python's `statistics` module](https://docs.python.org/3/library/statistics.html) implements `median()` to average the two middle values automatically when the input has an even length, matching the by-hand result above. [R's `median()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/median.html) behaves the same way and accepts an `na.rm` argument for stripping missing values before the calculation runs. [Microsoft's MEDIAN function documentation](https://support.microsoft.com/en-us/office/median-function-d0916313-4753-414c-8537-ce85bdd967d2) describes the same spreadsheet formula, which ignores empty cells and text automatically. None of the three tools will warn you if you feed them an unsorted or mixed-type list, so it is still worth sanity-checking a surprising result by hand.
-
 ## A Worked Example: Median vs Average at a Nine-Person Startup
 
 A nine-person startup wants to describe typical pay to a prospective hire. Annual salaries, in thousands of dollars, are:
@@ -192,6 +177,23 @@ That's about $67,444.
 </Figure>
 
 This is the same skew mechanism described above, just with dollars instead of a histogram: one high outlier stretches the upper tail, the mean follows it upward, and the median stays anchored to what a typical person in the data set actually experiences.
+
+## How Do You Calculate the Median in Python, R, or Excel?
+
+Every major tool returns the same number the hand calculation does — sort the values, then take the middle one or average the two middle ones — but each exposes it through its own function.
+
+```
+Python:  from statistics import median
+         median([3, 7, 12, 20])      # 9.5
+
+R:       median(c(3, 7, 12, 20))      # 9.5
+
+Excel:   =MEDIAN(A1:A4)               # 9.5
+```
+
+[Python's `statistics` module](https://docs.python.org/3/library/statistics.html) implements `median()` to average the two middle values automatically when the input has an even length, matching the by-hand result above. [R's `median()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/median.html) behaves the same way and accepts an `na.rm` argument for stripping missing values before the calculation runs. [Microsoft's MEDIAN function documentation](https://support.microsoft.com/en-us/office/median-function-d0916313-4753-414c-8537-ce85bdd967d2) describes the same spreadsheet formula and notes that it ignores text and empty cells found inside a referenced range, while a typed-in argument that cannot be translated into a number causes an error.
+
+An unsorted list is never a problem for any of the three — each one sorts the values internally before picking the middle, so there is no need to sort first yourself. Mixed types are handled differently, though. Python's `median()` raises a `TypeError` if the list mixes incompatible types, such as strings and numbers, so a broken input stops the calculation outright rather than quietly returning a wrong number. R's documentation describes `median()` as working on numeric vectors (or other classes with a defined method, such as `Date`); a character vector falls outside that documented behavior, so don't trust a result if one slips in by mistake. Excel sits in between: it ignores stray text sitting inside a referenced range, but a non-numeric value typed directly into the formula throws an error rather than being silently included. It is still worth sanity-checking a surprising result by hand, but none of the three tools will silently fold an obviously bad value into a believable-looking median.
 
 ## Common Mistakes People Make With Median vs Average
 
