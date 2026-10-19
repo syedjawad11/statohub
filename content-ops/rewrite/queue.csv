@@ -8,7 +8,7 @@ order,slug,lane,status,attempts,score,date,notes
 7,permutations,A,published,0,92,2026-10-13,
 8,z-table,B,published,0,90,2026-10-16,
 9,exponential-distribution,A,published,0,92,2026-10-14,
-10,median-vs-average,B,changes_requested,2,68,2026-10-18,"software section: false claim Python/R/Excel don't error/warn on unsorted or mixed-type input (round 2, max rounds reached) | software section closing claim false: Python NaN / R character-vector medians return silently wrong values (round 3, max rounds reached)"
+10,median-vs-average,B,published,2,90,2026-10-19,"software section: false claim Python/R/Excel don't error/warn on unsorted or mixed-type input (round 2, max rounds reached) | software section closing claim false: Python NaN / R character-vector medians return silently wrong values (round 3, max rounds reached)"
 11,interquartile-range,A,published,0,90,2026-10-15,
 12,percentiles,B,pending,0,,,
 13,what-is-correlation,A,published,1,90,2026-10-17,"round-2 CHANGES_REQUESTED: decision paragraph draws causal claim from observational correlation; one-sentence fix needed, see parked draft"
