@@ -75,6 +75,7 @@ INSERT INTO "outsource_articles" VALUES('synthetic-control-method','Synthetic Co
 INSERT INTO "outsource_articles" VALUES('precision-vs-recall','Precision vs Recall','machine-learning-statistics',56,'2026-10-10','956826','published','outsource-content/raw/precision-vs-recall.json','src/content/articles/precision-vs-recall.mdx',1,1,0,6,'','2026-10-16 09:14:14','2026-10-16 09:33:52');
 INSERT INTO "outsource_articles" VALUES('transform-skewed-data','Transform Skewed Data','data-analysis',57,'2026-10-13','968755','published','outsource-content/raw/transform-skewed-data.json','src/content/articles/transform-skewed-data.mdx',1,2,0,8,'','2026-10-17 09:14:30','2026-10-17 09:31:13');
 INSERT INTO "outsource_articles" VALUES('roc-auc-interpretation','ROC AUC Interpretation','machine-learning-statistics',58,'2026-10-14','972692','blocked','outsource-content/raw/roc-auc-interpretation.json','src/content/articles/roc-auc-interpretation.mdx',3,0,1,6,'','2026-10-18 09:15:56','2026-10-18 09:41:51');
+INSERT INTO "outsource_articles" VALUES('blocking-vs-stratification','Blocking vs Stratification','experiments-causality',59,'2026-10-15','976767','fetched','outsource-content/raw/blocking-vs-stratification.json',NULL,0,0,0,NULL,'','2026-10-19 09:14:48','2026-10-19 09:14:54');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

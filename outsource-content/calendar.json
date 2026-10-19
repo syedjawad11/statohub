@@ -405,6 +405,13 @@
       "title": "ROC AUC Interpretation",
       "slug": "roc-auc-interpretation",
       "category_slug": "machine-learning-statistics"
+    },
+    {
+      "queue_position": 59,
+      "day_label": "2026-10-15",
+      "title": "Blocking vs Stratification",
+      "slug": "blocking-vs-stratification",
+      "category_slug": "experiments-causality"
     }
   ]
 }
