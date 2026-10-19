@@ -1,0 +1,227 @@
+---
+title: "Blocking vs Stratification: Block or Sample?"
+h1: "Blocking vs. Stratification: Assign Treatments or Select Samples?"
+description: "Blocking vs stratification: learn when to block treatments inside an experiment versus stratify a sample, plus how an A/B conversion test applies each method."
+category: experiments-causality
+primaryKeyword: blocking vs stratification
+phase: 1
+keywords:
+  - blocking vs stratification
+  - block treatments
+  - stratify samples
+  - A/B conversion test
+related:
+  - synthetic-control-method
+  - instrumental-variables-explained
+  - regression-discontinuity-design
+draft: false
+pubDate: 2026-10-19
+updatedDate: 2026-10-19
+reviewedDate: 2026-10-19
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Blocking is the technique you use inside experiments to assign treatments within homogeneous groups; stratification is what survey designers use to select representative samples. The diagnostic is simple: if you are assigning treatments, block; if you are selecting observations, stratify. When you run an experiment, block on strong pre-treatment predictors of the outcome.
+
+<KeyTakeaways rows={[
+  { point: 'Block to assign, stratify to select', details: "If you're assigning treatments, block; if you're selecting observations, stratify — the two techniques solve different problems even though both start by grouping similar units." },
+  { point: 'Choose covariates deliberately', details: 'Pick one or two strong, pre-treatment predictors — especially baseline outcomes. Weak variables add little, and poorly chosen blocks can hurt precision in small samples.' },
+  { point: 'Late covariates still have an answer', details: "When a covariate arrives after randomization, post-stratification or regression adjustment recovers nearly all of blocking's efficiency — except in small samples with too many strata." },
+  { point: 'Analyze the design you actually ran', details: 'Include block indicators and use robust standard errors; unequal stratum sampling rates need inverse-probability weights, and stratified trials can still pool results across groups.' },
+]} />
+
+## What do blocking, stratification, and post-stratification mean?
+
+Both techniques start from the same idea: sort similar units into groups before chance enters the design. What you do with those groups next is what separates them. A <a href="https://www.itl.nist.gov/div898/handbook/pri/section3/pri332.htm" rel="nofollow noopener noreferrer" target="_blank">randomized block design</a> treats a nuisance factor as a blocking factor, so its contribution to experimental error can be removed from the comparison. Stratified sampling, by contrast, draws a sample from each group so that every subgroup is represented.
+
+- **Blocking:** you form homogeneous subsets of experimental units, then <a href="https://online.stat.psu.edu/stat509/lesson/3/3.3" rel="nofollow noopener noreferrer" target="_blank">randomize treatments within each one</a>.
+- **Strata:** the groups a population is divided into before you randomly select units from each of them.
+- **Post-stratification:** you group units after the data are collected and adjust the estimates accordingly.
+- **Block size:** the number of units per block. Blocks that are too small or too heterogeneous create estimation and attrition problems.
+- **Matched pairs:** a block of similar units, with one assigned to each arm.
+- **Rerandomization:** redrawing an assignment until covariate balance is acceptable.
+
+## How do blocking and stratification differ in practice?
+
+The quickest way to tell them apart is to ask what happens after the grouping. Blocking and stratification both create homogeneous groups, but <a href="https://pubmed.ncbi.nlm.nih.gov/29064623/" rel="nofollow noopener noreferrer" target="_blank">their analytical models differ</a>: blocked experiments need estimators such as ANOVA or regression with block indicators, while stratified sampling relies on within-stratum sampling variance.
+
+Blocks live inside an experiment; strata live in a sample drawn from a population. After grouping, blocking randomizes treatment assignment within each block, while stratification randomly selects units within each stratum. The purposes diverge the same way: blocking reduces variance in treatment comparisons, while stratification guarantees subgroup representation and reduces sampling variance in population estimates. The diagnostic checklist follows directly from that split — ask whether you control who receives a treatment, whether you control who enters the sample, or whether you do both, in which case you stratify the sample and then block the assignment within it.
+
+<DataTable
+  caption="Blocking and stratification compared"
+  headers={['Dimension', 'Blocking', 'Stratification']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Setting', 'Lives inside an experiment', 'Lives in a sample drawn from a population'],
+    ['Action after grouping', 'Randomizes treatment assignment within each block', 'Randomly selects units within each stratum'],
+    ['Purpose', 'Reduces variance in treatment comparisons', 'Guarantees subgroup representation and reduces sampling variance in population estimates'],
+    ['Analysis', 'ANOVA or regression with block indicators', 'Within-stratum sampling variance, inverse-probability weights when rates differ'],
+    ['Diagnostic question', 'Do you control who receives the treatment?', 'Do you control who enters the sample?'],
+  ]}
+/>
+
+The two ideas are <a href="https://www.stat.cmu.edu/~brian/905-2008/papers/FienbergTanur-ISR-1987.pdf" rel="nofollow noopener noreferrer" target="_blank">closely parallel in design</a>, even though their error structures differ in analysis.
+
+<Figure number={1} caption="The diagnostic that separates blocking from stratification: who controls treatment assignment versus who controls sample entry.">
+  <DecisionTree
+    title="Block or stratify?"
+    desc="A decision tree asks first whether you control who enters the sample, then whether you also control which units receive the treatment, to route the reader to blocking, stratification, both, or post-stratification."
+    root={{
+      label: 'Do you control who enters the sample?',
+      yes: {
+        label: 'Do you also control which units receive the treatment?',
+        yes: { label: 'Stratify the sample, then block the assignment' },
+        no: { label: 'Stratify: sample units from each subgroup' },
+      },
+      no: {
+        label: 'Do you control which units receive the treatment?',
+        yes: { label: 'Block: randomize treatment within homogeneous groups' },
+        no: { label: 'Neither — use post-stratification after the data are collected' },
+      },
+    }}
+  />
+</Figure>
+
+## When should you block in an experiment?
+
+Block when you can identify a pre-treatment variable that strongly predicts the outcome. Blocking works by grouping similar units and randomizing within groups, and <a href="https://imai.fas.harvard.edu/teaching/files/stratified_experiments.pdf" rel="nofollow noopener noreferrer" target="_blank">standard Neyman-framework math</a> shows the resulting efficiency gains. The payoff is largest in heterogeneous populations, where unblocked randomization could leave one arm with a lopsided mix of units by chance.
+
+<Callout variant="quote" source="Harvard CARES — 'To block or not to block, that is the question'" sourceHref="https://cares-blog.gse.harvard.edu/post/can-blocking-hurt/">
+Blocking is most effective when the blocking variable is strongly prognostic of the outcome, and baseline measures of the outcome itself often deliver the best improvement in precision because they predict final results better than almost anything else.
+</Callout>
+
+The same source offers a practical motto: block what you can and randomize what you cannot. Prioritize a few strong prognostic variables over many weak ones. A baseline test score in an education trial, or prior-period conversion in a product test, will usually beat a long list of demographic indicators. Blocking on relevant prognostic variables typically increases power, and in large samples it almost never harms precision. The real risk sits in small finite samples with poorly chosen blocks.
+
+## When should you stratify a sample?
+
+Stratify when you control who enters the sample and you need every subgroup to appear in it. Survey designers use stratification for two reasons: to guarantee that subgroups are represented, and to lower the sampling variance of population estimates. Our guide to <Link to={routes.article('sampling-methods')}>sampling methods</Link> covers the mechanics in detail.
+
+- **Opinion polls:** strata such as region or age band keep any one group from being under-sampled by chance.
+- **Rare subgroups:** a small group can be sampled at a higher rate so you get enough observations to say something about it.
+- **Multistage surveys:** strata are often defined first, with clusters then selected inside each.
+
+Stratification changes how you estimate. When strata are sampled at different rates, each observation must be weighted by the inverse of its selection probability so the overall estimate reflects the population rather than the sample. Variance is then computed within strata and combined. A stratified trial, by the way, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9015079/" rel="nofollow noopener noreferrer" target="_blank">does not force separate subgroup reporting</a>: the main analysis often pools across strata, since the goal is balanced assignment rather than mandatory subgroup tests.
+
+## What if you cannot block before randomizing?
+
+Sometimes the covariate arrives late, or enrollment is rolling and blocks cannot be built in advance. Post-stratification is the usual fallback: you randomize as normal, then group units by the covariate and adjust the estimate afterward.
+
+<Callout variant="note" title="Key finding">
+Post-stratification is nearly as efficient as pre-randomization blocking. The variance difference is on the order of 1/n&#178;, and the precision loss depends mainly on the treatment proportion and the sample size.
+</Callout>
+
+The catch is finite samples. With many strata, or strata chosen poorly, post-stratification can raise variance rather than lower it, a risk also noted in work on post-stratified treatment effect estimates. In practice: lean on post-stratification or regression adjustment when the sample is reasonably large and you have a handful of well-defined strata. With a small sample, keep the number of strata low or fall back on a simple covariate-adjusted regression. Rerandomization offers a third path when you can inspect balance before the experiment starts.
+
+Which of the three fallbacks you reach for depends mostly on when the covariate became available and how many strata it would create. A covariate known only after enrollment closes rules out blocking outright, so the choice narrows to post-stratification versus a covariate-adjusted regression, and the sample size usually settles that call.
+
+## How do you implement blocking step by step?
+
+<Checklist
+  id="blocking-implementation"
+  title="Blocking implementation checklist"
+  style="numbered"
+  items={[
+    { text: 'Pick prognostic covariates', detail: 'Choose pre-treatment variables that predict the outcome. A baseline measure of the outcome is usually the strongest choice.' },
+    { text: 'Choose a block method', detail: 'Discrete strata work for categorical covariates. For continuous or several covariates, use matched pairs or a multivariate distance such as Mahalanobis distance. For very large experiments, threshold blocking and approximation algorithms build blocks efficiently and allow flexible block sizes. Set a minimum block size so every block can hold both treatment and control units, even after some attrition.' },
+    { text: 'Randomize within blocks', detail: 'Assign treatments separately inside each block. In blinded trials, avoid fixed block sizes: fixed-size blocks ensure balance but risk predictability, so use randomly mixed block sizes to protect allocation concealment.' },
+    { text: 'Pre-specify the analysis', detail: 'Write down the blocking variables, the block construction rule, and the estimator before data collection starts, and register them where your field expects it.' },
+  ]}
+/>
+
+**Pro Tip:** *If you must stratify a randomization, keep the number of stratifying variables small, since stratified randomization is commonly limited to two variables to preserve balance.*
+
+For background on randomization itself, see our guide to the <Link to={routes.article('randomized-controlled-trial')}>randomized controlled trial</Link>.
+
+## Which estimator should you use after blocking?
+
+You have three main options, and the right one depends on how much you want to squeeze out of the design.
+
+- **Aggregated block differences:** compute the treatment effect inside each block, then combine the estimates weighted by block size.
+- **Regression with block indicators:** include dummy variables for blocks so the model accounts for the block structure.
+- **Lin (2013) estimator:** interacts recentered covariates with treatment, and often improves power over the simpler options.
+- **Attrition and empty blocks:** a block that loses all of its treated or control units cannot contribute a within-block comparison, so plan for this before it happens.
+- **Standard errors:** never analyze a blocked experiment as if it were completely randomized, because the standard errors can be incorrect or misleading. Request robust standard errors, or use exact randomization inference when appropriate.
+
+For related questions that arise after the main analysis, such as comparing several groups, see our guide to <Link to={routes.article('post-hoc-tests')}>post-hoc tests</Link>.
+
+## A short worked example: blocking an A/B conversion test
+
+Say you run a checkout test on a group of visitors, using illustrative numbers only. Each visitor has a baseline conversion-risk score from past behavior, which is strongly prognostic of whether they buy.
+
+<Figure number={2} caption="The five-step sequence for blocking an A/B conversion test on a baseline risk score.">
+  <ProcessFlow
+    title="Blocking an A/B conversion test"
+    desc="A five-step horizontal pipeline: form blocks by risk score, randomize inside blocks, estimate the within-block effect, compare precision to an unblocked design, then interpret the tighter confidence interval."
+    steps={[
+      { label: 'Form blocks', detail: 'Sort visitors by risk score and group them into blocks of similar visitors.' },
+      { label: 'Randomize inside blocks', detail: 'In every block, assign visitors to the new checkout or the old one.' },
+      { label: 'Estimate', detail: 'Compute the difference in conversion within each block, then average across blocks weighted by size.' },
+      { label: 'Compare precision', detail: 'An unblocked design lumps high- and low-risk visitors into one noisy comparison; the blocked design compares like with like.' },
+      { label: 'Interpret', detail: 'Report the effect with a tighter confidence interval than an unblocked test would allow.' },
+    ]}
+  />
+</Figure>
+
+A regression with block indicators gives a comparable answer to the aggregated, size-weighted estimate above. If the new checkout converts better within most blocks, you can report the effect with more confidence than an unblocked test would allow, because the standard error shrinks once the noisy variation from mixing high- and low-risk visitors is removed.
+
+This is the same logic that makes blocking worth the setup cost in any experiment with a known, strongly prognostic covariate: the comparison inside each block is cleaner than the comparison across the whole sample, because the units being compared already resemble each other on the variable that would otherwise add noise. An unblocked design has to average over that noise; a blocked design removes it from the comparison before the randomization even happens.
+
+## What mistakes should you avoid?
+
+- **Confusing assign and select.** Reapply the diagnostic: blocking assigns, stratification selects.
+- **Too many small blocks or strata.** Finite-sample variance can inflate when blocks shrink toward a few units each.
+- **Blocking on non-prognostic covariates,** or building blocks so heterogeneous that units within them barely resemble each other.
+- **Fixed, predictable block sizes** in blinded studies, which let staff anticipate the next assignment.
+- **Analysis errors:** ignoring the blocks, mis-weighting block estimates, or failing to pre-specify the plan.
+
+## Our take: block thoughtfully, adjust when you cannot
+
+Blocking earns its place when you have a strong prognostic variable and the discipline to commit to it before the data arrive. When you do not, post-stratification or regression adjustment recovers most of the benefit. Treat blocking as a design decision, not a statistical afterthought. Our checklist: pick one or two strong covariates, set a minimum block size, randomize within blocks, use mixed block sizes when blinded, pre-specify the estimator, and analyze with the block structure included. More worked cases live in our <Link to={routes.appliedLanding()}>Applied Statistics hub</Link>.
+
+## Where to learn more on Statohub
+
+Our <Link to={routes.categoryHub('experiments-causality')}>Experiments &amp; Causality hub</Link> pairs plain-English guides with applied examples, and our <Link to={routes.calculatorsHub()}>calculators</Link> let you check the numbers yourself. Try the <Link to={routes.calculator('probability')}>probability calculator</Link> to see how chance imbalance shows up in small groups.
+
+## Sources
+
+<Sources items={[
+  { text: 'To block or not to block, that is the question', href: 'https://cares-blog.gse.harvard.edu/post/can-blocking-hurt/', org: 'CARES, Harvard Graduate School of Education' },
+  { text: 'Stratified Randomized Experiments', href: 'https://imai.fas.harvard.edu/teaching/files/stratified_experiments.pdf', org: 'Kosuke Imai, Harvard University' },
+  { text: 'Experimental design matters for statistical analysis: how to handle blocking', href: 'https://pubmed.ncbi.nlm.nih.gov/29064623/', org: 'PubMed / National Library of Medicine' },
+  { text: '5.3.3.2. Randomized Block Designs', href: 'https://www.itl.nist.gov/div898/handbook/pri/section3/pri332.htm', org: 'NIST/SEMATECH e-Handbook of Statistical Methods' },
+  { text: 'Experimental and Sampling Structures: Parallels Diverging and Meeting (Fienberg & Tanur, 1987)', href: 'https://www.stat.cmu.edu/~brian/905-2008/papers/FienbergTanur-ISR-1987.pdf', org: 'International Statistical Review, via Carnegie Mellon University' },
+  { text: "Agnostic notes on regression adjustments to experimental data: Reexamining Freedman's critique (Lin, 2013)", href: 'https://arxiv.org/abs/1208.2301', org: 'Annals of Applied Statistics, via arXiv' },
+  { text: 'Stratification Clarification for Methods for Randomized Clinical Trials — Reply', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9015079/', org: 'PubMed Central / National Library of Medicine' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the main difference between blocking and stratification?',
+    answer: 'Blocking is used in experiments to assign treatments within groups of similar units. Stratification is used in sampling to select units from subgroups of a population. The grouping idea is shared, but the follow-up action differs.',
+  },
+  {
+    question: 'Is post-stratification as good as blocking?',
+    answer: 'In large samples it comes close, with a variance difference on the order of 1/n². In small samples, many strata or poorly chosen strata can increase variance, so keep strata few and well defined.',
+  },
+  {
+    question: 'Do you have to analyze a blocked experiment differently?',
+    answer: 'Yes. Include the block structure in the analysis, for example through regression with block indicators. Treating a blocked experiment as completely randomized can produce incorrect standard errors.',
+  },
+  {
+    question: 'How do you keep blocked randomization unpredictable?',
+    answer: 'Use randomly mixed block sizes instead of one fixed size. Fixed blocks guarantee balance but let observers anticipate the next assignment, which can undermine allocation concealment.',
+  },
+]} />
