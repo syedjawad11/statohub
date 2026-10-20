@@ -1,0 +1,207 @@
+---
+title: "Cointegration Test: Which Method to Use"
+h1: "Cointegration Tests: Read Adjustment Speed in R, Python, and MATLAB"
+description: "Run a cointegration test (Engle-Granger, Johansen, or ARDL), then interpret the cointegrating vector and adjustment speed in R, Python, and MATLAB."
+category: time-series-forecasting
+primaryKeyword: cointegration test
+phase: 1
+keywords:
+  - cointegration test
+  - johansen test
+  - engle-granger test
+  - cointegrating vector
+related:
+  - autocorrelation-interpretation
+  - seasonal-decomposition
+  - arima-model-basics
+draft: false
+pubDate: 2026-10-20
+updatedDate: 2026-10-20
+reviewedDate: 2026-10-20
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import DecisionTree from '../../components/applied/infographics/DecisionTree.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+If your series are nonstationary and integrated of the same order, usually I(1), run a cointegration test to check whether some linear combination of them is stationary, which signals a long-run equilibrium. Rejecting the null of no cointegration supports such a relationship; failing to reject means you have no evidence of one. The usual choices are Engle-Granger, Johansen, Phillips-Ouliaris, and ARDL bounds tests.
+
+<KeyTakeaways rows={[
+  { point: 'Confirm I(1) first', details: 'Run ADF tests on levels and first differences to confirm each series is I(1), and verify all variables share that integration order.' },
+  { point: 'Match the test to the data', details: 'Choose the two-step residual test for a pair, Johansen for several variables, or ARDL when samples are small or integration orders are mixed.' },
+  { point: 'Read ARDL bounds correctly', details: 'Statistics above the upper bound support a levels relationship, those below the lower bound do not, and values between bounds are inconclusive.' },
+  { point: 'Report every default', details: 'State the deterministic terms, lag rule, sample range, test statistic, and p-value or critical values; defaults vary across software, so state each choice.' },
+  { point: 'Check for structural breaks', details: 'A missed break can hide a real relationship; Gregory-Hansen can allow an unknown break, while alternate trends and lag lengths test robustness.' },
+]} />
+
+## What cointegration means and why it matters
+
+A series is I(0) when it is stationary: its mean and variance stay stable over time. It is I(1) when it must be differenced once to become stationary, as with a random walk. Two or more I(1) series are cointegrated when a linear combination of them is I(0). That combination is the cointegrating relation, and the weights are the cointegrating vector. In plain terms, the series may wander, but they wander together and keep returning to an equilibrium gap.
+
+<Figure number={1} caption="Core cointegration vocabulary: I(0) and I(1) series, the cointegrating relationship and vector, and the regression risk of ignoring them.">
+  <DataTable
+    caption="Cointegration basics"
+    headers={['Term', 'Meaning']}
+    align={['left', 'left']}
+    rows={[
+      ['I(0)', 'Mean and variance stay stable over time.'],
+      ['I(1)', 'Must be differenced once to become stationary.'],
+      ['Cointegration', 'An I(0) linear combination of I(1) series.'],
+      ['Weights (cointegrating vector)', 'Form the cointegrating relationship.'],
+      ['Regression risk', 'A high R-squared can reflect shared trends, not a genuine relationship.'],
+    ]}
+  />
+</Figure>
+
+This is not the same as correlation. Correlation measures how strongly variables move together in a sample. Cointegration is an existence property: [tests measure confidence that a long-run relationship exists](https://www.econstor.eu/bitstream/10419/50872/1/368666662.pdf), not how strong it is.
+
+The practical stakes are real. Regressing nonstationary variables without checking for cointegration can produce [spurious regressions](https://www.bauer.uh.edu/rsusmel/phd/ec2-7.pdf), with a high R-squared and impressive t-statistics driven by shared trends rather than any genuine relationship.
+
+A common applied use case makes the distinction concrete. Pair trading looks for two assets whose price gap behaves like a stationary series: if the gap is genuinely cointegrated, it should wander but keep reverting toward its historical average, which is the property the strategy is built to exploit. A cointegration test checks for exactly that reverting behavior — it does not, on its own, guarantee a profitable trade or that the relationship will keep holding once it is deployed live, since the sample used to estimate it is necessarily historical.
+
+## When to test and which checks come first
+
+Run a cointegration test only after you have established that your variables behave like I(1) series. Skipping the pretests is the most common way to get a meaningless result.
+
+Start with an augmented Dickey-Fuller (ADF) test on each series, first in levels and then on first differences. A nonstationary level paired with a stationary first difference is the signature of an I(1) series; our <Link to={routes.article('time-series-stationarity')}>time series stationarity guide</Link> walks through that ADF logic in more depth. Next, confirm that every variable you plan to test shares the same order of integration, because both Engle-Granger and Johansen assume it going in. When the orders are mixed or genuinely uncertain, an ARDL bounds approach is the better fit precisely because it does not require every series to be I(1) first.
+
+Sample size is the next constraint to check. Johansen's system-based likelihood-ratio approach needs a relatively large sample to behave well, and its power can be weak in small samples, so ARDL is generally the more forgiving choice when observations are limited. Before running anything, plot the raw series and look for structural breaks — a policy change, a financial crisis, or any other shift in the data-generating process can mask a cointegrating relationship that is genuinely there, making a correctly specified test fail for the wrong reason. Finally, decide on the deterministic terms — none, a constant, or a constant plus trend — before you test, because that choice changes the critical values your statistic is compared against; switching it only after seeing the result turns the test into an exercise in finding whatever answer you wanted.
+
+The checklist below collects these same pretests in a form you can run through before trusting any cointegration result:
+
+<Checklist
+  id="cointegration-pretest-checklist"
+  title="Pretest checklist before running a cointegration test"
+  style="check"
+  items={[
+    { text: 'Run ADF tests on levels and first differences', detail: 'Confirms that levels are nonstationary and differences are stationary for each series.' },
+    { text: 'Confirm a shared order of integration', detail: 'Engle-Granger and Johansen assume it; use an ARDL bounds approach when orders are mixed or uncertain.' },
+    { text: 'Check your sample size', detail: 'Johansen needs relatively large samples; ARDL is generally preferred when observations are few.' },
+    { text: 'Plot the data for structural breaks', detail: 'A policy change or financial crisis can mask a real cointegrating relationship.' },
+    { text: 'Decide on deterministic terms before testing', detail: 'None, constant, or trend — the choice changes the critical values you compare against.' },
+  ]}
+/>
+
+## Choosing among the common cointegration tests
+
+Each test answers a slightly different question, so match the method to your data.
+
+- **Engle-Granger:** a two-step procedure. You regress one series on the others to estimate the cointegrating vector, then run a unit-root test on the residuals. Because the vector is estimated, [standard Dickey-Fuller critical values do not apply](https://www.econometrics-with-r.org/16.3-cointegration.html); Phillips-Ouliaris-type distributions are used instead. In a simple bivariate case, the critical value depends on the significance level and the deterministic terms. It works best with two variables.
+- **Johansen:** a system likelihood-ratio approach that reports trace and maximum-eigenvalue statistics to determine the cointegration rank. It suits several variables and multiple cointegrating vectors, but [needs relatively large samples](https://www.mathworks.com/help/econ/cointegration-analysis.html) and can have poor power in small ones.
+- **Phillips-Ouliaris:** residual-based alternatives, including the Zt, Za, Pu, and Pz variants documented in the [arch cointegration examples](https://arch.readthedocs.io/en/stable/unitroot/unitroot_cointegration_examples.html).
+- **ARDL bounds:** the Pesaran-Shin-Smith F-type test stays valid whether variables are I(0), I(1), or a mix. It compares the statistic to [lower and upper critical bounds](https://www.statsmodels.org/stable/generated/statsmodels.tsa.ardl.UECMResults.bounds_test.html). Above the upper bound you conclude a levels relationship exists; below the lower bound you do not; between them the result is inconclusive.
+- **Gregory-Hansen:** allows an unknown break in the cointegrating vector by [choosing the breakpoint that minimizes the residual ADF statistic](https://www.estima.com/webhelp/topics/gregoryhansenprocedure.html). Use it when a break is plausible.
+
+Matching the test to the data comes down to three questions: how many series are you testing, how large is the sample, and do all the variables share the same order of integration? A pair of series with a reasonably long sample is Engle-Granger's home turf, since its two-step residual approach is built around a single cointegrating relationship between two variables. Three or more series, or a setting where more than one cointegrating vector might exist, calls for Johansen's system-based trace and maximum-eigenvalue statistics instead. When the sample is short, or the integration orders are mixed or uncertain, the ARDL bounds test is usually the safer default, because its F-statistic stays valid whether the underlying variables are I(0), I(1), or a mix of the two. Gregory-Hansen is a narrower tool: reach for it specifically when you suspect the cointegrating relationship itself shifted at some point in the sample, rather than treating it as a general-purpose substitute for the other four tests.
+
+<Figure number={2} caption="How to read an ARDL bounds test statistic against the lower and upper critical bounds.">
+  <DecisionTree
+    title="ARDL bounds test interpretation"
+    desc="A decision tree compares the ARDL F-statistic to the lower and upper critical bounds: above the upper bound indicates a levels relationship exists, below the lower bound indicates it does not, and a value between the bounds is inconclusive."
+    root={{
+      label: 'Is the F-statistic above the upper critical bound?',
+      yes: { label: 'A levels relationship exists' },
+      no: {
+        label: 'Is the F-statistic below the lower critical bound?',
+        yes: { label: 'No evidence of a levels relationship' },
+        no: { label: 'Inconclusive — between the bounds' },
+      },
+    }}
+  />
+</Figure>
+
+<Callout variant="tip" title="Pro tip">
+When two tests disagree, check whether the cause is deterministic terms or lag length before trusting either answer.
+</Callout>
+
+## Running the tests and reading the output in R, Python, and MATLAB
+
+Most software wraps the same ideas in different function names. In Python, statsmodels offers `coint`, an augmented Engle-Granger test that assumes I(1) variables and returns a statistic and a p-value from MacKinnon's approximation. The `arch` package provides Engle-Granger and Phillips-Ouliaris routines. MATLAB's Econometrics Toolbox covers Engle-Granger and Johansen testing, and R packages cover the same ground. A rough pseudo-code pattern looks like this:
+
+```
+result = coint_test(y, x, trend="c", lag_rule="aic")
+read: statistic, p-value, lag used
+```
+
+Follow these steps when you report results. Reporting a result well means naming every choice a reader would otherwise have to guess. Start by stating which test you ran, which deterministic term you specified, and which lag rule selected the lag length, since statsmodels, arch, R packages, and MATLAB's Econometrics Toolbox do not share default settings. Then report the test statistic itself alongside its p-value or the relevant critical values, plus the ADF lag length actually used on the residuals, exactly as the arch package's Engle-Granger example documents. For any genuine finding of cointegration, go further: report the estimated root and the cointegrating vector together with the sample range, and — if you have fit an ARDL or error-correction specification — report the speed-of-adjustment coefficient. That coefficient should come out negative and statistically significant if the series are really correcting back toward their long-run equilibrium; a coefficient that is positive, or indistinguishable from zero, undercuts the cointegration story even if the earlier test rejected the null.
+
+<Figure number={3} caption="The five elements to report after running any cointegration test, from test settings to the adjustment-speed coefficient.">
+  <ProcessFlow
+    title="Reporting a cointegration test result"
+    desc="A five-step horizontal pipeline moves from stating the test and settings, through reporting the statistic, residual lag length, and cointegrating vector, to reporting the adjustment-speed coefficient."
+    steps={[
+      { label: 'State test and settings', detail: 'Name the test, the deterministic term (none, constant, or trend), and the lag rule (fixed, AIC, or BIC).' },
+      { label: 'Report the statistic', detail: 'Give the test statistic and the p-value or critical values.' },
+      { label: 'Report the lag length', detail: 'State the ADF lag length used on the residuals.' },
+      { label: 'Report the vector', detail: 'Give the estimated root, the cointegrating vector, and the sample range.' },
+      { label: 'Report adjustment speed', detail: 'For ARDL or error-correction models, report the speed-of-adjustment coefficient; it should be negative and significant.' },
+    ]}
+  />
+</Figure>
+
+Defaults differ across packages, so never rely on them silently.
+
+## Assumptions, diagnostics, and pitfalls
+
+A cointegration result is only as good as the checks behind it. Before you trust a rejection:
+
+- Confirm integration orders with ADF or an equivalent test, since a misclassified series invalidates Engle-Granger and Johansen.
+- Choose lag length deliberately. Too few lags leave autocorrelation in the residuals and distort the test size; too many cost power.
+- Test for breaks with Gregory-Hansen, and rerun with alternate deterministic terms or a sub-sample.
+- Remember what a rejection means: a long-run relation exists, not that it is strong or stable.
+- Estimate the error-correction coefficient to describe how quickly deviations shrink.
+
+None of these checks is a one-time box to tick. A cointegration result that looks solid under one set of deterministic terms and lag choices can evaporate under another, which is exactly why robustness checks — not just the headline test statistic — are what make a reported relationship defensible.
+
+<Callout variant="tip" title="Pro tip">
+If the conclusion flips when you change the trend specification, report both results rather than picking the one you prefer.
+</Callout>
+
+## Our view: a workflow you can defend
+
+We think the most common failure in applied work is not the wrong test but an unreported choice. Our recommended workflow is simple: pretest stationarity, pick the test that fits your data (Engle-Granger for two series, Johansen for systems, ARDL for small or mixed samples), estimate the cointegrating vector, then report the speed of adjustment and at least one robustness check. State your deterministic terms, lag rule, and sample range plainly, so a reader can reproduce your result.
+
+## Where to go next with our guides and calculators
+
+Our <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> collects step-by-step, interpretation-focused guides that show how methods like these work on real data. When you are ready to practice, explore our <Link to={routes.calculatorsHub()}>calculators</Link> and our <Link to={routes.categoryHub('time-series-forecasting')}>time series forecasting guides</Link>. Start with the Applied hub, then return to your own data with a clear workflow in hand.
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is cointegration in econometrics?',
+    answer: 'Cointegration describes nonstationary series that share a stable long-run relationship. Each series wanders on its own, but a particular linear combination of them is stationary, so deviations from equilibrium eventually correct.',
+  },
+  {
+    question: 'What is the ARDL bounds test?',
+    answer: 'It is an F-type test that checks for a levels relationship without requiring all variables to be I(1). The statistic is compared to lower and upper critical bounds, and a value between them is inconclusive.',
+  },
+  {
+    question: 'What is the difference between correlation and cointegration?',
+    answer: 'Correlation measures how strongly variables move together in a sample. Cointegration tests whether a stationary long-run relationship exists between nonstationary series, and it does not measure strength.',
+  },
+  {
+    question: 'How does cointegration apply to pair trading?',
+    answer: 'Pair trading looks for two assets whose price gap behaves like a stationary series. A cointegration test checks whether that gap tends to revert, which is the property the strategy relies on. It does not guarantee profit or that the relationship will persist.',
+  },
+]} />
+
+## Sources
+
+<Sources items={[
+  { text: '16.3 Cointegration | Introduction to Econometrics with R', href: 'https://www.econometrics-with-r.org/16.3-cointegration.html', org: 'Hanck, Arnold, Gerber, and Schmelzer' },
+  { text: 'Cointegration Analysis', href: 'https://www.mathworks.com/help/econ/cointegration-analysis.html', org: 'MathWorks' },
+  { text: 'Cointegration Testing', href: 'https://arch.readthedocs.io/en/stable/unitroot/unitroot_cointegration_examples.html', org: 'arch (Kevin Sheppard)' },
+  { text: 'statsmodels.tsa.ardl.UECMResults.bounds_test', href: 'https://www.statsmodels.org/stable/generated/statsmodels.tsa.ardl.UECMResults.bounds_test.html', org: 'statsmodels' },
+  { text: 'GREGORYHANSEN Procedure', href: 'https://www.estima.com/webhelp/topics/gregoryhansenprocedure.html', org: 'Estima (RATS)' },
+  { text: 'Lecture 18: Cointegration (Spurious Regression)', href: 'https://www.bauer.uh.edu/rsusmel/phd/ec2-7.pdf', org: 'University of Houston, Bauer College of Business (R. Susmel)' },
+  { text: 'Measuring the Strength of Cointegration and Granger-Causality', href: 'https://www.econstor.eu/bitstream/10419/50872/1/368666662.pdf', org: 'ZBW / EconStor (Erdal Atukeren)' },
+]} />
