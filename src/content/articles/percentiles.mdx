@@ -1,6 +1,7 @@
 ---
-title: "Percentiles: Meaning, Definition & How to Calculate"
-description: "Understand the percentile meaning and definition: the value below which p% of data falls. Covers the formula, a fully worked example, and a free calculator."
+title: "Percentile Meaning: Definition & Formula"
+h1: "Percentile Meaning: Definition, Formula & How to Calculate"
+description: "The percentile meaning in statistics: the value below which a given percent of a data set falls. Covers the definition, formula, and a worked example."
 category: descriptive-statistics
 primaryKeyword: percentile meaning
 keywords:
@@ -13,275 +14,333 @@ keywords:
   - percentile definition
 phase: 1
 calculator: percentile
-related: []
+related:
+  - interquartile-range
+  - standard-deviation
+  - how-to-find-outliers
 draft: false
 pubDate: 2026-06-29
-updatedDate: 2026-09-20
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-20
+reviewedDate: 2026-10-20
 ---
+
 import StatCalc from '../../components/StatCalc.astro';
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
 import Link from '../../components/Link.astro';
-import RelatedLink from '../../components/RelatedLink.astro';
 import { routes } from '../../lib/links';
 
-The **percentile meaning** in statistics is this: the pth percentile is the value in a dataset at or below which p percent of the observations fall. A score at the 85th percentile is higher than 85 percent of all values in the dataset. The meaning of percentile turns a raw number — a test score, a salary, a blood-pressure reading — into an instantly interpretable rank, which is why percentiles appear in standardized testing, pediatric growth charts, income reporting, and quality control.
+The **percentile meaning** in statistics is this: the pth percentile is the value in a sorted data set at or below which p percent of the observations fall. A score at the 85th percentile is higher than 85 percent of all values in the data set — that single relationship is the definition of percentile in full. The same four-step formula that defines a percentile also produces the median, the quartiles, and the deciles, and it is exactly what runs behind the calculator below, Excel's `PERCENTILE.INC`, and R's default `quantile()` function. This guide covers the meaning of percentile precisely, the calculation steps, a fully worked numeric example, and the everyday places percentiles show up, from test scores to growth charts to income brackets.
 
-Before you can define percentile precisely, you need a sorted dataset and a target percentage. The calculation follows four repeatable steps. This guide covers the definition of percentile, the formula, a fully worked numeric example with real numbers from the actual calculator engine, and the most common misconceptions students and practitioners run into.
+<KeyTakeaways rows={[
+  { point: 'Percentile meaning, in one line', details: 'Pₚ is the value at or below which p percent of a sorted data set falls — a rank within the distribution, not a raw score.' },
+  { point: 'The formula is four repeatable steps', details: 'Sort the data, compute a virtual position, split it into a floor and a fraction, then interpolate between the two nearest values.' },
+  { point: 'A percentile is not a percentage', details: 'Scoring at the 70th percentile means you beat 70 percent of other scores; it says nothing about how many questions you answered correctly.' },
+  { point: 'The median and quartiles are special cases', details: 'The 50th percentile is the median, and the 25th/75th percentiles are Q1/Q3 — same formula, different value of p.' },
+  { point: 'Tools can disagree slightly', details: "R, Excel, and NumPy don't all default to the same interpolation method, so a small data set can return a different percentile depending on the software." },
+]} />
 
----
+## Quick Checklist: How to Calculate a Percentile
+
+<Checklist
+  id="how-to-calculate-a-percentile-checklist"
+  title="Quick checklist: calculating a percentile"
+  style="check"
+  items={[
+    { text: 'Sort the data first', detail: 'Percentile positions only make sense on values arranged from smallest to largest.' },
+    { text: 'Compute the virtual position', detail: 'position = (p / 100) × (n − 1), using the target percentile p and the count n.' },
+    { text: 'Split the position into floor and fraction', detail: 'j = floor(position) is the lower index, and f = position − j is the fraction between neighbors.' },
+    { text: 'Interpolate between the two nearest values', detail: 'If f = 0, the answer is the value at index j; otherwise, slide f of the way from the value at j to the value at j + 1.' },
+    { text: 'Note which method you used', detail: 'Excel, R, and NumPy offer more than one percentile algorithm, and small data sets can show a visibly different result between them.' },
+  ]}
+/>
+
+Run through these steps in order every time — skipping or reordering any one of them is a common source of a wrong answer.
+
+## Calculate a Percentile
+
+Paste your own list of numbers into the calculator below, set the target percentile, and it returns that value along with Q1, the median, Q3, and the IQR in one pass.
+
+<StatCalc slug="percentile" variant="embed" />
 
 ## What Is the Definition of a Percentile?
 
-A percentile is a threshold value in a distribution. The pth percentile (written Pₚ) is the point such that p percent of the data falls at or below it. The percentile definition holds across every application: if the 70th percentile of exam scores in a class is 82, then 70 percent of students scored 82 or lower.
+A percentile is a threshold value within a sorted distribution. The pth percentile, written Pₚ, is the point such that p percent of the data falls at or below it. The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm) states the definition formally: the pth percentile is "a value, Y₍ₚ₎, such that at most (100p)% of the measurements are less than this value and at most 100(1−p)% are greater" — and it adds that "the 50th percentile is called the median." That definition of percentile holds across every application: if the 70th percentile of exam scores in a class is 82, then 70 percent of students scored 82 or lower.
 
-Note what percentile definition does **not** say: it does not say you answered 70 percent of questions correctly. A percentile is a rank, not a raw proportion. This distinction is worth locking in early because it trips up most beginners.
+Note what the percentile definition does **not** say: it does not say you answered 70 percent of questions correctly. A percentile is a rank, not a raw proportion, and that distinction is worth locking in early because it trips up most beginners.
 
 ### Percentiles Versus Percentages
 
-A percentage score of 70 means you answered 70 of 100 questions correctly. A percentile rank of 70 means you scored higher than 70 percent of test-takers. In an easy exam where most students scored well, answering 70 percent of questions correctly might put you below the median — at the 40th percentile. In a hard exam, the same raw percentage might place you in the top quarter. The percentile captures the competitive position; the percentage captures the absolute score.
-
-### Related Terms
-
-Many concepts build directly on the percentile definition:
-- **Median**: the 50th percentile — the value that splits the dataset exactly in half
-- **Quartile**: the 25th (Q1), 50th (Q2), and 75th (Q3) percentiles, which divide data into four equal parts
-- **Decile**: every 10th percentile (1st decile = 10th percentile, and so on)
-- **Quintile**: every 20th percentile (1st quintile = 20th percentile)
-
-All of these are special cases of the general percentile. Once you know how to calculate percentiles, you can find any of these statistics using the same formula.
+A percentage score of 70 means you answered 70 of 100 questions correctly. A percentile rank of 70 means you scored higher than 70 percent of test-takers. On an easy exam where most students scored well, answering 70 percent of questions correctly might put you below the median — at the 40th percentile. On a hard exam, that same raw percentage might place you in the top quarter. The percentile captures competitive position; the percentage captures the absolute score, and the two numbers move independently of each other.
 
 ### Why Raw Scores Need Context
 
-A raw number becomes meaningful only when you know its distribution. The phrase "he scored 640" says nothing about performance unless you know the score range and how other people performed. The phrase "she scored at the 94th percentile" is immediately interpretable: only 6 percent of test-takers did better.
+A raw number becomes meaningful only once you know its distribution. The phrase "she scored 640" says nothing about performance unless you also know the score range and how everyone else performed. The phrase "she scored at the 94th percentile" is immediately interpretable: only 6 percent of test-takers did better, regardless of what the underlying scale looked like.
 
-Healthcare providers use percentile charts for children's height and weight precisely because absolute measurements need reference distributions. A child's height in centimetres is meaningless without knowing the distribution of heights for children of the same age and sex; the percentile rank conveys that context in a single number.
+### Related Terms Built on the Same Definition
 
-The [NIST/SEMATECH e-Handbook of Statistical Methods, section 7.2.6.2 — Percentiles](https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm) provides a formal treatment of percentile notation and its use in process monitoring and quality engineering.
+Several familiar statistics are just percentiles at a specific value of p:
 
-<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="On a related note" />
+- **Median** — the 50th percentile, the value that splits the data set exactly in half.
+- **Quartile** — the 25th (Q1), 50th (Q2), and 75th (Q3) percentiles, which divide the data into four equal parts.
+- **Decile** — every 10th percentile; the 3rd decile, for instance, is the 30th percentile.
+- **Quintile** — every 20th percentile; the 1st quintile is the 20th percentile.
 
----
+Once you can define percentile and apply the formula below, you already know how to find any of these — each one is the same calculation at a different p.
 
-## How to Calculate Percentile
+<Callout variant="tip" title="Pro tip">
+When a reported number already looks like a percentile — a score between 1 and 99 with no units attached — check the source before assuming it's a raw percentage. Growth charts, standardized test reports, and income brackets all commonly report percentile rank, not percentage.
+</Callout>
 
-The most widely used method — and the one behind R's default `quantile()`, Excel's `PERCENTILE.INC`, and this site's percentile calculator — is **linear interpolation**, also known as Hyndman-Fan Type 7. It works on any sorted numeric dataset.
+## How Do You Calculate a Percentile Step by Step?
 
-### Step-by-Step: How to Calculate Percentiles
+The most widely used method for how to calculate percentile values — and the one behind R's default `quantile()`, Excel's `PERCENTILE.INC`, and the calculator above — is **linear interpolation**, formally Hyndman-Fan Type 7. It works on any sorted numeric data set and answers how to calculate percentiles for any p from 0 to 100.
 
-**Step 1. Sort the data in ascending order.**
+### Step 1: Sort the Data in Ascending Order
 
-Arrange all n values from smallest to largest.
-
-**Step 2. Compute the virtual (real-numbered) position.**
-
-```
-position = (p / 100) x (n - 1)
-```
-
-Here p is the target percentile (0 to 100) and n is the count of values. The `n - 1` scales the position to a zero-based index into the sorted array.
-
-**Step 3. Split the position into an integer floor and a fractional remainder.**
-
-```
-j = floor(position)   <- lower index
-k = ceil(position)    <- upper index
-f = position - j      <- fraction (0 <= f < 1)
-```
-
-**Step 4. Interpolate between the two neighboring values.**
-
-If f = 0 (position lands exactly on an integer), the percentile is `sortedData[j]`.
-
-Otherwise:
-
-```
-Pp = sortedData[j] + f x (sortedData[k] - sortedData[j])
-```
-
-This linear interpolation slides f of the way from the lower to the upper neighbor. When f = 0.5, you land exactly halfway between them.
-
-### Why Interpolation?
-
-For a dataset of 10 values there are not 100 distinct positions — only 10 actual data points. The interpolation formula creates a continuous mapping from percentile to value, so that P45 gives a well-defined answer even when no data point sits precisely there. For large n the difference between methods shrinks and the interpolation matters less; for small n it can shift the result noticeably.
-
-The open-access textbook [OpenStax, *Introductory Statistics* — §2.3 Measures of the Location of the Data](https://openstax.org/books/introductory-statistics/pages/2-3-measures-of-the-location-of-the-data) covers this procedure with additional practice datasets and explains how quartiles follow from the same formula.
-
----
-
-## Fully Worked Example: Finding the 90th Percentile
-
-**Dataset of ten exam scores:**
-
-5, 10, 15, 20, 25, 30, 35, 40, 45, 50
-
-n = 10. The data is already sorted. Find P₉₀.
-
-### Step 1: Confirm the Sort
-
-sortedData (indices 0–9): [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+Arrange all n values from smallest to largest. Every later step depends on this order being correct.
 
 ### Step 2: Compute the Virtual Position
 
 ```
-position = (90 / 100) x (10 - 1) = 0.90 x 9 = 8.1
+position = (p / 100) × (n − 1)
 ```
 
-### Step 3: Split Into Floor and Fraction
+Here p is the target percentile (0 to 100) and n is the count of values. The `n − 1` scales the position to a zero-based index into the sorted array.
+
+### Step 3: Split the Position Into a Floor and a Fraction
+
+```
+j = floor(position)    ← lower index
+k = ceil(position)     ← upper index
+f = position − j       ← fraction, between 0 (inclusive) and 1 (exclusive)
+```
+
+### Step 4: Interpolate Between the Two Neighboring Values
+
+If f = 0 (the position lands exactly on an integer), the percentile is `sortedData[j]`. Otherwise:
+
+```
+Pₚ = sortedData[j] + f × (sortedData[k] − sortedData[j])
+```
+
+This slides f of the way from the lower neighbor to the upper one. When f = 0.5, the result lands exactly halfway between them.
+
+<DataTable
+  caption="The four-step percentile formula, applied"
+  headers={['Step', 'What it does', 'Formula']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['1. Sort', 'Order all values ascending', '—'],
+    ['2. Position', 'Locate a virtual index for p', 'position = (p/100) × (n − 1)'],
+    ['3. Split', 'Separate the integer and fractional parts', 'j = floor(position), f = position − j'],
+    ['4. Interpolate', 'Blend the two nearest values by f', 'Pₚ = data[j] + f × (data[j+1] − data[j])'],
+  ]}
+/>
+
+For a data set of 10 values, there are not 100 distinct positions — only 10 actual data points. The interpolation formula creates a continuous mapping from percentile to value, so P₄₅ gives a well-defined answer even when no data point sits precisely there. The open-access textbook [OpenStax, *Introductory Statistics* — §2.3 Measures of the Location of the Data](https://openstax.org/books/introductory-statistics/pages/2-3-measures-of-the-location-of-the-data) walks through this same procedure with additional practice data sets.
+
+## A Worked Example: Finding the 90th Percentile
+
+**Data set of ten exam scores, already sorted:**
+
+```
+5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+```
+
+n = 10. Find P₉₀.
+
+**Step 2 — virtual position:**
+
+```
+position = (90 / 100) × (10 − 1) = 0.90 × 9 = 8.1
+```
+
+**Step 3 — floor and fraction:**
 
 ```
 j = floor(8.1) = 8
 k = ceil(8.1)  = 9
-f = 8.1 - 8    = 0.1
+f = 8.1 − 8    = 0.1
 ```
 
-### Step 4: Interpolate
+(Index 8 in the sorted array is the 9th value, 45; index 9 is the 10th value, 50.)
+
+**Step 4 — interpolate:**
 
 ```
-P90 = sortedData[8] + 0.1 x (sortedData[9] - sortedData[8])
-    = 45 + 0.1 x (50 - 45)
+P₉₀ = sortedData[8] + 0.1 × (sortedData[9] − sortedData[8])
+    = 45 + 0.1 × (50 − 45)
     = 45 + 0.5
     = 45.5
 ```
 
-**The 90th percentile is 45.5.**
+**The 90th percentile is 45.5.** Ninety percent of the scores — 9 out of 10 — fall at or below 45.5; the only score above that threshold is 50. The result sits exactly 10 percent of the way from 45 to 50, matching the 0.1 fraction from Step 3.
 
-This means 90 percent of the scores (9 out of 10) fall at or below 45.5. The only score above this threshold is 50. The result sits between the 9th value (45) and the 10th value (50), exactly 10 percent of the way from 45 to 50 — matching the 0.1 fraction.
+<Figure number={1} caption="Of the 10 exam scores, 9 fall at or below the 90th-percentile threshold of 45.5, and 1 falls above it.">
+  <AnnotatedChart
+    title="Worked example: P90 of ten exam scores"
+    desc="A bar chart of 10 total exam scores, split into 9 values at or below the 90th-percentile threshold of 45.5, and 1 value above it."
+    type="bar"
+    points={[
+      { label: 'Total scores', value: 10 },
+      { label: 'At or below 45.5', value: 9, annotation: '90% of the data' },
+      { label: 'Above 45.5', value: 1, annotation: 'Only the top score, 50' },
+    ]}
+  />
+</Figure>
 
-### Verify With the Calculator
+Enter the same ten values into the calculator above and set the percentile to 90 to confirm the result without redoing the arithmetic by hand.
 
-Enter the same dataset (5, 10, 15, 20, 25, 30, 35, 40, 45, 50) into the tool below and set the percentile to 90:
+## What Percentile Rank Does a Value You Already Have Correspond To?
 
-<StatCalc slug="percentile" variant="embed" />
+Everything above answers "what value sits at the pth percentile?" The reverse question — "what percentile rank does this value I already have correspond to?" — can give more than one defensible answer, because more than one counting convention is in common use, and they don't all agree.
 
-<RelatedLink to={routes.calculator('percentile')} label="percentile calculator" intro="For a related calculation" />
+Take the value 45 in the same ten-score data set used throughout this guide. Four conventions, four different answers:
 
----
+- **At or below (the definition this page opened with):** 9 of the 10 scores — 5, 10, 15, 20, 25, 30, 35, 40, and 45 itself — are at or below 45, so by a plain count, 45 sits at the **90th** percentile rank.
+- **Strictly below:** only 8 of the 10 scores are strictly less than 45 (45 itself isn't counted), which gives an **80th** percentile rank instead.
+- **The Type-7 formula, run in reverse:** solving `position = (p / 100) × (n − 1)` for p, using 45's zero-based index of 8, gives p = (8 / 9) × 100 ≈ **88.9**. This is the direction consistent with the forward formula used everywhere else on this page, though neither this section's formula nor the calculator above actually computes it for you — both only go from p to a value, not from a value back to p.
+- **NIST's rank-based convention:** the [NIST/SEMATECH e-Handbook](https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm) defines the percentile corresponding to the i-th ranked point as i / (n + 1); for 45 at rank i = 9 of n = 10, that's (9 / 11) × 100 ≈ **81.8**.
 
-## Quartiles: The Four Most Common Percentiles
-
-Quartiles divide a sorted dataset into four equal quarters. Q1, Q2, and Q3 are simply the 25th, 50th, and 75th percentiles, computed with the identical four-step formula.
-
-Using the same ten exam scores:
-
-**Q1 (25th percentile):**
 ```
-position = 0.25 x 9 = 2.25
-j = 2,  k = 3,  f = 0.25
-Q1 = sortedData[2] + 0.25 x (sortedData[3] - sortedData[2])
-   = 15 + 0.25 x (20 - 15)
-   = 15 + 1.25 = 16.25
-```
-
-**Q2 / Median (50th percentile):**
-```
-position = 0.50 x 9 = 4.5
-j = 4,  k = 5,  f = 0.5
-Q2 = sortedData[4] + 0.5 x (sortedData[5] - sortedData[4])
-   = 25 + 0.5 x (30 - 25)
-   = 25 + 2.5 = 27.5
+At or below:        9 / 10 × 100  = 90
+Strictly below:      8 / 10 × 100  = 80
+Type-7, reversed:    (8 / 9) × 100 ≈ 88.9
+NIST, i / (n + 1):   (9 / 11) × 100 ≈ 81.8
 ```
 
-**Q3 (75th percentile):**
+None of these four numbers is wrong — each follows a legitimate, documented definition of what a percentile rank counts. By the "at or below" definition this page opened with, 45 genuinely is at the 90th percentile rank of this data set; that is not a mistake, it's just a different (and simpler) question than the Type-7 interpolation this page's formula and calculator use to go the other direction. When a specific percentile-rank figure needs to be reproducible, state which convention produced it.
+
+## How Do Percentiles Relate to Quartiles, Deciles, and the Median?
+
+Quartiles, deciles, and the median are not separate statistics — they are percentiles at specific values of p, computed with the identical four-step formula above. The median is the 50th percentile; Q1 and Q3 are the 25th and 75th percentiles; a decile is any multiple of the 10th percentile.
+
+Running the same ten-score data set through Steps 2–4 at p = 25, 50, and 75 gives Q1 = 16.25, the median = 27.5, and Q3 = 38.75 — the same numbers a direct quartile calculation would produce, because it's the same formula applied three more times. The <Link to={routes.article('interquartile-range')}>interquartile range guide</Link> covers what happens once you subtract Q1 from Q3 (the IQR), why that difference resists outliers, and how it anchors the 1.5×IQR rule used in the <Link to={routes.article('how-to-find-outliers')}>outlier detection guide</Link>; both go well beyond what a single percentile value tells you on its own.
+
+<Callout variant="note" title="Percentile vs. percentile rank">
+"Percentile" (the value) and "percentile rank" (the position a specific observation holds) are often used interchangeably, but they answer slightly different questions: a percentile is a threshold you calculate from a whole data set, while a percentile rank tells you where one particular observation sits relative to the rest.
+</Callout>
+
+## Where Are Percentiles Used in Real Life?
+
+The percentile meaning translates across many fields because ranking a value within its distribution is a near-universal need.
+
+<DataTable
+  caption="Common real-world uses of percentiles"
+  headers={['Field', 'What the percentile reports']}
+  align={['left', 'left']}
+  rows={[
+    ['Standardized testing', 'A percentile rank showing what share of test-takers a given score outperformed.'],
+    ['Pediatric growth charts', 'Height, weight, and head circumference ranked against children of the same age and sex.'],
+    ['Income and wealth reporting', 'Median income (the 50th percentile) and high-earner thresholds like the 90th or 99th percentile.'],
+    ['Manufacturing process capability', 'The 0.135th and 99.865th percentiles of a non-normal process distribution, used in place of a ±3-standard-deviation spread.'],
+    ['Financial risk management', 'Value at Risk, defined directly as a percentile of a loss distribution.'],
+  ]}
+/>
+
+**Standardized testing.** The SAT, GRE, and most professional licensing exams report scores alongside a percentile rank. [The College Board's guide to understanding SAT Suite scores](https://satsuite.collegeboard.org/sat/scores/understanding-scores) notes that a score report includes "percentiles that compare your scores to other students who took the same test" — admissions offices lean on that ranking because raw scores from different test forms and years aren't directly comparable.
+
+**Pediatric growth charts.** The [CDC's clinical growth charts](https://www.cdc.gov/growthcharts/cdc-growth-charts.htm) plot height, weight, and head circumference against percentile curves calculated from national reference populations by age and sex. A child at the 60th percentile for weight is heavier than 60 percent of children the same age; tracking whether that percentile stays stable across visits is more informative than any single raw measurement.
+
+**Income and wealth distribution.** Economic reporting regularly cites the "median income" (the 50th percentile) and thresholds like "the 90th-percentile earner" or "the top one percent" (above the 99th percentile). These labels convert a complex income distribution into a comparable, single number across regions and time periods.
+
+**Manufacturing process capability.** When process data don't follow a normal distribution, [NIST/SEMATECH's process capability guidance](https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm) replaces the usual ±3-standard-deviation spread with two percentiles of the actual data instead — the 99.865th percentile minus the 0.135th percentile — which the handbook says "is justified to mimic the coverage of ±3 standard deviations for the normal distribution." That percentile-based spread then feeds directly into nonnormal capability indices such as Ĉₙₚₖ and Ĉₙₚₘ, in place of the standard-deviation-based versions used for normal data.
+
+**Financial risk management.** Value at Risk (VaR) is defined directly as a percentile of a loss distribution over a set holding period: a 99th-percentile VaR estimate means losses are expected to exceed that figure only 1 percent of the time. Risk teams and regulators specify both the percentile and the holding period they're using, because a one-day 99th-percentile VaR and a ten-day 99th-percentile VaR describe different things, and the two numbers aren't interchangeable.
+
+## How Do You Calculate Percentiles in Excel, R, and Python?
+
+Each tool implements the percentile formula with its own defaults and quirks, and they don't all agree on small data sets.
+
 ```
-position = 0.75 x 9 = 6.75
-j = 6,  k = 7,  f = 0.75
-Q3 = sortedData[6] + 0.75 x (sortedData[7] - sortedData[6])
-   = 35 + 0.75 x (40 - 35)
-   = 35 + 3.75 = 38.75
+Excel:  =PERCENTILE.INC(A1:A10, 0.9)
+        → uses the same linear-interpolation method as this page's formula
+
+R:      scores = c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
+        quantile(scores, 0.9)              # type = 7 by default → 45.5
+
+Python: import numpy as np
+        scores = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+        np.percentile(scores, 90)          # method='linear' by default → 45.5
 ```
 
-**IQR = Q3 - Q1 = 38.75 - 16.25 = 22.5**
+[Microsoft's `PERCENTILE.INC` documentation](https://support.microsoft.com/en-us/office/percentile-inc-function-680f9539-45eb-410b-9a5e-c1355e5fe2ed) confirms the function returns the k-th percentile "inclusive" of 0 and 1, matching the linear-interpolation formula used throughout this guide. [R's `quantile()` documentation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html) lists nine distinct sample-quantile algorithms, selected with its `type` argument, and defaults to `type = 7` — the same method. [NumPy's `percentile()` function](https://numpy.org/doc/stable/reference/generated/numpy.percentile.html) offers a matching set of interpolation methods under its `method` parameter, with `linear` as the default, again producing the same 45.5 on this data set.
 
-| Statistic | Value |
-|-----------|-------|
-| Q1 (25th percentile) | 16.25 |
-| Q2 / Median (50th percentile) | 27.5 |
-| Q3 (75th percentile) | 38.75 |
-| IQR (Q3 - Q1) | 22.5 |
-| P90 (90th percentile) | 45.5 |
+Excel also ships a second function, `PERCENTILE.EXC`, which [Microsoft's documentation states](https://support.microsoft.com/en-us/office/percentile-exc-function-bbaa7204-e9e1-4010-85bf-c31dc5dce4ba) takes a k strictly between 0 and 1, interpolates when k isn't an exact multiple of `1/(n + 1)`, and returns a `#NUM!` error "if it cannot interpolate for the percentile... specified." In practice that means k only resolves to a value when `1/(n + 1) ≤ k ≤ n/(n + 1)` — at the 90th percentile (k = 0.9), that requires n ≥ 9, so the ten-score data set used throughout this guide just clears the bar, but a five-value data set would return `#NUM!` at that same percentile. The same n ≥ 9 floor applies at the 10th percentile (k = 0.1), since the valid range is symmetric around the middle of the data set. `PERCENTILE.EXC` does not generally return the same value as `PERCENTILE.INC` on the same input.
 
-### What the IQR Tells You
+<Callout variant="tip" title="Pro tip">
+Before comparing a percentile across two tools or two people's hand calculations, confirm both used the same method. On small data sets, `PERCENTILE.INC` and `PERCENTILE.EXC`, or R's different `type` values, can return noticeably different answers for the same p.
+</Callout>
 
-The interquartile range (IQR = 22.5) measures the spread of the middle 50 percent of the data. Because it ignores the bottom and top quarters, the IQR is unaffected by extreme values — it is one of the most robust spread statistics in descriptive analysis. Box plots display the IQR as the height of the central box, with whiskers extending to the data boundaries.
+## What Mistakes Do People Make When Interpreting Percentiles?
 
-The IQR also drives a standard outlier detection rule: any value more than 1.5 × IQR below Q1 or above Q3 is a candidate outlier. For this dataset, 1.5 × 22.5 = 33.75, so the lower fence is 16.25 - 33.75 = -17.5 and the upper fence is 38.75 + 33.75 = 72.5. All ten values fall within those fences, so no outliers are flagged.
+- **Confusing percentile with percent correct.** A score at the 75th percentile does not mean you answered 75 percent of questions correctly — it means you scored higher than 75 percent of other test-takers. You could answer 60 percent of questions correctly and still land at the 90th percentile on a genuinely hard exam.
+- **Assuming the 50th percentile equals the mean.** The 50th percentile is the median. In a symmetric distribution, the median and the mean coincide; in a right-skewed distribution — income is the classic case — the median sits well below the mean, because a small number of very high values pull the mean upward.
+- **Expecting every tool to agree.** As the Excel/R/Python comparison above shows, the interpolation method matters, and `PERCENTILE.INC` and `PERCENTILE.EXC` are not interchangeable. Always state which method produced a reported percentile when the exact value matters.
+- **Treating percentile gaps as uniform in value.** The raw-value gap between the 10th and 20th percentile is not necessarily equal to the gap between the 80th and 90th percentile, even though both cover ten percentile points. In a right-skewed distribution, the gap between the 90th and 99th percentiles can be many times larger than the gap between the 1st and 10th — percentile points measure rank spacing, not value spacing.
+- **Reporting a percentile with no sample size.** A 90th-percentile value computed from 10 observations and the same percentile computed from 10,000 observations carry very different amounts of statistical certainty, even when the number itself looks identical. With only 10 observations, each data point effectively controls 10 percentage points of the distribution, so a single unusual measurement can shift an extreme percentile noticeably; with 10,000 observations, the same percentile is far more stable.
+- **Assuming there's one universally correct interpolation method.** The NIST/SEMATECH handbook itself says no single accepted way exists to interpolate between data points for a percentile that doesn't land exactly on an observation, and it points to Hyndman and Fan's 1996 review of nine different methods used in practice. Picking a method is a documented choice, not a universal constant.
+- **Reporting a percentile rank without naming the convention.** As the percentile-rank section above shows, the same value can correspond to a 90th, 88.9th, 81.8th, or 80th percentile rank depending on whether you count at-or-below, strictly-below, the reversed Type-7 formula, or NIST's i/(n + 1) rule. State which one you used whenever the exact figure matters.
 
-<RelatedLink to={routes.article('how-to-find-outliers')} label="How to Find Outliers in Data" intro="Worth reading next" />
+## Statohub's Take on Percentiles
 
----
+Statohub's position is that the percentile meaning is one of the most underused tools for communicating a number clearly. A raw figure — a score, a measurement, a dollar amount — says little on its own; a percentile instantly tells a reader where that figure sits relative to everyone else. The trade-off is that a percentile hides the underlying scale, so report both the raw value and the percentile together whenever the audience might need to judge the absolute size of a gap, not just its rank.
 
-## Where Percentiles Are Used in Real Life
+Pick one interpolation method and name it whenever a percentile value needs to be reproducible — this guide uses linear interpolation throughout because it's the shared default across R, Excel's `PERCENTILE.INC`, and NumPy, which keeps a hand-computed answer, a spreadsheet formula, and a script all landing on the same number. Switching methods silently, or comparing two percentiles computed with different ones, is where most disagreements about "the right answer" actually come from.
 
-The percentile meaning translates across many fields because ranking within a distribution is a universal need.
+## Put Percentiles to Work With Statohub's Tools
 
-### Standardized Testing
+The calculator above handles any percentile, plus Q1, the median, and Q3, for a list you paste in directly. To round out the surrounding statistics, the <Link to={routes.article('standard-deviation')}>standard deviation guide</Link> covers a spread measure that uses every value instead of a single rank, and the <Link to={routes.article('interquartile-range')}>interquartile range guide</Link> shows what the 25th and 75th percentiles do once you subtract one from the other. For the data points that a percentile calculation alone can miss, the <Link to={routes.article('how-to-find-outliers')}>outlier detection guide</Link> explains how the 25th and 75th percentiles also set the standard fences for flagging extreme values. The <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link> ties mean, median, mode, range, and percentiles together in one place, and the full <Link to={routes.calculatorsHub()}>calculators hub</Link> lists every tool on the site.
 
-SAT, ACT, GRE, GMAT, and most professional licensing exams report scores as percentile ranks alongside (or instead of) raw scores. A score at the 92nd percentile means you outperformed 92 percent of those who sat the exam in the same testing cohort. Admissions offices and hiring managers use percentile cutoffs because the absolute scale of one exam is not directly comparable to another.
+## Sources
 
-### Pediatric Growth Charts
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.2.6.2. Percentiles', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.3 Measures of the Location of the Data, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-3-measures-of-the-location-of-the-data', org: 'OpenStax' },
+  { text: 'Microsoft Support — PERCENTILE.INC function', href: 'https://support.microsoft.com/en-us/office/percentile-inc-function-680f9539-45eb-410b-9a5e-c1355e5fe2ed', org: 'Microsoft' },
+  { text: 'Microsoft Support — PERCENTILE.EXC function', href: 'https://support.microsoft.com/en-us/office/percentile-exc-function-bbaa7204-e9e1-4010-85bf-c31dc5dce4ba', org: 'Microsoft' },
+  { text: 'NumPy — numpy.percentile', href: 'https://numpy.org/doc/stable/reference/generated/numpy.percentile.html', org: 'NumPy' },
+  { text: 'R Documentation — quantile (Sample Quantiles)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html', org: 'The R Project' },
+  { text: 'CDC — Clinical Growth Charts', href: 'https://www.cdc.gov/growthcharts/cdc-growth-charts.htm', org: 'CDC' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 6.1.6. What is Process Capability?', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm', org: 'NIST' },
+  { text: 'College Board — What Do My SAT Suite Scores Mean?', href: 'https://satsuite.collegeboard.org/sat/scores/understanding-scores', org: 'College Board' },
+]} />
 
-Pediatricians plot height, weight, and head circumference on growth charts calibrated to national percentile distributions by age and sex. A child at the 60th percentile for weight is heavier than 60 percent of children the same age. The chart allows clinicians to track whether a child's percentile rank is stable across visits — a sudden drop from the 50th to the 10th percentile is more informative than any single raw measurement.
+## FAQ
 
-### Income and Wealth Distribution
+<FAQ items={[
+  {
+    question: 'How Do You Calculate a Percentile Step by Step?',
+    answer: 'Sort the data in ascending order, then compute a virtual position with position = (p / 100) × (n − 1). Split that position into an integer floor (j) and a fractional remainder (f). If f equals 0, the percentile is the value at index j; otherwise, interpolate by adding f × (the value at j + 1 minus the value at j) to the value at j. This procedure works for any percentile p from 0 to 100, and it is the method behind Excel, R, and NumPy\'s default percentile functions.',
+  },
+  {
+    question: 'What Is the 50th Percentile?',
+    answer: 'The 50th percentile is the median — the value that splits a sorted data set into two equal halves. For the ten-score example in this guide, [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], the 50th percentile is 27.5, found by interpolating halfway between the 5th value (25) and the 6th value (30). In a symmetric distribution, the median equals the mean; in a skewed distribution, the two diverge.',
+  },
+  {
+    question: 'What Does the 90th Percentile Mean?',
+    answer: 'The 90th percentile is the value at or below which 90 percent of a data set falls, leaving only 10 percent above it. In the worked example on this page, P₉₀ equals 45.5 for the data set [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]. A person at the 90th percentile of any measured characteristic has a higher value than 90 percent of the comparison group.',
+  },
+  {
+    question: 'What Is the Difference Between a Percentile and a Percentage?',
+    answer: "A percentage is a proportion of a whole — answering 70 of 100 questions correctly gives a 70 percent score. A percentile is a rank within a distribution — scoring at the 70th percentile means outperforming 70 percent of other test-takers. The two numbers move independently: a 70 percent raw score could land at the 40th percentile on an easy test, or the 95th percentile on a hard one.",
+  },
+  {
+    question: 'Why Do Excel, R, and Python Sometimes Return Different Percentiles for the Same Data?',
+    answer: "Each tool offers more than one percentile algorithm, and the defaults don't always match. Excel's PERCENTILE.INC, R's default quantile() (type 7), and NumPy's default percentile() (method='linear') agree with each other on most data sets, but Excel's separate PERCENTILE.EXC function uses a different formula and can return a visibly different value, especially on a small sample.",
+  },
+]} />
 
-Economic analysis regularly cites the "median income" (50th percentile), the "90th percentile earner," and "the top one percent" (above the 99th percentile). These references convert complex income distributions into a common language. When a report says the 90th-percentile household income is $150,000, it means 90 percent of households earn less than that — a statement that is comparable across time periods and regions.
+## Recommended
 
-### Quality Control in Manufacturing
-
-Control charts in process engineering use percentile thresholds (often the 1st and 99th) as specification limits. If 1 percent of products fall outside the designed tolerance, the process may still be acceptable; if the proportion climbs, the chart signals a problem. The NIST handbook uses percentile-based process capability indices (Cp, Cpk) extensively in manufacturing quality programs.
-
-### Financial Risk Management
-
-Value at Risk (VaR) is defined as a percentile of the loss distribution over a given period. A 99th-percentile, one-day VaR of $5 million means the bank expects to lose more than $5 million on only 1 percent of trading days. Regulators require banks to hold capital reserves based on these percentile estimates.
-
----
-
-## Common Mistakes When Interpreting Percentiles
-
-Knowing the definition of percentile is not quite enough — correct interpretation requires avoiding several persistent errors.
-
-### Confusing Percentile With Percent Correct
-
-A score at the 75th percentile does not mean you answered 75 percent of questions correctly. It means you scored higher than 75 percent of other test-takers. You could answer 60 percent of questions correctly and still land at the 90th percentile if the exam was genuinely hard. Always read the context: "75th percentile" is a rank; "75 percent" is a proportion.
-
-### Assuming the 50th Percentile Equals the Mean
-
-The 50th percentile is the median — the middle value. In a symmetric distribution the median and mean (arithmetic average) coincide. In a right-skewed distribution — such as income, where a small number of very high earners pull the mean upward — the median is substantially lower than the mean. "Average income" often refers to the mean, which sits well above the median for most populations. Check whether "average" means mean or median before drawing conclusions.
-
-### Expecting All Software to Agree
-
-There are at least nine recognized methods for computing percentiles (the Hyndman-Fan Types 1 through 9). R's default, Excel's PERCENTILE.INC, and this site's calculator all use Type 7 (linear interpolation). Excel's PERCENTILE.EXC and some textbook methods differ, and for small datasets the outputs can vary noticeably. Always note which method was used before comparing results across tools.
-
-### Treating Percentile Gaps as Uniform
-
-The gap in raw value between the 10th and 20th percentile is not necessarily equal to the gap between the 80th and 90th percentile, even though both cover ten percentile points. In a right-skewed distribution — again, think income — the raw difference between the 90th and 99th percentiles can be many times larger than the difference between the 1st and 10th. Percentile points measure rank spacing, not value spacing.
-
-<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="Another helpful calculator is" />
-
----
-
-## Frequently Asked Questions
-
-### How to calculate percentile step by step?
-
-Four steps. (1) Sort the data in ascending order. (2) Compute position = (p / 100) x (n - 1). (3) Set j = floor(position), k = ceil(position), f = position - j. (4) If f = 0, the answer is sortedData[j]; otherwise the answer is sortedData[j] + f x (sortedData[k] - sortedData[j]). Apply this procedure for any p from 0 to 100.
-
-### What is the 50th percentile?
-
-The median — the value that divides the sorted dataset into two equal halves. For the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50] the 50th percentile is 27.5, computed by interpolating halfway between the 5th value (25) and the 6th value (30). In a symmetric distribution the median equals the mean; in a skewed distribution they diverge.
-
-### What does the 90th percentile mean?
-
-Ninety percent of the data falls at or below that value and only 10 percent exceeds it. In the worked example above, P₉₀ = 45.5 for the dataset [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]. In everyday language, a person at the 90th percentile of any measured characteristic has a higher value than 90 percent of the reference population.
-
-### What is the difference between a percentile and a percentage?
-
-A percentage is a proportion of a whole (answering 70 of 100 questions gives a 70 percent score). A percentile is a rank within a distribution (scoring at the 70th percentile means outperforming 70 percent of other test-takers). The two numbers are independent: you can earn a 70 percent raw score and land at the 40th percentile on an easy test, or at the 95th percentile on a hard one.
-
----
-
-## Summary
-
-Percentiles come down to a single idea: where does one value sit within a sorted distribution? The definition of percentile makes it precise — Pₚ is the threshold below which p percent of observations fall. Calculating any percentile requires four steps: sort, compute a virtual position scaled to the data range, split that position into floor and fraction, and interpolate linearly between neighbors. Quartiles (Q1, Q2, Q3) are the most commonly used special cases; the IQR they produce is one of the most robust measures of spread in descriptive statistics.
-
-For the full standalone tool, open the <Link to={routes.calculator('percentile')}>percentile calculator page</Link>, or browse all statistics tools on the <Link to={routes.calculatorsHub()}>calculators hub</Link>.
+- <Link to={routes.article('how-to-find-the-mean')}>How to Find the Mean (Average): Formula & Steps</Link>
+- <Link to={routes.calculator('z-score')}>Z-Score Calculator</Link>
+- <Link to={routes.article('how-to-find-the-range')}>How to Find the Range in Statistics</Link>
+- <Link to={routes.article('variance')}>Variance: Definition, Formula & vs Standard Deviation</Link>
