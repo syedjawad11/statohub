@@ -15,7 +15,7 @@ order,slug,lane,status,attempts,score,date,notes
 14,standard-deviation,B,pending,0,,,
 15,probability-formula,A,published,1,90,2026-10-19,"round2 CHANGES_REQUESTED: FAQ for 'probability when outcomes not equally likely' dropped, and Bayes P(A|B) formula dropped; score 66/100; parked draft in drafts/"
 16,skewed-distribution,B,pending,0,,,
-17,mean-median-mode-range,A,pending,0,,,
+17,mean-median-mode-range,A,published,0,90,2026-10-20,
 18,fundamental-statistics,B,pending,0,,,
 19,test-statistic,A,pending,0,,,
 20,t-test,B,pending,0,,,
