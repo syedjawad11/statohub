@@ -412,6 +412,13 @@
       "title": "Blocking vs Stratification",
       "slug": "blocking-vs-stratification",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 60,
+      "day_label": "2026-10-16",
+      "title": "Cointegration Test",
+      "slug": "cointegration-test",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }

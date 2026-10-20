@@ -76,6 +76,7 @@ INSERT INTO "outsource_articles" VALUES('precision-vs-recall','Precision vs Reca
 INSERT INTO "outsource_articles" VALUES('transform-skewed-data','Transform Skewed Data','data-analysis',57,'2026-10-13','968755','published','outsource-content/raw/transform-skewed-data.json','src/content/articles/transform-skewed-data.mdx',1,2,0,8,'','2026-10-17 09:14:30','2026-10-17 09:31:13');
 INSERT INTO "outsource_articles" VALUES('roc-auc-interpretation','ROC AUC Interpretation','machine-learning-statistics',58,'2026-10-14','972692','blocked','outsource-content/raw/roc-auc-interpretation.json','src/content/articles/roc-auc-interpretation.mdx',3,0,1,6,'','2026-10-18 09:15:56','2026-10-18 09:41:51');
 INSERT INTO "outsource_articles" VALUES('blocking-vs-stratification','Blocking vs Stratification','experiments-causality',59,'2026-10-15','976767','published','outsource-content/raw/blocking-vs-stratification.json','src/content/articles/blocking-vs-stratification.mdx',2,0,0,7,'','2026-10-19 09:14:48','2026-10-19 09:28:53');
+INSERT INTO "outsource_articles" VALUES('cointegration-test','Cointegration Test','time-series-forecasting',60,'2026-10-16','980627','fetched','outsource-content/raw/cointegration-test.json',NULL,0,0,0,NULL,'','2026-10-20 09:15:08','2026-10-20 09:15:23');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
