@@ -419,6 +419,13 @@
       "title": "Cointegration Test",
       "slug": "cointegration-test",
       "category_slug": "time-series-forecasting"
+    },
+    {
+      "queue_position": 61,
+      "day_label": "2026-10-20",
+      "title": "Box Plot vs Violin Plot",
+      "slug": "box-plot-vs-violin",
+      "category_slug": "data-analysis"
     }
   ]
 }
