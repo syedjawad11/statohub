@@ -1,0 +1,247 @@
+---
+title: "Box Plot vs Violin Plot: How to Choose"
+h1: "Box Plot vs Violin Plot: Which One to Use and When"
+description: "Box plot vs violin plot: what each shows, how to read a violin plot, when a box plot is enough, and how to combine them without misleading your audience."
+category: data-analysis
+primaryKeyword: box plot vs violin plot
+phase: 1
+keywords:
+  - box plot vs violin plot
+  - box plot vs violin
+  - when to use box plots
+  - violin plot interpretation
+  - how to read a violin plot
+  - box plot or violin plot
+related:
+  - box-plot-interpretation
+  - histogram-vs-boxplot
+  - scatter-plot-interpretation
+draft: false
+pubDate: 2026-10-21
+updatedDate: 2026-10-21
+reviewedDate: 2026-10-21
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Use a box plot when you need a compact, standardized summary of several groups, with the median, spread and outliers visible at a glance. Use a violin plot when the shape of each distribution matters, because a violin adds a smoothed density curve that can reveal multiple peaks, gaps and skew that a box hides. With small samples, plot the raw points instead of either one.
+
+The rest of this guide explains why, shows a worked example, and gives a practical decision path so you can choose in under a minute.
+
+<KeyTakeaways rows={[
+  { point: 'What each plot shows', details: 'A box plot gives the five-number summary and flagged outliers. A violin adds a smoothed density curve showing shape, including multiple peaks.' },
+  { point: 'When to choose box plots', details: 'Many groups, small figures, and audiences who already read the format fluently.' },
+  { point: 'When to choose violins', details: 'When modality or skew could change your conclusion — subgroups, mixed populations, skewed wait times.' },
+  { point: 'Violins can mislead too', details: 'They are smoothed estimates, not exact probabilities, and a poor bandwidth setting can invent structure that is not really there.' },
+  { point: 'The safe default', details: 'With very small samples, plot the raw points. Otherwise, draw a violin with a slim box inside it and overlay the raw data.' },
+]} />
+
+## What a box plot actually shows
+
+A box plot (also called a box-and-whiskers plot) condenses a numeric variable into a handful of landmarks. The box spans the first quartile (Q1, the value below which 25% of observations fall) to the third quartile (Q3, the 75% mark), and a line inside marks the median. The distance from Q1 to Q3 is the interquartile range, or IQR, which describes where the middle half of the data sits.
+
+The whiskers extend toward the minimum and maximum, and points beyond them are drawn individually as outliers. In the common convention, a point is flagged when it falls more than 1.5 times the IQR beyond the box, a rule [described in Claus Wilke's visualization text](https://clauswilke.com/dataviz/boxplots-violins.html). If you want the arithmetic, our guide to <Link to={routes.article('how-to-find-outliers')}>finding outliers with the 1.5×IQR rule</Link> walks through the formula, and <Link to={routes.article('box-plot-interpretation')}>box plot interpretation</Link> covers how to read each element.
+
+The [CDC's data visualization guidance](https://www.cdc.gov/cove/data-visualization-types/box-and-whiskers-plot.html) describes what the format is good at: at a glance you can see how tightly data are grouped, how skewed they are and how symmetric they look. That is a lot of information in very little space, and it explains why the plot is a staple of exploratory work.
+
+### Why box plots became the default
+
+Box plots were introduced by John Tukey in the early 1970s, at a time when graphics were drawn by hand, as [Wilke notes](https://clauswilke.com/dataviz/boxplots-violins.html). A five-number summary is easy to draw with a pencil and a ruler. A smooth density curve is not. Much of the box plot's popularity is therefore historical, and that history is a reason to ask whether it is still the best tool when software draws the alternative for free.
+
+## What a violin plot adds
+
+A violin plot is a statistical graphic for comparing probability distributions. As [Wikipedia's entry on the violin plot](https://en.wikipedia.org/wiki/Violin_plot) puts it, it resembles a box plot but adds a rotated kernel density plot on each side. A kernel density estimate (KDE) is a smoothed curve built by placing a small bump on every observation and adding the bumps up. Where observations pile up, the curve is high, so the violin is wide. Where data are sparse, the violin is narrow.
+
+The idea was formalized in an article by Hintze and Nelson in [The American Statistician](https://www.tandfonline.com/doi/abs/10.1080/00031305.1998.10480559), which proposed the violin plot as a way to pool the best features of the box plot and the density trace. Their [paper is also available as a PDF](https://www.stat.cmu.edu/~rnugent/PCMI2016/papers/ViolinPlots.pdf) if you want the original argument.
+
+The key practical point is that the violin keeps the summary and adds the shape. [Matplotlib's gallery comparison](https://matplotlib.org/stable/gallery/statistics/boxplot_vs_violin.html) makes the same observation: violins are closely related to Tukey's box plots but add the distribution of the sample through the density trace.
+
+## How to read a violin plot
+
+Reading a violin takes four steps. Take them in order and you avoid the usual misreadings.
+
+1. **Find the center.** Look for the median marker, usually a dot or a line, often with a thin box or interval inside the violin. If the plot has no inner marker, you cannot read the median reliably from the outline alone.
+2. **Read the width as concentration.** Wider sections mean more observations in that range, and narrower sections mean fewer. The width describes relative density, not a count and not a probability you can read off directly.
+3. **Count the peaks.** One bulge suggests one cluster. Two bulges suggest two subgroups mixed together, such as fast and slow responders or two product types. A flat, wide violin suggests values spread fairly evenly.
+4. **Check the tails.** A long thin tail on one side signals skew. Our guide to <Link to={routes.article('skewed-distribution')}>skewed distributions</Link> explains how to tell left skew from right skew and what each does to the mean and median.
+
+One more caution belongs here. Because the shape comes from a density estimate, the plot is an aid to understanding, not a tool for detailed mathematical analysis, and you should not mistake relative concentration for actual probability values, as the [Wikipedia summary](https://en.wikipedia.org/wiki/Violin_plot) warns.
+
+## A worked example where the box plot misleads
+
+The following numbers are a constructed illustration, not real data. Suppose a support team compares ticket resolution times, in minutes, for two queues, each with 200 tickets.
+
+- **Queue A:** times cluster around 5 to 6 minutes, with a modest right tail.
+- **Queue B:** half the tickets are quick password resets that take about 2 minutes, and the other half are billing disputes that take about 9 minutes. Almost nothing falls near 5 or 6 minutes.
+
+Compute the summaries and both queues can report a median near 5.5 minutes and a similar IQR. Their box plots would look almost identical. A manager would conclude the queues perform alike.
+
+Now draw violins. Queue A shows one hump centered near 5.5. Queue B shows two humps with a pinched waist in the middle, where the median sits. The median of Queue B describes almost no actual ticket. The right conclusion is that Queue B is really two processes, and averaging them hides both. This is the situation Wilke describes when he says [violin plots expose differences in density that a box plot can hide](https://clauswilke.com/dataviz/boxplots-violins.html), including a normal and a bimodal distribution sharing the same median and IQR.
+
+The lesson is not that box plots are wrong. It is that a box plot answers "where is the middle and how far does it spread?" and stays silent on "how many groups are in here?"
+
+## Box plot vs violin plot: a side-by-side comparison
+
+<DataTable
+  caption="Box plot vs violin plot, compared question by question"
+  headers={['Question', 'Box plot', 'Violin plot']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['What it summarizes', 'Five-number summary and outliers', 'Smoothed density plus a summary marker'],
+    ['Reveals multiple peaks', 'No', 'Yes, if the sample is large enough'],
+    ['Outlier rule', 'Common 1.5×IQR convention', 'No universal rule'],
+    ['Exact values readable', 'Median and quartiles read directly', 'Usually requires an inner box or marker'],
+    ['Dependence on settings', 'Low (quartile method varies slightly)', 'High (bandwidth and trimming affect the shape)'],
+    ['Space needed', 'Small, scales to many groups', 'Needs more width to be legible'],
+    ['Audience familiarity', 'Very high', 'Lower, may need a note on how to read it'],
+    ['Best sample size', 'Moderate to large', 'Larger, where a density estimate is stable'],
+  ]}
+/>
+
+The outlier row matters in practice. Box plots define outliers as points beyond 1.5 times the IQR, whereas violin plots lack that universal rule, a contrast that [Wilke's chapter](https://clauswilke.com/dataviz/boxplots-violins.html) draws explicitly. If your audience cares about flagging unusual values, the box plot does that job by design.
+
+## When to use box plots
+
+Choose a box plot when one or more of the following holds.
+
+- **You are comparing many groups.** Twelve monthly boxes fit on one axis and stay readable. Twelve violins often turn into visual noise.
+- **The question is about medians, spread or outliers.** The box encodes exactly those quantities. The [StatPearls review of exploratory analysis](https://www.ncbi.nlm.nih.gov/books/NBK557570/) lists these same uses: examining outliers, assessing range and showing differences among groups.
+- **Your audience reads box plots fluently.** In a journal or a regulatory report, a familiar format lowers the risk of misreading.
+- **The sample is moderate and the shape is plausibly unimodal.** If a histogram would show one hump, the box plot loses little.
+- **You need exact quartiles on the page.** A box can be labeled with them directly.
+
+If you are deciding between a box plot and a histogram rather than a violin, see our comparison of <Link to={routes.article('histogram-vs-boxplot')}>histogram vs box plot</Link> and the guide to <Link to={routes.article('histogram-interpretation')}>histogram interpretation</Link>.
+
+## When a violin plot is the better choice
+
+Reach for a violin when shape could change the decision.
+
+- **You suspect subgroups.** Mixed populations, such as two customer segments or two measurement batches, show up as multiple peaks.
+- **Skew is the story.** Wait times, incomes and response times are often right-skewed, and a violin shows the tail's weight, not just its endpoint.
+- **You have a moderate number of groups and plenty of data in each.** Three to six violins with a few hundred points each is a comfortable use.
+- **You are in exploratory mode.** The violin is a diagnostic. Part of <Link to={routes.article('exploratory-data-analysis')}>an exploratory data analysis workflow</Link> is looking for structure you did not expect, and density shapes help.
+
+## Where both plots go wrong
+
+### Very small samples
+
+Both plots can mislead when there are few observations. A [Nature Methods column on box plots](https://www.nature.com/articles/nmeth.2813) advises avoiding them for very small samples (fewer than 5 observations), because the quartiles are unstable. A smoothed violin built on a handful of points is worse, since it implies a continuous shape that the data cannot support. With samples this small, plot every point, using jitter (a small random nudge along the non-value axis) to stop overlapping dots from hiding each other. Wilke makes the same recommendation: [raw points are more honest than summaries or smoothed shapes at small n](https://clauswilke.com/dataviz/boxplots-violins.html).
+
+### Bandwidth and phantom structure
+
+The bandwidth is the smoothing parameter of the KDE. Set it too narrow and the curve becomes jagged, with spurious peaks around individual points. Set it too wide and genuine peaks merge into one. The KDE can also extend past the observed minimum and maximum, suggesting values that never occurred, which is the kind of [phantom data in the tails that Wilke warns about](https://clauswilke.com/dataviz/boxplots-violins.html). Many software packages let you trim the violin at the data range and change the bandwidth. Try at least two settings before you trust a second peak.
+
+### Unequal group sizes
+
+A violin from 30 observations and a violin from 3,000 can look equally authoritative. Print the sample size under each group, or scale widths with the count, and say which you did.
+
+### Dropping the outlier information
+
+A violin can bury a single extreme value in a thin tail. If outliers matter, keep a box or mark them, and check them against the <Link to={routes.article('how-to-find-outliers')}>1.5×IQR rule</Link>.
+
+## A practical decision path
+
+Run through these questions in order.
+
+<Checklist
+  id="decision-path"
+  title="A practical decision path"
+  style="numbered"
+  items={[
+    { text: 'Do you have fewer than about 10 observations per group?', detail: 'Plot the raw points. Stop here.' },
+    { text: 'Are you comparing more than about 8 groups?', detail: 'Start with box plots. Add violins only for groups that look odd.' },
+    { text: 'Could subgroups or multiple modes exist?', detail: 'Check a histogram first, or go straight to a violin.' },
+    { text: 'Does your audience need exact quartiles or outlier flags?', detail: 'Use a box plot, or a violin with an inner box.' },
+    { text: 'Still unsure?', detail: 'Draw a violin with a narrow box inside and the raw points overlaid. You get the summary, the shape and the evidence in one figure, which is the combination many tutorials recommend.' },
+  ]}
+/>
+
+## Drawing and labeling the plot well
+
+Whichever you choose, a few habits make the figure honest.
+
+- Label the axis with units and state what the box and whiskers represent, since whisker definitions differ between tools.
+- Report the sample size per group.
+- Keep the same axis range across panels so groups are comparable.
+- Order groups meaningfully, by median or by a natural sequence such as month, not alphabetically by default.
+- State the bandwidth method for violins in a caption or note.
+
+These match the broader principles in our <Link to={routes.article('data-visualization-best-practices')}>data visualization best practices guide</Link>. If you are learning to draw statistical graphs by hand for an exam, these [tips for drawing graphs accurately](https://mathvault.io/drawing-graphs-accurately) cover the precision habits that earn marks, and they transfer well to a hand-drawn box plot.
+
+## Our perspective
+
+We see the box plot vs violin plot question as a question about what decision the chart supports, not about which plot is more sophisticated. A violin is not an upgrade on a box plot. It trades simplicity and standardization for shape, and it brings a smoothing choice that the analyst, not the data, controls. That makes it a good diagnostic and a risky default for audiences who cannot see the settings.
+
+Our habit is to look at the shape first, with a histogram or a violin plus raw points, then to decide what to show. If the shape is simple, a box plot communicates it cleanly. If it is not, we show the shape and say so. In both cases we write the sample size on the figure, because it is the cheapest piece of context and the one most often missing.
+
+<Figure number={1} caption="A four-step path for choosing between a box plot and a violin plot, from inspecting shape to labeling the final figure.">
+  <ProcessFlow
+    title="Choosing a plot"
+    desc="A four-step horizontal pipeline moves from inspecting the shape with a histogram or violin plus raw points, to choosing a box plot when the shape is simple, to showing the shape when it is not, to adding the sample size on the figure."
+    steps={[
+      { label: 'Inspect the shape', detail: 'Use a histogram or violin plus raw points.' },
+      { label: 'Choose a box plot', detail: 'When the shape is simple.' },
+      { label: 'Show the shape', detail: 'When it is not, and say so.' },
+      { label: 'Add sample size', detail: 'Write it on the figure.' },
+    ]}
+  />
+</Figure>
+
+This is also why we pair explanations with tools on the same page: a plot only helps when you can connect it to the numbers behind it, such as the median, the quartiles and the spread.
+
+## Check the numbers behind your plot
+
+If you want to confirm the center of a dataset before you draw it, our <Link to={routes.calculator('mean')}>average calculator</Link> computes the mean and median from your values. For the wider picture, the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> shows how these ideas feed real analyses, and the <Link to={routes.learnLanding()}>Learn Statistics</Link> section explains the underlying concepts in plain English.
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Is a violin plot better than a box plot?',
+    answer: 'Not universally. A violin shows distribution shape, including multiple peaks, so it is better when shape matters and the sample is reasonably large. A box plot is better for comparing many groups, reporting exact quartiles and flagging outliers with a familiar convention.',
+  },
+  {
+    question: 'How do I interpret a violin plot if it has no box inside?',
+    answer: 'Read width as relative concentration of data, count the bulges to see how many clusters exist, and look at the tails for skew. Without an inner marker you cannot read the median or quartiles precisely, so add one or report them in the caption.',
+  },
+  {
+    question: 'Can a violin plot show outliers?',
+    answer: 'Not in the standardized way a box plot does. The thin tail of a violin hints at extreme values, but there is no universal cutoff rule. If outliers are central to your question, keep a box plot or overlay the individual points.',
+  },
+  {
+    question: 'How many observations do I need for a violin plot?',
+    answer: 'There is no single threshold, but density estimates need enough data to be stable. Below roughly 10 observations per group, plot the raw points instead. Above that, check how the shape changes when you adjust the bandwidth.',
+  },
+  {
+    question: 'Should I combine a box plot and a violin plot?',
+    answer: 'Often yes. A violin with a slim box inside gives the shape and the summary together, and overlaying the raw points guards against smoothing artifacts. It is a sound default for exploratory work.',
+  },
+]} />
+
+## Sources
+
+<Sources items={[
+  { text: 'Fundamentals of Data Visualization: Boxplots and violins', href: 'https://clauswilke.com/dataviz/boxplots-violins.html', org: 'Claus O. Wilke' },
+  { text: 'Violin Plots: A Box Plot-Density Trace Synergism, The American Statistician (PDF)', href: 'https://www.stat.cmu.edu/~rnugent/PCMI2016/papers/ViolinPlots.pdf', org: 'Hintze & Nelson, 1998' },
+  { text: 'Violin plot, Wikipedia', href: 'https://en.wikipedia.org/wiki/Violin_plot', org: 'Wikipedia' },
+  { text: 'Box plot vs. violin plot comparison, Matplotlib documentation', href: 'https://matplotlib.org/stable/gallery/statistics/boxplot_vs_violin.html', org: 'Matplotlib' },
+  { text: 'Visualizing samples with box plots, Nature Methods', href: 'https://www.nature.com/articles/nmeth.2813', org: 'Nature Methods' },
+  { text: 'Box-and-Whiskers Plot, CDC COVE', href: 'https://www.cdc.gov/cove/data-visualization-types/box-and-whiskers-plot.html', org: 'CDC' },
+  { text: 'Exploratory Data Analysis, NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/eda/eda.htm', org: 'NIST' },
+  { text: 'Box Plot, NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm', org: 'NIST' },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('histogram-vs-boxplot')}>Histogram vs Boxplot: When to Use Each</Link>
+- <Link to={routes.article('box-plot-interpretation')}>Box Plot Interpretation: IQR and Outliers</Link>
+- <Link to={routes.article('scatter-plot-interpretation')}>Scatter Plot Interpretation Guide</Link>
+- <Link to={routes.article('data-visualization-best-practices')}>Data Visualization Best Practices Guide</Link>
