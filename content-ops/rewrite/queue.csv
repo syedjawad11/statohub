@@ -12,7 +12,7 @@ order,slug,lane,status,attempts,score,date,notes
 11,interquartile-range,A,published,0,90,2026-10-15,
 12,percentiles,B,published,0,88,2026-10-20,
 13,what-is-correlation,A,published,1,90,2026-10-17,"round-2 CHANGES_REQUESTED: decision paragraph draws causal claim from observational correlation; one-sentence fix needed, see parked draft"
-14,standard-deviation,B,pending,0,,,
+14,standard-deviation,B,blocked,1,86,2026-10-21,"Reviewer PASS 86/100 round 2, but reviewer subagent's Bash calls for log-review/set-status/db dump/git were denied by the permission classifier in this automated run; needs a human decision on how the reviewer/orchestrator should complete publishes in this environment. Draft parked at content-ops/rewrite/drafts/standard-deviation.mdx."
 15,probability-formula,A,published,1,90,2026-10-19,"round2 CHANGES_REQUESTED: FAQ for 'probability when outcomes not equally likely' dropped, and Bayes P(A|B) formula dropped; score 66/100; parked draft in drafts/"
 16,skewed-distribution,B,pending,0,,,
 17,mean-median-mode-range,A,published,0,90,2026-10-20,

@@ -1,0 +1,320 @@
+---
+title: "Standard Deviation: Formula & How to Find It"
+description: "Standard deviation measures how far data typically spreads from the mean. See the formula, a full worked example, and calculate your own data below."
+category: descriptive-statistics
+primaryKeyword: standard deviation
+keywords:
+  - standard deviation
+  - formula to standard deviation
+  - how to find standard deviation
+  - how to find the standard deviation
+  - sample standard deviation
+  - standard deviation formula
+  - standard deviation meaning
+  - what does standard deviation mean
+phase: 3
+calculator: standard-deviation
+related:
+  - how-to-find-the-mean
+  - variance
+  - standard-deviation-symbol
+draft: false
+pubDate: 2026-06-14
+updatedDate: 2026-09-20
+reviewedDate: 2026-09-20
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Standard deviation is a measure of how far the values in a dataset typically sit from their mean — a small standard deviation means the values cluster tightly around the average, and a large one means they scatter widely. The standard deviation formula builds that number in four moves: subtract the mean from every value, square each difference, average the squares, and take the square root — dividing by the full count N if your data is a population, or by n − 1 if it's a sample, since that denominator is the one step the formula to standard deviation changes depending on which you have. Standard deviation meaning, reduced to one line, comes down to exactly that result: it's the typical distance any single value sits from the mean, and that single number is how to find standard deviation for any dataset you're handed.
+
+<KeyTakeaways rows={[
+  { point: 'It measures typical distance from the mean', details: 'A standard deviation of zero means every value equals the mean; the larger the number, the more the values scatter around the average.' },
+  { point: 'There are two formulas, not one', details: 'Divide by N for a population and by n − 1 for a sample — the denominator changes the result, sometimes substantially in small datasets.' },
+  { point: 'It is the square root of variance', details: 'Variance comes first and lands in squared units; taking its square root returns the measure to the original units of the data.' },
+  { point: 'Almost every real dataset uses the sample formula', details: 'Unless you have measured literally every member of the group you care about, you want s and the n − 1 denominator, not σ and N.' },
+  { point: 'One outlier can distort it sharply', details: 'Squaring each deviation gives outsized weight to extreme values, so a single unusual data point can inflate the result well beyond what the rest of the data suggests.' },
+]} />
+
+## Quick Checklist: How to Find Standard Deviation
+
+Before you calculate, run through these checks — most wrong answers trace back to skipping one of them.
+
+<Checklist
+  id="how-to-find-standard-deviation-checklist"
+  title="Quick checklist: finding standard deviation"
+  style="check"
+  items={[
+    { text: 'Decide population or sample first', detail: 'This single decision sets your denominator: N for a population, n − 1 for a sample.' },
+    { text: 'Find the mean before anything else', detail: 'Every deviation is measured against the mean, so compute it first and carry several decimal places.' },
+    { text: 'Subtract the mean from each value', detail: 'You should get a mix of positive and negative numbers that sum to exactly zero — a useful arithmetic check.' },
+    { text: 'Square every deviation', detail: 'Squaring removes the negative signs and gives extra weight to values far from the mean.' },
+    { text: 'Divide by N or n − 1, then take the square root', detail: 'Dividing alone gives you variance; the square root at the end is what makes it standard deviation.' },
+    { text: 'Check the result against the data', detail: 'A standard deviation larger than the spread of your actual values usually signals an arithmetic error.' },
+  ]}
+/>
+
+## What Does Standard Deviation Mean?
+
+Standard deviation meaning, in plain terms: it is the typical distance between an individual value and the mean of the dataset it came from. If every value equaled the mean exactly, the standard deviation would be zero — there would be no spread at all. The more the values differ from the mean, the larger the number grows.
+
+So what does standard deviation mean in a concrete case? A standard deviation of 3 points on a test tells you that a typical score sits about 3 points from the class average, not that every score is exactly 3 points away. Some scores sit closer, some sit farther, and the standard deviation summarizes the typical distance across all of them in a single number.
+
+Standard deviation stays in the original units of the data — centimeters, dollars, seconds, test points — which is what makes it directly readable. <Link to={routes.article('variance')}>Variance</Link> measures the same underlying spread but in squared units, so standard deviation is simply its square root; the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol guide</Link> covers exactly which Greek or Latin letter marks each version of this statistic. Standard deviation is also the unit the <Link to={routes.article('empirical-rule')}>empirical rule</Link> is built around: for a normally distributed dataset, roughly 68% of values fall within one standard deviation of the mean, about 95% fall within two, and about 99.7% fall within three. Standardizing a single value against the mean and standard deviation — a <Link to={routes.article('z-score')}>z-score</Link> — is how you measure exactly how many standard deviations away any one observation sits.
+
+## What Is the Standard Deviation Formula?
+
+There are two standard deviation formulas, and the one you need depends entirely on whether your data is an entire population or a sample drawn from one. Both formulas start from the mean — what the NIST/SEMATECH e-Handbook's chapter on [Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines as the center of a dataset — before measuring how far every value sits from it.
+
+<DataTable
+  caption="Population vs. sample standard deviation formula"
+  headers={['', 'Population (σ)', 'Sample (s)']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Formula', 'σ = √( Σ(xᵢ − μ)² / N )', 's = √( Σ(xᵢ − x̄)² / (n − 1) )'],
+    ['Denominator', 'N — the full count', 'n − 1 — Bessel’s correction'],
+    ['Mean used', 'μ (population mean)', 'x̄ (sample mean)'],
+    ['Use when', 'Data covers every member of the group', 'Data is a subset drawn from a larger group'],
+  ]}
+/>
+
+In both formulas, `xᵢ` stands for each individual value and `Σ` means "sum everything that follows." The [NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.6 — Measures of Scale](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) lists standard deviation alongside variance, range, and the interquartile range as the standard numerical measures of spread, and defines it the same way: the square root of the average squared distance from the mean. [OpenStax's *Introductory Statistics*, 2.7 Measures of the Spread of the Data](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) works through both versions of the formula side by side with additional worked examples.
+
+### Why the Sample Formula Uses n − 1
+
+The sample standard deviation formula divides by `n − 1` instead of `n` — an adjustment known as Bessel's correction. When you calculate the sample mean x̄ from the same data you are measuring, the deviations from x̄ run slightly smaller, on average, than the deviations from the true population mean μ would. Dividing by `n − 1` inflates the result just enough to correct for that, which is why statisticians call it an unbiased estimator of the population variance.
+
+The correction matters most in small samples; for large samples, dividing by 999 instead of 1,000 barely changes the answer. The full derivation — including why it connects to degrees of freedom — belongs to the <Link to={routes.article('variance')}>variance guide's walkthrough of Bessel's correction</Link>, since the same adjustment applies to variance before the square root is even taken.
+
+## How Do You Find Standard Deviation?
+
+Finding standard deviation by hand always follows the same five steps once you know whether you're working with a population or a sample. Here is how to find standard deviation for a small sample: five employees' time (in minutes) in a status meeting — 12, 15, 9, 18, 11.
+
+**Step 1 — Find the mean.**
+
+```
+x̄ = (12 + 15 + 9 + 18 + 11) / 5 = 65 / 5 = 13
+```
+
+**Step 2 — Subtract the mean from each value.**
+
+```
+12 − 13 = −1
+15 − 13 = +2
+9  − 13 = −4
+18 − 13 = +5
+11 − 13 = −2
+```
+
+These deviations sum to exactly zero: (−1) + 2 + (−4) + 5 + (−2) = 0. That is a reliable check before moving on.
+
+**Step 3 — Square each deviation.**
+
+```
+(−1)² = 1
+(+2)² = 4
+(−4)² = 16
+(+5)² = 25
+(−2)² = 4
+```
+
+**Step 4 — Sum the squared deviations.**
+
+```
+1 + 4 + 16 + 25 + 4 = 50
+```
+
+**Step 5 — Divide by n − 1, then take the square root.**
+
+Because these five meetings are a sample rather than every meeting that will ever happen, divide by n − 1 = 4:
+
+```
+s² = 50 / 4 = 12.5          (this is the sample variance)
+s  = √12.5 ≈ 3.54 minutes   (this is the sample standard deviation)
+```
+
+Meeting lengths in this sample typically run about 3.54 minutes from the 13-minute average — a reasonable spread for a short status check-in. Notice that step 5 happens in two parts: dividing gives you variance, in squared minutes, and only the square root brings the result back to minutes.
+
+<Callout variant="tip" title="Pro tip">
+Always check that your deviations sum to zero before you square them. If they don't, you made an arithmetic error in step 2 or step 1 — catching it now is far faster than tracing it back after you've already divided and taken a square root.
+</Callout>
+
+### Try the Standard Deviation Calculator
+
+Enter any list of numbers below and the calculator returns the mean, deviations, variance, and standard deviation automatically, for both the sample and population versions.
+
+<StatCalc slug="standard-deviation" variant="embed" />
+
+For a full-page version with more room to work, open the <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>.
+
+## Sample Standard Deviation vs. Population Standard Deviation: Which Do You Use?
+
+This is the most common point of confusion in finding standard deviation, and the deciding factor is never the size of the dataset — it's what the dataset represents.
+
+**Use the population formula (σ, divide by N) when:**
+- The dataset contains every member of the group you care about.
+- You are not trying to generalize to a larger group beyond what you measured.
+- Example: the exact final-exam scores of all 24 students in one classroom, when the question is only about that classroom.
+
+**Use the sample standard deviation formula (s, divide by n − 1) when:**
+- The dataset is a subset drawn from a larger population.
+- You want your result to estimate the spread of that larger group.
+- Example: blood-pressure readings from 40 patients in a clinical trial, used to estimate variability across all patients who might take the treatment.
+
+In practice, almost every dataset collected in research, business, or school assignments is a sample — a survey of some respondents, a batch of some products, a semester of some transactions — so the sample standard deviation is the version you will reach for far more often. Reporting "the sample standard deviation was 4.2" without checking this distinction first is how the wrong formula ends up in a result.
+
+## How Is Standard Deviation Used in Practice?
+
+Standard deviation shows up anywhere spread needs to be summarized in a single, interpretable number, and three settings illustrate why it is reported so often.
+
+**Manufacturing and quality control.** The [NIST/SEMATECH e-Handbook's chapter on process capability](https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm) compares the width of a product's specification limits to the spread of the process itself, measured as six process standard deviation units — the tighter that spread relative to the spec, the more capable the process is considered. [Control charts](https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc32.htm) apply the same idea moment to moment: one widely used rule, the Western Electric Company rule, flags a process as out of control the moment a single point falls more than three standard deviations from the center line. Both techniques depend entirely on a reliable standard deviation estimate — the [chapter on Shewhart X-bar and S control charts](https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc321.htm) shows how that estimate is built from the average of several sample standard deviations.
+
+**Scientific reporting and error bars.** Published charts commonly show error bars as either the standard deviation or the standard error, and the two describe different things. A peer-reviewed guide to interpreting figures, [Cumming, Fidler & Vaux's "Error bars in experimental biology"](https://pmc.ncbi.nlm.nih.gov/articles/PMC2064100/), describes the standard deviation as "the typical or (roughly speaking) average difference between the data points and their mean," a descriptive statistic about the data itself — in contrast to the standard error, an inferential statistic about how precisely the mean was estimated.
+
+<Callout variant="quote" source="Cumming, Fidler & Vaux, Journal of Cell Biology (2007)" sourceHref="https://pmc.ncbi.nlm.nih.gov/articles/PMC2064100/">
+Standard deviation (SD) ... Typical or (roughly speaking) average difference between the data points and their mean. ... Standard error (SE) ... A measure of how variable the mean will be, if you repeat the whole study many times.
+</Callout>
+
+**Describing scores and measurements.** [OpenStax's *Introductory Statistics*, 6.2 Using the Normal Distribution](https://openstax.org/books/introductory-statistics/pages/6-2-using-the-normal-distribution), walks through exam scores expressed in exactly this form — a mean paired with a standard deviation — to find what fraction of students scored above or below a given value. The same approach underlies how standardized tests and other measurements get interpreted: the mean sets the center, and the standard deviation sets the scale everything else is judged against.
+
+## A Worked Example: Comparing Two Production Lines' Consistency
+
+A quality engineer at a parts manufacturer wants to know which of two production lines turns out more consistent bolts before deciding where to schedule a calibration check. Both lines target a 10.00 mm diameter, with an engineering tolerance of ±0.05 mm around that target. Eight bolts are pulled from each line — a sample from ongoing production, not every bolt either line will ever make, so the sample formula applies. Finding each line's standard deviation takes the usual five steps; a sixth step then checks that result against the tolerance.
+
+**Line A diameters (mm):** 10.02, 9.98, 10.01, 9.99, 10.03, 9.97, 10.00, 10.00
+
+**Step 1 — Mean.**
+
+```
+x̄_A = (10.02+9.98+10.01+9.99+10.03+9.97+10.00+10.00) / 8 = 80.00 / 8 = 10.00
+```
+
+**Step 2 & 3 — Deviations and squares.**
+
+```
+10.02 → (+0.02)² = 0.0004
+9.98  → (−0.02)² = 0.0004
+10.01 → (+0.01)² = 0.0001
+9.99  → (−0.01)² = 0.0001
+10.03 → (+0.03)² = 0.0009
+9.97  → (−0.03)² = 0.0009
+10.00 → ( 0.00)² = 0
+10.00 → ( 0.00)² = 0
+```
+
+**Step 4 — Sum:** 0.0028
+
+**Step 5 — Divide by n − 1 = 7, then take the square root:**
+
+```
+s²_A = 0.0028 / 7 = 0.0004
+s_A  = √0.0004 = 0.02 mm
+```
+
+**Line B diameters (mm):** 10.10, 9.90, 10.05, 9.85, 10.15, 9.95, 10.20, 9.80
+
+Running the same five steps: the mean is also 10.00 mm, the sum of squared deviations is 0.15, and dividing by n − 1 = 7 gives a sample variance of 0.15 / 7 ≈ 0.02143. Taking the square root:
+
+```
+s_B = √0.02143 ≈ 0.1464 mm
+```
+
+<Figure number={1} caption="Line B's bolt-diameter standard deviation runs roughly seven times wider than Line A's, despite both lines averaging exactly 10.00 mm.">
+  <AnnotatedChart
+    title="Sample standard deviation by production line"
+    desc="Bar chart comparing bolt diameter standard deviation between two production lines, both centered on a 10.00 millimeter target: Line A at 0.02 millimeters and Line B at approximately 0.1464 millimeters."
+    type="bar"
+    points={[
+      { label: 'Line A', value: 0.02, annotation: '0.02 mm' },
+      { label: 'Line B', value: 0.1464, annotation: '≈0.1464 mm' },
+    ]}
+  />
+</Figure>
+
+**Step 6 — Weigh the spread against the tolerance with Cp.** A standard deviation on its own doesn't say whether either line is good enough — that takes comparing it to the ±0.05 mm tolerance using the process capability index Cp, defined in the [NIST/SEMATECH e-Handbook's chapter on process capability](https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm) as the tolerance width divided by six process standard deviations:
+
+```
+Tolerance width = 10.05 − 9.95 = 0.10 mm
+
+Cp = tolerance width / (6 × s)
+
+Cp_A = 0.10 / (6 × 0.02)   = 0.10 / 0.12   ≈ 0.83
+Cp_B = 0.10 / (6 × 0.1464) = 0.10 / 0.8784 ≈ 0.11
+```
+
+**Decision.** Both lines center on the 10.00 mm target, so the mean alone tells the engineer nothing is wrong. The Cp numbers tell a sharper story: the conventional rule of thumb treats Cp ≥ 1 as "capable," and strictly speaking neither line clears that bar on this sample — but Line A's 0.83 is close enough to flag for a minor adjustment, while Line B's 0.11 is a serious miss, with a standard deviation (≈0.1464 mm) that is already about 1.46 times the entire 0.10 mm tolerance band on its own. Line B is the one to send for calibration immediately; Line A is the one to keep watching and re-measure with a larger sample. With only 8 bolts per line, both Cp estimates carry real sampling uncertainty, which is itself a reason not to treat either number as the final word.
+
+## Common Mistakes When Calculating Standard Deviation
+
+- **Using n instead of n − 1 for a sample.** This is the single most common computational error, and it systematically understates the spread. If your data is a sample — and it almost certainly is — divide by n − 1, not n.
+- **Reporting variance as if it were standard deviation.** Dividing the sum of squared deviations gives you variance, in squared units. Forgetting the final square-root step leaves you with a number in the wrong units and larger than the real spread.
+- **Mixing population and sample notation.** Computing the mean as x̄ and then dividing by N, or vice versa, produces a number that matches neither formula correctly. Decide upfront whether you have a population or a sample and stay consistent through every step.
+- **Rounding the mean too early.** Rounding x̄ to one or two decimal places before computing deviations compounds that rounding error through every squared term. Carry at least four decimal places until the final step.
+- **Treating standard deviation as outlier-resistant.** Squaring each deviation gives extra weight to values far from the mean, so a single outlier can inflate standard deviation sharply. Swap just one value in the five-person meeting example from earlier — change the 18-minute meeting to a 40-minute one, so the data become 12, 15, 9, 40, 11 — and the mean rises from 13 to 17.4 minutes while the sample standard deviation jumps from about 3.54 minutes to about 12.82 minutes, more than three times its original size from a single changed value. When outliers are a real concern, the <Link to={routes.article('interquartile-range')}>interquartile range</Link> is the more resistant alternative.
+
+## Statohub's Take on Standard Deviation
+
+Statohub's position is that standard deviation earns its place as the default spread statistic precisely because it stays in the original units of the data — it is the number worth reporting to a reader, not just computing for a formula. That said, treat it as one view of spread, not the whole picture: pair it with a quick look at the data itself, especially when a dataset is small enough that a single unusual value could be doing most of the work.
+
+## Put Standard Deviation to Work With Statohub's Tools
+
+The calculator above handles the full calculation — mean, deviations, variance, and standard deviation — for any dataset you enter, and the dedicated <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link> gives you more room to work. If you need this same calculation inside a spreadsheet instead, the <Link to={routes.article('standard-deviation-excel')}>guide to standard deviation in Excel</Link> covers the exact functions to use. To see the squared-units version of this same spread measure, try the <Link to={routes.calculator('variance')}>variance calculator</Link>, or start from the <Link to={routes.article('how-to-find-the-mean')}>mean guide</Link> for the center every deviation here is measured against. For the rest of the descriptive-statistics toolkit — mean, median, mode, and the other spread measures — browse the <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link>, or jump straight to the <Link to={routes.calculatorsHub()}>calculators hub</Link> for every tool on the site.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.6. Measures of Scale', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.1. Measures of Location', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 6.1.6. What is Process Capability?', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 6.3.2. What are Variables Control Charts?', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc32.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 6.3.2.1. Shewhart X-bar and R and S Control Charts', href: 'https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc321.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.7 Measures of the Spread of the Data, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data', org: 'OpenStax' },
+  { text: 'OpenStax — 6.2 Using the Normal Distribution, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/6-2-using-the-normal-distribution', org: 'OpenStax' },
+  { text: 'Cumming, G., Fidler, F., Vaux, D.L. — "Error Bars in Experimental Biology," Journal of Cell Biology (2007)', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2064100/', org: 'PMC / NCBI' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is the Standard Deviation Formula?',
+    answer: 'There are two standard deviation formulas. For a population: σ = √( Σ(xᵢ − μ)² / N ), dividing by the full count N. For a sample: s = √( Σ(xᵢ − x̄)² / (n − 1) ), dividing by n − 1 instead. The only difference between the two is the denominator — N for a population, n − 1 for a sample — and that difference is enough to change the result, especially in small datasets.',
+  },
+  {
+    question: 'What Does Standard Deviation Mean?',
+    answer: 'Standard deviation meaning, stated plainly, is the typical distance between an individual data value and the mean of its dataset. A standard deviation of zero means every value equals the mean exactly. As the values spread out further from the average, the standard deviation grows larger, so it works as a single number that summarizes how tightly or loosely a dataset clusters.',
+  },
+  {
+    question: 'How Do You Find the Standard Deviation of a Small Sample?',
+    answer: 'Find the mean, subtract it from every value, square each deviation, sum the squares, divide by n − 1, then take the square root. For the sample 12, 15, 9, 18, 11, the mean is 13, the squared deviations sum to 50, dividing by n − 1 = 4 gives a variance of 12.5, and the square root gives a sample standard deviation of about 3.54.',
+  },
+  {
+    question: 'Is a Higher Standard Deviation Always a Bad Sign?',
+    answer: 'No — a higher standard deviation simply means more spread, and whether that is good or bad depends entirely on context. A wide spread in investment returns usually signals more risk, but a wide spread in, say, species counts across habitats could just reflect natural variety. Judge a standard deviation against what the data represents, not against a universal threshold.',
+  },
+  {
+    question: "What's the Difference Between Standard Deviation and Variance?",
+    answer: "Standard deviation is the square root of variance. Variance is expressed in squared units, which makes it awkward to interpret directly but convenient inside formulas; standard deviation returns the result to the original units of the data, which is why it is the version almost always reported. The variance guide's standard deviation vs. variance comparison covers the full practical difference.",
+  },
+  {
+    question: 'Can Standard Deviation Ever Be Negative?',
+    answer: 'No. Standard deviation is always zero or positive, because it is built from squared deviations before the final square root is taken, and a square root of a non-negative number is never negative. A standard deviation of exactly zero means every value in the dataset is identical; any spread at all pushes the result above zero.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('how-to-find-the-range')}>How to Find the Range in Statistics</Link>
+- <Link to={routes.article('interquartile-range')}>Interquartile Range (IQR): A Spread Measure for Skewed Data</Link>
+- <Link to={routes.article('mean-absolute-deviation')}>Mean Absolute Deviation Explained</Link>
+- <Link to={routes.article('what-is-an-average')}>What Is an Average? Mean Definition, Types & Meaning</Link>
