@@ -17,7 +17,7 @@ order,slug,lane,status,attempts,score,date,notes
 16,skewed-distribution,B,pending,0,,,
 17,mean-median-mode-range,A,published,0,90,2026-10-20,
 18,fundamental-statistics,B,pending,0,,,
-19,test-statistic,A,changes_requested,1,,2026-10-21,R2 fail: df table row misdefines chi-square c as 'the mean itself' (NIST: c = estimated params + 1); one-line fix
+19,test-statistic,A,published,1,88,2026-10-22,R2 fail: df table row misdefines chi-square c as 'the mean itself' (NIST: c = estimated params + 1); one-line fix
 20,t-test,B,pending,0,,,
 21,parameter-vs-statistic,A,pending,0,,,
 22,how-to-find-the-mean,B,pending,0,,,

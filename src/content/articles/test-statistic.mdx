@@ -1,6 +1,7 @@
 ---
-title: "Test Statistic: Formula, Degrees of Freedom & t-Table"
-description: "A test statistic measures how far a sample result falls from the null hypothesis. Learn the formula, critical values, degrees of freedom, and the t-table."
+title: "Test Statistic: Formula, Critical Values & df"
+h1: "Test Statistic: Formula, Critical Values, Degrees of Freedom & the t-Table"
+description: "A test statistic is the number a hypothesis test produces to compare a sample result against a critical value and decide whether to reject the null hypothesis."
 category: inferential-statistics
 primaryKeyword: test statistic
 keywords:
@@ -17,263 +18,331 @@ keywords:
   - what is df in statistics
 phase: 1
 calculator: t-table
-related: []
+related:
+  - t-test
+  - z-score
+  - chi-square-test
 draft: false
 pubDate: 2026-06-25
-updatedDate: 2026-09-20
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-22
+reviewedDate: 2026-10-22
 ---
-import RelatedLink from '../../components/RelatedLink.astro';
 
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
 import { routes } from '../../lib/links';
 
-A **test statistic** is a single number that summarises how far a sample result departs from what you would expect under the null hypothesis, measured in standard-error units. Every hypothesis test produces one — a t-statistic, a z-statistic, an F-statistic, or a chi-square statistic — and once you have it, you compare it against a critical value from the matching distribution table to decide whether your result is surprising enough to reject the null hypothesis.
+A **test statistic** is the single number a hypothesis test produces by dividing how far a sample result falls from the null hypothesis by the standard error of that result. Every hypothesis test boils down to one of these — a t-statistic, a z-statistic, an F-statistic, or a chi-square statistic — and once you have it, you compare it against a critical value from the matching distribution to decide whether the result is surprising enough to reject the null hypothesis. This guide walks through the general formula for a test statistic, how to find degrees of freedom for the tests you will meet most often, how to read a t distribution table, and a fully solved numeric example.
 
-This article walks through the test statistic formula for the most common case (the one-sample t-test), explains how to find degrees of freedom, describes the t distribution table, and works through a fully solved numeric example from start to finish.
+<KeyTakeaways rows={[
+  { point: 'A test statistic standardizes your result', details: 'It expresses the gap between your sample estimate and the null-hypothesis value in standard-error units, so results from different tests can be judged on the same scale.' },
+  { point: 'Degrees of freedom set how extreme is extreme', details: 'For a one-sample t-test, df = n − 1; every test subtracts one degree of freedom for each parameter estimated from the data before the statistic is computed.' },
+  { point: 'A t distribution table trades convenience for precision', details: 'A printed table rounds to a handful of alpha levels and df values; a calculator returns the exact critical value for any combination of the two.' },
+  { point: 'The critical value depends on three choices', details: 'Significance level, one- or two-tailed direction, and degrees of freedom together set the threshold your test statistic has to clear.' },
+  { point: 'A larger |test statistic| is stronger evidence, not proof', details: 'Crossing the critical value lets you reject the null hypothesis at your chosen significance level — it does not prove the alternative hypothesis is true.' },
+]} />
 
----
+## Quick Checklist: Finding Your Test Statistic and Critical Value
 
-## What a Test Statistic Measures
+Run through these six steps in order for any hypothesis test, whether it is a one-sample t-test, a chi-square test, or an ANOVA.
 
-The null hypothesis makes a precise claim: the population mean equals a specific value, the slope equals zero, or two groups have equal means. Your sample will never match that claim exactly — even when the null hypothesis is true — because random samples scatter around the true population value.
+<Checklist
+  id="test-statistic-checklist"
+  title="Quick checklist: finding your test statistic and critical value"
+  style="check"
+  items={[
+    { text: 'Identify the test', detail: 'One sample mean: a t-statistic. Two sample means: a pooled or Welch t-statistic. Categorical counts: a chi-square statistic. Several group means at once: an F-statistic.' },
+    { text: 'Apply the matching test statistic formula', detail: '(observed result − value expected under H0) divided by the standard error of that result.' },
+    { text: 'Find degrees of freedom', detail: 'Count the independent data points, then subtract one for each parameter you estimated before computing the statistic.' },
+    { text: 'Choose a significance level and tail count', detail: 'α = 0.05 is the default; use a one-tailed test only when the alternative hypothesis names a direction, decided before you see the data.' },
+    { text: 'Look up or calculate the critical value', detail: 'Match df and α to a row and column of the t distribution table, or use the calculator below for an exact figure.' },
+    { text: 'Compare and decide', detail: 'Reject the null hypothesis if the absolute test statistic meets or exceeds the critical value (two-tailed), or if the signed statistic clears it in the stated direction (one-tailed).' },
+  ]}
+/>
 
-The test statistic converts that scatter into a standardised score:
+## What Is a Test Statistic?
+
+A test statistic is a single standardized number that tells you how far your sample result sits from what the null hypothesis predicts, measured in standard-error units rather than in the original units of the data. The general test statistic formula is:
 
 ```
-test statistic = (observed result − expected under H₀) / standard error
+test statistic = (observed result − value expected under H0) / standard error
 ```
 
-A test statistic of 0 means the sample landed exactly on the null-hypothesis prediction. A test statistic of 2 means the sample result is two standard errors above the prediction; −2 means two standard errors below. The **larger the absolute value**, the stronger the evidence against the null hypothesis.
+A test statistic of 0 means the sample landed exactly on the null hypothesis's prediction. A test statistic of 2 means the result is two standard errors above that prediction; −2 means two standard errors below. The larger the absolute value, the stronger the evidence against the null hypothesis.
 
-The standard error in the denominator is key. It measures how much the sample statistic (for example, the sample mean) typically varies from one random sample to the next. Dividing by the standard error puts the raw difference on a universal scale that you can compare against a critical value from a table — regardless of whether the original data were measured in millilitres, test scores, or response times.
+The standard error in the denominator does the real work. It measures how much the sample statistic — a mean, a proportion, a difference between two means — would typically vary from one random sample to the next. Dividing by it converts a raw difference, in whatever units the data were measured (milliliters, test scores, response times), into a universal scale you can compare against a critical value. [NIST's e-Handbook of Statistical Methods on testing a single population mean](https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm) builds the one-sample case around exactly this ratio: the test statistic is the sample mean minus the hypothesized mean, divided by the standard error of the mean.
 
----
+Two samples with identical raw differences can produce very different test statistics once that standard error is accounted for. A 3 mL gap between a sample mean and a claimed value is unremarkable if cans vary by 20 mL from one to the next, but the same 3 mL gap is striking if cans normally vary by only 1 mL — the test statistic captures that distinction automatically, where the raw difference alone cannot.
 
-## The Test Statistic Formula for a One-Sample t-Test
-
-When you compare a sample mean against a known or assumed population mean, and the population standard deviation is unknown (which is the usual situation in practice), the test statistic formula is the one-sample t-statistic:
+When the population standard deviation σ is unknown — the normal situation in practice — that standard error is estimated from the sample itself, and the formula becomes the one-sample t-statistic:
 
 ```
 t = (x̄ − μ₀) / (s / √n)
 ```
 
-where:
+where x̄ is the sample mean, μ₀ is the hypothesized population mean, s is the sample standard deviation, and n is the sample size. The result follows a t-distribution with `n − 1` degrees of freedom, not a standard normal distribution, because s is itself estimated with error. When σ is known from an outside, trusted source, the same logic produces a z-statistic instead: `z = (x̄ − μ₀) / (σ / √n)`, compared against the <Link to={routes.article('z-score')}>z-score</Link> distribution rather than the t.
 
-- **x̄** is the sample mean
-- **μ₀** is the hypothesised population mean (stated in the null hypothesis)
-- **s** is the sample standard deviation
-- **n** is the sample size
-- **s / √n** is the standard error of the mean
+## Calculate a Critical t-Value Instantly
 
-This formula for the test statistic divides the raw difference between the sample mean and the null-hypothesis value by its standard error. The result follows a **t-distribution** with `n − 1` degrees of freedom — not a standard normal distribution — because `s` is estimated from the data rather than known in advance.
+Enter degrees of freedom, a confidence level, and one- or two-tailed below to get the exact critical t-value — no interpolating between rows of a printed t distribution table.
 
-For large samples (n > 30 or so), the t-distribution closely approximates the standard normal, so the practical distinction shrinks. For small samples, the heavier tails of the t-distribution matter a great deal: you need a larger test statistic to reach statistical significance.
+<StatCalc slug="t-table" variant="embed" />
 
-Other tests use different formulas for the test statistic. A two-sample t-test uses a pooled or Welch version that accounts for two sample sizes and two standard deviations. A z-test uses the known population standard deviation σ instead of the estimated s. A chi-square test computes `(observed − expected)² / expected` summed over categories. Despite these differences, all of them measure the same underlying idea: how many standard errors away from the null hypothesis is my result?
+For a larger version with the same inputs, open the standalone <Link to={routes.calculator('t-table')}>t-table calculator</Link>. If you already have a test statistic and need the corresponding probability instead of a threshold, use the <Link to={routes.calculator('p-value')}>p-value calculator</Link>.
 
-<RelatedLink to={routes.calculator('t-test')} label="t-test calculator" intro="For a related calculation" />
+## What Is a Degree of Freedom in Statistics?
 
----
+A degree of freedom (abbreviated **df**, occasionally written **d.f.**) is one independent piece of information available for estimating something from your data. In a sample of n values, all n observations are free to vary. The moment you use that sample to estimate a parameter — a mean, say — one piece of information is "used up," leaving one fewer degree of freedom for whatever you estimate next.
 
-## Degrees of Freedom: What They Are and How to Find Them
-
-The phrase *degrees of freedom* (abbreviated **df** or **d.f.**) refers to the number of independent pieces of information available for estimating a parameter. Every time you use data to estimate something, you consume one degree of freedom.
-
-For a one-sample t-test, you estimate the population mean using the sample mean before computing the standard deviation. That uses up one degree of freedom, leaving:
+For a one-sample t-test, you estimate the population mean with the sample mean before computing the sample standard deviation, so:
 
 ```
 df = n − 1
 ```
 
-With a sample of 16 observations, df = 15. That value of 15 tells the t-distribution how spread out its tails should be. **Smaller df → heavier tails → larger critical values.** As df grows toward infinity, the t-distribution converges to the standard normal and the critical values converge to the familiar z-scores (1.645 for 90 %, 1.960 for 95 %, 2.576 for 99 %).
+A sample of 16 observations has df = 15. That number tells the t-distribution how heavy its tails should be: **smaller df means heavier tails and larger critical values.** As df grows toward infinity, the t-distribution converges on the standard normal, and its critical values converge on the familiar z-scores — 1.645 at 90%, 1.960 at 95%, 2.576 at 99% confidence.
 
-Understanding how to find degrees of freedom for other tests follows the same "observations minus estimated parameters" logic:
+The same n − 1 shows up in the sample standard deviation formula itself, for the same reason. Dividing the sum of squared deviations by n − 1 instead of n (a correction sometimes called Bessel's correction) compensates for the fact that the sample mean, by construction, is the value that minimizes those squared deviations — using n would systematically underestimate the population variance. [NIST's table of critical values for the Student's t-distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm) labels its last row "Normal Values," reflecting that convergence. In practice, by roughly 100 degrees of freedom the two distributions are already almost indistinguishable.
 
-- **Two-sample t-test (equal variances):** df = n₁ + n₂ − 2
-- **Paired t-test:** df = number of pairs − 1
-- **Chi-square goodness-of-fit:** df = number of categories − 1
-- **Chi-square test of independence:** df = (rows − 1) × (columns − 1)
-- **Simple linear regression (F-test):** df = n − 2
+Knowing how to find degrees of freedom for other common tests follows the same "data points minus estimated parameters" logic:
 
-The pattern is always the same: start with the number of data points or observations, then subtract one for each parameter you estimated before computing the statistic.
+<DataTable
+  caption="How to find degrees of freedom for common hypothesis tests"
+  headers={['Test', 'Degrees of freedom', 'Why']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['One-sample t-test', 'n − 1', 'One mean estimated from the sample before the standard deviation is computed.'],
+    ['Two-sample t-test (pooled)', 'n₁ + n₂ − 2', 'Two sample means estimated, one from each group.'],
+    ['Paired t-test', 'number of pairs − 1', 'The differences become a single sample, so only one mean is estimated.'],
+    ['Chi-square goodness-of-fit', 'k − c', 'k category counts sum to a fixed total; c = (number of distribution parameters estimated from the data) + 1, so c = 1 (and df = k − 1) when no parameters are estimated.'],
+    ['Chi-square test of independence', '(rows − 1) × (columns − 1)', 'Row and column totals are fixed, constraining the free cells in the table.'],
+    ['One-way ANOVA (F-test)', 'df₁ = k − 1, df₂ = N − k', 'k group means estimated across N total observations.'],
+  ]}
+/>
 
-<RelatedLink to={routes.calculator('t-table')} label="t-table calculator" intro="Another helpful calculator is" />
+[NIST's page on comparing two process means](https://www.itl.nist.gov/div898/handbook/prc/section3/prc31.htm) and its [companion page on paired observations](https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm) confirm the n₁ + n₂ − 2 and "pairs − 1" rules respectively. For the chi-square goodness-of-fit test, [NIST's handbook page](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35f.htm) gives df = k − c, where c is the number of estimated parameters plus one — that reduces to the familiar k − 1 only in the common case where no distribution parameter is estimated from the sample, just the category counts themselves. The pattern never changes: start with the number of independent observations, then subtract one for every parameter you had to estimate before you could compute the statistic. The <Link to={routes.article('chi-square-distribution')}>chi-square distribution guide</Link> covers how that df value shapes the chi-square curve itself.
 
----
+A paired t-test is worth a second look because it is easy to miscount. With 20 subjects measured before and after a treatment, it is tempting to write df = 20 + 20 − 2 = 38, as if there were two independent samples. But the paired design collapses each before/after pair into a single difference score, leaving 20 differences rather than 40 independent values — so df = 20 − 1 = 19, not 38. Treating paired data as if it were two independent groups is one of the more common degrees-of-freedom mistakes in practice.
 
-## The t-Distribution Table
+<Callout variant="tip" title="Pro tip">
+Before computing df for a before/after or matched-pairs design, count your rows of data, not your rows of measurements. Twenty subjects measured twice is still 20 independent units — 20 difference scores — so df = n − 1 = 19, never n₁ + n₂ − 2.
+</Callout>
 
-Once you have the test statistic and the degrees of freedom, you look up the **critical value** — the threshold beyond which a test statistic is considered statistically significant at your chosen significance level (α).
+## How Do You Read a t Distribution Table?
 
-The t distribution table organises critical values by:
+A t distribution table (also called a table for t distribution, or simply a t table distribution) organizes critical values by two axes: degrees of freedom down the rows, and significance level plus tail count across the columns. Once you have your test statistic and its df, you find the cell where your row and column meet — that cell is the critical value.
 
-1. **Degrees of freedom (df)** — each row represents one value of df
-2. **Significance level (α) and tail count** — each column represents one combination
+<DataTable
+  caption="Critical values from the t distribution table"
+  headers={['df', 'One-tailed α = 0.05', 'Two-tailed α = 0.10', 'Two-tailed α = 0.05', 'Two-tailed α = 0.01']}
+  align={['right', 'right', 'right', 'right', 'right']}
+  rows={[
+    ['5', '2.015', '2.015', '2.571', '4.032'],
+    ['10', '1.812', '1.812', '2.228', '3.169'],
+    ['15', '1.753', '1.753', '2.131', '2.947'],
+    ['20', '1.725', '1.725', '2.086', '2.845'],
+    ['30', '1.697', '1.697', '2.042', '2.750'],
+    ['∞', '1.645', '1.645', '1.960', '2.576'],
+  ]}
+/>
 
-A two-tailed test at α = 0.05 splits the 5 % equally between both tails (2.5 % in each tail). A one-tailed test at α = 0.05 places all 5 % in a single tail. Because the critical region is smaller in a one-tailed test, the critical value is lower and easier to exceed — which is why you must choose one-tailed or two-tailed **before** collecting data, based on your research question, not after you see which gives a smaller p-value.
+A two-tailed test at α = 0.05 splits that 5% evenly between both tails (2.5% each). A one-tailed test at α = 0.05 places the entire 5% in one tail, which is why the one-tailed column always holds a smaller critical value than the two-tailed column at the same α — a smaller rejection threshold is easier to clear, but only in the direction you committed to before collecting data. Notice that the bottom row (∞ df) reproduces the standard normal z-scores exactly, confirming the convergence described above.
 
-Here are critical values from the table for t distribution for common significance levels:
+Reading down any single column tells its own story: as df falls from 30 to 5, the α = 0.05 two-tailed critical value climbs from 2.042 to 2.571. That increase is the table's way of penalizing small samples — with fewer data points backing up the estimated standard deviation, the test demands a larger test statistic before it will call a result significant.
 
-| df | One-tailed α = 0.05 | Two-tailed α = 0.10 | Two-tailed α = 0.05 | Two-tailed α = 0.01 |
-|---:|-------------------:|-------------------:|-------------------:|-------------------:|
-|  5 | 2.015 | 2.015 | 2.571 | 4.032 |
-| 10 | 1.812 | 1.812 | 2.228 | 3.169 |
-| 15 | 1.753 | 1.753 | 2.131 | 2.947 |
-| 20 | 1.725 | 1.725 | 2.086 | 2.845 |
-| 30 | 1.697 | 1.697 | 2.042 | 2.750 |
-| ∞  | 1.645 | 1.645 | 1.960 | 2.576 |
+<Callout variant="tip" title="Pro tip">
+Printed t distribution tables rarely list every df value — they jump from 20 to 24 to 30, for instance. When your df falls between two listed rows, use the calculator above instead of interpolating by eye; it returns the exact critical value for any whole-number df.
+</Callout>
 
-Notice how the values in the bottom row (∞ df) equal the standard normal z-scores. The t table distribution converges to the normal table as sample size grows.
+## How Do You Find a Critical Value for a Hypothesis Test?
 
----
+Finding a critical value takes three inputs, a lookup, and a comparison, in this order:
 
-## Worked Example: Using the Test Statistic Formula Step by Step
+1. **Choose the significance level (α).** 0.05 (5%) is the conventional default, meaning you accept a 5% chance of rejecting a true null hypothesis (a Type I error). Some fields use the stricter 0.01 or the more lenient 0.10.
+2. **Decide one-tailed or two-tailed.** Use two-tailed when the alternative hypothesis is H₁: parameter ≠ value — a difference in either direction counts. Use one-tailed only when the alternative specifies a direction (H₁: parameter > value or < value), decided before looking at the data.
+3. **Determine degrees of freedom.** For a one-sample t-test, df = n − 1; see the table above for other designs.
+4. **Look up the table or run the calculator.** Find the row matching your df, then the column matching your α and tail count. That cell — or the calculator's output — is the critical value.
+5. **Compare and decide.** Reject H₀ if |test statistic| ≥ critical value (two-tailed), or if the signed statistic clears the critical value in the predicted direction (one-tailed). Otherwise, fail to reject.
 
-**Scenario:** A beverage company claims its cans contain 355 mL on average. A quality inspector randomly selects 16 cans and measures:
+[NIST's guidance on confidence limits for the mean](https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm) builds a confidence interval from the same critical value this decision rule uses, just applied to an interval estimate instead of a yes/no test — the <Link to={routes.article('null-hypothesis')}>null hypothesis guide</Link> covers how to state H₀ and H₁ correctly before you get this far.
 
-- Sample mean: x̄ = 352 mL
-- Sample standard deviation: s = 6 mL
-- Sample size: n = 16
+## One-Tailed vs Two-Tailed Tests: Which Critical Value Applies?
 
-At α = 0.05, is there statistically significant evidence that the true mean differs from 355 mL?
+The direction you choose changes which critical value you need, and therefore how hard the null hypothesis is to reject:
 
-### Step 1 — State the hypotheses
+- **Two-tailed (H₁: μ ≠ μ₀).** The rejection region sits in both tails. At α = 0.05 and df = 15, the critical value is 2.131; reject H₀ if |t| ≥ 2.131.
+- **One-tailed (H₁: μ > μ₀ or μ < μ₀).** The rejection region sits in one tail only. At α = 0.05 and df = 15, the critical value is 1.753; reject H₀ if t ≥ 1.753 (upper-tailed) or t ≤ −1.753 (lower-tailed).
 
-- **H₀:** μ = 355 mL (null hypothesis — the claimed value)
-- **H₁:** μ ≠ 355 mL (two-tailed alternative — deviation in either direction)
+The one-tailed critical value (1.753) is smaller than the two-tailed one (2.131), so it is easier to clear — but only in the predicted direction. If the real effect runs the opposite way, a one-tailed test gives you no way to detect it, no matter how extreme the data are. Decide the tail count from your research question before collecting data; switching to one-tailed after seeing a nearly significant two-tailed result is a form of p-hacking that inflates your real Type I error rate above the stated α.
 
-### Step 2 — Compute the test statistic formula
+A one-tailed test fits a question like "does the new process produce cans with *more* than 355 mL," where an outcome below 355 mL would never lead to rejecting H₀ regardless of how far below it falls. A two-tailed test fits "does the new process produce cans with a *different* average than 355 mL," where deviation in either direction is relevant. Most quality-control and regulatory settings default to two-tailed tests specifically because an unexpected result in the "wrong" direction is still worth catching.
 
-```
-t = (x̄ − μ₀) / (s / √n)
-  = (352 − 355) / (6 / √16)
-  = −3 / (6 / 4)
-  = −3 / 1.5
-  = −2.00
-```
+## How Does the Test Statistic Formula Change Across Different Tests?
 
-The test statistic is **t = −2.00**.
+The ratio stays the same — observed minus expected, divided by standard error — but the specific formula for a test statistic depends on what you are comparing.
 
-### Step 3 — Find degrees of freedom
+<DataTable
+  caption="The test statistic formula by hypothesis test"
+  headers={['Test', 'Test statistic formula', 'Distribution used']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['One-sample t-test', 't = (x̄ − μ₀) / (s / √n)', 't, df = n − 1'],
+    ['One-sample z-test', 'z = (x̄ − μ₀) / (σ / √n)', 'Standard normal (z)'],
+    ['Two-sample t-test (pooled)', 't = (x̄₁ − x̄₂) / (sₚ √(1/n₁ + 1/n₂))', 't, df = n₁ + n₂ − 2'],
+    ['Chi-square goodness-of-fit', 'χ² = Σ (O − E)² / E', 'Chi-square, df = k − 1 (no estimated parameters)'],
+    ['One-way ANOVA', 'F = (variance between groups) / (variance within groups)', 'F, df₁ = k − 1, df₂ = N − k'],
+  ]}
+/>
 
-```
-df = n − 1 = 16 − 1 = 15
-```
+Despite the different symbols, every row answers the same question: how many standard errors away from the null hypothesis does this sample sit? The <Link to={routes.article('t-test')}>t-test guide</Link> works through the one- and two-sample t formulas with fully solved numbers, the <Link to={routes.article('chi-square-test')}>chi-square test guide</Link> walks the goodness-of-fit and independence formulas step by step, and <Link to={routes.article('t-test-vs-z-test')}>t-test vs. z-test</Link> covers exactly when to swap s for a known σ.
 
-### Step 4 — Find the critical value
-
-From the t distribution table at df = 15 and α = 0.05 two-tailed, the critical value is **t* = 2.131**.
-
-### Step 5 — Compare and decide
-
-For a two-tailed test, compare the **absolute value** of the test statistic against the critical value:
-
-```
-|t| = 2.00 < t* = 2.131
-```
-
-Because 2.00 does not exceed 2.131, the inspector **fails to reject the null hypothesis** at the 5 % significance level. This sample does not provide strong enough evidence to conclude the cans differ from 355 mL.
-
-To see how close the result is to significance: if the sample mean had been 350.8 mL instead of 352 mL, the test statistic would have been t = −2.80, which exceeds 2.131 in absolute value, and the inspector would reject H₀.
-
----
-
-## Try the T-Table Calculator
-
-Use the calculator below to look up any critical t value instantly — enter the degrees of freedom, choose the confidence level, and select one-tailed or two-tailed. No printed table needed.
-
-<StatCalc slug="t-table" variant="embed" />
-
-For the worked example above: set df = 15, confidence level = 95 %, and two-tailed. The calculator returns **t* = 2.131**, confirming the table value.
-
-You can also explore the full <Link to={routes.calculator("t-table")}>T-Table Calculator</Link> page for additional combinations of df and significance level. If you already know the test statistic and need the corresponding probability, use the <Link to={routes.calculator("p-value")}>P-Value Calculator</Link>.
-
----
-
-## How to Find the Critical Value: A Step-by-Step Guide
-
-Every hypothesis test needs a critical value — the boundary between "fail to reject" and "reject." Finding it requires three inputs:
-
-1. **Choose the significance level (α).** The most common value is 0.05 (5 %), meaning you accept a 5 % chance of a false rejection (Type I error). Research fields sometimes use 0.01 (stricter) or 0.10 (more lenient).
-
-2. **Decide on one-tailed or two-tailed.** Use a **two-tailed test** when H₁ says the parameter differs from H₀ in either direction (H₁: μ ≠ μ₀). Use a **one-tailed test** when the direction is specified (H₁: μ > μ₀ or H₁: μ < μ₀). The tail count halves or concentrates the rejection region.
-
-3. **Determine the degrees of freedom.** For a one-sample t-test, df = n − 1. This tells you which row of the table to use.
-
-4. **Look up the table.** Find the row matching your df value, then the column matching your α and tail count. The cell entry is the critical value t*.
-
-5. **Compare.** Reject H₀ if |t| ≥ t* (two-tailed) or t ≥ t* in the specified direction (one-tailed). Otherwise, fail to reject.
-
-The [NIST/SEMATECH e-Handbook of Statistical Methods, Comparing One Process Mean to a Standard](https://www.itl.nist.gov/div898/handbook/prc/section2/prc231.htm) provides a comprehensive reference for the one-sample t-test procedure, including the decision rule and examples from industrial quality control.
-
-<RelatedLink to={routes.article('z-score')} label="Z-Score Explained" intro="On a related note" />
-
----
-
-## One-Tailed vs Two-Tailed Tests
-
-Choosing one-tailed or two-tailed changes which critical value you need and therefore how hard it is to reject H₀:
-
-**Two-tailed test (H₁: μ ≠ μ₀)**
-- Rejection region sits in both tails of the distribution
-- At α = 0.05 and df = 15: critical value = **2.131**
-- You reject H₀ if |t| ≥ 2.131
-
-**One-tailed test (H₁: μ > μ₀ or H₁: μ < μ₀)**
-- Rejection region sits in one tail only
-- At α = 0.05 and df = 15: critical value = **1.753**
-- You reject H₀ if t ≥ 1.753 (upper-tailed) or t ≤ −1.753 (lower-tailed)
-
-The one-tailed critical value (1.753) is smaller than the two-tailed value (2.131), making it easier to reach the rejection region — but only in the predicted direction. If the true effect is in the opposite direction, a one-tailed test gives you no recourse regardless of how extreme the data are.
-
-**Decision rule:** Choose the tail count based on your research question before you look at the data. Switching from two-tailed to one-tailed after seeing the results to achieve significance is a form of p-hacking that inflates the Type I error rate.
-
----
-
-## Common Mistakes When Working With Test Statistics
-
-**Using the wrong denominator.** The formula uses `s / √n` — the standard error of the *mean* — not `s` alone. Dividing by `s` instead of `s / √n` makes the denominator too large and the test statistic too small, leading to under-rejection of false null hypotheses.
-
-**Ignoring the sign in a two-tailed test.** Compare the **absolute value** of the test statistic against the critical value. A test statistic of −2.5 is exactly as extreme as +2.5.
-
-**Using z instead of t for small samples.** When n < 30 and the population standard deviation is unknown, use the t-distribution with df = n − 1. The z-distribution has lighter tails, so using z would give a critical value that is too small and would lead you to reject H₀ too often.
-
-**Misreading the t table distribution columns.** A two-tailed test at α = 0.05 uses the same column as a one-tailed test at α = 0.025. Confirm you are in the correct column before recording the critical value.
-
-**Treating "fail to reject" as "accept."** A test statistic that falls short of the critical value means the data are *consistent with* the null hypothesis — not that the null hypothesis is *confirmed*. Insufficient sample size is a common reason for a non-significant result even when a real effect exists.
-
-For the related z-statistic used when the population standard deviation is known, see the <Link to={routes.article("z-score")}>Z-Score article</Link>. To compute standard deviations quickly, use the <Link to={routes.calculator("standard-deviation")}>Standard Deviation Calculator</Link>.
-
----
-
-## Frequently Asked Questions
-
-### What is a degree of freedom in statistics?
-
-One independent piece of information that is free to vary when estimating a parameter. In a sample of n values, all n observations can vary freely. Once you use that sample to estimate the mean, that constraint "uses up" one degree of freedom, leaving n − 1 degrees of freedom for estimating the variance. The [Penn State STAT 415 course on hypothesis testing for one mean](https://online.stat.psu.edu/stat415/lesson/7/7.1) discusses degrees of freedom in detail and shows how they shape the t-distribution.
-
-### What is the difference between the test statistic and the p-value?
-
-The test statistic is a number on the scale of the underlying distribution (t, z, F, or chi-square). The **p-value** converts that number into a probability: the probability of observing a test statistic at least as extreme as the one you computed, assuming the null hypothesis is true. A smaller p-value means stronger evidence against H₀. You can reach a decision using either approach — compare |t| against the critical value, or compare the p-value against α — and both approaches always agree. Use the <Link to={routes.calculator("p-value")}>P-Value Calculator</Link> to convert a t-statistic directly into a p-value.
-
-### Can the test statistic be negative?
-
-Yes. A t-statistic is negative whenever the sample mean falls below the null-hypothesis mean (x̄ < μ₀). In the worked example above, the sample mean (352 mL) was below the claimed value (355 mL), giving t = −2.00. For a two-tailed test, what matters is the absolute value; for a lower-tailed one-tailed test, a large negative value is what triggers rejection.
-
-### How does the test statistic formula change for a two-sample t-test?
-
-For a two-sample t-test comparing two independent groups (assuming equal variances), the test statistic formula is:
-
-```
-t = (x̄₁ − x̄₂) / (sₚ × √(1/n₁ + 1/n₂))
-```
-
-where sₚ is the pooled standard deviation:
+The two-sample row's pooled standard deviation, sₚ, is itself a formula worth seeing in full. [NIST's page on comparing two process means](https://www.itl.nist.gov/div898/handbook/prc/section3/prc31.htm) builds it from each group's own sample variance, weighted by its degrees of freedom:
 
 ```
 sₚ = √( ((n₁ − 1)s₁² + (n₂ − 1)s₂²) / (n₁ + n₂ − 2) )
 ```
 
-and the degrees of freedom is df = n₁ + n₂ − 2. The logic is identical to the one-sample case: divide the observed difference by its standard error, then compare against the t distribution table. Use the <Link to={routes.calculator("t-test")}>T-Test Calculator</Link> to compute two-sample t-statistics directly without manual arithmetic.
+where s₁ and s₂ are the two groups' sample standard deviations and n₁ and n₂ are their sample sizes. That pooled figure then replaces the single s in the one-sample formula's standard error term.
+
+The pooled two-sample formula above assumes both groups share a common population standard deviation. When that assumption is shaky — one group's data are noticeably more spread out than the other's — Welch's t-test replaces the pooled standard error with one computed from each group's own variance separately, and its degrees of freedom are no longer a clean integer formula but an approximation based on both sample sizes and variances. Software defaults vary, so check before assuming: [R's `t.test()` defaults to Welch's version](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html) (`var.equal = FALSE`), while [Python's `scipy.stats.ttest_ind()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html) defaults to the pooled, equal-variance version (`equal_var=True`) and needs `equal_var=False` set explicitly to switch to Welch's.
+
+## A Worked Example: Using the Test Statistic Formula Step by Step
+
+**Scenario:** A beverage company claims its cans hold 355 mL on average. A quality inspector samples 16 cans and measures a mean of 352 mL with a sample standard deviation of 6 mL. At α = 0.05, is there statistically significant evidence the true mean differs from 355 mL?
+
+<Figure number={1} caption="The five-step path from stated hypotheses to a reject/fail-to-reject decision for the 16-can sample.">
+  <ProcessFlow
+    title="Test statistic decision process"
+    desc="Five steps: state the hypotheses, compute the test statistic, find degrees of freedom, find the critical value, then compare and decide."
+    steps={[
+      { label: 'State the hypotheses', detail: 'H0: mu = 355 mL. H1: mu is not 355 mL.' },
+      { label: 'Compute the test statistic', detail: 't = (352 - 355) / (6 / sqrt(16)) = -2.00.' },
+      { label: 'Find degrees of freedom', detail: 'df = 16 - 1 = 15.' },
+      { label: 'Find the critical value', detail: 'Two-tailed, alpha = 0.05, df = 15: t* = 2.131.' },
+      { label: 'Compare and decide', detail: '|-2.00| < 2.131, so fail to reject H0.' },
+    ]}
+    direction="horizontal"
+  />
+</Figure>
+
+1. **State the hypotheses.** H₀: μ = 355 mL. H₁: μ ≠ 355 mL (two-tailed).
+2. **Compute the test statistic.**
+   ```
+   t = (x̄ − μ₀) / (s / √n)
+     = (352 − 355) / (6 / √16)
+     = −3 / (6 / 4)
+     = −3 / 1.5
+     = −2.00
+   ```
+3. **Find degrees of freedom.** df = n − 1 = 16 − 1 = 15.
+4. **Find the critical value.** At df = 15, two-tailed α = 0.05, the t distribution table gives t* = 2.131.
+5. **Compare and decide.** |t| = 2.00 is less than t* = 2.131, so the inspector **fails to reject** the null hypothesis — the sample does not provide strong enough evidence that the cans differ from 355 mL.
+
+If the sample mean had instead been 350.8 mL, the same formula gives t = (350.8 − 355) / 1.5 = −2.80, which exceeds 2.131 in absolute value — that result would reject H₀.
+
+## Finding Test Statistics and Critical Values in R, Python, and Excel
+
+Each major tool replaces the printed t distribution table with a direct function call:
+
+```
+R:      qt(0.975, df = 15)        -> 2.131450   # two-tailed critical value, alpha = 0.05
+        pt(-2.00, df = 15)        -> 0.03197    # one-tailed p-value for t = -2.00
+Python: from scipy.stats import t
+        t.ppf(0.975, df=15)       -> 2.131450
+        t.cdf(-2.00, df=15)       -> 0.03197
+Excel:  =T.INV(0.975, 15)         -> 2.131450
+```
+
+R's [`qt()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/TDist.html) returns the quantile (critical value) for a given cumulative probability and df, and its companion `pt()` returns the cumulative probability for a given t and df — the two directions of a t table lookup in one line each. Python's [`scipy.stats.t` object](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html) exposes the same pair through `.ppf()` and `.cdf()`. Excel's [T.INV function](https://support.microsoft.com/en-us/office/t-inv-function-2908272b-4e61-4942-9df9-a25fec9b0e2e) returns the left-tailed inverse of the t-distribution — passing it `1 − α/2` and your df gives the two-tailed critical value directly, matching the table and the calculator above.
+
+None of these three require you to compute the test statistic by hand first, either. R's [`t.test()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html) and Python's [`scipy.stats.ttest_1samp()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html) each take the raw sample plus the hypothesized mean and return the test statistic, degrees of freedom, and p-value together:
+
+```
+R:      t.test(can_volumes, mu = 355)
+        # t = -2.00, df = 15, p-value = 0.0639
+
+Python: from scipy.stats import ttest_1samp
+        ttest_1samp(can_volumes, popmean=355)
+        # TtestResult(statistic=-2.00, pvalue=0.0639, df=15)
+```
+
+Excel's [T.TEST function](https://support.microsoft.com/en-us/office/t-test-function-d4e08ec3-c545-485f-962e-276f7cbed055) takes two ranges of raw data rather than a single sample against a hypothesized mean, so it is built for comparing two groups (paired or independent) rather than the one-sample case above — for a one-sample test in Excel, compute the test statistic with the formula directly, then pass it to T.DIST.2T or look it up against T.INV as shown.
+
+## Common Mistakes When Working With Test Statistics
+
+- **Using the wrong denominator.** The formula uses `s / √n`, the standard error of the mean, not `s` alone. Dividing by `s` makes the denominator too large and the test statistic too small, under-rejecting false null hypotheses. Fix it by writing out the standard error as its own line before dividing, rather than dividing in a single mental step.
+- **Ignoring the sign in a two-tailed test.** Compare the **absolute value** of the test statistic against the critical value — a test statistic of −2.5 is exactly as extreme as +2.5. Fix it by taking the absolute value as a deliberate step before the comparison, not by eyeballing which number looks bigger.
+- **Using z when σ is unknown, regardless of sample size.** The t-distribution with df = n − 1 is the correct choice any time the population standard deviation is estimated from the sample rather than known outright — that includes large samples, not just small ones. The z-distribution's lighter tails only become a negligible difference as n grows; they do not become "correct" at n = 30. Fix it by checking whether σ is truly known from an external source, not just assumed, before reaching for a z-table.
+- **Misreading the t distribution table columns.** A two-tailed test at α = 0.05 uses the same column as a one-tailed test at α = 0.025. Confirm which column you are in before recording the critical value, since the two labeling conventions sit side by side in most printed tables.
+- **Miscounting degrees of freedom on a paired or two-sample design.** Treating paired before/after data as two independent groups inflates df and understates how uncertain the estimate really is. Fix it by asking whether each row of data represents one subject or two before choosing a df formula.
+- **Treating "fail to reject" as "proven true."** A test statistic that falls short of the critical value means the data are *consistent with* the null hypothesis, not that the null hypothesis is confirmed. An underpowered sample size is a common reason for a non-significant result even when a real effect exists, so fix it by reporting the result as "no significant difference detected," not "no difference exists."
+
+## Statohub's Take on the Test Statistic
+
+Statohub's position is that the test statistic formula is worth memorizing in its general form — (observed − expected) / standard error — rather than as a list of unrelated symbols for each test. Once that ratio clicks, the t-statistic, z-statistic, and chi-square statistic stop looking like separate topics and start looking like the same idea applied to different data. Degrees of freedom deserve the same treatment: learn the "data points minus estimated parameters" rule once, and every test's df formula follows from it rather than needing separate memorization. A printed t distribution table is worth working through by hand once, for the same reason a times table is worth memorizing once — it builds an intuition for how critical values tighten as sample size grows that an instant calculator answer does not teach on its own.
+
+## Put the Test Statistic to Work With Statohub's Tools
+
+The calculator above returns an exact critical t-value for any degrees of freedom, confidence level, and tail count, replacing the row-and-column hunting a printed t distribution table requires — open the standalone <Link to={routes.calculator('t-table')}>t-table calculator</Link> for a larger version. Once you have a test statistic in hand, the <Link to={routes.calculator('t-test')}>t-test calculator</Link> runs the one-sample case directly from a sample mean, hypothesized mean, standard deviation, and n, and the <Link to={routes.calculator('p-value')}>p-value calculator</Link> converts any t or z statistic into its p-value. The <Link to={routes.categoryHub('inferential-statistics')}>Inferential Statistics hub</Link> connects this page to the surrounding tests — hypothesis setup, p-values, and the chi-square family — and Statohub's full <Link to={routes.calculatorsHub()}>calculators hub</Link> lists every tool for checking your own numbers.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook — 7.2.2. Are the Data Consistent With the Assumed Process Mean?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section2/prc22.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook — 7.3.1. Do Two Processes Have the Same Mean?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc31.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook — 7.3.1.1. Analysis of Paired Observations', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook — 1.3.5.15. Chi-Square Goodness-of-Fit Test', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35f.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook — 1.3.6.7.2. Critical Values of the Student’s-t Distribution', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook — 1.3.5.2. Confidence Limits for the Mean', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm', org: 'NIST' },
+  { text: 'scipy.stats.t — SciPy v1.18.0 Manual', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html', org: 'SciPy' },
+  { text: 'scipy.stats.ttest_1samp — SciPy v1.18.0 Manual', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html', org: 'SciPy' },
+  { text: 'scipy.stats.ttest_ind — SciPy v1.18.0 Manual', href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html', org: 'SciPy' },
+  { text: 'R: The Student t Distribution (dt, pt, qt, rt)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/TDist.html', org: 'The R Project' },
+  { text: 'R: Student’s t-Test (t.test)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html', org: 'The R Project' },
+  { text: 'T.INV function', href: 'https://support.microsoft.com/en-us/office/t-inv-function-2908272b-4e61-4942-9df9-a25fec9b0e2e', org: 'Microsoft Support' },
+  { text: 'T.TEST function', href: 'https://support.microsoft.com/en-us/office/t-test-function-d4e08ec3-c545-485f-962e-276f7cbed055', org: 'Microsoft Support' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Is a Degree of Freedom (df) in Statistics?',
+    answer: 'A degree of freedom — written df or occasionally d.f. — is one independent piece of information free to vary when you estimate a parameter from data. In a sample of n values, all n can vary freely; once you use that sample to estimate the mean, one piece of information is used up, leaving n − 1 degrees of freedom to estimate the variance or run a t-test. Other tests follow the same "observations minus estimated parameters" rule with their own counts.',
+  },
+  {
+    question: 'What Is the Difference Between a Test Statistic and a P-Value?',
+    answer: 'The test statistic is a number on the scale of its underlying distribution (t, z, F, or chi-square). The p-value converts that number into a probability — the chance of seeing a test statistic at least this extreme if the null hypothesis were true. A smaller p-value means stronger evidence against H0. Comparing |test statistic| to a critical value and comparing the p-value to α always produce the same decision; the p-value calculator above converts between them directly.',
+  },
+  {
+    question: 'Can a Test Statistic Be Negative?',
+    answer: 'Yes. A t-statistic or z-statistic is negative whenever the sample result falls below the value the null hypothesis predicts. In the worked example above, a sample mean of 352 mL below the claimed 355 mL produced t = −2.00. For a two-tailed test, only the absolute value matters; for a lower-tailed one-tailed test, a large negative value is exactly what triggers rejection.',
+  },
+  {
+    question: 'How Does the Test Statistic Formula Change for a Two-Sample T-Test?',
+    answer: 'For two independent groups with equal variances, t = (x̄₁ − x̄₂) / (sₚ × √(1/n₁ + 1/n₂)), with df = n₁ + n₂ − 2, where sₚ is the pooled standard deviation: sₚ = √( ((n₁ − 1)s₁² + (n₂ − 1)s₂²) / (n₁ + n₂ − 2) ), per NIST’s page on comparing two process means. The logic matches the one-sample case: divide the observed difference by its standard error, then compare against the t distribution table. The t-test calculator runs this formula directly from your two groups’ summary statistics.',
+  },
+  {
+    question: 'How Do You Find Degrees of Freedom for a Chi-Square Test?',
+    answer: 'For a chi-square goodness-of-fit test comparing observed counts across k categories to expected counts, df = k − 1 in the common case where only the category counts themselves are used, since those counts must sum to a fixed total; subtract one more degree of freedom for each additional distribution parameter estimated from the sample. For a chi-square test of independence on a contingency table, df = (rows − 1) × (columns − 1), since the row and column totals constrain how many cells can vary freely. The chi-square test guide works both formulas through fully solved examples.',
+  },
+  {
+    question: 'Why Does the T Distribution Table Converge to the Z-Table as Degrees of Freedom Increase?',
+    answer: 'The t-distribution has heavier tails than the standard normal because it accounts for the extra uncertainty of estimating the standard deviation from a sample instead of knowing it outright. As degrees of freedom grow, that estimate becomes more reliable, the extra uncertainty shrinks, and the t-distribution’s shape approaches the standard normal’s. By around df = 100, a t table’s critical values and a z-table’s critical values are nearly identical, which is why the bottom "infinity" row of most t tables matches the familiar z-scores of 1.645, 1.960, and 2.576.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('null-hypothesis')}>Null Hypothesis: Definition, Examples & How to State It</Link>
+- <Link to={routes.article('chi-square-distribution')}>Chi-Square Distribution: Shape, Table & Density</Link>
+- <Link to={routes.article('t-test-vs-z-test')}>T-Test vs Z-Test: How to Choose</Link>
+- <Link to={routes.calculator('p-value')}>P-Value Calculator</Link>
