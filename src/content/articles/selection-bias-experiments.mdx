@@ -1,0 +1,209 @@
+---
+title: "Selection Bias in Experiments: Causes & Fixes"
+h1: "Selection Bias in Experiments: How It Arises and How to Prevent It"
+description: "Selection bias in experiments explained: where it enters randomized studies, with worked examples and a checklist to detect and reduce it."
+category: experiments-causality
+primaryKeyword: selection bias in experiments
+keywords:
+  - selection bias in experiments
+  - selection bias example
+  - selection bias explained
+  - avoid selection bias
+  - selection bias vs sampling bias
+phase: 1
+related:
+  - blocking-vs-stratification
+  - synthetic-control-method
+  - instrumental-variables-explained
+draft: false
+pubDate: 2026-10-22
+updatedDate: 2026-10-22
+reviewedDate: 2026-10-22
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+Selection bias in an experiment means that the people, sites, or observations you analyze differ from the group you want to learn about, in a way that is tied to the treatment, the outcome, or their causes. Randomization removes much of this risk at the moment of assignment, but it does not remove all of it: who gets recruited, who can be reached, who drops out, and which sites volunteer can all reintroduce it. This guide explains where selection enters, shows concrete examples, and gives a checklist you can apply before, during, and after a study.
+
+<KeyTakeaways rows={[
+  { point: 'Name the target population first', details: "Selection bias is a gap between the sample you analyze and the population your conclusion is about — you can't judge whether a result is biased without naming that population." },
+  { point: 'Randomization needs concealment', details: 'Random assignment protects comparisons only when the allocation sequence is unpredictable and hidden from whoever enrolls participants.' },
+  { point: "Balance isn't proof of safety", details: "Volunteering, dropout, and site selection can distort a randomized experiment's internal comparison or its generalizability even when arm sizes look balanced." },
+  { point: 'Adjustment has limits', details: 'Regression and propensity-score adjustment remove bias only to the extent your covariates capture why people ended up in each group.' },
+  { point: 'Track the participant flow', details: 'Document who was eligible, invited, enrolled, randomized, retained, and analyzed, then compare those groups at every stage.' },
+]} />
+
+## What selection bias means in an experiment
+
+The National Cancer Institute [defines selection bias](https://www.cancer.gov/publications/dictionaries/cancer-terms/def/selection-bias) as an error in choosing the individuals or groups that take part in a study. That definition is a good starting point, but experiments need something sharper. A [2022 causal-inference framework](https://pmc.ncbi.nlm.nih.gov/articles/PMC9378569/) defines it as the difference between the true causal effect in a referent population and the effect you estimate after selection has happened. In plain terms: the answer you computed is not the answer to the question you asked, and the reason is who ended up in your data.
+
+That definition carries a practical lesson. Without naming both the population and the effect you care about, analysts can argue about whether a result is biased when they are actually targeting different quantities. A study of motivated volunteers may be perfectly valid for volunteers and still say little about everyone else. Whether that counts as bias depends entirely on the decision the result will inform.
+
+### Two kinds of selection problem
+
+The same framework separates two mechanisms, and the difference matters for what you can do about them:
+
+<DataTable
+  caption="Two mechanisms behind selection bias in an experiment"
+  headers={['Mechanism', 'What happens', 'Typical experiment example']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Conditioning on a collider (or its descendant)', 'Restricting the data to people selected by something influenced by both treatment and outcome creates a spurious association', "Analyzing only users who completed a survey that both the feature and the user's satisfaction influenced"],
+    ['Selection on an effect-measure modifier', 'The effect differs across subgroups, and the selected group over-represents some of them', 'A pilot run only with the most engaged customers, where the treatment works best'],
+  ]}
+/>
+
+The first can bias the comparison even inside your selected sample. The second may leave the comparison internally valid while the effect it estimates does not describe the broader population. A study can therefore be internally sound and still fail to answer the question a decision maker is asking. For graphical rules that tell the two apart, see this [American Journal of Epidemiology paper](https://academic.oup.com/aje/article/194/1/267/7696650) on selected-sample and general-population effects. Our guide to <Link to={routes.article('control-confounders')}>controlling confounders with DAGs</Link> shows how to draw the same logic as a diagram.
+
+## Where selection enters an experiment
+
+It helps to follow participants through the study, because bias can enter at each step.
+
+<Figure number={1} caption="Selection bias can enter at any of five stages between recruiting a participant and analyzing their data.">
+  <ProcessFlow
+    title="Where selection enters an experiment"
+    desc="A five-step pipeline from eligibility and recruitment through consent, assignment, retention, and analysis, with bias able to enter at every stage."
+    steps={[
+      { label: 'Eligibility & recruitment', detail: 'Who can see the invitation, who can reach the site, who has the time or transportation.' },
+      { label: 'Consent & participation', detail: 'People who opt in often differ from people who do not, in motivation, health, or attitude.' },
+      { label: 'Assignment', detail: 'If recruiters can predict the next assignment, they may steer certain people into certain arms.' },
+      { label: 'Retention & measurement', detail: 'People who drop out or cannot be measured are rarely a random subset.' },
+      { label: 'Analysis', detail: 'Excluding "non-compliers" or "incomplete cases" after the fact can quietly rebuild the problem randomization solved.' },
+    ]}
+  />
+</Figure>
+
+1. **Eligibility and recruitment.** Who can see the invitation, who can reach the site, who has the time or transportation. Recent [health-research guidance](https://pmc.ncbi.nlm.nih.gov/articles/PMC11192540/) stresses that access barriers, especially for marginalized groups, shape whose outcomes become visible at all.
+2. **Consent and participation.** People who opt in often differ from people who do not, in motivation, health, or attitude.
+3. **Assignment.** If recruiters can predict the next assignment, they may steer certain people into certain arms.
+4. **Retention and measurement.** People who drop out or cannot be measured are rarely a random subset.
+5. **Analysis.** Excluding "non-compliers" or "incomplete cases" after the fact can quietly rebuild the problem randomization solved. Our guide to <Link to={routes.article('intention-to-treat')}>intention to treat versus per-protocol analysis</Link> explains why this choice matters.
+
+## Selection bias examples in experiments
+
+### Volunteers versus the people you want to describe
+
+A [2013 laboratory study](https://ideas.repec.org/a/kap/expeco/v16y2013i3p372-382.html) of 1,173 students compared those who volunteered for lab experiments with those who did not. Overall, it found no significant difference in measured social and risk preferences. Yet participants who sent less in a trust game were more likely to take part. The lesson is not that volunteers are fine or that they are not. It is that selection can be specific to one behavior even when broad comparisons look reassuring. This was one student laboratory, so it should not be generalized to all volunteer samples.
+
+### Sites that opt in
+
+Randomizing within each site does not make the sites representative. An [NBER study](https://www.nber.org/system/files/working_papers/w18373/revisions/w18373.rev0.pdf) of 14 U.S. energy-conservation field experiments covering 550,000 households found that partner sites were selected on characteristics correlated with treatment effects. Results from participating sites were therefore not automatically representative of sites that never partnered. External validity, in other words, is a design question, not a free byproduct of randomization.
+
+### A product test on engaged users only
+
+Consider a hypothetical team testing a new onboarding flow. To save engineering time, they roll it out only to users who opened the app at least three times last week, then randomize within that group. The comparison between arms is clean. But the estimate applies to already engaged users, and if the flow helps casual users more or less, the company's rollout decision will rest on the wrong number. This is the effect-measure-modifier problem in everyday form.
+
+### A model trained on the people who bought
+
+In machine learning, the pattern is the same. [Google's machine-learning guidance](https://developers.google.com/machine-learning/crash-course/fairness/types-of-bias) describes selection bias as training examples chosen in a way that does not reflect the real-world distribution, including coverage bias, participation bias, and nonrandom sampling. Its example is a sales model trained only on customers who bought the product, which excludes people who chose competitors. If you evaluate such a model with a random train-test split, the test set carries the same distortion, so the score looks good and means little. See our <Link to={routes.categoryHub('machine-learning-statistics')}>machine learning statistics hub</Link> for how to evaluate models against the deployment population.
+
+## Why randomization is necessary but not sufficient
+
+Random assignment balances groups on average, on both measured and unmeasured traits. That protection depends on implementation. Cochrane's [handbook chapter on sources of bias](https://training.cochrane.org/handbook/archive/v5.1/chapter_8/8_4-introduction-to-sources-of-bias-in-clinical-trials.htm) explains that chance assignment prevents systematic baseline differences only when the sequence is unpredictable and protected from foreknowledge.
+
+This is why allocation concealment is a separate safeguard from generating the random sequence. A [methodological paper on detecting selection bias in randomized trials](https://www.sciencedirect.com/science/article/abs/pii/S0197245699000148) gives the mechanism: if the next assignment is known, patients more likely to respond may be enrolled only when the active treatment is next. The sequence is random, yet the groups are not comparable.
+
+A caution on the evidence itself: a Cochrane review compared random with non-random allocation and adequate with unclear concealment across 18 studies, but rated all of them at high risk of bias, so the size of these effects should be read cautiously. The mechanism is well understood; the exact magnitude is not settled.
+
+For a fuller treatment of design, see our <Link to={routes.article('randomized-controlled-trial')}>randomized controlled trial guide</Link>.
+
+## Attrition: balanced is not the same as harmless
+
+A common reassurance is that dropout rates are similar in both arms. It is weaker than it sounds. [Research on survey nonresponse and attrition](https://eml.berkeley.edu/%7Ejmccrary/DMS_v9.pdf) shows that loss to follow-up can be related to potential outcomes even when the percentages match. Imagine a weight-loss program where 20% leave each arm. In the treatment arm, those who leave might be people for whom it is not working; in the control arm, those who leave might be people who found another program. Equal percentages, different kinds of people.
+
+<DataTable
+  caption="Equal attrition rates, different kinds of leavers"
+  headers={['Study arm', 'Attrition rate', 'Who tends to leave']}
+  align={['left', 'center', 'left']}
+  rows={[
+    ['Treatment', '20%', 'People for whom the program is not working'],
+    ['Control', '20%', 'People who found another program'],
+  ]}
+/>
+
+If you must analyze only observed cases, ask how the estimate would change under plausible assumptions about the people you lost, and, where possible, track a random subsample of dropouts more intensively.
+
+## What to do when you cannot randomize
+
+Sometimes assignment is chosen by participants, managers, or circumstance. Adjustment can help, but it is not a universal repair.
+
+A [randomized experiment comparing random and participant-chosen assignment](https://doi.org/10.1198/016214508000000733) offers useful evidence. Ordinary regression reduced bias by 84 to 94% relative to the randomized benchmark, and propensity-score methods reduced it by about 58 to 96%, depending on outcome and method. These are results from one study, not guarantees. The same study found propensity scores performed poorly when built from a narrow convenience set of predictors instead of broader predictors of assignment.
+
+The working question is therefore not whether you adjusted. It is whether your covariates capture the reasons people selected one condition rather than another. Age and sex alone rarely do. Our step-by-step <Link to={routes.article('propensity-score-matching')}>propensity score matching guide</Link> walks through building and checking a score, and the <Link to={routes.article('regression-discontinuity-design')}>regression discontinuity</Link> and <Link to={routes.article('synthetic-control-method')}>synthetic control</Link> guides cover designs that exploit a rule or a comparison unit instead of relying only on measured covariates.
+
+## A practical checklist for avoiding selection bias
+
+These steps follow the investigation approach recommended in recent [health-research guidance](https://pmc.ncbi.nlm.nih.gov/articles/PMC11192540/), adapted for any experiment.
+
+<Checklist
+  id="selection-bias-checklist"
+  title="A practical checklist for avoiding selection bias"
+  style="numbered"
+  items={[
+    { text: 'Name the target population and the effect.', detail: 'Write one sentence: "We want the average effect of X on Y among Z."' },
+    { text: 'Build a flow table.', detail: 'Count who was eligible, invited, enrolled, randomized, retained, and analyzed. Large drops between stages are where to look.' },
+    { text: 'Conceal allocation.', detail: 'Use an unpredictable sequence and keep upcoming assignments hidden from whoever enrolls participants, until enrollment is done.' },
+    { text: 'Compare baseline characteristics.', detail: 'Check arms against each other, and enrolled participants against the eligible population where data exist.' },
+    { text: 'Compare responders and nonresponders.', detail: 'Report response rates and, if possible, what you know about those who did not respond.' },
+    { text: 'Analyze as assigned.', detail: 'Preserve the randomized comparison, and treat exclusions as a deliberate, justified choice.' },
+    { text: 'Stress-test attrition.', detail: 'Ask how large the effect of the missing people would have to be to change your conclusion.' },
+    { text: 'State the limits.', detail: 'If your sample is volunteers, one region, or engaged users, say the result applies to them.' },
+  ]}
+/>
+
+For sampling choices that shape the first steps, see our overview of <Link to={routes.article('sampling-methods')}>probability and non-probability sampling</Link>. For a broader catalog, our <Link to={routes.article('types-of-bias-in-statistics')}>guide to 12 types of bias in statistics</Link> places selection bias beside its relatives.
+
+## Our perspective
+
+We see the same mistake in student projects, business dashboards, and published papers: a clean comparison is mistaken for a clean answer. Randomization earns its reputation, and we explain it at length in our <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> section, but it addresses one question, whether the groups are comparable at assignment. It says nothing about whether the sample resembles the population you will act on, or whether the people measured at the end are the people who started.
+
+Our advice is to treat selection as a design problem and a reporting problem together. Decide the target population first. Write down the flow of participants. Be willing to say "this applies to people like those we studied" rather than stretching a result. Readers trust a modest, precisely scoped claim more than a broad one that quietly depends on who showed up.
+
+## Put it into practice
+
+If you want to move from concepts to calculations, our <Link to={routes.learnLanding()}>Learn Statistics</Link> guides explain the underlying ideas in plain English, and our <Link to={routes.calculatorsHub()}>calculators</Link> let you check numbers such as group differences with a <Link to={routes.calculator('chi-square')}>chi-square calculator</Link>. The <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> collects worked examples that connect these ideas to real decisions.
+
+## Sources
+
+<Sources items={[
+  { text: 'Toward a clearer definition of selection bias when estimating causal effects', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9378569/', org: 'PMC' },
+  { text: 'Definition of selection bias, NCI Dictionary of Cancer Terms', href: 'https://www.cancer.gov/publications/dictionaries/cancer-terms/def/selection-bias', org: 'National Cancer Institute' },
+  { text: 'Simple graphical rules for assessing selection bias in general-population and selected-sample treatment effects', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11735978/', org: 'American Journal of Epidemiology / PMC' },
+  { text: 'Is there selection bias in laboratory experiments?', href: 'https://ideas.repec.org/a/kap/expeco/v16y2013i3p372-382.html', org: 'Experimental Economics' },
+  { text: 'NBER working paper w18373 on site selection in field experiments', href: 'https://www.nber.org/system/files/working_papers/w18373/revisions/w18373.rev0.pdf', org: 'National Bureau of Economic Research' },
+  { text: 'Google machine learning crash course: types of bias', href: 'https://developers.google.com/machine-learning/crash-course/fairness/types-of-bias', org: 'Google' },
+  { text: 'Cochrane Handbook: assessing risk of bias in a randomized trial', href: 'https://training.cochrane.org/handbook/current/chapter-08', org: 'Cochrane' },
+  { text: 'CONSORT 2010 Explanation and Elaboration: allocation concealment and selection bias', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2844943/', org: 'PMC' },
+  { text: 'Survey nonresponse and attrition methods', href: 'https://eml.berkeley.edu/%7Ejmccrary/DMS_v9.pdf', org: 'UC Berkeley' },
+  { text: 'Causal Inference: What If (selection bias and adjustment)', href: 'https://miguelhernan.org/s/hernanrobins_WhatIf_19aug26.pdf', org: 'Hernán & Robins' },
+  { text: 'Health-research guidance on addressing selection bias', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11192540/', org: 'PMC' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Can selection bias happen in a randomized controlled trial?',
+    answer: 'Yes. If past or upcoming assignments are predictable, recruiters can steer participants, and differential dropout can unbalance the groups after randomization. Randomization with concealed allocation and careful follow-up greatly reduces the risk but does not remove it on its own.',
+  },
+  {
+    question: 'What is the difference between selection bias and sampling bias?',
+    answer: 'The terms overlap, and usage varies by field. Sampling bias usually refers to how a sample was drawn from a population, while selection bias is the broader idea that the analyzed group differs from the target in a way tied to treatment or outcome, including through dropout and exclusions.',
+  },
+  {
+    question: 'How do I check whether volunteers differ from non-volunteers?',
+    answer: 'Compare baseline characteristics and response rates for those who enrolled against the eligible population wherever you have data. A broad comparison can look reassuring while hiding a specific difference, as a 2013 student laboratory study found with trust-game behavior.',
+  },
+  {
+    question: 'Does adjusting for covariates fix selection bias?',
+    answer: 'Only to the extent that the covariates capture why people ended up in each group. In one randomized benchmark study, adjustment cut bias substantially but varied by outcome and specification, and narrow predictor sets performed poorly. Treat adjustment as a partial remedy that needs justification, not a guarantee.',
+  },
+]} />
