@@ -19,7 +19,7 @@ order,slug,lane,status,attempts,score,date,notes
 18,fundamental-statistics,B,pending,0,,,
 19,test-statistic,A,published,1,88,2026-10-22,R2 fail: df table row misdefines chi-square c as 'the mean itself' (NIST: c = estimated params + 1); one-line fix
 20,t-test,B,pending,0,,,
-21,parameter-vs-statistic,A,pending,0,,,
+21,parameter-vs-statistic,A,published,0,92,2026-10-23,
 22,how-to-find-the-mean,B,pending,0,,,
 23,standard-deviation-excel,A,pending,0,,,
 24,what-is-an-average,B,pending,0,,,
