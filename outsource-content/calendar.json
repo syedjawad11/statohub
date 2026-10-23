@@ -433,6 +433,13 @@
       "title": "Selection Bias in Experiments",
       "slug": "selection-bias-experiments",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 63,
+      "day_label": "2026-10-21",
+      "title": "Time Series Split",
+      "slug": "time-series-split",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }

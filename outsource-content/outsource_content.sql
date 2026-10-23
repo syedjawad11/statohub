@@ -79,6 +79,7 @@ INSERT INTO "outsource_articles" VALUES('blocking-vs-stratification','Blocking v
 INSERT INTO "outsource_articles" VALUES('cointegration-test','Cointegration Test','time-series-forecasting',60,'2026-10-16','980627','published','outsource-content/raw/cointegration-test.json','src/content/articles/cointegration-test.mdx',1,1,0,7,'','2026-10-20 09:15:08','2026-10-20 09:28:33');
 INSERT INTO "outsource_articles" VALUES('box-plot-vs-violin','Box Plot vs Violin Plot','data-analysis',61,'2026-10-20','988471','published','outsource-content/raw/box-plot-vs-violin.json','src/content/articles/box-plot-vs-violin.mdx',2,1,0,8,'','2026-10-21 09:15:54','2026-10-21 09:27:14');
 INSERT INTO "outsource_articles" VALUES('selection-bias-experiments','Selection Bias in Experiments','experiments-causality',62,'2026-10-19','984776','published','outsource-content/raw/selection-bias-experiments.json','src/content/articles/selection-bias-experiments.mdx',2,1,0,11,'','2026-10-22 09:16:01','2026-10-22 09:37:42');
+INSERT INTO "outsource_articles" VALUES('time-series-split','Time Series Split','time-series-forecasting',63,'2026-10-21','994496','fetched','outsource-content/raw/time-series-split.json',NULL,0,0,0,NULL,'','2026-10-23 09:15:11','2026-10-23 09:15:24');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,
