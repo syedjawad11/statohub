@@ -1,0 +1,258 @@
+---
+title: "Time Series Split: Avoiding Data Leakage"
+h1: "Time Series Split: How to Divide Data Without Leakage"
+description: "A time series split divides data by date, not at random. Learn how to size the test window and run expanding or sliding folds without leaking the future."
+category: time-series-forecasting
+primaryKeyword: time series split
+keywords:
+  - time series split
+  - train test split time series
+  - time series split example
+phase: 1
+related:
+  - cointegration-test
+  - autocorrelation-interpretation
+  - seasonal-decomposition
+draft: false
+pubDate: 2026-10-23
+updatedDate: 2026-10-23
+reviewedDate: 2026-10-23
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A time series split divides observations by date instead of at random: everything before a cutoff trains the model, and everything after it tests the model. The order matters because a forecast only ever uses the past to predict the future, and an evaluation that lets the model see later observations will report accuracy that disappears the day the model goes live. This guide covers the single cutoff split, the repeated version that scikit-learn calls `TimeSeriesSplit`, how to size the test window, and the mistakes that quietly invalidate results.
+
+<KeyTakeaways rows={[
+  { point: 'Split by date, not at random', details: 'Everything before the cutoff trains the model; everything after it tests the model, with no shuffling.' },
+  { point: 'Size the test window deliberately', details: 'It should be at least as long as the forecast horizon and long enough to contain a full seasonal cycle.' },
+  { point: 'One cutoff gives one number', details: 'Repeated expanding or sliding folds (TimeSeriesSplit) give a more stable estimate of error across periods.' },
+  { point: 'Leakage usually happens before the split', details: 'Scaling, imputing, or detrending on the full dataset leaks future information even when the split itself is correct.' },
+]} />
+
+## Why random splits fail on time series
+
+In a standard machine learning task, rows are assumed to be roughly independent, so shuffling them before a split produces a representative sample. Time series observations are not independent. Today's value depends on yesterday's, and the structure you want the model to learn (trend, seasonality, autocorrelation) lives in the order of the rows.
+
+Shuffle that data and two things go wrong. First, the test set contains points that sit between training points, so the model can effectively interpolate rather than forecast. Second, features built from neighbors, such as lagged values or rolling averages, carry information from the test period into training. The [practitioner guidance on splitting time series](https://apxml.com/courses/time-series-analysis-forecasting/chapter-6-model-evaluation-selection/train-test-split-time-series) lists leakage as the central problem with random splitting, and the result is a silent error: the metrics look excellent, and the model fails in production.
+
+The goal of any time-based split is to rehearse the real situation. At the cutoff date, you know only the past, and you must predict what has not happened yet. If you want a refresher on what makes time series data different, our guide to <Link to={routes.article('autocorrelation-interpretation')}>autocorrelation</Link> explains why neighboring observations are related and why that breaks the independence assumption behind shuffling.
+
+<Figure number={1} caption="What goes wrong under a random split versus what a time-based split does instead, read left to right.">
+  <DataTable
+    headers={['Random split', 'Time-based split']}
+    align={['left', 'left']}
+    rows={[
+      ['Test points sit between training points', 'Trains only on data from before the cutoff'],
+      ['Lagged or rolling features leak test-period info into training', 'Tests only on data from after the cutoff'],
+      ['Metrics look excellent, then fail in production', 'Rehearses the real forecasting situation'],
+    ]}
+  />
+</Figure>
+
+## The simplest version: one chronological cutoff
+
+The standard method is to choose a point in time. All data before it becomes the training set, and all data after it becomes the test set, [as described in the Educative course on time series](https://educative.io/courses/an-introduction-to-time-series/splitting-time-series-data). No shuffling, no stratification.
+
+Suppose you have 72 months of retail sales, January 2020 through December 2025. A cutoff at January 2025 gives you 60 months to train on and 12 months to test on. You fit the model on the 60 months, forecast the next 12, and compare those forecasts with what actually happened.
+
+In pandas this is a slice by position or date:
+
+```python
+train = df.loc[:"2024-12-31"]
+test = df.loc["2025-01-01":]
+```
+
+<Figure number={2} caption="A single chronological cutoff applied to 72 months of retail sales: 60 months train, 12 months test.">
+  <ProcessFlow
+    title="Chronological split timeline"
+    desc="A three-point timeline from January 2020 to December 2025, marking where training begins, where the January 2025 cutoff falls after 60 months of training data, and where the 12-month test window ends in December 2025."
+    steps={[
+      { label: 'Jan 2020', detail: 'Training begins' },
+      { label: 'Jan 2025', detail: 'Cutoff — 60 months trained' },
+      { label: 'Dec 2025', detail: '12-month test window ends' },
+    ]}
+  />
+</Figure>
+
+This is the right first step when you need a fast, interpretable check, or when the series is short and the model is expensive to fit. Its weakness is that you get one error number from one period. If that single test year was unusual (a promotion, a supply shock, a holiday shift), the number tells you about that year, not about the model.
+
+## How big should the test set be?
+
+There is no single correct ratio. [Common splits range from 70/30 to 90/10](https://apxml.com/courses/time-series-analysis-forecasting/chapter-6-model-evaluation-selection/train-test-split-time-series), depending on how much data you have and how far ahead you need to forecast. Two constraints matter more than the percentage.
+
+### Match the forecast horizon
+
+If the business needs a 12-month forecast, the test set must cover at least 12 months. A 3-month test window cannot tell you how the model behaves in month 9, where errors usually grow. Experienced analysts size the test window by the decision it supports, not by the row count.
+
+### Cover a full seasonal cycle
+
+If your data is monthly and has a yearly pattern, a test set shorter than a year may never contain the months where the model is most likely to fail. [A test set that omits a full seasonal cycle](https://apxml.com/courses/time-series-analysis-forecasting/chapter-6-model-evaluation-selection/train-test-split-time-series) may not reveal whether the model learned seasonality at all. A test window made only of January to March, for example, would reward a model that ignored the December peak. If you are unsure what seasonal structure your series has, a <Link to={routes.article('seasonal-decomposition')}>seasonal decomposition</Link> will show it before you choose a cutoff.
+
+The same logic applies to weekly patterns in daily data: test on at least a few full weeks. For a practical look at how planners think about representative test windows when demand has strong seasonal swings, this piece on [lane-level demand forecasting for logistics](https://sentientconcepts.com/post/demand-forecasting-logistics) is a useful applied reference.
+
+### A quick sizing table
+
+<DataTable
+  caption="Suggested test window by situation"
+  headers={['Situation', 'Suggested test window', 'Reason']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Monthly data, 12-month forecast needed', '12 months or more', 'Covers the horizon and one seasonal cycle'],
+    ['Daily data, weekly seasonality, 14-day forecast', '14 days, ideally 4 weeks or more', 'Covers the horizon and repeated weekdays'],
+    ['Only 3 years of monthly data', '12 months, accept a short training set', 'Seasonality must be testable'],
+    ['Long history, stable process', '10 to 20 percent from the end', 'Standard holdout works well'],
+  ]}
+/>
+
+These are starting points to adapt, not fixed rules. If the training set becomes too short for the model to learn the seasonal pattern, you need more data or a simpler model, not a smaller test set.
+
+## Repeating the split: time series cross-validation
+
+One cutoff gives one estimate. To get several, you repeat the split at different points in time. The approach is often called rolling-origin evaluation or time series cross-validation, and tools such as [scikit-learn's TimeSeriesSplit](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html) and [MATLAB's tspartition](https://www.mathworks.com/help/stats/tspartition.html) implement it.
+
+There are two common window designs:
+
+- **Expanding window:** the training set grows with each fold. Fold 1 trains on the first block, fold 2 on the first block plus the next, and so on. This is how `TimeSeriesSplit` behaves by default.
+- **Sliding window:** the training set keeps a fixed length and moves forward. This suits series where old behavior becomes irrelevant, such as after a structural change in the business.
+
+The test blocks always come after the training data and never overlap with it. Unlike <Link to={routes.article('k-fold-cross-validation')}>K-fold cross-validation</Link>, where folds are independent and the order of training and testing is arbitrary, each training set here is a superset of the one before, because every fold adds the previous test block to the training data. The procedure is deterministic by design, since the point is to simulate a model being updated as new data arrives.
+
+### A worked example with 60 observations
+
+Take 60 monthly observations and five splits. With scikit-learn's defaults, the test block size is the number of samples divided by the number of splits plus one, so each test block holds 10 observations:
+
+<DataTable
+  caption="Five expanding-window folds over 60 monthly observations"
+  headers={['Fold', 'Training observations', 'Test observations']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['1', '1 to 10', '11 to 20'],
+    ['2', '1 to 20', '21 to 30'],
+    ['3', '1 to 30', '31 to 40'],
+    ['4', '1 to 40', '41 to 50'],
+    ['5', '1 to 50', '51 to 60'],
+  ]}
+/>
+
+Notice that the first fold trains on only 10 months. That model has never seen a full seasonal cycle twice, so its error will probably be worse than the later folds. This is useful information, not noise: it shows how much history the model needs before it performs reliably. Averaging all five errors blindly would hide this, so look at the error fold by fold, and consider whether the early folds belong in your headline number.
+
+### Code that does it
+
+```python
+from sklearn.model_selection import TimeSeriesSplit
+
+tscv = TimeSeriesSplit(n_splits=5, test_size=12, gap=0)
+for fold, (train_idx, test_idx) in enumerate(tscv.split(X)):
+    model.fit(X.iloc[train_idx], y.iloc[train_idx])
+    preds = model.predict(X.iloc[test_idx])
+    # score preds against y.iloc[test_idx]
+```
+
+The signature of the splitter includes `n_splits`, `max_train_size`, `test_size` and `gap`, per the [scikit-learn documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html). Each does something specific:
+
+- `test_size` fixes the length of each test block, which lets you match it to your forecast horizon (12 for a 12-month forecast).
+- `max_train_size` caps the training window, turning the expanding design into a sliding one.
+- `gap` leaves a number of observations between train and test, which helps when your features use lags or rolling windows that would otherwise reach across the boundary, or when you must forecast further ahead than one step.
+
+For a longer treatment of choosing between these designs and scoring the folds, see our <Link to={routes.article('cross-validation-time-series')}>time series cross-validation guide</Link>.
+
+## Mistakes that quietly ruin a split
+
+Most leakage in time series work is not caused by shuffling. It comes from steps that happen before the split.
+
+<Checklist
+  id="split-leakage-checks"
+  title="Checks that catch silent leakage"
+  style="check"
+  items={[
+    { text: 'Scaling or imputing fit on the training window only', detail: 'A mean or standard deviation computed over all rows includes the future. Fit scalers, imputers, and encoders on the training window, then apply them to the test window. A pipeline run inside each fold makes this automatic.' },
+    { text: 'Rolling features use trailing windows only', detail: 'A 7-day moving average computed before splitting lets the first test rows borrow from the last training rows, which is legitimate, but a centered window borrows from rows ahead, which is not.' },
+    { text: 'Differencing or detrending fit per window, not on the full series', detail: 'Transformations that estimate parameters from the whole series leak. Apply transforms in a way that can be reproduced on new data.' },
+    { text: 'Hyperparameters tuned before the final holdout is touched', detail: 'If you adjust hyperparameters after seeing test error, the test set has become a validation set. Keep a final period untouched, or use the repeated folds for tuning and a last holdout for the final check.' },
+    { text: 'Regime changes called out explicitly', detail: 'If a pricing change or a pandemic splits your history into regimes, a single test window may sit entirely in one regime. Say so in the write-up rather than presenting the number as a general property of the model.' },
+    { text: 'Grouped series checked for shared events across groups', detail: 'If you forecast many stores or products, splitting by time within each group is not always enough, because a shared event can reach across groups.' },
+  ]}
+/>
+
+Extensions that split by group and time exist, for example in [sktime's splitters](https://www.sktime.net/docs/api-reference/split/). Our broader <Link to={routes.article('train-test-split')}>train test split checklist</Link> covers general leakage patterns that also apply outside forecasting.
+
+## Perspective: what we look for when we review a split
+
+When we read a forecasting analysis, we check the split before we look at the metric. A very good accuracy score on a time series is more often a signal to look for leakage than a reason to celebrate, because the failure is silent: nothing errors, the numbers are simply too kind.
+
+We also think the discussion of ratios distracts beginners. Asking whether 80/20 is correct matters less than asking what decision the forecast supports, how far ahead it must see, and whether the test window contains the hardest part of the calendar. A 70/30 split that covers two seasonal peaks is more informative than a 90/10 split that covers none.
+
+Finally, report the error per fold or per horizon step, not only the average. An average of five folds hides a model that is fine in 2025 and poor in its early history, and that difference is what a decision-maker needs to know. Pair the split with an honest metric choice; our guide to <Link to={routes.article('forecast-accuracy-metrics')}>forecast accuracy metrics</Link> explains when MAE, RMSE and MAPE each mislead.
+
+<Callout variant="tip" title="Pro tip">
+Before trusting a strong result, re-run the same split with the early, hardest-to-forecast period isolated as its own fold. A model that only looks good once it has years of history behind it will not look good in its first live year either.
+</Callout>
+
+## Putting it into practice
+
+A reliable workflow for a new forecasting problem looks like this:
+
+<Checklist
+  id="split-workflow"
+  title="A reliable split workflow"
+  style="numbered"
+  items={[
+    { text: 'Plot the series first', detail: 'Note trend, seasonality, and any breaks. Exploratory analysis prevents surprises later.' },
+    { text: 'Decide the forecast horizon', detail: 'Set the test window to at least that length and at least one full seasonal cycle.' },
+    { text: 'Set aside the final holdout', detail: 'Do not touch it while building the model.' },
+    { text: 'Use expanding or sliding folds on the earlier data', detail: 'Set test_size to the horizon, and add a gap if your features or forecast steps require it.' },
+    { text: 'Build all preprocessing inside each training fold', detail: 'Scaling, imputing, and feature selection are fit on the training window only, every time.' },
+    { text: 'Score each fold and inspect the spread', detail: 'Only then evaluate once on the final holdout.' },
+    { text: 'Refit on all available data', detail: 'Do this before producing the forecasts you actually ship.' },
+  ]}
+/>
+
+If you want to understand the modeling side, our overview of <Link to={routes.categoryHub('time-series-forecasting')}>forecasting and time series</Link> shows how models and accuracy fit together, and the <Link to={routes.article('holt-winters')}>Holt-Winters guide</Link> is a good first model to evaluate with the splits above. If you are newer to the topic and want a general introduction to turning analysis into something others can act on, a short resource on [data storytelling skills for analysts](https://anylearns.ai/blog/data-storytelling-skills) can help you present these results.
+
+## Learn it, calculate it, apply it
+
+Statohub is built around a simple path: understand the concept, run the numbers, then use it on a real problem. If you want to strengthen the foundations behind the splits in this article, start with our <Link to={routes.learnLanding()}>Learn Statistics section</Link>, try the <Link to={routes.calculatorsHub()}>statistical calculators</Link>, and explore more worked problems in our <Link to={routes.appliedLanding()}>Applied Statistics hub</Link>.
+
+Related reading: <Link to={routes.article('train-test-split')}>Train Test Split: A Data Leakage Checklist</Link>, <Link to={routes.article('cross-validation-time-series')}>Time Series Cross Validation: A Practical Guide</Link>, <Link to={routes.article('interrupted-time-series')}>Interrupted Time Series Analysis Guide</Link>, and our <Link to={routes.categoryHub('time-series-forecasting')}>Forecasting & Time Series</Link> overview.
+
+## Sources
+
+<Sources items={[
+  { text: 'How to Properly Split Time Series Data for Modeling', href: 'https://educative.io/courses/an-introduction-to-time-series/splitting-time-series-data', org: 'Educative' },
+  { text: 'Train-Test Split Strategies for Time Series Data', href: 'https://apxml.com/courses/time-series-analysis-forecasting/chapter-6-model-evaluation-selection/train-test-split-time-series', org: 'ApX Machine Learning' },
+  { text: 'TimeSeriesSplit — scikit-learn documentation', href: 'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html', org: 'scikit-learn' },
+  { text: 'Splitters — sktime documentation', href: 'https://www.sktime.net/docs/api-reference/split/', org: 'sktime' },
+  { text: 'Cross-validation (statistics)', href: 'https://en.wikipedia.org/wiki/Cross-validation_(statistics)', org: 'Wikipedia' },
+  { text: '5.10 Time series cross-validation — Forecasting: Principles and Practice (3rd ed)', href: 'https://otexts.com/fpptr/tscv.html', org: 'Hyndman & Athanasopoulos' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'How do you split time series data into train and test sets?',
+    answer: 'Pick a cutoff date, train on everything before it and test on everything after it, keeping the original order. Size the test window to your forecast horizon and make sure it covers a full seasonal cycle. Do not shuffle, and fit any preprocessing on the training portion only.',
+  },
+  {
+    question: 'Why not use an 80/20 split?',
+    answer: 'An 80/20 split is a reasonable default, and ratios from 70/30 to 90/10 are common, but the percentage is not the point. What matters is that the test window is as long as the horizon you must forecast and contains the seasonal pattern. With a short series, 80/20 may leave a test set too brief to be informative.',
+  },
+  {
+    question: 'What is the difference between TimeSeriesSplit and K-fold?',
+    answer: 'K-fold creates independent folds and can train on data from after the test fold. TimeSeriesSplit always tests on data that comes after the training data, and each training set contains the previous one plus the last test block. That makes it suitable for forecasting, where the order of events matters.',
+  },
+  {
+    question: 'What does the gap parameter do?',
+    answer: 'The gap parameter leaves a number of observations unused between the end of training and the start of testing. It is useful when features use lags or rolling windows that would otherwise connect the two sets, or when you want to evaluate forecasts several steps ahead rather than the next point.',
+  },
+]} />

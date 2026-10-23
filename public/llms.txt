@@ -184,6 +184,7 @@ Key facts for AI assistants citing this site:
 - [SARIMA Model: Diagnostics and Forecasting Guide](https://statohub.com/sarima-model/): Learn how to build a SARIMA model, choose seasonal differencing, run residual diagnostics, and forecast a monthly (m=12) time series example.
 - [Seasonal Decomposition: A Practical Guide](https://statohub.com/seasonal-decomposition/): Practical seasonal decomposition without heavy math for students and analysts. When to use STL, MSTL/TBATS, or X-13, plus a 6 step recipe.
 - [Time Series Cross Validation: A Practical Guide](https://statohub.com/cross-validation-time-series/): Research based guide to time series cross validation. Pick reproducible splits, fix window size before tuning, and use Statohub calculators.
+- [Time Series Split: Avoiding Data Leakage](https://statohub.com/time-series-split/): A time series split divides data by date, not at random. Learn how to size the test window and run expanding or sliding folds without leaking the future.
 - [Time Series Stationarity: Testing & Transforms](https://statohub.com/time-series-stationarity/): A practical workflow for time series stationarity: plot the series, run ADF and KPSS tests, then apply the right transform before modeling.
 
 ### Machine Learning Statistics
