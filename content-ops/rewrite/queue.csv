@@ -16,7 +16,7 @@ order,slug,lane,status,attempts,score,date,notes
 15,probability-formula,A,published,1,90,2026-10-19,"round2 CHANGES_REQUESTED: FAQ for 'probability when outcomes not equally likely' dropped, and Bayes P(A|B) formula dropped; score 66/100; parked draft in drafts/"
 16,skewed-distribution,B,published,0,90,2026-10-22,
 17,mean-median-mode-range,A,published,0,90,2026-10-20,
-18,fundamental-statistics,B,pending,0,,,
+18,fundamental-statistics,B,changes_requested,1,,2026-10-23,n-1 mechanism clause misattributed to OpenStax 2.7 (source says only 'better estimate'); cut clause or cite a source for it
 19,test-statistic,A,published,1,88,2026-10-22,R2 fail: df table row misdefines chi-square c as 'the mean itself' (NIST: c = estimated params + 1); one-line fix
 20,t-test,B,pending,0,,,
 21,parameter-vs-statistic,A,published,0,92,2026-10-23,
