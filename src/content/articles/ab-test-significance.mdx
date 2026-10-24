@@ -1,0 +1,247 @@
+---
+title: "A/B Test Significance: How to Read Results"
+h1: "A/B Test Significance: How to Read Your Results"
+description: "Learn how to judge A/B test significance: p-values, confidence intervals, effect size and common traps, with a worked conversion-rate example you can follow."
+category: experiments-causality
+primaryKeyword: a/b test significance
+phase: 1
+keywords:
+  - a/b test significance
+  - ab test p-value
+  - confidence interval
+  - effect size
+related:
+  - selection-bias-experiments
+  - blocking-vs-stratification
+  - instrumental-variables-explained
+draft: false
+pubDate: 2026-10-24
+updatedDate: 2026-10-24
+reviewedDate: 2026-10-24
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+An A/B test result is statistically significant when the difference between control and variant is larger than random variation would plausibly produce if the change did nothing. In practice, you pick a threshold in advance (the significance level, usually 0.05), calculate a p-value, and compare the two. That comparison answers only one question, though. Whether the lift is large enough to matter, and whether the test was designed well enough to trust, are separate questions, and this guide covers all three.
+
+<KeyTakeaways rows={[
+  { point: 'What significance means', details: 'A p-value below your preset alpha counts as evidence against "no difference" — it is not a 95% chance the variant is better.' },
+  { point: 'Match the test to the metric', details: 'Conversion rates use a two-proportion z-test; averages like revenue per user usually need a t-test allowing unequal variances.' },
+  { point: 'Report lift alongside the p-value', details: 'Pair the confidence interval and the percentage-point lift with the p-value — a significant result can still be commercially trivial.' },
+  { point: 'Lock the design before launch', details: 'Fix the metric, sample size, and stopping rule in advance; peeking or testing many variants inflates false positives.' },
+  { point: 'Significance assumes clean design', details: 'A causal read only holds when users were randomly assigned and the experiment was designed cleanly.' },
+]} />
+
+## What significance means in an A/B test
+
+Start with the logic of the test, because every dashboard label rests on it. You assume a null hypothesis: the variant and the control have the same true conversion rate. You then ask how surprising your observed data would be under that assumption. Optimizely's documentation describes this as [measuring how unusual your results would be if there were no difference between variation and baseline](https://docs.optimizely.com/experimentation-strategy/docs/statistical-significance), with any lift attributable to chance alone.
+
+Two terms are worth fixing now:
+
+- **Significance level (alpha):** the false-positive rate you are willing to accept, chosen before the test. Alpha of 0.05 means that if the change truly does nothing, you would still declare a winner about 1 time in 20.
+- **P-value:** the probability of seeing a difference at least as large as yours, assuming the null hypothesis is true. Our guide to the <Link to={routes.article('p-value')}>p-value</Link> goes deeper on how it is calculated.
+
+When the p-value falls below alpha, you reject the null hypothesis and call the result statistically significant. Firebase's A/B testing documentation, for example, [uses 0.05 as its significance threshold](https://firebase.google.com/docs/ab-testing/ab-concepts). Note the careful wording: a p-value below 0.05 is evidence against the no-difference assumption. It does not mean there is a 95% probability that variant B is better, and it does not measure how much better B is.
+
+### What the "95% significance" label really claims
+
+Many tools display "95% significance" or "95% confidence." That figure is usually 1 minus the p-value, which tempts readers to treat it as the probability that the variant wins. It is not. It is a restatement of the p-value under the no-effect assumption. A review of online experimentation methods, [Statistical Challenges in Online Controlled Experiments](https://arxiv.org/html/2212.11366v5), warns that p-value misinterpretation and problematic testing practices can raise false-positive rates, which is why a green "significant" badge cannot replace sound design and analysis.
+
+## Choosing the right test for your metric
+
+The test must match the type of outcome you measure. The exact choice depends on the metric and the experimental design, but two cases cover most work:
+
+<DataTable
+  caption="Matching the significance test to your metric type"
+  headers={['Metric type', 'Example', 'Typical test']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Binary (converted or not)', 'Signup rate, click-through rate', 'Two-proportion z-test'],
+    ['Continuous', 'Revenue per user, session length', 't-test allowing unequal variances'],
+    ['Counts or ratios with dependence', 'Page views per user, repeat purchases', 'Methods that account for repeated observations; consult a statistician'],
+  ]}
+/>
+
+The [Firebase documentation](https://firebase.google.com/docs/ab-testing/ab-concepts) notes that conversion data is commonly analyzed with a two-proportion z-test, while continuous outcomes may call for an unequal-variance t-test. The rest of this guide uses the conversion-rate case because it is the most common.
+
+## A worked example: from raw counts to a decision
+
+The workflow below follows the steps in [this significance calculator's documentation](https://a2z.tools/ab-test-significance-calculator): compute each group's rate, estimate the difference, then calculate a p-value and confidence interval. The numbers are an illustrative example we constructed, not data from a real experiment.
+
+Suppose a checkout test assigned 10,000 users to each arm:
+
+- **Control (A):** 500 purchases, a 5.0% conversion rate.
+- **Variant (B):** 560 purchases, a 5.6% conversion rate.
+
+### Step 1: Measure the lift
+
+The absolute lift is 0.6 percentage points. The relative lift is 0.6 ÷ 5.0, or 12%. Report both, because a "12% lift" sounds far larger than "0.6 points" and readers deserve to see each.
+
+### Step 2: Compute the standard error
+
+The pooled two-proportion test combines both groups under the null hypothesis. The pooled rate is (500 + 560) ÷ 20,000 = 0.053. The standard error is the square root of 0.053 × 0.947 × (1/10,000 + 1/10,000), which is about 0.00317, or 0.32 percentage points. In words, it describes how much the difference between two groups of this size would typically wobble from chance alone.
+
+### Step 3: Compute z and the p-value
+
+The z statistic is the observed difference divided by the standard error: 0.006 ÷ 0.00317, about 1.89. For a two-sided test, that corresponds to a p-value of roughly 0.058.
+
+At alpha 0.05, this result is **not** significant. The data are suggestive, but they do not clear the bar you set.
+
+### Step 4: Build the confidence interval
+
+The 95% confidence interval for the difference is 0.6 points plus or minus about 0.62 points, giving roughly −0.02 to +1.22 percentage points. The interval barely includes zero, which matches the p-value. As the [calculator documentation](https://a2z.tools/ab-test-significance-calculator) explains, an interval that includes zero means the data do not establish a detectable difference at that confidence level.
+
+The interval also tells you something the p-value does not: the true effect could plausibly range from essentially nothing to a gain of over a full point. That is useful for planning the next step, since it shows the test was probably too small to settle the question.
+
+### Step 5: See how a small change flips the verdict
+
+Now suppose B had 570 purchases (5.7%). The difference is 0.7 points, the standard error is about 0.00318, z is about 2.20, and the p-value is about 0.028. That is significant at 0.05. Ten extra purchases out of 10,000 moved the label from "inconclusive" to "winner." This is why a result sitting near the threshold should be treated as borderline evidence, not a bright line, and why the interval deserves as much attention as the verdict.
+
+<DataTable
+  caption="Worked example: how 10 extra purchases change the verdict (variant B at 570 purchases)"
+  headers={['Metric', 'Value']}
+  align={['left', 'left']}
+  rows={[
+    ['Conversion rate (B)', '5.7%'],
+    ['Absolute lift', '0.7 points'],
+    ['z statistic', 'About 2.20'],
+    ['p-value vs. 0.05', 'About 0.028; below 0.05'],
+    ['Verdict', 'Significant at 0.05'],
+  ]}
+/>
+
+## Statistical significance is not practical significance
+
+A significant p-value tells you the difference is probably not noise. It does not tell you the difference is worth acting on. The [Pearson A/B calculator](https://www.pearson.com/channels/calculators/ab-test-significance-calculator) states the point directly: a tiny lift can be significant with a huge sample, while a real lift can stay inconclusive with too little data.
+
+Before shipping a winner, ask:
+
+1. **How large is the lift in absolute terms?** Convert percentage points into orders, signups or revenue per month.
+2. **Does the whole confidence interval sit above your minimum worthwhile effect?** If the lower bound is a gain of 0.01 points, the result is significant but may not repay the cost of the change.
+3. **Does the primary metric agree with guardrail metrics?** A conversion win that raises refunds or support tickets is not a win.
+
+Our guide to <Link to={routes.article('effect-size')}>effect size</Link> explains how to express magnitude in standardized terms, which helps when you compare results across experiments.
+
+### What to report with every result
+
+A defensible readout includes the control and variant rates, absolute and relative lift, p-value, confidence interval, sample sizes in each arm, and the decision rule you committed to before launch. Firebase and [the Pearson tool](https://www.pearson.com/channels/calculators/ab-test-significance-calculator) both separate statistical from practical significance, and a report that includes all of these items makes that separation visible to stakeholders.
+
+## Design choices that decide whether significance can be trusted
+
+The math above is the easy part. Most invalid A/B conclusions come from the setup.
+
+### Random assignment and a clear unit of analysis
+
+An A/B test supports a causal reading only when users are randomly assigned to arms and the analysis unit is defined clearly. The [2023 review of online experiments](https://arxiv.org/html/2212.11366v5) describes these tests as digital randomized controlled trials and highlights assumptions such as no interference between users (often called SUTVA), asymptotic approximations and non-independent outcomes. If the same person can appear in both arms, or if users influence one another (a marketplace or social feature, for instance), a simple z-test can mislead.
+
+A practical check is a sample-ratio mismatch test: if you planned a 50/50 split and the arms differ noticeably in size, something in assignment or logging is broken, and the significance result should not be trusted until you find the cause.
+
+For a full planning checklist, see <Link to={routes.article('how-to-design-an-ab-test')}>how to design an A/B test that answers your question</Link>. Teams building the measurement side of a campaign may also find this [marketing analytics playbook](https://vainnewyork.com/post/marketing-analytics) useful for tying a hypothesis and metric to a 90-day plan.
+
+### Define the hypothesis and primary metric first
+
+Choose one primary metric and write down the hypothesis, the minimum effect you care about, and the sample size before collecting data. Secondary metrics can inform, but only the primary metric should decide. Otherwise you are free to find whichever metric happens to cross 0.05.
+
+### Do not peek and stop early
+
+Checking a standard fixed-sample test every day and stopping the moment p dips under 0.05 inflates the false-positive rate well above the nominal 5%, because you are giving chance many opportunities to look like a win. Either fix the sample size and look once, or use a method built for repeated looks. Our <Link to={routes.article('sequential-testing')}>sequential testing guide</Link> explains when stopping early is legitimate.
+
+### Adjust when you compare many things
+
+Testing several variants against one control, or reading many metrics, creates a multiple-comparisons problem: even if every variant is ineffective, the chance that at least one looks positive grows with each comparison. The research notes that a prespecified primary metric and an adjustment can reduce this risk. The simplest adjustment is Bonferroni, which [divides alpha by the number of planned comparisons](https://www.pearson.com/channels/calculators/ab-test-significance-calculator).
+
+With three variants against one control, the threshold becomes 0.05 ÷ 3, about 0.0167. A variant with p = 0.03 would pass an unadjusted test but fail the corrected one. Bonferroni can be conservative, and the correction should be planned before you look at results. See our guides to the <Link to={routes.article('multiple-comparisons-problem')}>multiple comparisons problem</Link> and the <Link to={routes.article('bonferroni-correction')}>Bonferroni correction</Link>, plus <Link to={routes.article('post-hoc-tests')}>post-hoc tests</Link> for comparisons after a multi-group analysis.
+
+<Figure number={1} caption="The unadjusted 0.05 threshold, the Bonferroni-corrected threshold for three comparisons, and the variant's p-value — the variant clears the first bar but misses the second.">
+  <AnnotatedChart
+    title="Multiple-comparison thresholds"
+    desc="Bar chart comparing the unadjusted significance threshold of 0.05, the Bonferroni-corrected threshold of 0.0167 for three planned comparisons, and the variant's observed p-value of 0.03. The variant passes the unadjusted threshold but fails the corrected one."
+    type="bar"
+    points={[
+      { label: 'Unadjusted threshold', value: 0.05 },
+      { label: 'Corrected threshold (3 comparisons)', value: 0.0167, annotation: 'Bonferroni: 0.05 ÷ 3' },
+      { label: 'Variant p-value', value: 0.03, annotation: 'Passes unadjusted, fails corrected' },
+    ]}
+    yLabel="p-value"
+  />
+</Figure>
+
+## Choosing 0.05 or 0.01
+
+Neither is universally better. A lower alpha such as 0.01 cuts false positives but requires a larger sample to detect the same lift. Choose based on the cost of being wrong. A reversible button-color test can live with 0.05. A pricing change that is hard to undo, or a medical or safety context, justifies a stricter threshold. What matters is that you choose before seeing results, not after.
+
+## A quick pre-launch and readout checklist
+
+<Checklist
+  id="ab-test-readout-checklist"
+  title="Pre-launch and readout checklist"
+  style="numbered"
+  items={[
+    { text: 'State the hypothesis, primary metric and minimum worthwhile effect.' },
+    { text: 'Set alpha and compute the required sample size per arm.' },
+    { text: 'Randomize at the right unit and verify the split once data arrives.' },
+    { text: 'Run to the planned sample size, or use a sequential method if you must look early.' },
+    { text: 'Apply a multiple-comparison correction if there are several variants or primary metrics.' },
+    { text: 'Report rates, lifts, p-value, confidence interval and sample sizes.' },
+    { text: 'Decide using the interval and business context, not the label alone.' },
+  ]}
+/>
+
+## Our perspective
+
+We see the same pattern when readers bring us A/B test questions: the calculation is rarely where things go wrong. A calculator will happily produce a p-value from any four numbers you type in, and it will not warn you that the split was uneven, that the test was stopped on day three, or that six variants were quietly compared. The number is only as trustworthy as the process behind it.
+
+So we encourage a habit of reading the interval before the p-value, asking what lift would justify the change before the test starts, and treating results near 0.05 as unsettled rather than decisive. When a test comes back inconclusive, that is information too: it tells you the effect, if one exists, is smaller than your test could detect. That is why our guides link each concept to a calculator and an applied example on the same journey, so you can practice the reasoning and not just the arithmetic.
+
+## Practice with the tools on Statohub
+
+If you want to build the intuition behind these steps, start with our <Link to={routes.learnLanding()}>Learn section</Link> for plain-English explanations, try the <Link to={routes.calculatorsHub()}>Statohub calculators</Link> to check your own counts, and browse the <Link to={routes.appliedLanding()}>Applied Statistics hub</Link> and <Link to={routes.categoryHub('experiments-causality')}>Experiments & Causality</Link> for more worked experiments. The <Link to={routes.calculator('chi-square')}>chi-square calculator</Link> is a handy companion when you want to compare conversion counts across more than two groups.
+
+## Sources
+
+<Sources items={[
+  { text: 'About Firebase A/B tests', href: 'https://firebase.google.com/docs/ab-testing/ab-concepts', org: 'Firebase (Google)' },
+  { text: 'A/B Test Significance Calculator, Pearson', href: 'https://www.pearson.com/channels/calculators/ab-test-significance-calculator', org: 'Pearson' },
+  { text: 'A/B Test Significance Calculator, A2Z Tools', href: 'https://a2z.tools/ab-test-significance-calculator', org: 'A2Z Tools' },
+  { text: 'Statistical Challenges in Online Controlled Experiments: A Review of A/B Testing Methodology', href: 'https://arxiv.org/html/2212.11366v5', org: 'arXiv' },
+  { text: 'Statistical significance, Optimizely documentation', href: 'https://docs.optimizely.com/experimentation-strategy/docs/statistical-significance', org: 'Optimizely' },
+  { text: 'NIST/SEMATECH e-Handbook — How can we determine whether two processes produce the same proportion of defectives?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook — What are confidence intervals?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm', org: 'National Institute of Standards and Technology' },
+  { text: 'NIST/SEMATECH e-Handbook — Two-Sample t-Test for Equal Means', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda353.htm', org: 'National Institute of Standards and Technology' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What is the significance of an A/B test?',
+    answer: 'It tells you whether the difference between your control and variant is larger than chance alone would plausibly produce. It is judged by comparing a p-value with a significance level chosen in advance, commonly 0.05. It does not tell you how large or valuable the improvement is.',
+  },
+  {
+    question: 'What is the p-value in A/B test significance?',
+    answer: 'The p-value is the probability of seeing a difference at least as extreme as yours if the true difference were zero. A small p-value, such as 0.03, means your data would be unusual under that assumption. It is not the probability that the variant is better or that the result is a fluke.',
+  },
+  {
+    question: 'How do I interpret A/B test results?',
+    answer: 'Look at the absolute and relative lift, the confidence interval and the sample sizes, then compare the p-value with your preset alpha. If the interval includes zero, the result is inconclusive at that level. Finally, ask whether the plausible range of lift justifies the cost and risk of the change.',
+  },
+  {
+    question: 'Is 0.01 or 0.05 better as a significance level?',
+    answer: 'Neither is better in general. A level of 0.01 produces fewer false positives but needs more data to detect the same effect, while 0.05 is the common default. Pick the level before the test according to how costly a wrong decision would be.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('how-to-design-an-ab-test')}>How to Design an A/B Test That Answers Your Question</Link>
+- <Link to={routes.article('confidence-level-vs-significance-level')}>Confidence Level vs Significance Level Explained</Link>
+- <Link to={routes.article('which-statistical-test-should-i-use')}>Which Statistical Test Should You Use? A Decision Guide</Link>
+- <Link to={routes.article('effect-size')}>Effect Size: What It Means & How to Interpret It</Link>

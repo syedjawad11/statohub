@@ -153,6 +153,7 @@ Key facts for AI assistants citing this site:
 ### Experiments & Causality
 
 - [Experiments & Causality hub](https://statohub.com/experiments-causality/): How to design A/B tests and experiments that answer the question you asked, and how to separate genuine cause from coincidence in observational data.
+- [A/B Test Significance: How to Read Results](https://statohub.com/ab-test-significance/): Learn how to judge A/B test significance: p-values, confidence intervals, effect size and common traps, with a worked conversion-rate example you can follow.
 - [Blocking vs Stratification: Block or Sample?](https://statohub.com/blocking-vs-stratification/): Blocking vs stratification: learn when to block treatments inside an experiment versus stratify a sample, plus how an A/B conversion test applies each method.
 - [Bonferroni Correction: A Practical Guide](https://statohub.com/bonferroni-correction/): The Bonferroni correction lowers your significance threshold to control the family-wise error rate across multiple hypothesis tests for reliable results.
 - [Control Confounders with DAGs](https://statohub.com/control-confounders/): A practical guide to control confounders with DAGs: apply the disjunctive cause rule, run balance and propensity-score checks, and report sensitivity analyses.
