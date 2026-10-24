@@ -337,7 +337,7 @@ INSERT INTO "articles" VALUES('mediation-process-spss','Mediation Analysis with 
 INSERT INTO "articles" VALUES('p-value-adjustment-software','Adjusting P-Values for Multiple Tests in Excel, R and Python','experiments-causality','bonferroni correction excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('random-assignment','Random Assignment: How to Randomise Participants in Excel, R and Python','experiments-causality','random assignment excel',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('minimum-detectable-effect','Minimum Detectable Effect (MDE) Explained','experiments-causality','minimum detectable effect',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
-INSERT INTO "articles" VALUES('ab-test-statistical-significance','Statistical Significance in A/B Testing: What 95% Actually Means','experiments-causality','statistical significance ab testing',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
+INSERT INTO "articles" VALUES('ab-test-statistical-significance','Statistical Significance in A/B Testing: What 95% Actually Means','experiments-causality','statistical significance ab testing',1,NULL,NULL,NULL,NULL,0,'retired',NULL,NULL,0,'2026-10-24: retired - topic taken by outsourced article ''ab-test-significance'' (ADR 0029).',NULL,NULL,'2026-10-24 09:14:36');
 INSERT INTO "articles" VALUES('bayesian-ab-testing','Bayesian vs Frequentist A/B Testing','experiments-causality','bayesian ab testing',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('aa-test','A/A Tests: Why and When to Run One','experiments-causality','aa test',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
 INSERT INTO "articles" VALUES('sample-ratio-mismatch','Sample Ratio Mismatch (SRM): Detect and Diagnose It','experiments-causality','sample ratio mismatch',1,NULL,NULL,NULL,NULL,0,'planned',NULL,NULL,0,'',NULL,NULL,'2026-10-04 17:53:50');
@@ -1655,9 +1655,6 @@ INSERT INTO "keywords" VALUES(3057,'random-assignment','how to randomly assign p
 INSERT INTO "keywords" VALUES(3058,'minimum-detectable-effect','minimum detectable effect',1);
 INSERT INTO "keywords" VALUES(3059,'minimum-detectable-effect','mde ab testing',0);
 INSERT INTO "keywords" VALUES(3060,'minimum-detectable-effect','minimum detectable effect calculator',0);
-INSERT INTO "keywords" VALUES(3061,'ab-test-statistical-significance','statistical significance ab testing',1);
-INSERT INTO "keywords" VALUES(3062,'ab-test-statistical-significance','ab test confidence level',0);
-INSERT INTO "keywords" VALUES(3063,'ab-test-statistical-significance','ab test p value',0);
 INSERT INTO "keywords" VALUES(3064,'bayesian-ab-testing','bayesian ab testing',1);
 INSERT INTO "keywords" VALUES(3065,'bayesian-ab-testing','bayesian vs frequentist ab testing',0);
 INSERT INTO "keywords" VALUES(3066,'aa-test','aa test',1);
@@ -2161,7 +2158,7 @@ INSERT INTO "plan_rows" VALUES('p-value-adjustment-software','S238','applied','S
 INSERT INTO "plan_rows" VALUES('random-assignment','S239','applied','Software walkthrough','Excel; R; Python','Simple, block and stratified randomisation; seeds; allocation concealment; balance checks',1300,'P2','randomized-controlled-trial','');
 INSERT INTO "plan_rows" VALUES('minimum-detectable-effect','S240','applied','Concept guide','','Definition; formula; trade-off with sample size and duration; choosing a realistic MDE; worked examples',1400,'P1','how-to-design-an-ab-test','');
 INSERT INTO "plan_rows" VALUES('ab-test-statistical-significance','S241','applied','Concept guide','','What the p-value says and doesn''t; confidence vs probability-to-beat; false positives at scale; worked readout',1500,'P1','how-to-design-an-ab-test','');
-INSERT INTO "plan_rows" VALUES('bayesian-ab-testing','S242','applied','Comparison','','Both approaches on one test; priors; probability to beat control; expected loss; when each fits',1500,'P2','ab-test-statistical-significance','');
+INSERT INTO "plan_rows" VALUES('bayesian-ab-testing','S242','applied','Comparison','','Both approaches on one test; priors; probability to beat control; expected loss; when each fits',1500,'P2','ab-test-significance','');
 INSERT INTO "plan_rows" VALUES('aa-test','S243','applied','Concept guide','','Validating the platform; expected false-positive rate; interpreting results; cost vs value',1000,'P3','how-to-design-an-ab-test','');
 INSERT INTO "plan_rows" VALUES('sample-ratio-mismatch','S244','applied','Concept guide','','Chi-square SRM check; common causes; triage steps; whether results are salvageable',1200,'P2','how-to-design-an-ab-test','');
 INSERT INTO "plan_rows" VALUES('novelty-effect','S245','applied','Concept guide','','Definitions; spotting them in time plots; cohort analysis; how long to run',1000,'P3','how-to-design-an-ab-test','');
@@ -2186,7 +2183,7 @@ INSERT INTO "plan_rows" VALUES('cohort-vs-case-control','S263','applied','Compar
 INSERT INTO "plan_rows" VALUES('relative-risk-vs-odds-ratio','S264','applied','Comparison','','Formulas from a 2×2 table; when OR approximates RR; NNT; communicating risk',1500,'P1','odds-ratio-interpretation','');
 INSERT INTO "plan_rows" VALUES('subgroup-analysis','S265','applied','Concept guide','','Why average effects hide variation; pre-specified subgroups; interaction tests; forking-paths risk',1300,'P3','multiple-comparisons-problem','');
 INSERT INTO "plan_rows" VALUES('p-hacking','S266','applied','Concept guide','','Common forms; simulation of false positives; garden of forking paths; pre-registration and registered reports',1400,'P2','multiple-comparisons-problem','');
-INSERT INTO "plan_rows" VALUES('absolute-vs-relative-lift','S267','applied','Comparison','','Percentage-point vs percent lift; formulas; confidence intervals for each (delta method for relative lift); why small baselines inflate relative lift; which to report to stakeholders; worked examples',1200,'P2','ab-test-statistical-significance','');
+INSERT INTO "plan_rows" VALUES('absolute-vs-relative-lift','S267','applied','Comparison','','Percentage-point vs percent lift; formulas; confidence intervals for each (delta method for relative lift); why small baselines inflate relative lift; which to report to stakeholders; worked examples',1200,'P2','ab-test-significance','');
 INSERT INTO "plan_rows" VALUES('moving-average','S268','applied','Concept guide','Excel; Google Sheets','Simple, weighted and exponential definitions; window choice; lag; building each in Excel; ToolPak; charts; forecasting limits',1800,'P1','time-series-analysis','');
 INSERT INTO "plan_rows" VALUES('exponential-smoothing-excel','S269','applied','Software walkthrough','Excel','Alpha choice; building the recursion; ToolPak damping factor; optimising alpha with Solver; error metrics',1500,'P1','simple-exponential-smoothing','');
 INSERT INTO "plan_rows" VALUES('excel-forecast-functions','S270','applied','Software walkthrough','Excel','Each function''s model; seasonality detection; confidence intervals; Forecast Sheet options; when it misleads',1700,'P1','forecasting-methods','');
