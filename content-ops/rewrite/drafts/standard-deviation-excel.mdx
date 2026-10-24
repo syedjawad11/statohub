@@ -1,0 +1,324 @@
+---
+title: "Standard Deviation Excel: STDEV.S, STDEV.P & More"
+h1: "How to Calculate Standard Deviation in Excel"
+description: "This guide to standard deviation Excel formulas compares STDEV.S and STDEV.P, explains STDEVA, and walks through a full worked example and calculator."
+category: descriptive-statistics
+primaryKeyword: standard deviation excel
+keywords:
+  - standard deviation excel
+  - excel function standard deviation
+  - excel standard deviation
+  - standard deviation and excel
+  - standard deviation by excel
+  - standard deviation for excel
+  - standard deviation with excel
+phase: 1
+calculator: standard-deviation
+related:
+  - standard-deviation
+  - variance
+pubDate: 2026-06-23
+updatedDate: 2026-10-24
+reviewedDate: 2026-09-20
+draft: false
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import StatCalc from '../../components/StatCalc.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A standard deviation Excel formula almost always comes down to a choice between two functions — `STDEV.S` for a sample and `STDEV.P` for a complete population — and getting that choice right matters far more than the arithmetic itself, which Excel finishes in under a second. Calculating standard deviation with Excel is fast once you know which function matches your data: `STDEV.S` divides by `n − 1` and is the right default almost every time, while `STDEV.P` divides by `n` and only applies when your range holds every member of the group, with no exceptions. The real risk isn't the formula — it's a range that quietly reaches past your data (a whole-column reference picking up stray values below it), a hidden or filtered row the function still counts, or a number stored as text, each of which changes the result without throwing an error.
+
+<KeyTakeaways rows={[
+  { point: 'Two functions cover nearly every case', details: 'STDEV.S applies Bessel’s correction and divides by n − 1 for a sample; STDEV.P divides by n for a complete population.' },
+  { point: 'Picking the wrong one is the costliest mistake', details: 'STDEV.P always returns a value at or below STDEV.S on the same data, so using it on sample data systematically understates variability.' },
+  { point: 'Blanks, text, and hidden rows behave differently than expected', details: 'STDEV.S and STDEV.P ignore blank and text cells, but they still count rows a filter or a manual Hide Rows command is currently hiding.' },
+  { point: 'STDEVA and STDEVPA treat TRUE and FALSE as numbers', details: 'Even inside a cell reference, TRUE counts as 1 and FALSE counts as 0 — but text and blank cells in that same reference are still ignored, not converted to 0.' },
+  { point: 'SUBTOTAL and AGGREGATE respect filters', details: 'Function numbers 107/108 (SUBTOTAL) or 7/8 (AGGREGATE) recompute standard deviation over only the rows currently visible on screen.' },
+]} />
+
+## Quick Checklist: How to Calculate Standard Deviation in Excel
+
+Most wrong results trace back to one of these checks being skipped. Run through this list before trusting any standard deviation by Excel formula.
+
+<Checklist
+  id="standard-deviation-excel-checklist"
+  title="Quick checklist: standard deviation in Excel"
+  style="check"
+  items={[
+    { text: 'Decide sample or population first', detail: 'If the data is a subset of a larger group, use STDEV.S; if it is the entire population with no exceptions, use STDEV.P.' },
+    { text: 'Check whole-column references for stray values below the data', detail: 'A reference like A:A keeps reading past your last row, so a note, a total, or a second table further down the column gets silently folded in.' },
+    { text: 'Confirm blanks are really blank, not zeros', detail: 'A blank cell is excluded; a 0 is included and pulls the result toward zero.' },
+    { text: 'Watch for numbers stored as text', detail: 'Values imported from another system sometimes look numeric but get skipped by STDEV.S and STDEV.P.' },
+    { text: 'Decide whether filtered or hidden rows should count', detail: 'STDEV.S and STDEV.P always include them; use SUBTOTAL or AGGREGATE if you want only the visible rows.' },
+  ]}
+/>
+
+## Calculate Standard Deviation in Excel
+
+The calculator below runs the same arithmetic as Excel's `STDEV.S` and `STDEV.P`. Enter the eight delivery times used in the worked example further down this page — 18, 22, 19, 25, 21, 30, 20, 17 — to confirm you get the same two results Excel returns.
+
+<StatCalc slug="standard-deviation" variant="embed" />
+
+## Which Excel Function Should You Use: STDEV.S or STDEV.P?
+
+Use `STDEV.S` whenever your data is a sample drawn from a larger group, and reserve `STDEV.P` for the rare case where your range holds every member of a closed, complete population. The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm) defines the standard deviation as "the square root of the variance" and notes that it "restores the units of the spread to the original data units," unlike the <Link to={routes.article('variance')}>variance</Link>, which squares them — a result of 5 minutes means a typical value sits about 5 minutes from the mean, while the variance would report 25 minutes-squared for the same spread. On paper this is the population standard deviation `σ` or sample standard deviation `s`; see the <Link to={routes.article('standard-deviation-symbol')}>standard deviation symbol</Link> guide for how that notation maps onto Excel's two function names.
+
+<DataTable
+  caption="Excel's standard deviation functions compared"
+  headers={['Function', 'What it computes', 'Denominator', 'Use when...']}
+  align={['left', 'left', 'left', 'left']}
+  rows={[
+    ['STDEV.S', 'Sample standard deviation, Bessel-corrected', 'n − 1', 'Data is a sample of a larger population'],
+    ['STDEV.P', 'Population standard deviation', 'n', 'Data is the entire population, no exceptions'],
+    ['STDEV (legacy)', 'Identical result to STDEV.S', 'n − 1', 'Older workbooks; behaves exactly like STDEV.S'],
+    ['STDEVP (legacy)', 'Identical result to STDEV.P', 'n', 'Older workbooks; behaves exactly like STDEV.P'],
+  ]}
+/>
+
+Per [Microsoft's documentation for STDEV.S](https://support.microsoft.com/en-us/excel/functions/stdev-s-function), the function "assumes that its arguments are a sample of the population" and computes the standard deviation "using the n-1 method." [STDEV.P's documentation](https://support.microsoft.com/en-us/excel/functions/stdev-p-function) states the opposite assumption — that the arguments represent the entire population — and divides by `n` instead. Both functions accept the same argument shapes: a range like `A1:A100`, a list of individual values, or a mix of both, via `=STDEV.S(number1, [number2], ...)` or `=STDEV.P(number1, [number2], ...)`.
+
+The `n − 1` denominator exists because a sample systematically underestimates the spread of the full population it was drawn from; dividing by one less than the count corrects that bias. [OpenStax's *Introductory Statistics*, §2.7](https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data) walks through this same relationship between the sample standard deviation `s` and the population standard deviation `σ` in more formal terms. Excel is not the only tool built around this distinction: [R's `sd()` function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/sd.html) always "uses denominator n - 1," matching `STDEV.S`, while [NumPy's `std()` function](https://numpy.org/doc/stable/reference/generated/numpy.std.html) defaults to `ddof=0`, matching `STDEV.P`. For the full derivation of why the correction works, see the dedicated <Link to={routes.article('standard-deviation')}>standard deviation</Link> guide — this page focuses on applying the two functions correctly inside a spreadsheet, not re-deriving the formula.
+
+Microsoft retains `STDEV` and `STDEVP` as legacy names: `STDEV` is mathematically identical to `STDEV.S`, and `STDEVP` is identical to `STDEV.P`. [STDEVP's own documentation](https://support.microsoft.com/en-us/excel/functions/stdevp-function) confirms it "assumes that its arguments are the entire population." Both older names still work in current Excel, including Excel 365, but Microsoft recommends the `.S`/`.P` names in new workbooks because the suffix makes the sample-versus-population choice explicit at a glance.
+
+<Callout variant="tip" title="Pro tip">
+When you are not sure whether your data is a sample or a population, default to STDEV.S. Treating a sample as a population (using STDEV.P) understates variability every time; treating a true population as a sample (using STDEV.S) only adds a small, conservative cushion.
+</Callout>
+
+## How Do STDEVA and STDEVPA Handle Non-Numeric Cells?
+
+`STDEVA` (sample) and `STDEVPA` (population) exist for the specific case where a range deliberately mixes numbers with `TRUE`/`FALSE` values you want included in the calculation. [Microsoft's documentation for STDEVA](https://support.microsoft.com/en-us/excel/functions/stdeva-function) is worth reading carefully here, because it states the rule two ways in the same paragraph: "arguments that contain TRUE evaluate as 1; arguments that contain text or FALSE evaluate as 0," but then adds that "empty cells and text values in the array or reference are ignored." Taken together, the behavior that's actually unambiguous is this: a `TRUE` inside a cell reference counts as 1 and a `FALSE` inside a cell reference counts as 0, while a genuinely empty cell or a text value in that same reference is excluded, not converted to 0. This differs from `STDEV.S` and `STDEV.P`, which exclude all three — blanks, text, and logical values — from a reference.
+
+Because folding a `FALSE` into the calculation as a zero can pull a result toward zero when you didn't mean to include that cell at all, stick with `STDEV.S`/`STDEV.P` unless your range genuinely needs `TRUE`/`FALSE` counted as numbers. If you need a dispersion measure that's less sensitive to how individual cells are coded in the first place, the <Link to={routes.article('mean-absolute-deviation')}>mean absolute deviation</Link> guide covers an alternative that avoids squaring distances from the mean entirely.
+
+## How Do You Calculate Standard Deviation for a Subset, Multiple Ranges, or Across Sheets in Excel?
+
+`STDEV.S` and `STDEV.P` aren't limited to one contiguous range: pass several ranges as separate arguments, wrap a condition in `FILTER` to restrict the calculation to a subset, or write a 3-D reference to span matching cells across several sheets. Each approach suits a different layout, covered one at a time below.
+
+**Non-contiguous ranges.** Both `STDEV.S` and `STDEV.P` accept more than one range as separate arguments:
+
+```
+=STDEV.S(A1:A8, C1:C5)
+```
+
+Excel treats the two ranges as one combined data set — useful when your values are split across non-adjacent columns or separate tables.
+
+**Named ranges.** Assigning a name to a range (Formulas → Define Name) lets you write a self-documenting formula:
+
+```
+=STDEV.S(DeliveryTimes)
+```
+
+A named range defined as an Excel Table or a dynamic named range also resizes automatically as rows are added, so the formula keeps covering the full data set without manual edits.
+
+**Conditional subsets.** Excel has no dedicated `STDEVIF` function, but in Excel 365 and Excel 2021 you can combine `STDEV.S` with [the `FILTER` function](https://support.microsoft.com/en-us/excel/functions/filter-function), which "filters an array based on a Boolean (True/False) array":
+
+```
+=STDEV.S(FILTER(B2:B100, A2:A100="East"))
+```
+
+This computes the standard deviation of only the rows where column A equals "East." In older Excel versions without `FILTER`, the same result comes from an array formula entered with Ctrl+Shift+Enter:
+
+```
+=STDEV.S(IF(A2:A100="East", B2:B100))
+```
+
+Excel adds the surrounding braces automatically when you press Ctrl+Shift+Enter — type the formula itself, not the braces.
+
+**Across multiple sheets.** A 3-D reference spans every sheet between two tab names:
+
+```
+=STDEV.S(Sheet1:Sheet3!A1:A10)
+```
+
+Excel treats the matching cell range on every sheet from `Sheet1` through `Sheet3` as one combined data set, which only works cleanly when every sheet shares the same layout.
+
+## How Do You Add Standard Deviation Error Bars to an Excel Chart?
+
+Select the chart, open Chart Elements, check Error Bars, then pick Standard Deviation — but know what that option actually draws first: it computes a single standard deviation from every plotted point across the whole series and applies that one value to every point uniformly, rather than a separate, per-point standard deviation drawn from each point's own underlying data. [Microsoft's documentation on error bars](https://support.microsoft.com/en-us/office/add-change-or-remove-error-bars-in-a-chart) spells out the equation it uses: the Standard Deviation option is computed from "M = arithmetic mean" and "ny = total number of data values in all series," so every error bar on the chart ends up the same length by construction.
+
+1. Click the chart to select it.
+2. Click the **+** (Chart Elements) button that appears to the right of the chart.
+3. Check **Error Bars**, then select **More Options**.
+4. Under **Error Amount**, pick **Standard Deviation** for the single, chart-wide value described above, and set the multiplier — 1 is the most common choice.
+
+If you actually need a different standard deviation bar on each point — say, one `STDEV.S` per group in a bar chart — the built-in option can't do that. Instead, choose **Custom**, then **Specify Value**, and point the Positive and Negative Error Value boxes at a range of cells holding a separate `STDEV.S` result for each point; Microsoft's documentation confirms "you can also define error values as a range of cells from the same Excel workbook." That route gives every bar its own, genuinely computed standard deviation instead of one shared value borrowed from the whole series.
+
+Either way, error bars let a reader judge at a glance whether the spread is large or small relative to the values being compared, without reading the underlying numbers.
+
+## How Do You Use STDEV.S Inside Other Excel Formulas?
+
+`STDEV.S` and `STDEV.P` nest cleanly inside larger formulas, which is where standard deviation earns its keep in data-quality checks and outlier screening. To count how many values sit more than one standard deviation above the <Link to={routes.article('how-to-find-the-mean')}>mean</Link>:
+
+```
+=COUNTIF(A1:A8, ">"&(AVERAGE(A1:A8)+STDEV.S(A1:A8)))
+```
+
+On the eight delivery times used in the worked example below, `AVERAGE` returns 21.5 and `STDEV.S` returns about 4.2426, so the threshold is roughly 25.74 minutes. Exactly one value — 30 minutes — exceeds it, so this formula returns **1**.
+
+Excel's [`STANDARDIZE` function](https://support.microsoft.com/en-us/excel/functions/standardize-function) turns the same standard deviation into a <Link to={routes.article('z-score')}>z-score</Link> directly, "a normalized value from a distribution characterized by mean and standard_dev":
+
+```
+=STANDARDIZE(30, 21.5, 4.2426)
+```
+
+This returns approximately **2.00** — the 30-minute delivery sits about two sample standard deviations above the mean, which is exactly the kind of flag a data-quality check or outlier screen is built to catch.
+
+## A Worked Example: Courier Delivery Times
+
+A regional courier manager wants to know how consistent one driver's delivery times are before promising customers a delivery window. She pulls 8 delivery times, in minutes, from Tuesday's route sheet — out of roughly 40 stops the driver made that day, so this is clearly a **sample**, not the full population of deliveries.
+
+### Step 1: Enter the data
+
+| Cell | Delivery time (min) |
+|------|----------------------|
+| A1 | 18 |
+| A2 | 22 |
+| A3 | 19 |
+| A4 | 25 |
+| A5 | 21 |
+| A6 | 30 |
+| A7 | 20 |
+| A8 | 17 |
+
+### Step 2: Choose the right function
+
+These 8 times are a sample drawn from a larger day of deliveries, so `STDEV.S` applies here — not `STDEV.P`.
+
+### Step 3: Enter the formulas and verify by hand
+
+```
+=STDEV.S(A1:A8)   → 4.2426
+=STDEV.P(A1:A8)   → 3.9686
+```
+
+**Mean:**
+
+```
+x̄ = (18 + 22 + 19 + 25 + 21 + 30 + 20 + 17) / 8 = 172 / 8 = 21.5
+```
+
+**Squared deviations from the mean:**
+
+| Value | Deviation | Squared deviation |
+|-------|-----------|--------------------|
+| 18 | −3.5 | 12.25 |
+| 22 | 0.5 | 0.25 |
+| 19 | −2.5 | 6.25 |
+| 25 | 3.5 | 12.25 |
+| 21 | −0.5 | 0.25 |
+| 30 | 8.5 | 72.25 |
+| 20 | −1.5 | 2.25 |
+| 17 | −4.5 | 20.25 |
+| **Sum** | | **126** |
+
+```
+STDEV.S: s = √(126 / (8 − 1)) = √(126 / 7) = √18 ≈ 4.2426
+STDEV.P: σ = √(126 / 8) = √15.75 ≈ 3.9686
+```
+
+Excel's output matches the hand calculation exactly. The Bessel correction — dividing by `n − 1 = 7` instead of `n = 8` — pushes the sample estimate above the population value, which is the intended effect of correcting for a sample's tendency to underestimate spread.
+
+<Figure number={1} caption="STDEV.S and STDEV.P on the same eight delivery times, computed from the identical sum of squared deviations (126) but divided by 7 versus 8.">
+  <AnnotatedChart
+    title="Sample vs. population standard deviation"
+    desc="Bar chart comparing STDEV.S at approximately 4.24 against STDEV.P at approximately 3.97, both computed from a sum of squared deviations of 126 across the same eight delivery times."
+    type="bar"
+    points={[
+      { label: 'STDEV.S', value: 4.24, annotation: 'Divides by n − 1 = 7' },
+      { label: 'STDEV.P', value: 3.97, annotation: 'Divides by n = 8' },
+    ]}
+  />
+</Figure>
+
+**Decision.** The manager should report the sample standard deviation — about 4.24 minutes — when estimating how consistent this driver's deliveries are likely to be going forward, since 8 stops out of roughly 40 is a sample, not the whole day. Paste these same eight values into the calculator above to confirm both results without redoing the arithmetic by hand.
+
+<Callout variant="tip" title="Pro tip">
+Whenever you share a standard deviation figure, name the function that produced it — "STDEV.S, n = 8" rather than a bare number. The gap between STDEV.S and STDEV.P shrinks as n grows, but on a small sample like this one it's large enough that leaving the method unstated makes the figure impossible to check.
+</Callout>
+
+## What Causes a Wrong Standard Deviation Result in Excel?
+
+Knowing what can go wrong saves hours of troubleshooting when a number looks off.
+
+- **Using STDEV.P on sample data.** This is the costliest mistake, because `STDEV.P` always returns a value at or below `STDEV.S` on the same numbers. Treating a sample as if it were the whole population understates variability, and any confidence interval or control limit built on that understated number inherits the error.
+- **A whole-column reference picking up values you didn't mean to include.** A text header like "Minutes" in A1 isn't actually the risk — `STDEV.S` and `STDEV.P` ignore text in a reference and calculate over exactly the numeric rows you intended. The real risk is a reference like `=STDEV.S(A:A)`: it keeps reading all the way down the column, so a note typed below the data, a running total, or the start of a second table further down the sheet gets silently folded into the result. An Excel Table (Ctrl+T) resizes its own references automatically, which avoids this without you having to track the last row by hand.
+- **Confusing a blank cell with a zero.** `STDEV.S` and `STDEV.P` exclude a genuinely blank cell from both the count and the result; a cell containing `0` is included and pulls the result toward zero. If a missing measurement means "no data," leave it empty — entering `0` changes the answer.
+- **Numbers stored as text.** Values imported from another system sometimes arrive as text that merely looks numeric. `STDEV.S` and `STDEV.P` ignore them, quietly shrinking the effective sample size. The small green triangle in a cell's top-left corner is Excel's warning sign; Data → Text to Columns, or multiplying the column by 1, converts the values to true numbers.
+- **Hidden or filtered rows that still get counted.** Filtering a table down to one region's orders doesn't stop `STDEV.S` or `STDEV.P` from reading every row in the range, including the ones currently hidden by the filter. The same applies to a row hidden manually with Hide Rows. `SUBTOTAL(7, ...)` matches `STDEV.S` and `SUBTOTAL(8, ...)` matches `STDEV.P`; add 100 (`SUBTOTAL(107, ...)` or `SUBTOTAL(108, ...)`) to also exclude manually hidden rows. [AGGREGATE's documentation](https://support.microsoft.com/en-us/excel/functions/aggregate-function) offers the same function numbers 7 and 8 for `STDEV.S` and `STDEV.P`, plus an `options` argument that can additionally ignore error values in the range.
+- **Treating a tiny sample's result as precise.** With fewer than five or six values, a single extreme observation can shift the standard deviation substantially. Report the sample size `n` alongside the standard deviation so a reader can judge how stable the estimate is — a standard deviation of 3.5 from `n = 4` carries far less weight than the same value from `n = 200`.
+
+<Callout variant="quote" source="SUBTOTAL function, Microsoft Support" sourceHref="https://support.microsoft.com/en-us/excel/functions/subtotal-function">
+1-11 includes manually-hidden rows, while 101-111 excludes them; filtered-out cells are always excluded.
+</Callout>
+
+## Statohub's Take on Standard Deviation in Excel
+
+Statohub's position is that the function choice, not the arithmetic, is where this calculation actually goes wrong in practice. Spend the extra few seconds confirming sample versus population and scanning the range for a stray value past the data, a blank-versus-zero mixup, or a hidden row before trusting the number — Excel will compute a confident-looking result from flawed inputs without ever flagging the problem. When a quick, disposable first pass is all you need, the <Link to={routes.article('how-to-find-the-range')}>range</Link> is faster to check by eye; reach for the standard deviation once that first look says the data is worth a more careful read.
+
+## Put Standard Deviation in Excel to Work With Statohub's Tools
+
+The calculator above applies the exact `STDEV.S`/`STDEV.P` arithmetic covered throughout this guide — for a standalone version, open the full <Link to={routes.calculator('standard-deviation')}>standard deviation calculator</Link>. For the underlying formula and notation this page assumes you already know, see the <Link to={routes.article('standard-deviation')}>standard deviation</Link> guide, and for the closely related measure expressed in squared units, see the <Link to={routes.article('variance')}>variance</Link> guide. The <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link> walks through mean, median, range, variance, and standard deviation side by side, and the <Link to={routes.calculatorsHub()}>calculators hub</Link> lists every tool statohub publishes.
+
+## Sources
+
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.6. Measures of Scale', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.7 Measures of the Spread of the Data, Introductory Statistics', href: 'https://openstax.org/books/introductory-statistics/pages/2-7-measures-of-the-spread-of-the-data', org: 'OpenStax' },
+  { text: 'Microsoft Support — STDEV.S function', href: 'https://support.microsoft.com/en-us/excel/functions/stdev-s-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — STDEV.P function', href: 'https://support.microsoft.com/en-us/excel/functions/stdev-p-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — STDEVA function', href: 'https://support.microsoft.com/en-us/excel/functions/stdeva-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — STDEVP function', href: 'https://support.microsoft.com/en-us/excel/functions/stdevp-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — FILTER function', href: 'https://support.microsoft.com/en-us/excel/functions/filter-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — SUBTOTAL function', href: 'https://support.microsoft.com/en-us/excel/functions/subtotal-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — AGGREGATE function', href: 'https://support.microsoft.com/en-us/excel/functions/aggregate-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — STANDARDIZE function', href: 'https://support.microsoft.com/en-us/excel/functions/standardize-function', org: 'Microsoft' },
+  { text: 'Microsoft Support — Add, change, or remove error bars in a chart', href: 'https://support.microsoft.com/en-us/office/add-change-or-remove-error-bars-in-a-chart', org: 'Microsoft' },
+  { text: 'NumPy — numpy.std', href: 'https://numpy.org/doc/stable/reference/generated/numpy.std.html', org: 'NumPy' },
+  { text: 'R Documentation — sd (Standard Deviation)', href: 'https://stat.ethz.ch/R-manual/R-devel/library/stats/html/sd.html', org: 'The R Project' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What Excel Function Calculates Standard Deviation?',
+    answer: 'The two functions to know are STDEV.S (sample, divides by n − 1) and STDEV.P (population, divides by n). For almost all practical work, the excel function standard deviation calls for is STDEV.S. Older workbooks may instead use STDEV (equivalent to STDEV.S) or STDEVP (equivalent to STDEV.P) — both still work in current Excel.',
+  },
+  {
+    question: 'What Is the Difference Between STDEV.S and STDEV.P?',
+    answer: 'STDEV.S applies Bessel’s correction, dividing the sum of squared deviations by n − 1. STDEV.P divides by n with no correction. On the same data set, STDEV.S always returns a value equal to or greater than STDEV.P, and the gap between them shrinks as the sample size grows. Use STDEV.S for a sample and STDEV.P only when the data is the full population.',
+  },
+  {
+    question: 'Does Excel Standard Deviation Match R, Python, and Other Software?',
+    answer: 'STDEV.S matches R’s sd() function, which its documentation says always "uses denominator n - 1," and matches Python’s NumPy with ddof=1 (np.std(ddof=1)). STDEV.P matches NumPy’s default (np.std() with ddof=0). R has no separate built-in population-standard-deviation function; to reproduce STDEV.P’s result in R, multiply sd(x) by sqrt((n-1)/n). The underlying arithmetic is identical across every tool — only the denominator each one defaults to, and whether a population version ships built in, differs.',
+  },
+  {
+    question: 'What Does a Standard Deviation of Zero Mean in Excel?',
+    answer: 'A result of zero means every value in the range is identical, so there is no spread at all. That is mathematically correct, but it usually signals a data-entry problem — the same value repeated by accident — or a range that has collapsed to a single distinct entry. Check the source data before concluding the variability is genuinely zero.',
+  },
+  {
+    question: 'Is STDEV Still Available in Current Excel?',
+    answer: 'Yes. STDEV and STDEVP remain available in current Excel, including Excel 365, for backward compatibility with older workbooks. Microsoft recommends STDEV.S and STDEV.P for new work because the suffix makes the sample-versus-population choice explicit, but an existing workbook using the legacy names continues to calculate correctly without any changes.',
+  },
+  {
+    question: 'Why Does My Standard Deviation by Excel Formula Ignore Some of My Rows?',
+    answer: 'STDEV.S and STDEV.P skip blank cells, text, and logical values sitting inside a range reference — a text header is ignored correctly, but a text-formatted number you meant to include gets silently dropped too, shrinking the effective count without an error appearing. They do not, however, skip rows a filter or a manual Hide Rows command is currently hiding — use SUBTOTAL or AGGREGATE instead if those rows should be excluded too.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('standard-deviation-symbol')}>The Standard Deviation Symbol (Sigma): Signs & Notation</Link>
+- <Link to={routes.article('how-to-find-the-mean')}>How to Find the Mean (Average): Formula & Steps</Link>
+- <Link to={routes.article('how-to-find-the-range')}>How to Find the Range in Statistics</Link>
+- <Link to={routes.article('mean-absolute-deviation')}>Mean Absolute Deviation Explained</Link>
