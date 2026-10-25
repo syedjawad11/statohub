@@ -81,6 +81,7 @@ INSERT INTO "outsource_articles" VALUES('box-plot-vs-violin','Box Plot vs Violin
 INSERT INTO "outsource_articles" VALUES('selection-bias-experiments','Selection Bias in Experiments','experiments-causality',62,'2026-10-19','984776','published','outsource-content/raw/selection-bias-experiments.json','src/content/articles/selection-bias-experiments.mdx',2,1,0,11,'','2026-10-22 09:16:01','2026-10-22 09:37:42');
 INSERT INTO "outsource_articles" VALUES('time-series-split','Time Series Split','time-series-forecasting',63,'2026-10-21','994496','published','outsource-content/raw/time-series-split.json','src/content/articles/time-series-split.mdx',1,2,0,6,'','2026-10-23 09:15:11','2026-10-23 09:28:36');
 INSERT INTO "outsource_articles" VALUES('ab-test-significance','A/B Test Significance','experiments-causality',64,'2026-10-22','996694','published','outsource-content/raw/ab-test-significance.json','src/content/articles/ab-test-significance.mdx',1,2,0,8,'','2026-10-24 09:14:57','2026-10-24 09:27:01');
+INSERT INTO "outsource_articles" VALUES('kalman-filter-basics','Kalman Filter Basics','time-series-forecasting',65,'2026-10-23','1001109','fetched','outsource-content/raw/kalman-filter-basics.json',NULL,0,0,0,NULL,'','2026-10-25 09:15:42','2026-10-25 09:15:52');
 CREATE TABLE outsource_reviews (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   article_slug   TEXT NOT NULL REFERENCES outsource_articles(slug) ON DELETE CASCADE,

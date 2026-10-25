@@ -447,6 +447,13 @@
       "title": "A/B Test Significance",
       "slug": "ab-test-significance",
       "category_slug": "experiments-causality"
+    },
+    {
+      "queue_position": 65,
+      "day_label": "2026-10-23",
+      "title": "Kalman Filter Basics",
+      "slug": "kalman-filter-basics",
+      "category_slug": "time-series-forecasting"
     }
   ]
 }
