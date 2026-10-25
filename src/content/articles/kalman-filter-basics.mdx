@@ -1,0 +1,269 @@
+---
+title: "Kalman Filter Basics: Predict and Update Loop"
+h1: "Kalman Filter Basics: How the Prediction and Update Loop Works"
+description: "Kalman filter basics in plain English: the state space idea, the predict and update loop, the Kalman gain, a worked numeric example and common failure points."
+category: time-series-forecasting
+primaryKeyword: "kalman filter basics"
+phase: 1
+keywords:
+  - kalman filter basics
+  - state space models explained
+  - kalman filter intuition
+related:
+  - time-series-split
+  - cointegration-test
+  - autocorrelation-interpretation
+draft: false
+pubDate: 2026-10-25
+updatedDate: 2026-10-25
+reviewedDate: 2026-10-25
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import ProcessFlow from '../../components/applied/infographics/ProcessFlow.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+A Kalman filter is a recursive algorithm that estimates a quantity you cannot observe directly, such as the true position of a vehicle, from a stream of noisy measurements. At every time step it makes a prediction from a model, compares that prediction with the new measurement, and blends the two, giving more weight to whichever is more certain. This guide explains the state space idea behind it, walks through one worked numeric example, and shows where the method breaks.
+
+<KeyTakeaways rows={[
+  { point: 'What the filter tracks', details: 'A best estimate of the hidden state and the uncertainty of that estimate, updated every time step.' },
+  { point: 'The two-phase cycle', details: 'Each cycle predicts from a model, then updates with a new measurement.' },
+  { point: 'The Kalman gain', details: 'The weight on the new measurement — it rises when the measurement is precise and falls when the model is precise.' },
+  { point: "When it's optimal", details: 'Only for linear systems with Gaussian noise; nonlinear problems need variants such as the extended or unscented filter.' },
+  { point: 'Where to start debugging', details: 'A wrong model usually hurts more than a noisy sensor, so check the model before tuning anything else.' },
+]} />
+
+## The problem the filter solves
+
+Imagine a delivery robot that reports its position every second. The reported values jitter because the sensor is imperfect. You also know something about how the robot moves: its speed is roughly constant, so next second's position should be near this second's position plus the distance traveled.
+
+You now hold two imperfect pieces of information: a model-based prediction and a noisy measurement. Throwing either away wastes information. Averaging them equally ignores the fact that one may be far more reliable than the other. The Kalman filter formalizes the sensible middle path.
+
+This is why it is better described as a data fusion tool than as a smoother. Because it accounts for the statistical uncertainty of each source, it can combine very different inputs, such as GPS and accelerometer readings, in one estimate ([MIT course notes](https://web.mit.edu/kirtley/kirtley/binlustuff/literature/control/Kalman%20filter.pdf)).
+
+## State space models in plain terms
+
+A **state space model** separates what is really happening from what you manage to record. The **state** is the set of variables that describe the system at a moment: position and velocity, for example. The state is latent, meaning hidden. What you collect are **observations**, which are noisy and often indirect functions of the state ([IBM overview of state space models](https://www.ibm.com/think/topics/state-space-model)).
+
+The model has two equations, each in words:
+
+1. **State equation:** the next state equals a known transformation of the current state, plus random disturbance. The disturbance is called process noise.
+2. **Observation equation:** the measurement equals a known transformation of the state, plus measurement noise.
+
+The basic linear filter relies on four matrices: the state-transition matrix F, the state-to-measurement matrix H, the process noise covariance Q, and the measurement noise covariance R ([didactical overview, arXiv](https://arxiv.org/pdf/1607.05590.pdf)). A **covariance matrix** is simply the multivariate version of variance: it records how uncertain each variable is and how the uncertainties move together.
+
+It helps to keep the two noise terms apart:
+
+<DataTable
+  caption="Process noise vs. measurement noise"
+  headers={['Term', 'What it describes', 'Plain-English meaning']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Q, process noise', 'Random change in the system itself', 'How much the real world surprises your model'],
+    ['R, measurement noise', 'Error in the sensor or data collection', 'How much you distrust each reading'],
+  ]}
+/>
+
+The filter's job is not to describe the world perfectly. It produces a continuously updated best guess of a reality you cannot see, balancing these two kinds of noise ([arXiv overview](https://arxiv.org/pdf/1607.05590.pdf)).
+
+## The predict and update loop
+
+The filter alternates between two phases, which is why it is called predictor-corrector ([GMU tutorial](https://math.gmu.edu/~berry/Presentations/KalmanTutorial.pdf)).
+
+### Step 1: Predict
+
+Using the model, push the previous estimate forward one step. The estimate moves according to the dynamics, and the uncertainty grows, because time has passed and the process noise Q has added doubt. Prediction always makes you less sure.
+
+### Step 2: Update
+
+A new measurement arrives. Compare it with what the model expected: the gap is the **innovation** or residual. Correct the prediction by a fraction of that gap. The fraction is the Kalman gain. After the correction, uncertainty shrinks, because you have gained information. Update always makes you more sure.
+
+<Figure number={1} caption="The four-step predict-and-update cycle: a model-based prediction, a new measurement, a correction weighted by the Kalman gain, and shrinking uncertainty.">
+  <ProcessFlow
+    title="Kalman update loop"
+    desc="A four-step horizontal flow: Prediction produces a model-based expected value, a new measurement arrives and the gap between it and the prediction is the innovation or residual, Correction applies a fraction of that gap set by the Kalman gain, and Uncertainty shrinks after the update."
+    steps={[
+      { label: 'Prediction', detail: 'Model-based expected value.' },
+      { label: 'New measurement', detail: 'Gap is innovation or residual.' },
+      { label: 'Correction', detail: 'Fraction set by Kalman gain.' },
+      { label: 'Uncertainty', detail: 'Shrinks after the update.' },
+    ]}
+  />
+</Figure>
+
+Then the loop repeats. Because the previous estimate and its covariance summarize everything learned so far, the filter does not need to store the entire measurement history. That recursive property is a consequence of working with Gaussian distributions: combining two Gaussians yields another Gaussian, so the form never grows more complicated ([arXiv overview](https://arxiv.org/pdf/1607.05590.pdf)).
+
+A similar logic appears whenever people estimate something unseen from imperfect evidence; the way teachers arrive at [predicted grades from several pieces of evidence](https://premium.mathvault.io/blog/the-science-of-predicted-gradeshow-teachers-algorithms-get-it-right) is one everyday case of combining signals into a single estimate, though without the formal uncertainty bookkeeping the Kalman filter adds.
+
+## Kalman filter intuition: a weighted average with memory
+
+The most useful mental model is that the filter is an optimal weighted average. The ACM introduction presents it as a way to combine a model's prediction with imprecise observations, weighting each by its estimated confidence ([Communications of the ACM](https://cacm.acm.org/research/an-elementary-introduction-to-kalman-filtering/)).
+
+In the simplest one-dimensional case, the update is:
+
+**new estimate = prediction + K × (measurement − prediction)**
+
+where K is a number between 0 and 1. If K is 0, you ignore the measurement. If K is 1, you accept the measurement completely. Anything between is a blend. If you want to see ordinary weighting before adding uncertainty, our <Link to={routes.article('weighted-average')}>weighted average guide</Link> and <Link to={routes.calculator('weighted-average')}>weighted average calculator</Link> cover the idea on its own.
+
+### What the Kalman gain responds to
+
+In matrix form the gain is computed as K = P⁻Hᵀ(R + HP⁻Hᵀ)⁻¹, where P⁻ is the predicted uncertainty ([GMU tutorial](https://math.gmu.edu/~berry/Presentations/KalmanTutorial.pdf)). You do not need to memorize it. Read it as a ratio: prediction uncertainty divided by total uncertainty, where total is prediction uncertainty plus measurement noise.
+
+- Small R (precise sensor): the ratio is near 1, so the filter trusts the measurement.
+- Small prediction uncertainty (a confident model, driven by low Q): the ratio is near 0, so the filter leans on its internal prediction.
+
+This is the same logic as inverse-variance weighting, and it also echoes the updating of beliefs in <Link to={routes.article('bayes-theorem')}>Bayes' theorem</Link>: a prior (the prediction) is combined with a likelihood (the measurement) to give a posterior (the new estimate). In fact, the Kalman filter is the Bayesian answer to this problem when everything is linear and Gaussian.
+
+## A worked example with real numbers
+
+Suppose you are estimating a tank's true water level, which you believe is constant, using a noisy sensor. These numbers are invented for teaching, not drawn from any dataset.
+
+**Setup.** The initial estimate is 10.0 cm with variance 4.0. The sensor noise variance is R = 1.0. The process noise is Q = 0.2, because the level might drift slightly.
+
+**Cycle 1, update.** The first reading is 12.0 cm.
+
+- Gain: K = 4.0 / (4.0 + 1.0) = 0.8
+- Estimate: 10.0 + 0.8 × (12.0 − 10.0) = 11.6 cm
+- Variance: (1 − 0.8) × 4.0 = 0.8
+
+The estimate moved most of the way toward the reading, because the initial guess was vague compared with the sensor.
+
+**Cycle 2, predict.** The level is assumed constant, so the estimate stays at 11.6, but variance grows by Q: 0.8 + 0.2 = 1.0.
+
+**Cycle 2, update.** The next reading is 11.0 cm.
+
+- Gain: K = 1.0 / (1.0 + 1.0) = 0.5
+- Estimate: 11.6 + 0.5 × (11.0 − 11.6) = 11.3 cm
+- Variance: (1 − 0.5) × 1.0 = 0.5
+
+Two things stand out. The gain dropped from 0.8 to 0.5 because the filter grew more confident in its own estimate, so each new reading moves it less. And the variance 0.5 is below the sensor's 1.0: the fused estimate is more precise than any single reading.
+
+If you set Q to a larger value, the predicted variance would inflate more each cycle, the gain would stay higher, and the filter would keep reacting to new readings. That is the central tuning trade-off: a small Q gives a smooth but sluggish estimate, a large Q gives a responsive but jittery one.
+
+<Figure number={2} caption="Variance at each stage of the two-cycle worked example, against the sensor's fixed measurement noise variance of 1.0.">
+  <AnnotatedChart
+    title="Variance at each stage"
+    desc="A bar chart showing variance shrinking from an initial 4.0 through two Kalman filter update cycles: 0.8 after cycle 1's update, back up to 1.0 after cycle 2's prediction, then down to 0.5 after cycle 2's update, compared against the sensor's fixed measurement noise variance of 1.0."
+    type="bar"
+    yLabel="Variance"
+    points={[
+      { label: 'Initial variance', value: 4.0 },
+      { label: 'After cycle 1 update', value: 0.8 },
+      { label: 'After cycle 2 prediction', value: 1.0 },
+      { label: 'After cycle 2 update', value: 0.5 },
+      { label: 'Sensor noise variance', value: 1.0 },
+    ]}
+  />
+</Figure>
+
+## Where the Kalman filter is used
+
+The ACM introduction lists spacecraft navigation, robot motion planning, signal processing and wireless sensor networks among its applications ([Communications of the ACM](https://cacm.acm.org/research/an-elementary-introduction-to-kalman-filtering/)). Analysts outside engineering meet the same machinery in econometrics and forecasting, where a time series is treated as a hidden level or trend observed with noise. Many classical forecasting models, including those in our <Link to={routes.categoryHub('time-series-forecasting')}>forecasting and time series guide</Link>, can be written in state space form, and so can <Link to={routes.article('arima-model-basics')}>ARIMA models</Link>.
+
+## When the filter is optimal, and when it is not
+
+The filter minimizes mean squared error under two assumptions: the system is linear and the noise is Gaussian ([arXiv overview](https://arxiv.org/pdf/1607.05590.pdf)). Relax those and you need a variant:
+
+<DataTable
+  caption="Kalman filter variants by assumption"
+  headers={['Situation', 'Typical approach']}
+  align={['left', 'left']}
+  rows={[
+    ['Linear dynamics, Gaussian noise', 'Standard Kalman filter'],
+    ['Mildly nonlinear dynamics', 'Extended Kalman filter, which linearizes around the current estimate'],
+    ['Strongly nonlinear dynamics', 'Unscented Kalman filter, which uses a different approximation'],
+  ]}
+/>
+
+These descriptions come from the same didactical overview. The standard assumptions resemble the checks you would run before trusting a regression, which is why our guide to <Link to={routes.article('regression-assumptions')}>linear regression assumptions</Link> is useful background for thinking about residuals and noise.
+
+## Common failure points
+
+### An inaccurate model
+
+The filter assumes the dynamics are known. When the model describing the system's evolution is wrong, performance can deteriorate significantly, often more than from noisy sensors alone ([arXiv overview](https://arxiv.org/pdf/1607.05590.pdf)). A constant-velocity model applied to a vehicle that accelerates hard will lag behind the truth no matter how you tune R.
+
+### Numerical instability
+
+Round-off error can cause covariance matrices to lose their positive-definite property, especially with very high or very small noise values, and the filter then fails ([GMU tutorial](https://math.gmu.edu/~berry/Presentations/KalmanTutorial.pdf)). In practice, analysts use numerically stable formulations from established libraries rather than coding the covariance update naively.
+
+### Poorly chosen Q and R
+
+Q and R are often guessed. A practical habit is to inspect the innovations: if the filter is well tuned, the gaps between prediction and measurement should look like unpredictable noise centered on zero. Systematic patterns, such as long runs of positive gaps, mean the model or the noise settings are off. Checking for those patterns is the same skill described in our <Link to={routes.article('autocorrelation-interpretation')}>autocorrelation interpretation guide</Link>.
+
+### Confusing smoothing with filtering
+
+A filter uses only the data up to the present moment. If you have the whole dataset and want the best possible historical estimate, a smoother that also uses later observations will be more accurate. Treat the filter as a real-time tool.
+
+## A short checklist before you apply it
+
+<Checklist
+  id="kalman-filter-checklist"
+  title="Before you apply a Kalman filter"
+  style="numbered"
+  items={[
+    { text: 'Name the hidden state and the quantity you actually measure.' },
+    { text: 'Write the simplest model of how the state changes between steps, and note what it ignores.' },
+    { text: 'Estimate R from the sensor or measurement process, and start Q small but not zero.' },
+    { text: 'Run the loop, then inspect the innovations for patterns.' },
+    { text: 'Compare against a naive baseline, such as the last observed value, to confirm the filter is earning its complexity.' },
+  ]}
+/>
+
+The last step matters. Simple estimates sometimes capture much of the benefit, and a high reading that is partly luck will tend to drop back, a phenomenon covered in <Link to={routes.article('regression-to-the-mean')}>regression to the mean</Link>.
+
+## Our perspective
+
+We see the Kalman filter as one of the clearest places where statistics meets decision-making: it forces you to state what you believe, how sure you are, and how much a new observation should change your mind. Most learners get stuck on the matrix notation, not the idea. So we recommend learning the one-dimensional case first, doing the arithmetic by hand once, and only then moving to matrices.
+
+We also think the most important habit is diligence about assumptions. The algorithm will happily produce a smooth, confident-looking output from a wrong model, and that confidence is exactly what makes silent errors dangerous. Check residuals, test against a baseline, and document where your noise values came from. That is the same plain-English, worked-example approach we take across our guides and calculators.
+
+## Keep building from here
+
+The filter sits at the meeting point of regression, probability and time series. If you want to refresh the foundations, start with our <Link to={routes.learnLanding()}>Learn Statistics</Link> section, practice with the <Link to={routes.calculator('linear-regression')}>linear regression calculator</Link> or the wider <Link to={routes.calculatorsHub()}>calculator collection</Link>, and then explore more worked problems in our <Link to={routes.appliedLanding()}>Applied Statistics hub</Link>. You can also see how this connects to <Link to={routes.categoryHub('machine-learning-statistics')}>machine learning statistics</Link>.
+
+## Sources
+
+<Sources items={[
+  { text: 'The Kalman Filter: a didactical overview', href: 'https://arxiv.org/pdf/1607.05590.pdf', org: 'arXiv' },
+  { text: 'Introduction to Data Assimilation and Kalman Filtering', href: 'https://math.gmu.edu/~berry/Presentations/KalmanTutorial.pdf', org: 'George Mason University' },
+  { text: 'Kalman filter lecture chapter', href: 'https://web.mit.edu/kirtley/kirtley/binlustuff/literature/control/Kalman%20filter.pdf', org: 'MIT' },
+  { text: 'What Are State Space Models?', href: 'https://www.ibm.com/think/topics/state-space-model', org: 'IBM' },
+  { text: 'Application of Statistical Filter Theory to the Optimal Estimation of Position and Velocity on Board a Circumlunar Vehicle', href: 'https://ntrs.nasa.gov/citations/19620006857', org: 'NASA Technical Reports Server' },
+  { text: 'The Geometric Unscented Kalman Filter', href: 'https://arxiv.org/pdf/2009.13079.pdf', org: 'arXiv' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'Is a Kalman filter the same as a moving average?',
+    answer: 'No. A moving average gives fixed weights to recent observations and has no model of how the quantity changes. A Kalman filter weights each new measurement according to its estimated uncertainty and combines it with a model-based prediction, so the weights adapt over time.',
+  },
+  {
+    question: 'Do I need to know linear algebra to use one?',
+    answer: 'For the one-dimensional case, only arithmetic is needed, as in the worked example above. Tracking several variables at once uses matrices, but the logic stays the same: predict, compare, correct by a weighted fraction of the gap.',
+  },
+  {
+    question: 'What is the difference between process noise and measurement noise?',
+    answer: 'Process noise (Q) is random change in the true system that your model cannot explain. Measurement noise (R) is error in how you observe it. A larger Q makes the filter follow the data more closely, while a larger R makes it trust the data less.',
+  },
+  {
+    question: 'Can a Kalman filter handle nonlinear data?',
+    answer: 'The standard version cannot do so optimally. Practitioners use the extended Kalman filter, which linearizes the dynamics, or the unscented Kalman filter, which uses a different approximation. Both work best when the nonlinearity is moderate.',
+  },
+]} />
+
+## Recommended
+
+- <Link to={routes.article('bayes-theorem')}>Bayes' Theorem (Bayes' Rule): Formula & Examples</Link>
+- <Link to={routes.categoryHub('time-series-forecasting')}>Forecasting & Time Series: Models and Accuracy</Link>
+- <Link to={routes.article('time-series-stationarity')}>Time Series Stationarity: Testing & Transforms</Link>
+- <Link to={routes.article('forecast-accuracy-metrics')}>Forecast Accuracy Metrics: MAE, RMSE, MAPE and When Each Misleads</Link>
