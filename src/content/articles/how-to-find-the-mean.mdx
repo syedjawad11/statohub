@@ -1,6 +1,6 @@
 ---
-title: "How to Find the Mean: Average Formula and Examples"
-description: "How to find the mean step by step: sum the values, divide by the count, and handle zeros, missing data, grouped tables, and averaged averages correctly."
+title: "How to Find the Mean: Formula & Steps"
+description: "How to find the mean: sum every value, divide by the count, handle zeros and missing data correctly, and check your answer with a free mean calculator."
 category: descriptive-statistics
 primaryKeyword: how to find the mean
 keywords:
@@ -19,51 +19,74 @@ keywords:
 phase: 1
 calculator: mean
 pubDate: 2026-06-30
-updatedDate: 2026-09-09
-reviewedDate: 2026-09-20
+updatedDate: 2026-10-26
+reviewedDate: 2026-10-26
 related:
   - weighted-average
   - what-is-an-average
   - how-to-find-the-median
 draft: false
 ---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import AnnotatedChart from '../../components/applied/infographics/AnnotatedChart.astro';
 import StatCalc from '../../components/StatCalc.astro';
 import Link from '../../components/Link.astro';
-import RelatedLink from '../../components/RelatedLink.astro';
 import { routes } from '../../lib/links';
 
-To find the mean, add up every value in a dataset and divide by how many values there are — that's the entire calculation. The part that actually trips people up isn't the arithmetic; it's the judgment calls around it: whether a zero belongs in the sum, whether a blank cell should be counted at all, how to handle a frequency table instead of a raw list, and — the mistake that quietly corrupts more reports than any other — whether you can average a set of averages the same way you average raw numbers. You usually can't, and this page shows exactly why with numbers you can check yourself.
+To find the mean, add up every value in a data set and divide by how many values there are — that single operation, sum divided by count, is the entire calculation. The part that actually trips people up isn't the arithmetic; it's the judgment calls around it: whether a zero belongs in the sum, whether a blank cell should be counted at all, how to handle a frequency table instead of a raw list, and — the mistake that quietly corrupts more reports than any other — whether you can average a set of averages the same way you average raw numbers. You usually can't, and this guide shows exactly why, with numbers you can check yourself.
 
----
+<KeyTakeaways rows={[
+  { point: 'Mean = Sum ÷ Count', details: 'In formal notation, x̄ = Σxᵢ / n for a sample or μ = Σxᵢ / N for a population — the arithmetic never changes, only the symbol does.' },
+  { point: 'Counting the wrong thing is the most common error', details: 'Divide by the number of values you actually summed, not by the sum itself and not by a count that silently includes missing data.' },
+  { point: 'Zeros and missing values are not interchangeable', details: 'A zero is a real measurement and belongs in both the sum and the count; a missing reading belongs in neither.' },
+  { point: "You can't average a set of averages without weighting", details: 'Taking the plain average of several group means is only correct when every group is the same size — otherwise, weight each mean by its group size first.' },
+  { point: 'A correct mean always falls between the minimum and maximum', details: 'If your computed mean lands outside the range of the original data, that result came from an arithmetic error — retrace the sum before trusting it.' },
+]} />
+
+## Quick Checklist: How Do You Find the Mean?
+
+Before you add a single number, run through these checks — most wrong answers to "how do I find an average" or "how do I find average" trace back to skipping one of them.
+
+<Checklist
+  id="how-to-find-the-mean-checklist"
+  title="Quick checklist: finding the mean"
+  style="check"
+  items={[
+    { text: 'List every value', detail: 'Count repeated values separately — if 7 appears three times, it contributes to both the sum and the count three times.' },
+    { text: 'Add every value together', detail: 'This is the Σxᵢ term in the mean formula. Skip nothing, including genuine zeros.' },
+    { text: 'Count the values, not the sum', detail: 'n is the number of data points you just added, not the total you got from adding them.' },
+    { text: 'Divide the sum by the count', detail: 'Mean = Sum ÷ Count. The result should land between your smallest and largest value.' },
+    { text: 'Decide zeros vs. missing data first', detail: 'A recorded zero counts in both the sum and the count; a missing reading counts in neither.' },
+    { text: "Never average a set of averages directly", detail: 'Weight each group mean by its group size first, unless every group behind those means is exactly the same size.' },
+  ]}
+/>
+
+Treat this as a pre-flight check, not a formality — the arithmetic in finding the mean is trivial, but the five judgment calls above are where real reports go wrong.
 
 ## What Is the Mean?
 
-The mean is the arithmetic average of a set of numbers. It measures the center of a dataset by spreading the total equally across every value. If a teacher wanted every student to receive the same score and then added up all the scores, the score each student would get is the mean.
+The mean is the arithmetic average of a data set: add every value together and divide by how many values there are. It measures the center of the data by spreading the total evenly across every observation — replace every value in the list with the mean, and the sum stays exactly the same, which is the defining property behind the mean formula.
 
-More precisely, the mean is the value that preserves the sum: replace every value in a list with the mean, and the total stays the same. That property is why the mean formula is defined as sum divided by count.
+Statisticians write the sample mean as **x̄** (x-bar) and the population mean as **μ** (mu). Both apply the identical calculation — sum divided by count — and only the symbol signals whether the data is a subset of a larger group or the entire group itself (more on that distinction below).
 
-Statisticians write it two ways:
+"Mean" and "average" get used interchangeably in casual speech, but they aren't always the same calculation — a geometric or harmonic average answers a different question than the arithmetic one this guide covers. The <Link to={routes.article('what-is-an-average')}>guide to what "average" means</Link> walks through how mean, median, and mode each earn the label "average" in different situations.
 
-- **x̄** (x-bar) — the sample mean, used when the data is a subset drawn from a larger population.
-- **μ** (mu) — the population mean, used when the data covers an entire population.
+## What Is the Mean Formula?
 
-Both use the same equation for average — only the symbol changes, to indicate which type of data you have.
-
-"Mean" and "average" get used interchangeably in casual speech, but they aren't always the same calculation — a geometric or harmonic average answers a different question than the arithmetic one this page covers.
-
-<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average? Mean vs Average" intro="See also" />
-
----
-
-## The Mean Formula
-
-The mean formula is:
+The average formula — also called the mean formula — in plain terms, is:
 
 ```
 Mean = Sum of all values / Number of values
 ```
 
-In formal mathematical notation, the equation for average is written:
+In formal notation, the equation for average is written:
 
 ```
 x̄ = (x₁ + x₂ + x₃ + ... + xₙ) / n
@@ -75,121 +98,73 @@ Using the summation operator Σ, the same formula for average becomes:
 x̄ = Σxᵢ / n
 ```
 
-where:
-- **Σxᵢ** is the sum of every individual value in the dataset
-- **n** is the total count of values
+where **Σxᵢ** is the sum of every individual value and **n** is the total count of values. The [NIST/SEMATECH e-Handbook of Statistical Methods](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the mean this same way — "the sum of the data points divided by the number of data points" — and treats it as the primary measure of location for a data set, alongside the median and mode.
 
-This formula for an average applies the same way whether you have 5 numbers or 5 000. Sum everything, then divide by the count. The [NIST/SEMATECH e-Handbook of Statistical Methods, Section 1.3.5.1 — Measures of Location](https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm) defines the arithmetic mean as the primary measure of central tendency and confirms this formula applies to both sample and population data.
+That one formula covers every notation you'll run into:
 
-<RelatedLink to={routes.calculator('mean')} label="mean calculator" intro="For a related calculation" />
+<DataTable
+  caption="The same mean formula, across contexts"
+  headers={['Context', 'Written as', 'What the symbols mean']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Sample statistics', 'x̄ = Σxᵢ / n', 'x̄ = sample mean, n = number of values in the sample'],
+    ['Population statistics', 'μ = Σxᵢ / N', 'μ = population mean, N = number of values in the entire population'],
+    ['Spreadsheets', '=AVERAGE(range)', 'Sums the non-empty numeric cells and divides by their count'],
+    ['Research papers (APA style)', 'M = Σxᵢ / n', 'APA style uses M to denote the sample mean'],
+  ]}
+/>
 
----
+Whichever form you reach for, it's the same formula for an average — only the symbol changes across that table; the arithmetic underneath, sum then divide, is identical in every row.
 
-## How to Find the Mean: Step-by-Step
+## How Do You Find the Mean, Step by Step?
 
-Learning how to find the mean requires four repeatable steps. The same four steps work for any list of numbers, large or small.
+Finding the mean — or, phrased the way people usually search for it, how to calculate average or how to find average — breaks down into four repeatable steps that work for any list of numbers, large or small.
 
-### Step 1: List All the Values
-
-Write out every value in the dataset. Count repeated values separately — if the number 7 appears three times, it contributes to the sum three times and to the count three times.
-
-### Step 2: Add All the Values Together
-
-Sum every value in the list to get the total. In the mean formula, this is the Σxᵢ term. Include every data point without skipping any.
-
-### Step 3: Count How Many Values Are in the Dataset
-
-Count the total number of individual values. This is `n` in the average formula. Do not count the sum itself — count the separate data points that make up the sum.
-
-### Step 4: Divide the Sum by the Count
-
-Divide the result from Step 2 by the result from Step 3. The quotient is the mean.
+1. **List every value.** Write out the full data set. Count repeated values separately — three 7s contribute to the sum three times and to the count three times.
+2. **Add every value together.** Sum the entire list to get the total. This is the Σxᵢ term in the mean formula, and every data point should go in — don't skip any.
+3. **Count the values.** Count the individual data points, not the sum you just produced. This is `n` (or `N` for a population) in the formula above.
+4. **Divide the sum by the count.** `Mean = Sum ÷ Count`. The quotient is the mean.
 
 ```
 Mean = Sum ÷ Count
 ```
 
-That is the complete process: sum then divide. The mean formula never changes; only the input data does.
+The mean formula never changes; only the data going into it does.
 
----
+<Callout variant="tip" title="Pro tip">
+Write down `n =` before you add anything. Deciding the count first forces you to confirm exactly which values belong in the data set, which heads off the most common mistake below: dividing by the wrong number because a value was missed or double-counted.
+</Callout>
 
-## Worked Example: Overnight Server Response Times
+## Calculate the Mean
 
-A site reliability engineer pulls five overnight API response times, in milliseconds, to check whether the service is meeting its latency target: **143, 168, 155, 201, 179**.
+Enter your own values below and the calculator applies the mean formula instantly, showing the sum and count it used to get there.
 
-The goal is to find the mean response time.
+<StatCalc slug="mean" variant="embed" />
 
-### Step 1: List the Values
+## What's the Difference Between a Sample Mean and a Population Mean?
 
-The five readings are: 143, 168, 155, 201, 179 ms.
+A **population mean (μ)** covers every member of a defined group — every student in one specific classroom of 30, for example — and is written `μ = Σxᵢ / N`, where `N` is the size of the entire population. A **sample mean (x̄)** covers only a subset drawn from a larger population — say, 200 of the 10,000 customers in a database — and is written `x̄ = Σxᵢ / n`, where `n` is the size of that sample.
 
-### Step 2: Add Them Together
+The [NIST/SEMATECH e-Handbook's overview of quantitative techniques](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35.htm) draws the same line: "the population, or true, mean is the sum of all the members of the given population divided by the number of members," while "the sample mean is calculated by summing the values in the sample and dividing by the number of values in the sample," with the sample mean then used as a point estimate of the unknown population mean.
 
-```
-143 + 168 + 155 + 201 + 179 = 846
-```
+Both calculations satisfy the same mean formula — sum divided by count — and the symbol is all that changes. The practical rule: if your data is a sample (almost always the case in applied work), write x̄ and treat it as an estimate, not a guaranteed match for μ. For the fuller statistic-versus-parameter distinction behind that symbol swap, see the <Link to={routes.article('what-is-an-average')}>what-is-an-average guide's section on sample and population means</Link>.
 
-### Step 3: Count the Values
+## Why Can't You Average a Set of Averages Directly?
 
-There are **5** readings.
-
-### Step 4: Divide
-
-```
-Mean = 846 / 5 = 169.2
-```
-
-The mean response time is **169.2 ms**.
-
-That tells the engineer that, averaged across the overnight window, requests came back in about 169.2 ms — useful for comparing this night against last night's mean, or against a 200 ms service-level target. No single request took exactly 169.2 ms, and that's expected: the mean represents the distribution of the total, not one observation. Think of it as the response time every request would have logged if the total milliseconds were shared equally across all five: 5 × 169.2 = 846, exactly the original sum.
-
-### Sense-Check Your Answer
-
-A quick way to verify any mean: the result must lie between the minimum and maximum values in the dataset. Here the readings range from 143 ms to 201 ms, so 169.2 ms falls squarely inside that range. A mean outside the range of your original data always means an arithmetic error — retrace the addition step first.
-
-<RelatedLink to={routes.article('what-is-an-average')} label="What Is an Average? Types and Meaning" intro="Worth reading next" />
-
----
-
-## Population Mean vs. Sample Mean
-
-When statisticians talk about how to find the mean, they draw a distinction between the **population mean** (μ) and the **sample mean** (x̄). The arithmetic is identical — sum divided by count — but the notation and interpretation differ based on the scope of the data.
-
-### Population Mean (μ)
-
-If you measure every member of a defined group, you have a population, and the mean is written μ.
-
-```
-μ = Σxᵢ / N
-```
-
-`N` (capital) is the total size of the entire population — for example, every student in one specific classroom of 30.
-
-### Sample Mean (x̄)
-
-Most of the time in statistics, you work with a sample — a subset drawn from a larger population — and the mean is written x̄.
-
-```
-x̄ = Σxᵢ / n
-```
-
-`n` (lowercase) is the number of values in your sample — for example, 200 of the 10 000 customers in a database, used to estimate what μ would be if you surveyed everyone.
-
-Both calculations satisfy the average formula: sum divided by count. The symbol is all that changes. The key practical point: if your data is a sample (almost always the case in research), write x̄ and acknowledge it is an estimate, not a definitive population figure.
-
----
-
-## Why You Can't Just Average a Set of Averages
-
-This is the mistake that gets past people who otherwise know exactly how to find the mean: averaging averages together as if they were raw data points. It only gives the right answer when every group behind those averages is the same size. The moment group sizes differ, the naive average is wrong — and it's wrong in a specific, checkable direction.
+This is the mistake that gets past people who otherwise know exactly how to find the mean: averaging averages together as if they were raw data points. It only gives the right answer when every group behind those averages is the same size — the moment group sizes differ, the naive average is wrong, and wrong in a specific, checkable direction.
 
 Say a delivery company tracks average delivery time by route for one day:
 
-| Route | Packages delivered | Mean delivery time |
-|---|---|---|
-| A | 40 | 22 minutes |
-| B | 15 | 35 minutes |
-| C | 25 | 18 minutes |
+<DataTable
+  caption="Delivery time by route, one day"
+  headers={['Route', 'Packages delivered', 'Mean delivery time']}
+  align={['left', 'right', 'right']}
+  rows={[
+    ['A', '40', '22 minutes'],
+    ['B', '15', '35 minutes'],
+    ['C', '25', '18 minutes'],
+  ]}
+/>
 
 A manager who wants the company-wide average delivery time might just average the three route means:
 
@@ -197,7 +172,7 @@ A manager who wants the company-wide average delivery time might just average th
 (22 + 35 + 18) / 3 = 75 / 3 = 25 minutes
 ```
 
-That looks reasonable, and it is wrong, because it gives Route B's 15 packages the same influence as Route A's 40. To get the true company-wide mean, go back to actual minutes: multiply each route's mean by its package count to recover the minutes that route spent, sum those totals, then divide by the total packages — the same weighted-mean formula introduced above:
+That looks reasonable, and it's wrong — it gives Route B's 15 packages the same influence as Route A's 40. To get the true company-wide mean, go back to actual minutes: multiply each route's mean by its package count to recover the minutes that route spent, sum those totals, then divide by the total packages.
 
 ```
 Total minutes = (40 × 22) + (15 × 35) + (25 × 18)
@@ -209,29 +184,35 @@ Total packages = 40 + 15 + 25 = 80
 Correct mean = 1 855 / 80 = 23.1875 ≈ 23.19 minutes
 ```
 
-Check it both ways: the naive average of averages gives 25 minutes; the weighted, package-count-correct average gives 23.19 minutes. The naive figure overstates the true company-wide average by almost two minutes — because it silently treats Route B, the smallest and slowest route, as if it carried a third of the company's volume, when it actually carried less than a fifth of it.
+<Figure number={1} caption="The naive average of the three route means overstates the true company-wide mean by about 1.8 minutes, because it treats Route B's 15 packages as if they carried the same weight as Route A's 40.">
+  <AnnotatedChart
+    title="Naive average vs. weighted average of delivery times"
+    desc="Bar chart comparing two ways of combining three route averages: the naive average of the three means comes to 25 minutes, while the correct package-weighted average comes to 23.19 minutes."
+    type="bar"
+    points={[
+      { label: 'Naive average of the 3 means', value: 25, annotation: 'Ignores package counts' },
+      { label: 'Weighted by package count', value: 23.19, annotation: 'The true company-wide mean' },
+    ]}
+  />
+</Figure>
 
-The rule to remember: you can average a set of averages directly only when the groups behind them are equal in size. The instant the group sizes differ, weight each average by its own group size before combining them — otherwise the small, extreme group distorts the result.
+The naive average of averages gives 25 minutes; the weighted, package-count-correct average gives 23.19 minutes — because the naive figure silently credits Route B, the smallest and slowest route, with a third of the company's volume, when it actually carried less than a fifth of it.
 
-<RelatedLink to={routes.article('weighted-average')} label="weighted average" intro="You may also find this useful" />
-
----
-
-## Special Cases That Trip People Up
-
-The standard mean formula handles most datasets cleanly. A few situations call for an adjusted approach.
-
-### Weighted Mean
-
-When some values should carry more influence than others — the delivery-route case above is one instance — a weighted mean assigns a weight (wᵢ) to each value before summing:
+The fix above is just the general weighted-mean formula, applied with each route's package count as its weight:
 
 ```
 Weighted Mean = Σ(wᵢ × xᵢ) / Σwᵢ
 ```
 
-A course where a final exam counts 60% and homework counts 40% works the same way: a student scoring 82 on the exam and 90 on homework gets (0.60 × 82 + 0.40 × 90) / 1 = 85.2, not the simple average of 86 that ignores the weighting.
+The same formula handles any situation where values should count unevenly for a reason other than group size — a final exam worth 60% of a grade and homework worth 40% gives a student who scores 82 on the exam and 90 on homework a weighted mean of 0.60 × 82 + 0.40 × 90 = 85.2, not the simple average of 86 that ignores the weighting.
 
-### Zeros vs. Blank or Missing Values
+The rule to remember: you can average a set of averages directly only when the groups behind them are equal in size. The instant group sizes differ, weight each average by its own group size before combining — the <Link to={routes.article('weighted-average')}>weighted average guide</Link> covers the formula in full, with GPA and portfolio-weighting examples.
+
+## How Do You Handle Zeros, Missing Values, and Frequency Tables When Finding the Mean?
+
+Three situations account for most of the real-world mean calculations that go wrong even when the sum-and-divide step is done correctly.
+
+### Zeros vs. missing values
 
 A zero and a missing value are not the same thing, and confusing them changes the answer. A zero is a real, recorded measurement of "none" and belongs in both the sum and the count. A blank or missing entry means no measurement was taken, and belongs in neither.
 
@@ -251,118 +232,129 @@ Count = 7 (Thursday miscounted as a zero)
 Mean = 17 / 7 ≈ 2.43 mm/day
 ```
 
-The two answers differ by about 0.4 mm/day, and the error always pushes the mean too low, since a phantom zero was added to the count without adding anything to the sum. Before summing anything, decide which blanks are genuine zeros (keep them) and which are missing data (drop them from the count too).
+<Callout variant="note" title="Which way the error points">
+Treating a missing value as a zero always pushes the mean too low, never too high — a phantom zero gets added to the count without adding anything to the sum. Before summing anything, decide which blanks are genuine zeros (keep them) and which are missing data (drop them from the count too).
+</Callout>
 
-### When an Outlier Skews the Result
+### Frequency tables
 
-A single extreme value can pull the mean far from the center of most data. If nine factory workers earn $42 000 per year and the CEO earns $900 000, the mean salary is:
-
-```
-(9 × 42 000 + 900 000) / 10 = 1 278 000 / 10 = $127 800
-```
-
-That mean of $127 800 misrepresents what a typical worker earns. When outliers are present, the **median** is often the more informative measure of center — the mean formula is still valid, it just tells a different story.
-
-### Finding the Mean of a Frequency Table
-
-When data appears as a frequency table — each value listed with how many times it occurs — multiply each value by its frequency, sum those products, then divide by the total count:
+When data arrives as a frequency table — each value listed with how many times it occurs, the same basic layout [OpenStax's *Introductory Statistics 2e*](https://openstax.org/books/introductory-statistics-2e/pages/2-2-histograms-frequency-polygons-and-time-series-graphs) shows paired with class boundaries and running totals — multiply each value by its frequency, sum those products, then divide by the total count:
 
 ```
 Mean = Σ(xᵢ × fᵢ) / Σfᵢ
 ```
 
-This is mathematically equivalent to listing every individual value and applying the standard average formula. The frequency table form simply compresses repeated entries.
+This is mathematically equivalent to listing every individual value and applying the standard formula; the frequency table just compresses repeated entries. [OpenStax's *Introductory Statistics 2e*, 2.5 Measures of the Center of the Data](https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data) makes the equivalence explicit: when a value repeats, "the mean can be calculated by multiplying each distinct value by its frequency and then dividing the sum by the total number of data values."
 
-<RelatedLink to={routes.calculator('weighted-average')} label="weighted average calculator" intro="Another helpful calculator is" />
+### A single outlier
 
----
-
-## Try the Mean Calculator
-
-Use the calculator below to find the mean of any dataset. Enter your values and it applies the average formula instantly — no arithmetic required.
-
-<StatCalc slug="mean" variant="embed" />
-
-To open the full calculator with additional options, visit the <Link to={routes.calculator('mean')}>mean calculator page</Link>. You can also explore every available tool on the <Link to={routes.calculatorsHub()}>statistics calculators hub</Link>.
-
----
-
-## The Same Calculation, Written Different Ways
-
-The mean formula appears in several notations across textbooks, software, and research. Each version expresses the same equation for average using different typographic conventions.
-
-### Sigma Notation
+A single extreme value can pull the mean far from where most of the data sits. If nine factory workers earn $42,000 a year and the CEO earns $900,000, the mean salary is:
 
 ```
-x̄ = (1/n) × Σᵢ₌₁ⁿ xᵢ
+(9 × 42 000 + 900 000) / 10 = 1 278 000 / 10 = $127 800
 ```
 
-`Σᵢ₌₁ⁿ` makes explicit that the sum runs from the first value to the last; `(1/n)` is just division by n written as multiplication.
+That $127,800 figure misrepresents what a typical worker earns, even though the arithmetic is correct. The [NIST/SEMATECH e-Handbook's guidance on outliers](https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm) treats exactly this kind of extreme value as worth flagging before it's allowed to drive a summary statistic unchallenged; the <Link to={routes.article('how-to-find-outliers')}>outlier detection guide</Link> covers the standard 1.5×IQR method for finding one. The mean formula is still valid here — it just tells a story the median usually tells more honestly.
 
-### In Spreadsheets
+## How Do You Find the Mean in Excel, Google Sheets, or Python?
 
-`=AVERAGE(range)` in Excel or Sheets sums the selected cells and divides by the count of non-empty ones. That detail matters: a truly blank cell is excluded from the count automatically, but a typed `0` is counted as a real zero — which is exactly the distinction from the section above. Store missing readings as blank cells, not zeros, and `AVERAGE` gets it right on its own.
+Every major tool implements the mean formula as a single built-in function, but each handles blanks and zeros slightly differently.
 
-### Research Notation
+```
+Excel / Google Sheets:  =AVERAGE(range)
 
-Published papers may write the sample mean as M (APA style), x̄, or simply "the mean" in prose. All three refer to the same quantity: Σxᵢ / n. Only the typographic style changes.
+Python:  values = [143, 168, 155, 201, 179]
+         import statistics
+         statistics.mean(values)   # 169.2
+```
 
-<RelatedLink to={routes.calculator('z-score')} label="z-score calculator" intro="On a related note" />
+In Excel, [Microsoft's documentation for the `AVERAGE` function](https://support.microsoft.com/en-us/office/average-function-047bac88-d466-426c-a32b-8f33eb960cf6) is explicit about this: "If a range or cell reference argument contains text, logical values, or empty cells, those values are ignored; however, cells with the value zero are included." That's exactly the distinction covered above — a truly blank cell drops out of both the sum and the count automatically, but a typed `0` stays in as a real zero. Google Sheets' [`AVERAGE` function](https://support.google.com/docs/answer/3093615) uses the same core definition — the sum of the value arguments divided by how many of them there are — and also ignores any text it encounters, though its own documentation doesn't spell out empty-cell handling the way Microsoft's does. Store missing readings as blank cells rather than zeros, and Excel's `AVERAGE` gets it right without any extra handling.
 
----
+In Python, the [`statistics` module's documentation](https://docs.python.org/3/library/statistics.html) describes `statistics.mean()` as returning "the sample arithmetic mean of data," which is a plain, unweighted sum-divided-by-count over whatever values you pass in — it does not skip missing entries, so filter a list before calling it if some readings are genuinely absent (represented as `None` or excluded from the list) rather than real zeros.
+
+## A Worked Example: Overnight Server Response Times
+
+A site reliability engineer pulls five overnight API response times, in milliseconds, to check whether a service is meeting its latency target: **143, 168, 155, 201, 179**. The goal — a real-world case of how to find the average of numbers pulled straight from a monitoring dashboard — is to find the mean response time.
+
+1. **List the values.** The five readings are 143, 168, 155, 201, and 179 ms.
+2. **Add them together.**
+
+   ```
+   143 + 168 + 155 + 201 + 179 = 846
+   ```
+
+3. **Count the values.** There are **5** readings.
+4. **Divide.**
+
+   ```
+   Mean = 846 / 5 = 169.2
+   ```
+
+The mean response time is **169.2 ms**. That tells the engineer that, averaged across the overnight window, requests came back in about 169.2 ms — useful for comparing this night against last night's mean, or against a 200 ms service-level target. No single request took exactly 169.2 ms, and that's expected: the mean represents what every request would have logged if the total milliseconds were shared equally across all five — 5 × 169.2 = 846, exactly the original sum.
+
+A quick way to verify any mean: the result must lie between the minimum and maximum values in the data set. Here the readings range from 143 ms to 201 ms, so 169.2 ms falls squarely inside that range. A mean outside the range of the original data always signals an arithmetic error — retrace the addition step first.
 
 ## Common Mistakes When Finding the Mean
 
-Even with a simple four-step process, certain errors come up repeatedly.
+- **Counting the sum instead of the values.** Count the number of data points you summed, not the total itself. If 8 values add to 48, divide 48 by 8 — not by 48 or 1.
+- **Accidentally including outliers or typos.** Entering 880 instead of 88 can radically distort the mean. Scan the list for implausibly large or small values before calculating, and verify anything that looks wrong against the original source.
+- **Dividing by the wrong count when values are missing.** If a data set has 10 slots but one value was never recorded, dividing by 10 instead of 9 gives a mean that's too low — the same error covered above under zeros versus missing values.
+- **Rounding intermediate results.** Rounding the sum before dividing compounds error into the final answer. Carry full precision until the last step, then round the mean itself.
+- **Averaging averages without weighting.** Combining group averages by taking their plain average, instead of weighting each by group size, is one of the most common — and hardest to spot — real-world mean errors, as the delivery-route example above shows directly.
 
-### Counting the Sum Instead of the Values
+## Statohub's Take on Finding the Mean
 
-Count the number of data points you summed, not the total itself. If 8 values add to 48, divide 48 by 8 — not by 48 or 1. Write down `n = ` before you add anything, so the count is ready before you compute the sum.
+Statohub's position is that the arithmetic of finding the mean is the easy part; the judgment calls around it are where accuracy is actually won or lost. A mean computed from the wrong count, or from averaged averages that were never weighted, is still "a mean" — it's just the wrong number, confidently reported. Decide what belongs in your sum and your count before you touch a calculator, and the four-step process handles the rest reliably every time.
 
-### Accidentally Including Outliers or Errors
+## Put the Mean to Work With Statohub's Tools
 
-A typo — entering 880 instead of 88 — can radically distort the mean. Scan the list for obviously wrong values before calculating; if a data point seems implausibly large or small, verify it against the original source.
+The calculator above finds the mean for any list you enter, along with the sum and count it used. For a dedicated, full-page version with the same engine, open the <Link to={routes.calculator('mean')}>mean calculator</Link>. When you're ready to look at how spread out those same values are, not just where they center, the <Link to={routes.categoryHub('descriptive-statistics')}>Descriptive Statistics hub</Link> rounds up the median, mode, variance, and standard deviation pages, and the <Link to={routes.calculatorsHub()}>calculators hub</Link> lists every tool on the site in one place.
 
-### Dividing by the Wrong Count When Values Are Missing
+## Sources
 
-If a dataset has 10 slots but one value was never recorded, dividing by 10 instead of 9 gives a mean that is too low. Count only the values you actually summed — the same error covered above under zeros versus missing values.
+<Sources items={[
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5.1. Measures of Location', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 1.3.5. Quantitative Techniques', href: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda35.htm', org: 'NIST' },
+  { text: 'NIST/SEMATECH e-Handbook of Statistical Methods — 7.1.6. What are Outliers in the Data?', href: 'https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm', org: 'NIST' },
+  { text: 'OpenStax — 2.5 Measures of the Center of the Data, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data', org: 'OpenStax' },
+  { text: 'OpenStax — 2.2 Histograms, Frequency Polygons, and Time Series Graphs, Introductory Statistics 2e', href: 'https://openstax.org/books/introductory-statistics-2e/pages/2-2-histograms-frequency-polygons-and-time-series-graphs', org: 'OpenStax' },
+  { text: 'Microsoft Support — AVERAGE function', href: 'https://support.microsoft.com/en-us/office/average-function-047bac88-d466-426c-a32b-8f33eb960cf6', org: 'Microsoft' },
+  { text: 'Google Docs Editors Help — AVERAGE function', href: 'https://support.google.com/docs/answer/3093615', org: 'Google' },
+  { text: 'Python Software Foundation — statistics module documentation', href: 'https://docs.python.org/3/library/statistics.html', org: 'Python Software Foundation' },
+]} />
 
-### Rounding Intermediate Results
+## FAQ
 
-Rounding the sum before dividing compounds error into the final answer. Carry full precision until the last step, then round the mean itself.
+<FAQ items={[
+  {
+    question: 'What Is the Formula for Average?',
+    answer: 'Average = Sum of all values / Number of values, or in shorthand, x̄ = Σxᵢ / n, where Σxᵢ is the total of every value and n is the count of values. The same formula applies whether you call the result the "mean" or the "average" — they describe the same arithmetic average calculation.',
+  },
+  {
+    question: 'How Do I Find an Average When One Value Is Unknown?',
+    answer: 'Rearrange the mean formula to solve for the missing value: since the sum must equal Mean × Count, subtract the known values’ sum from that target sum. For a target mean of 80 across 4 tests with scores of 75, 82, and 79 so far, the fourth score is (80 × 4) − (75 + 82 + 79) = 320 − 236 = 84.',
+  },
+  {
+    question: 'Does the Mean Formula Change for Large Data Sets?',
+    answer: 'No. Sum divided by count applies regardless of how many values you have. For large data sets you’ll typically use software — Excel, Python, or an online calculator — but the underlying calculation is identical to doing it by hand with five values; only the tool changes, not the formula.',
+  },
+  {
+    question: 'How Do You Find the Mean of Grouped Data?',
+    answer: 'When data is grouped into class intervals (for example, "10–19," "20–29"), use the midpoint of each interval as xᵢ and its frequency as fᵢ, then apply Mean = Σ(xᵢ × fᵢ) / Σfᵢ. This gives an estimate rather than an exact figure, since the original individual values inside each interval are no longer available.',
+  },
+  {
+    question: 'Is How to Find the Mean in Math Different From Using a Spreadsheet?',
+    answer: 'The calculation is identical either way — sum every value, divide by the count. In math class you typically do that by hand or with a formula like x̄ = Σxᵢ / n; in a spreadsheet, =AVERAGE(range) does the same sum-and-divide automatically, while skipping empty cells rather than treating them as zeros.',
+  },
+  {
+    question: 'Why Does My Average of Averages Not Match the Overall Mean?',
+    answer: 'Because a plain average of group averages only works when every group is the same size. If the groups differ in size, the plain average silently gives a smaller group the same influence as a larger one, which skews the result. Weight each group mean by its group size before combining them to get the true overall mean, as the delivery-route example above shows with real numbers.',
+  },
+]} />
 
-### Averaging Averages Without Weighting
+## Recommended
 
-Covered in full above, but it belongs on this list: combining group averages by taking their plain average, instead of weighting each by group size, is one of the most common — and hardest to spot — real-world mean errors.
-
-<RelatedLink to={routes.article('how-to-find-the-median')} label="how to find the median" />
-
----
-
-## Frequently Asked Questions
-
-### What is the formula for average?
-
-Average = Sum of all values / Number of values, or in shorthand, x̄ = Σxᵢ / n, where Σxᵢ is the total and n is the count.
-
-### How to calculate average when one value is unknown?
-
-Rearrange the mean formula to solve for the missing value: since the sum must equal Mean × Count, subtract the known values' sum from that target sum. For a mean of 80 across 4 tests with scores of 75, 82, and 79 so far, the fourth score is (80 × 4) − (75 + 82 + 79) = 320 − 236 = 84.
-
-### Does the mean formula change for large datasets?
-
-No. Sum divided by count applies regardless of how many values you have. For large datasets you'll use software — Excel, Python, or a calculator — but the calculation is identical to what you do by hand with five values; only the tools differ.
-
-### How to find the mean of grouped data?
-
-When data is grouped into class intervals (e.g., "10–19", "20–29"), use the midpoint of each interval as xᵢ and its frequency as fᵢ, then apply Mean = Σ(xᵢ × fᵢ) / Σfᵢ. This gives an estimate, since the original individual values are no longer available.
-
----
-
-## Summary
-
-Finding the mean always comes down to one rule: **Mean = Sum ÷ Count**. In formal notation that is x̄ = Σxᵢ / n for a sample mean or μ = Σxᵢ / N for a population mean. The four steps — list, sum, count, divide — produce the result every time, as long as you've made the right calls before you start summing: whether a zero counts, whether a blank does not, and whether the "values" in front of you are raw data or averages that need weighting first.
-
-The mean formula is the foundation of descriptive statistics. Once you can compute it reliably, you have the basis for understanding variance, standard deviation, z-scores, and every inferential test that follows. The [OpenStax *Introductory Statistics* (2e), Section 2.3 — Measures of the Center of the Data](https://openstax.org/books/introductory-statistics/pages/2-3-measures-of-the-center-of-the-data) provides worked examples and explains how the mean, median, and mode compare when data is symmetric versus skewed — a natural next step after mastering the average formula.
-
-To put the formula into practice immediately, enter your values into the <Link to={routes.calculator('mean')}>mean calculator</Link> and verify your results.
+- <Link to={routes.article('standard-deviation')}>Standard Deviation: Meaning, Formula & How to Calculate</Link>
+- <Link to={routes.article('standard-deviation-symbol')}>The Standard Deviation Symbol (Sigma): Signs & Notation</Link>
+- <Link to={routes.article('how-to-find-the-range')}>How to Find the Range in Statistics</Link>
+- <Link to={routes.article('variance')}>Variance: Definition, Formula & vs Standard Deviation</Link>
