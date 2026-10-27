@@ -22,7 +22,7 @@ CREATE TABLE articles (
   updated_at       TEXT NOT NULL DEFAULT (datetime('now'))
 );
 INSERT INTO "articles" VALUES('how-to-find-the-mean','How to Find the Mean (Average): Formula & Steps','descriptive-statistics','how to find the mean',1,9,22,195000,'mean',0,'published',90,NULL,0,'',NULL,NULL,'2026-10-26 10:26:27');
-INSERT INTO "articles" VALUES('what-is-an-average','What Is an Average? Mean Definition, Types & Meaning','descriptive-statistics','what is the average',1,0,34,124000,'mean',0,'published',90,NULL,0,'''distribution mean'' moved to PD2 (dedup).',NULL,NULL,'2026-06-18 01:09:48');
+INSERT INTO "articles" VALUES('what-is-an-average','What Is an Average? Mean Definition, Types & Meaning','descriptive-statistics','what is the average',1,0,34,124000,'mean',0,'published',86,NULL,0,'''distribution mean'' moved to PD2 (dedup).',NULL,NULL,'2026-10-27 10:35:49');
 INSERT INTO "articles" VALUES('mean-vs-average','Mean vs Average - Are They the Same Thing?','descriptive-statistics','mean vs average',1,1,26,70500,'mean',0,'merged',90,NULL,0,'2026-09-20: merged into /what-is-an-average/ (301 in public/_redirects, AdSense phase 2); keywords moved to that brief.',NULL,NULL,'2026-09-20 16:22:41');
 INSERT INTO "articles" VALUES('weighted-average','Weighted Average: Formula & Calculator','descriptive-statistics','weighted average',1,0,21,93400,'weighted-average',1,'published',90,NULL,0,'',NULL,NULL,'2026-06-20 21:57:01');
 INSERT INTO "articles" VALUES('how-to-find-the-median','How to Find the Median: Formula & Steps','descriptive-statistics','how to find the median',3,26,33,122200,'median',0,'published',90,NULL,0,'',NULL,NULL,'2026-07-07 01:18:02');
@@ -2414,11 +2414,13 @@ INSERT INTO "reviews" VALUES(148,'t-test',90,1,'R2 rewrite: all 9 R1 fixes verif
 INSERT INTO "reviews" VALUES(149,'r-squared-adjusted-r-squared',64,0,'rewrite r1: (1) NIST 4.4.4 misattributed for SST/SSR/SSE decomposition; (2) worked example asserts Sxy=8.0/Sxx=10.0 with no shown work (live per-point table dropped); (3) dropped live FAQ topics R2=0 / R2=1 without folding in; (4) field R2 range table thresholds unsourced; (5) tools CTA missing routes.calculatorsHub()','2026-10-26 00:55:08');
 INSERT INTO "reviews" VALUES(150,'r-squared-adjusted-r-squared',88,1,'rewrite r2: all 5 round-1 HARD fixes verified (NIST pmd44 now quoted for ''high R2 does not guarantee fit'', summary.lm backs R2=1-SSE/SST, per-point derivation table restored, R2=0/R2=1 FAQs restored, field ranges qualitative, calculatorsHub link added); arithmetic recomputed; 8/8 sources 200 + titles match; StatCalc/frontmatter invariants intact','2026-10-26 00:59:45');
 INSERT INTO "reviews" VALUES(151,'how-to-find-the-mean',90,1,'Round 2: all 12 keywords present in body; weighted-mean formula+grade example restored (85.2 vs 86, distinct from weighted-average.mdx); all 8 sources 200 with matching titles; NIST/OpenStax 2.5/Microsoft/Google/Python quotes verified verbatim; arithmetic rechecked; sanitize 17/17, overlap 0/0. WARN: dropped z-score/weighted-average calculator RelatedLinks; spreadsheet empty-cell wording generic (Excel-sourced).','2026-10-26 10:26:27');
+INSERT INTO "reviews" VALUES(152,'what-is-an-average',64,0,'1) HARD misattributed NIST quote: ''if the right tail is heavier...mean will be greater than the median'' is in 1.3.5.1 (eda351), not 1.3.5.11 (eda35b) - relink, and cite eda35b for something it says or replace it; 2) HARD rewrite dropped formulas x̄=Σxᵢ/n (μ/N) and weighted x̄_w=Σ(wᵢxᵢ)/Σwᵢ - fold back in; 3) HARD ''Is Mean the Same as Average?'' opens with keyword-stuffed list of 8 search phrasings instead of a direct answer; WARN: Sources #2 text vs page title, eda356 only unlinked in FAQ, 6 sources <8, stray paragraph after FAQ','2026-10-27 10:26:03');
+INSERT INTO "reviews" VALUES(153,'what-is-an-average',86,1,'Round 2: all 3 HARD fixed (NIST quotes correctly attributed eda351/eda35b, mean + weighted formulas restored, direct-answer openings); 8 sources verified (PMC via NCBI E-utilities, curl hits reCAPTCHA wall). WARN: residual keyword-phrasing list sentence in ''Is Mean the Same as Average?''','2026-10-27 10:35:49');
 CREATE UNIQUE INDEX idx_kw_global ON keywords(keyword);
 CREATE INDEX idx_articles_status ON articles(status);
 CREATE INDEX idx_articles_category ON articles(category_slug);
 CREATE INDEX idx_keywords_article ON keywords(article_slug);
 DELETE FROM "sqlite_sequence";
 INSERT INTO "sqlite_sequence" VALUES('keywords',3353);
-INSERT INTO "sqlite_sequence" VALUES('reviews',151);
+INSERT INTO "sqlite_sequence" VALUES('reviews',153);
 COMMIT;
