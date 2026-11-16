@@ -1,0 +1,227 @@
+---
+title: "R Squared Interpretation: Beyond the Fit Number"
+h1: "R-Squared Interpretation: Check Residuals, Not Just Fit"
+description: "Good r squared interpretation looks past the fit number: check residuals, know why high R² cannot prove causation, and confirm fit with out-of-sample error."
+category: data-analysis
+primaryKeyword: "r squared interpretation"
+keywords:
+  - r squared interpretation
+  - interpret r squared
+  - how to interpret r squared
+  - adjusted r squared meaning
+  - good r squared value
+  - r squared meaning
+  - coefficient of determination
+  - r squared explained simply
+phase: 1
+related:
+  - multiple-regression-diagnostics
+  - heteroscedasticity-test
+  - normality-tests
+draft: true
+---
+
+import KeyTakeaways from '../../components/applied/KeyTakeaways.astro';
+import Checklist from '../../components/applied/Checklist.astro';
+import DataTable from '../../components/applied/DataTable.astro';
+import Sources from '../../components/applied/Sources.astro';
+import FAQ from '../../components/applied/FAQ.astro';
+import Figure from '../../components/applied/Figure.astro';
+import Callout from '../../components/applied/Callout.astro';
+import TaxonomyTree from '../../components/applied/infographics/TaxonomyTree.astro';
+import Link from '../../components/Link.astro';
+import { routes } from '../../lib/links';
+
+R-squared measures the proportion of variance in an outcome variable that a fitted regression model accounts for, expressed as a value between 0 and 1. A higher figure means the model's predictors track more of the ups and downs in the data, but this number alone never proves causation, and it says nothing reliable about how the model will perform on new, unseen data.
+
+<KeyTakeaways rows={[
+  { point: 'Use adjusted R² for model comparison', details: 'Prefer it over plain R² when comparing models with different predictor counts, since ordinary R² mechanically rises whenever predictors are added, including irrelevant ones.' },
+  { point: 'Check residuals, not just the number', details: 'Inspect residuals against fitted values for curvature or changing spread, then check leverage and influence diagnostics, because outliers can swing R² substantially.' },
+  { point: 'Validate out-of-sample', details: 'Test predictions on unseen data with cross-validation or a holdout set, and report MAE or RMSE alongside R² rather than relying on training fit.' },
+  { point: 'Judge R² by field and purpose', details: 'Values around 0.2 to 0.3 can be informative in social science and marketing, while controlled physical experiments often exceed 0.9.' },
+  { point: "Don't mix R² types", details: "Pseudo R² from logistic or other generalized linear models uses a different definition of fit and is not directly comparable to an ordinary least squares R²." },
+]} />
+
+## Definition and formula: SSR, SSE, and SST explained
+
+The standard identity is R² = 1 − SSE / SST. Each term describes a different slice of variation in the outcome. SST, the total sum of squares, measures how far each observed value sits from the overall mean, capturing the total variation we are trying to explain. SSE, the sum of squared residuals (sometimes called the error sum of squares), measures how far the model's predictions fall from the actual observed values, the variation left unexplained. SSR, the regression sum of squares, captures the variation the model does account for, and SST = SSR + SSE in a standard least-squares fit.
+
+Put plainly, [R-squared equals 1 minus the ratio of unexplained variance to total variance](https://en.wikipedia.org/wiki/Coefficient_of_determination), and is commonly read as the fraction of variance in the dependent variable that the model explains. In simple linear regression with one predictor, R² is simply the square of the Pearson correlation coefficient, r, between the predictor and the outcome. That relationship breaks down once a model includes more than one predictor, since R² then reflects the combined explanatory power of the full set of variables rather than any single pairwise correlation.
+
+A few boundary cases are worth flagging. Models fit without an intercept can produce R² values outside the familiar 0 to 1 range under some software conventions, and alternative definitions exist for generalized linear models, so the formula above assumes an ordinary least-squares fit with a constant term, the setup most readers encounter first.
+
+<DataTable
+  caption="R² variance components: how SST, SSE, and SSR relate"
+  headers={['Term', 'Meaning']}
+  align={['left', 'left']}
+  rows={[
+    ['SST', 'Total variation around the mean'],
+    ['SSE', 'Unexplained squared residuals'],
+    ['SSR', 'Variation explained by the model'],
+    ['Identity', 'SST = SSR + SSE'],
+    ['R² formula', '1 − SSE / SST'],
+  ]}
+/>
+
+## Plain-language interpretation with intuitive examples
+
+Thinking of R² as "percent of variance explained" is a reasonable shorthand, provided we remember what it does not say. It does not tell us that one variable causes another, and it does not by itself tell us how accurate the model's predictions will be on data it has never seen. It is strictly an in-sample description of fit, calculated from the same data used to estimate the model.
+
+A few quick benchmarks help calibrate intuition:
+
+- An R² around two-thirds means the model accounts for a large portion of the variation in the outcome, leaving a substantial share unexplained, while still providing a reasonably strong fit in many applied settings.
+- An R² near one-quarter means most of the variation remains unexplained, which can still be meaningful in fields such as psychology or marketing where outcomes are influenced by many loosely measured factors.
+- An R² of 0.01 indicates the model explains almost none of the variation, and the predictors as specified are doing little practical work.
+
+Notice that R² itself carries no information about direction. Whether an outcome rises or falls with a predictor is given by the sign of the correlation coefficient r or the regression slope, not by R², which is always non-negative regardless of whether the relationship is positive or negative.
+
+## Adjusted R-squared: formula, meaning, and when to prefer it
+
+Adjusted R² modifies the standard formula to account for the number of predictors in a model relative to the sample size, penalizing models that add variables without meaningfully improving fit. [Adjusted R-squared should be used when comparing models with different numbers of predictors](https://online.stat.psu.edu/stat501/Lesson05), because plain R² mechanically increases, or at worst stays flat, every time a new variable is added, even an irrelevant one.
+
+The intuition is straightforward: adjusted R² asks whether each additional predictor earns its keep by improving fit more than chance would predict, given the loss of degrees of freedom. This makes it a useful comparative tool when choosing between a simpler and a more complex specification of the same outcome.
+
+It is still, however, an in-sample statistic. Adjusted R² tells us about explanatory power within the data used to fit the model, not about how well that model will generalize. Pairing it with a genuine out-of-sample check remains necessary before trusting a model's predictive claims.
+
+<Callout variant="note" title="Boundary case">
+Models fit without an intercept, and generalized linear models more generally, do not always follow the familiar 0-to-1 R² scale. Confirm which convention your software is using before comparing R² values across two different model specifications.
+</Callout>
+
+## Common misinterpretations and limits
+
+A few mistakes recur often enough to deserve explicit attention, because each can quietly undermine an otherwise careful analysis.
+
+- **High R² does not mean causation.** A large R-squared reflects association and in-sample fit, not a causal effect, and confounding variables can inflate the statistic without any causal link existing.
+- **R² almost always rises as predictors are added**, even ones with no real relationship to the outcome, which creates a built-in incentive toward overfitting if adjusted R² and validation checks are ignored.
+- **Nonlinearity and model misspecification can distort R²** in either direction, producing a deceptively high or low number that reflects the wrong functional form rather than the true strength of the relationship.
+- **Outliers and high-leverage points can swing R² substantially**, especially in smaller datasets, making a single unusual observation responsible for an impressive-looking fit statistic.
+- **R² does not translate into prediction error in the original units** of the outcome variable, so it cannot answer questions like "how far off will our forecast be in dollars or units sold."
+
+<Callout variant="tip" title="Pro tip">
+Treat R² as a starting question, not a final answer, and always follow it with a look at the residual plot before trusting the number.
+</Callout>
+
+## Practical validation checks that matter more than R-squared
+
+[Graphical residual analysis is the primary tool for assessing whether a model actually fits the data](https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd44.htm), often revealing problems that a single summary statistic like R² cannot. A disciplined validation routine looks roughly like this:
+
+<Checklist
+  id="r-squared-validation-checklist"
+  title="Practical validation checklist"
+  style="numbered"
+  items={[
+    { text: 'Plot residuals against fitted values', detail: 'Check for patterns, curvature, or changing spread that suggest the model misses important structure.' },
+    { text: 'Examine a QQ plot of residuals', detail: 'Assess whether the normality assumption behind standard inference is reasonable.' },
+    { text: 'Check leverage and influence diagnostics', detail: 'Identify observations disproportionately shaping the fitted line.' },
+    { text: 'Split into training and holdout sets, or cross-validate', detail: 'Compute MAE or RMSE on the unseen portion rather than relying on in-sample R² alone.' },
+    { text: 'Report R², adjusted R², standard error, and an out-of-sample metric together', detail: 'This combination conveys fit, complexity penalty, raw error scale, and predictive performance in one place.' },
+  ]}
+/>
+
+Our <Link to={routes.article('regression-assumptions')}>guide to checking regression assumptions</Link> walks through the linearity, independence, normality, and equal-variance conditions these diagnostics are built to test.
+
+## What is a "good" R-squared? Context-dependent benchmarks
+
+There is no universal threshold for a "good" R², because [what counts as acceptable depends heavily on the field, the type of data, and whether the goal is explanation or prediction](https://people.duke.edu/~rnau/rsquared.htm). Physical science experiments with tightly controlled conditions often produce R² values above 0.9, while social science and marketing models frequently work with values closer to 0.2 or 0.3 and still provide useful insight.
+
+Time series deserve particular caution: a near-1 R² can simply reflect that two unrelated series share a common trend, not that one meaningfully predicts the other. Before trusting a high R² in that setting, compare the model against a simple baseline, such as a naive or seasonal forecast, and inspect residuals for leftover autocorrelation.
+
+## Short worked example and where to calculate R-squared interactively
+
+Suppose a small dataset has a total sum of squares (SST) of 100 and a residual sum of squares (SSE) of 20 after fitting a regression line. R² = 1 − 20/100 = 0.80, meaning the model explains [80%](https://www.displayr.com/what-is-r-squared/) of the variation in the outcome for this illustrative sample.
+
+Now suppose we add an irrelevant predictor. Plain R² would tick up slightly even though the variable carries no real signal, while adjusted R² could fall, since the penalty for the added parameter outweighs the negligible improvement in fit.
+
+For hands-on practice, our <Link to={routes.article('r-squared-adjusted-r-squared')}>R-squared and adjusted R-squared guide</Link> walks through fuller worked examples, and our <Link to={routes.calculatorsHub()}>calculators</Link> let you compute sums of squares and R² directly from your own data.
+
+## Interpreting R-squared across different regression models
+
+R² behaves differently depending on the type of model being fit, and carrying the ordinary least-squares interpretation into other contexts without adjustment is a frequent source of confusion. In standard linear regression, R² has the clean variance-explained interpretation described throughout this article, built directly from the SSE and SST identity.
+
+Logistic regression and other generalized linear models do not share that structure, because the outcome is categorical rather than continuous, and there is no single sum-of-squares decomposition that behaves the same way. Software packages often report a "pseudo R²," such as McFadden's or Nagelkerke's version, which approximates the spirit of variance explained but is calculated differently and cannot be compared directly to an OLS R². A pseudo R² of 0.3 in a logistic model does not mean the same thing as an R² of 0.3 in a linear model, and treating them as interchangeable leads to a mismatched sense of fit.
+
+For count models, survival models, and other specialized regressions, similar substitute metrics exist, each tied to that model's own likelihood structure rather than to variance in the original units of the outcome. The practical takeaway is to check which R²-like statistic a given software routine is actually reporting before comparing it across model types, and to lean on model-specific diagnostics, such as classification accuracy or deviance-based measures, when the outcome is not continuous.
+
+<Figure number={1} caption="R²-like fit metrics are not interchangeable across model types; each regression family reports its own substitute statistic.">
+  <TaxonomyTree
+    title="Goodness-of-fit metrics by model type"
+    desc="A taxonomy tree showing that ordinary least squares regression uses R² and adjusted R², logistic and other generalized linear models use pseudo R² variants such as McFadden's and Nagelkerke's, and count, survival, and other specialized models use their own likelihood-based substitute metrics."
+    root="Goodness-of-fit metric used"
+    branches={[
+      { label: 'Ordinary least squares regression', children: ['R² (variance explained)', 'Adjusted R² (penalized for predictor count)'] },
+      { label: 'Logistic regression & other GLMs', children: ["McFadden's pseudo R²", "Nagelkerke's pseudo R²"] },
+      { label: 'Count, survival & other specialized models', children: ['Model-specific, likelihood-based substitute metrics'] },
+    ]}
+  />
+</Figure>
+
+## How R-squared relates to predictive accuracy and decision-making
+
+A model can post an impressively high in-sample R² and still make poor predictions once it meets new data, because R² is computed from the same observations used to fit the model and therefore cannot penalize overfitting on its own. This gap matters most in decisions with real consequences: a demand forecast, a pricing model, or a risk score that looks strong on historical data can still mislead if it has simply memorized quirks of that particular dataset.
+
+Held-out predictive error, measured with metrics like MAE or RMSE on data the model never saw during fitting, is the more honest gauge of real-world performance, since it reflects the model's behavior under the same conditions it will face in practice. A decision-maker choosing between two models should weigh out-of-sample error alongside R², not instead of it, because R² still communicates how much of the overall variation the model's structure is capturing, which is useful context for interpreting the size of the prediction errors themselves.
+
+In short, R² is a diagnostic about the model's relationship to the data it was built on, while out-of-sample error speaks to how much to trust that model going forward. Treating the two as a pair, rather than picking one, keeps both explanatory and predictive questions in view.
+
+<DataTable
+  caption="R² versus held-out error: what each one actually tells you"
+  headers={['Aspect', 'R²', 'Held-out error']}
+  align={['left', 'left', 'left']}
+  rows={[
+    ['Data used', 'Uses fitting data', 'Uses unseen data'],
+    ['What it shows', 'Shows variation captured', 'Shows prediction performance'],
+    ['Overfitting', "Doesn't penalize overfitting", 'Reflects new-data behavior'],
+  ]}
+/>
+
+## Alternative goodness-of-fit metrics to consider alongside R-squared
+
+R² is rarely the only number worth reporting, and several companion metrics fill in gaps it leaves open. The standard error of the regression expresses typical prediction error in the same units as the outcome variable, answering the practical question R² cannot: how far off, in real terms, a typical prediction tends to be.
+
+Information criteria such as AIC and BIC extend the idea behind adjusted R² by penalizing model complexity while comparing fit across models, and they are especially useful when models are not simply nested versions of each other. For predictive tasks, cross-validated MAE and RMSE remain the most direct measures of how a model will perform on new data, since they are computed on observations excluded from the fitting process.
+
+In classification contexts, where R² does not apply in its usual form, metrics like accuracy, precision, recall, and AUC serve the equivalent role of describing how well a model's outputs match reality. The right combination depends on the goal: explanatory work benefits from pairing R² or adjusted R² with residual diagnostics, while predictive work should foreground out-of-sample error metrics and treat R² as supporting context rather than the final verdict.
+
+## Teaching R-squared responsibly
+
+We built our approach around pairing every R² explanation with the checks that keep it honest: a look at the residuals, a comparison to a sensible baseline, and at least one out-of-sample error metric before any predictive claim gets made. Our rule of thumb is simple: never report R² alone when a decision rides on the result.
+
+## Where to calculate and validate R-squared on your own data
+
+Working through R² by hand builds intuition, but applying it to a real dataset is where the concept earns its keep. Our coefficient of determination guide walks through fuller examples of computing and adjusting R², and our calculators let you work through sums of squares and regression fit on your own numbers. For a broader look at how these ideas connect to real analysis questions, visit our <Link to={routes.appliedLanding()}>Applied Statistics</Link> hub.
+
+## Sources
+
+<Sources items={[
+  { text: 'How can I tell if a model fits my data? — NIST/SEMATECH e-Handbook of Statistical Methods', href: 'https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd44.htm', org: 'NIST' },
+  { text: "What's a good value for R-squared?", href: 'https://people.duke.edu/~rnau/rsquared.htm', org: 'Robert Nau, Duke University' },
+  { text: 'Coefficient of determination', href: 'https://en.wikipedia.org/wiki/Coefficient_of_determination', org: 'Wikipedia' },
+  { text: 'Regression Analysis — SPSS Annotated Output (adjusted R-squared)', href: 'https://stats.oarc.ucla.edu/spss/output/regression-analysis/', org: 'UCLA OARC Statistical Consulting' },
+  { text: 'Cross-validation: evaluating estimator performance', href: 'https://scikit-learn.org/stable/modules/cross_validation.html', org: 'scikit-learn documentation' },
+  { text: 'FAQ: What are pseudo R-squareds?', href: 'https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds/', org: 'UCLA OARC Statistical Consulting' },
+]} />
+
+## FAQ
+
+<FAQ items={[
+  {
+    question: 'What does R-squared correlation indicate?',
+    answer: 'R-squared indicates the proportion of variance in the outcome variable that a regression model accounts for, expressed as a value between 0 and 1. In simple linear regression, it equals the square of the Pearson correlation coefficient between the two variables, but it does not indicate causation.',
+  },
+  {
+    question: 'How is the coefficient of determination calculated?',
+    answer: 'The coefficient of determination equals 1 minus the ratio of the sum of squared residuals to the total sum of squares, written as R² = 1 − SSE/SST. Most statistical software, including Python libraries, computes this automatically after fitting a regression model and reports it alongside the model summary.',
+  },
+  {
+    question: 'What does a 0.5 R-squared value mean?',
+    answer: 'An R² around one-half means the model accounts for a large portion of the variation in the outcome, leaving a substantial share unexplained. Whether that counts as a strong or weak result depends on the field: it can be unremarkable in physical science but respectable in social science or marketing contexts.',
+  },
+  {
+    question: 'What is the meaning of adjusted R-squared in regression analysis?',
+    answer: 'Adjusted R² adjusts the standard R² formula to penalize models for adding predictors that do not meaningfully improve fit, making it the preferred statistic for comparing models with different numbers of predictors. Unlike plain R², it can decrease when a new variable adds more noise than explanatory power.',
+  },
+  {
+    question: 'Is a higher R-squared always better?',
+    answer: 'Not necessarily, since R² mechanically rises as more predictors are added, even irrelevant ones, which can mask overfitting. A model with a lower R² but strong residual diagnostics and solid out-of-sample accuracy is generally more trustworthy than one with a high R² and no validation behind it.',
+  },
+]} />
