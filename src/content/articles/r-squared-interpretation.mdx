@@ -77,7 +77,7 @@ Notice that R² itself carries no information about direction. Whether an outcom
 
 ## Adjusted R-squared: formula, meaning, and when to prefer it
 
-Adjusted R² modifies the standard formula to account for the number of predictors in a model relative to the sample size, penalizing models that add variables without meaningfully improving fit. [Adjusted R-squared should be used when comparing models with different numbers of predictors](https://online.stat.psu.edu/stat501/Lesson05), because plain R² mechanically increases, or at worst stays flat, every time a new variable is added, even an irrelevant one.
+Adjusted R² modifies the standard formula to account for the number of predictors in a model relative to the sample size, penalizing models that add variables without meaningfully improving fit. [Adjusted R-squared should be used when comparing models with different numbers of predictors](https://stats.oarc.ucla.edu/spss/output/regression-analysis/), because plain R² mechanically increases, or at worst stays flat, every time a new variable is added, even an irrelevant one.
 
 The intuition is straightforward: adjusted R² asks whether each additional predictor earns its keep by improving fit more than chance would predict, given the loss of degrees of freedom. This makes it a useful comparative tool when choosing between a simpler and a more complex specification of the same outcome.
 
