@@ -454,6 +454,13 @@
       "title": "Kalman Filter Basics",
       "slug": "kalman-filter-basics",
       "category_slug": "time-series-forecasting"
+    },
+    {
+      "queue_position": 66,
+      "day_label": "2026-10-11",
+      "title": "R-Squared Interpretation",
+      "slug": "r-squared-interpretation",
+      "category_slug": "data-analysis"
     }
   ]
 }
